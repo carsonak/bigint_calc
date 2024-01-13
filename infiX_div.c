@@ -99,17 +99,21 @@ uint32_t *infiX_div(uint32_t *dividend, uint32_t *divisor)
 }
 
 /**
- * get_quotient - calculates the quotient number at the given index
+ * get_quotient - calculates the quotient of number currently in "remain"
  * @dvsor: divisor array
  *
  * Description: the current dividend is stored in the global array "remain"
+ * The function will try to estimate the precise quotient for the number
+ * currently stored in "remain". The estimates may overshoot and undershoot
+ * and the function will use the difference to make the next estimate and
+ * therefore will oscilate closer and closer to the answer.
  *
  * Return: the quotient, -1 on failure
  */
 int64_t get_quotient(uint32_t *dvsor)
 {
 	uint32_t *rem_tmp = NULL, *tmp_mul = NULL, *tmp_sub = NULL, quotient_tmp[] = {1, 0, 0};
-	int64_t hold = 0, over_shoot = 0;
+	int64_t hold = 0, o_shoot = 0;
 
 	if (!dvsor)
 		return (-1);
@@ -139,23 +143,23 @@ int64_t get_quotient(uint32_t *dvsor)
 				hold = tmp_sub[tmp_sub[0]];
 				/*How many of dvsor[dvsor[0]] can fit in hold?*/
 				if (hold < dvsor[dvsor[0]])
-					over_shoot = 1;
+					o_shoot = 1;
 				else
-					over_shoot = hold / (int64_t)dvsor[dvsor[0]];
+					o_shoot = hold / (int64_t)dvsor[dvsor[0]];
 
 				free(tmp_sub);
-				quotient_tmp[1] -= over_shoot;
+				quotient_tmp[1] -= o_shoot;
 			}
 			else
 			{ /*Increase the quotient*/
 				hold = rem_tmp[rem_tmp[0]];
 				/*How many of dvsor[dvsor[0]] can fit in hold?*/
 				if (hold < dvsor[dvsor[0]])
-					over_shoot = 1;
+					o_shoot = 1;
 				else
-					over_shoot = hold / (int64_t)dvsor[dvsor[0]];
+					o_shoot = hold / (int64_t)dvsor[dvsor[0]];
 
-				quotient_tmp[1] += over_shoot;
+				quotient_tmp[1] += o_shoot;
 			}
 		}
 
@@ -182,13 +186,13 @@ int64_t get_quotient(uint32_t *dvsor)
 
 /**
  * zero_result_check - checks if dividend < divisor or divisor == 0
- * @dend: dividend
- * @sor: divisor
- * @qt: pointer to the quotient
+ * @dend: dividend array
+ * @sor: divisor array
+ * @qt: address of the quotient array
  *
- * Description: If dividend < divisor quotient will be set to 0 and dividend
+ * Description: If [dividend < divisor] quotient will be set to 0 and dividend
  * copied into the global variable "remain".
- * If divisor == 0 will just return 1
+ * If [divisor == 0] function will just return 1
  *
  * Return: 1 if true, 0 if false
  */
