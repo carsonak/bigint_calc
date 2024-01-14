@@ -65,10 +65,9 @@ uint32_t *infiX_div(uint32_t *dividend, uint32_t *divisor)
 	{
 		errno = 0;
 		len_rem = remain[0];
-		for (; q > 0 && len_rem < len_sor; q--, nd--, len_rem++)
+		for (; q && nd && len_rem < len_sor; q--, nd--, len_rem++)
 		{
-			quotient[q] = 0;
-			if (!mplug_num_low(&remain, dividend[nd]))
+			if (!mplug_num_low(&remain, dividend[nd]) || !mplug_num_low(&quotient, 0))
 			{
 				free(quotient);
 				return (NULL);
@@ -96,92 +95,6 @@ uint32_t *infiX_div(uint32_t *dividend, uint32_t *divisor)
 	trim_intarr(&remain);
 	trim_intarr(&quotient);
 	return (quotient);
-}
-
-/**
- * get_quotient - calculates the quotient of number currently in "remain"
- * @dvsor: divisor array
- *
- * Description: the current dividend is stored in the global array "remain"
- * The function will try to estimate the precise quotient for the number
- * currently stored in "remain". The estimates may overshoot and undershoot
- * and the function will use the difference to make the next estimate and
- * therefore will oscilate closer and closer to the answer.
- *
- * Return: the quotient, -1 on failure
- */
-int64_t get_quotient(uint32_t *dvsor)
-{
-	uint32_t *rem_tmp = NULL, *tmp_mul = NULL, *tmp_sub = NULL, quotient_tmp[] = {1, 0, 0};
-	int64_t hold = 0, o_shoot = 0;
-
-	if (!dvsor)
-		return (-1);
-
-	hold = remain[remain[0]];
-	if (remain[0] > dvsor[0])
-		hold = (hold * U32_ROLL) + (int64_t)remain[remain[0] - 1];
-
-	quotient_tmp[1] = hold / (int64_t)dvsor[dvsor[0]];
-	while (!rem_tmp ||
-		   (((rem_tmp[0] > dvsor[0] ||
-			  (rem_tmp[0] == dvsor[0] && rem_tmp[rem_tmp[0]] >= dvsor[dvsor[0]]))) &&
-			quotient_tmp[1] > 0))
-	{
-		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & U32_NEGBIT)))
-		{
-			if (rem_tmp[rem_tmp[0]] & U32_NEGBIT)
-			{ /*Decrease the quotient*/
-				tmp_sub = infiX_sub(tmp_mul, remain);
-				if (!tmp_sub)
-				{
-					free(rem_tmp);
-					free(tmp_mul);
-					return (-1);
-				}
-
-				hold = tmp_sub[tmp_sub[0]];
-				/*How many of dvsor[dvsor[0]] can fit in hold?*/
-				if (hold < dvsor[dvsor[0]])
-					o_shoot = 1;
-				else
-					o_shoot = hold / (int64_t)dvsor[dvsor[0]];
-
-				free(tmp_sub);
-				quotient_tmp[1] -= o_shoot;
-			}
-			else
-			{ /*Increase the quotient*/
-				hold = rem_tmp[rem_tmp[0]];
-				/*How many of dvsor[dvsor[0]] can fit in hold?*/
-				if (hold < dvsor[dvsor[0]])
-					o_shoot = 1;
-				else
-					o_shoot = hold / (int64_t)dvsor[dvsor[0]];
-
-				quotient_tmp[1] += o_shoot;
-			}
-		}
-
-		free(tmp_mul);
-		tmp_mul = NULL;
-		free(rem_tmp);
-		rem_tmp = NULL;
-		tmp_mul = infiX_mul(dvsor, quotient_tmp);
-		if (tmp_mul)
-		{
-			rem_tmp = infiX_sub(remain, tmp_mul);
-			if (!rem_tmp)
-				return (-1);
-		}
-		else
-			return (-1);
-	}
-
-	_memcpy((char *)remain, (char *)rem_tmp, ((rem_tmp[0] + 2) * sizeof(*rem_tmp)));
-	free(rem_tmp);
-	free(tmp_mul);
-	return (quotient_tmp[1]);
 }
 
 /**
@@ -241,4 +154,109 @@ int zero_result_check(uint32_t *dend, uint32_t *sor, uint32_t **qt)
 	}
 
 	return (0);
+}
+
+/**
+ * get_quotient - calculates the quotient of number currently in "remain"
+ * @dvsor: divisor array
+ *
+ * Description: the current dividend is stored in the global array "remain"
+ * The function will try to estimate the precise quotient for the number
+ * currently stored in "remain". The estimates may overshoot and undershoot
+ * and the function will use the difference to make the next estimate and
+ * therefore will oscilate closer and closer to the answer.
+ *
+ * Return: the quotient, -1 on failure
+ */
+int64_t get_quotient(uint32_t *dvsor)
+{
+	uint32_t *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
+	int64_t hold = 0;
+
+	if (!dvsor)
+		return (-1);
+
+	hold = remain[remain[0]];
+	if (remain[0] > dvsor[0])
+		hold = (hold * U32_ROLL) + (int64_t)remain[remain[0] - 1];
+
+	quot_tmp[1] = hold / (int64_t)dvsor[dvsor[0]];
+	while (!rem_tmp ||
+		   (((rem_tmp[0] > dvsor[0] ||
+			  (rem_tmp[0] == dvsor[0] && rem_tmp[rem_tmp[0]] >= dvsor[dvsor[0]]))) &&
+			quot_tmp[1] > 0))
+	{
+		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & U32_NEGBIT)))
+		{
+			hold = adjust_q(dvsor[dvsor[0]], mul_est, rem_tmp[rem_tmp[0]], quot_tmp[1]);
+			if (hold < 0)
+			{
+				free(rem_tmp);
+				free(mul_est);
+				return (-1);
+			}
+
+			quot_tmp[1] = hold;
+		}
+
+		free(mul_est);
+		mul_est = NULL;
+		free(rem_tmp);
+		rem_tmp = NULL;
+		mul_est = infiX_mul(dvsor, quot_tmp);
+		if (mul_est)
+		{
+			rem_tmp = infiX_sub(remain, mul_est);
+			if (!rem_tmp)
+				return (-1);
+		}
+		else
+			return (-1);
+	}
+
+	_memcpy((char *)remain, (char *)rem_tmp, ((rem_tmp[0] + 2) * sizeof(*rem_tmp)));
+	free(rem_tmp);
+	free(mul_est);
+	return (quot_tmp[1]);
+}
+
+/**
+ * adjust_q - check for overshoot or undershoot in quotient and adjust appropriately
+ * @ds_msd: number in the highest index of the divisor array
+ * @m_est: multiplied estimate
+ * @rem_msd: number in the highest index of the temporary remainder array
+ * @q_tmp: current quotient to be adjuststed
+ *
+ * Return: the adjusted quotient, -1 on failure
+ */
+int64_t adjust_q(uint32_t ds_msd, uint32_t *m_est, uint32_t rem_msd, int64_t q_tmp)
+{
+	uint32_t *tmp_sub = NULL;
+	int64_t hold = 0, o_shoot = 0;
+
+	if (rem_msd & U32_NEGBIT)
+	{ /*Decrease the quotient*/
+		tmp_sub = infiX_sub(m_est, remain);
+		if (!tmp_sub)
+			return (-1);
+
+		hold = tmp_sub[tmp_sub[0]];
+		/*How many of ds_msd can fit in hold?*/
+		if (hold < ds_msd)
+			o_shoot = 1;
+		else
+			o_shoot = hold / (int64_t)ds_msd;
+
+		free(tmp_sub);
+		q_tmp -= o_shoot;
+	}
+	else
+	{ /*Increase the quotient*/
+		hold = rem_msd;
+		/*How many of ds_msd can fit in hold?*/
+		o_shoot = hold / (int64_t)ds_msd;
+		q_tmp += o_shoot;
+	}
+
+	return (q_tmp);
 }
