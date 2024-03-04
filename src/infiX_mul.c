@@ -7,11 +7,11 @@
  *
  * Return: pointer to result, NULL on failure
  */
-mid_int *infiX_mul(mid_int *n1_arr, mid_int *n2_arr)
+mid_uint *infiX_mul(mid_uint *n1_arr, mid_uint *n2_arr)
 {
-	hi_int byt_mul = 0;
+	hi_uint byt_mul = 0;
 	ssize_t top = -1, botm = -1, c_mulsz = 0, t = 1, b = 1;
-	mid_int *c_mul = NULL, *prod = NULL, *total = NULL;
+	mid_uint *c_mul = NULL, *prod = NULL, *total = NULL;
 
 	/*Get and adjust size of the arrays. Stored at index 0.*/
 	if (n1_arr)
@@ -57,7 +57,7 @@ mid_int *infiX_mul(mid_int *n1_arr, mid_int *n2_arr)
 			byt_mul = 0;
 			for (t = 1; t <= top; t++)
 			{
-				byt_mul += (hi_int)n1_arr[t] * (hi_int)n2_arr[b];
+				byt_mul += (hi_uint)n1_arr[t] * (hi_uint)n2_arr[b];
 				/*Offset to current index of botm*/
 				c_mul[(t - 1) + b] = byt_mul % U32_ROLL;
 				byt_mul /= U32_ROLL;

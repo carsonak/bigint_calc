@@ -11,8 +11,8 @@
 int infiX_op(char *num1, char *sign, char *num2)
 {
 	size_t i = 0;
-	mid_int *n1_arr = NULL, *n2_arr = NULL, *ans_arr = NULL;
-	lo_int *answer = NULL;
+	mid_uint *n1_arr = NULL, *n2_arr = NULL, *ans_arr = NULL;
+	lo_uint *answer = NULL;
 	op_func ops[] = {
 		{"+", infiX_add},
 		{"-", infiX_sub},
@@ -38,14 +38,14 @@ int infiX_op(char *num1, char *sign, char *num2)
 			 */
 			if (num1)
 			{
-				n1_arr = str_u32((lo_int *)&num1[pad_char(num1, "0")]);
+				n1_arr = str_u32((lo_uint *)&num1[pad_char(num1, "0")]);
 				if (!n1_arr)
 					return (EXIT_FAILURE);
 			}
 
 			if (num2)
 			{
-				n2_arr = str_u32((lo_int *)&num2[pad_char(num2, "0")]);
+				n2_arr = str_u32((lo_uint *)&num2[pad_char(num2, "0")]);
 				if (!n2_arr)
 				{
 					if (n1_arr)

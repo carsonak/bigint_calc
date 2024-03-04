@@ -1,6 +1,6 @@
 #include "infix.h"
 
-mid_int *remain = NULL;
+mid_uint *remain = NULL;
 
 /**
  * infiX_div - divides a numbers stored in an array
@@ -13,11 +13,11 @@ mid_int *remain = NULL;
  *
  * Return: array with the result, NULL on failure
  */
-mid_int *infiX_div(mid_int *dividend, mid_int *divisor)
+mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor)
 {
 	size_t len_sor = 0, len_dend = 0, len_rem = 0, len_q = 0, nd = 0, r = 0, q = 0;
-	mid_int *quotient = NULL;
-	hi_int hold = 0;
+	mid_uint *quotient = NULL;
+	hi_uint hold = 0;
 
 	remain = NULL;
 	if (dividend)
@@ -109,7 +109,7 @@ mid_int *infiX_div(mid_int *dividend, mid_int *divisor)
  *
  * Return: 1 if true, 0 if false
  */
-int zero_result_check(mid_int *dend, mid_int *sor, mid_int **qt)
+int zero_result_check(mid_uint *dend, mid_uint *sor, mid_uint **qt)
 {
 	ssize_t lsor = -1, ldnd = -1, nd = 0;
 
@@ -168,19 +168,19 @@ int zero_result_check(mid_int *dend, mid_int *sor, mid_int **qt)
  *
  * Return: the quotient, -1 on failure
  */
-hi_int get_quotient(mid_int *dvsor)
+hi_uint get_quotient(mid_uint *dvsor)
 {
-	mid_int *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
-	hi_int hold = 0;
+	mid_uint *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
+	hi_uint hold = 0;
 
 	if (!dvsor)
 		return (-1);
 
 	hold = remain[remain[0]];
 	if (remain[0] > dvsor[0])
-		hold = (hold * U32_ROLL) + (hi_int)remain[remain[0] - 1];
+		hold = (hold * U32_ROLL) + (hi_uint)remain[remain[0] - 1];
 
-	quot_tmp[1] = hold / (hi_int)dvsor[dvsor[0]];
+	quot_tmp[1] = hold / (hi_uint)dvsor[dvsor[0]];
 	while (!rem_tmp ||
 		   (((rem_tmp[0] > dvsor[0] ||
 			  (rem_tmp[0] == dvsor[0] && rem_tmp[rem_tmp[0]] >= dvsor[dvsor[0]]))) &&
@@ -229,10 +229,10 @@ hi_int get_quotient(mid_int *dvsor)
  *
  * Return: the adjusted quotient, -1 on failure
  */
-hi_int adjust_q(mid_int ds_msd, mid_int *m_est, mid_int rem_msd, hi_int q_tmp)
+hi_uint adjust_q(mid_uint ds_msd, mid_uint *m_est, mid_uint rem_msd, hi_uint q_tmp)
 {
-	mid_int *tmp_sub = NULL;
-	hi_int hold = 0, o_shoot = 0;
+	mid_uint *tmp_sub = NULL;
+	hi_uint hold = 0, o_shoot = 0;
 
 	if (rem_msd & U32_NEGBIT)
 	{ /*Decrease the quotient*/
@@ -245,7 +245,7 @@ hi_int adjust_q(mid_int ds_msd, mid_int *m_est, mid_int rem_msd, hi_int q_tmp)
 		if (hold < ds_msd)
 			o_shoot = 1;
 		else
-			o_shoot = hold / (hi_int)ds_msd;
+			o_shoot = hold / (hi_uint)ds_msd;
 
 		free(tmp_sub);
 		q_tmp -= o_shoot;
@@ -254,7 +254,7 @@ hi_int adjust_q(mid_int ds_msd, mid_int *m_est, mid_int rem_msd, hi_int q_tmp)
 	{ /*Increase the quotient*/
 		hold = rem_msd;
 		/*How many of ds_msd can fit in hold?*/
-		o_shoot = hold / (hi_int)ds_msd;
+		o_shoot = hold / (hi_uint)ds_msd;
 		q_tmp += o_shoot;
 	}
 
