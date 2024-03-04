@@ -2,8 +2,8 @@
 
 /**
  * mplug_low - plugs an int array to the beginnig of another array
- * @dest: a pointer to a uint32_t array to be modified
- * @src: a uint32_t array to add to *dest
+ * @dest: a pointer to a mid_int array to be modified
+ * @src: a mid_int array to add to *dest
  *
  * Description: This function will allocate memory for an array of the size
  * of both *dest and src. If any of the pointers is NULL the function will
@@ -15,10 +15,10 @@
  *
  * Return: pointer to the mem area with the result, NULL on failure
  */
-uint32_t *mplug_low(uint32_t **dest, uint32_t *src)
+mid_int *mplug_low(mid_int **dest, mid_int *src)
 {
 	ssize_t len_d = 0, len_s = 0, d = 1, s = 1, f = 1;
-	uint32_t *final = NULL;
+	mid_int *final = NULL;
 
 	if (*dest)
 		len_d = (*dest)[0];
@@ -51,8 +51,8 @@ uint32_t *mplug_low(uint32_t **dest, uint32_t *src)
 
 /**
  * mplug_num_low - plugs an int to the beginning an int array
- * @dest: a pointer to a uint32_t array to be modified
- * @src: a uint32_t
+ * @dest: a pointer to a mid_int array to be modified
+ * @src: a mid_int
  *
  * Description: This function will allocate memory for an array of the size
  * of *dest + 1. If *dest is NULL the function will store the int in an array
@@ -64,10 +64,10 @@ uint32_t *mplug_low(uint32_t **dest, uint32_t *src)
  *
  * Return: pointer to the mem area with the result, NULL on failure
  */
-uint32_t *mplug_num_low(uint32_t **dest, uint32_t src)
+mid_int *mplug_num_low(mid_int **dest, mid_int src)
 {
 	ssize_t len_d = 0, d = 1, f = 1;
-	uint32_t *final = NULL;
+	mid_int *final = NULL;
 
 	if (!dest)
 		return (NULL);

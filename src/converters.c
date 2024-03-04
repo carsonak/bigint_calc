@@ -13,11 +13,11 @@
  *
  * Return: an array of 32 bit ints, NULL on failure
  */
-uint32_t *str_u32(uint8_t *num)
+mid_int *str_u32(lo_int *num)
 {
 	size_t u32arr_sz = 0, len = 0, h = 0;
 	int i = 0, g = 0;
-	uint32_t *u32arr = NULL;
+	mid_int *u32arr = NULL;
 
 	if (!num)
 		return (NULL);
@@ -46,7 +46,7 @@ uint32_t *str_u32(uint8_t *num)
 	for (h = 1, g = (len - 1); h <= u32arr_sz && g >= 0; h++)
 	{
 		for (i = 0; i < U32_DIGITS && (g - i) >= 0; i++)
-			u32arr[h] += (num[g - i] - '0') * (uint32_t)(pow(10, i));
+			u32arr[h] += (num[g - i] - '0') * (mid_int)(pow(10, i));
 
 		g -= i;
 	}
@@ -66,10 +66,10 @@ uint32_t *str_u32(uint8_t *num)
  *
  * Return: a string of numbers, NULL on failure
  */
-uint8_t *u32_str(uint32_t *u32a)
+lo_int *u32_str(mid_int *u32a)
 {
 	size_t u32arr_sz = 0, len = 0, g = 0, h = 0, i = 0;
-	uint8_t *num = NULL;
+	lo_int *num = NULL;
 	ssize_t temp = 0, div = 1;
 
 	if (!u32a)
@@ -132,9 +132,9 @@ uint8_t *u32_str(uint32_t *u32a)
 
 /**
  * trim_intarr - trims empty spaces from the end of an int array
- * @arr: pointer to the uint32_t arrary
+ * @arr: pointer to the mid_int arrary
  */
-void trim_intarr(uint32_t **arr)
+void trim_intarr(mid_int **arr)
 {
 	size_t arr_sz = 0;
 
@@ -179,8 +179,8 @@ size_t pad_char(char *str, char *ch)
 int main(void)
 {
 	size_t i = 0, g = 0;
-	uint32_t *ntemp = NULL, len = 0;
-	uint8_t *stemp = NULL;
+	mid_int *ntemp = NULL, len = 0;
+	lo_int *stemp = NULL;
 	char *nstr[] = {
 		"123456789",
 		"12345678912",
@@ -198,9 +198,9 @@ int main(void)
 	while (nstr[g])
 	{
 		printf("%s\n", &nstr[g][pad_char(nstr[g], "0")]);
-		/*ntemp = str_u32((uint8_t *)(&nstr[g][pad_char(nstr[g], "0")]));*/
+		/*ntemp = str_u32((lo_int *)(&nstr[g][pad_char(nstr[g], "0")]));*/
 		/*printf("%s\n", nstr[g]);*/
-		ntemp = str_u32((uint8_t *)nstr[g]);
+		ntemp = str_u32((lo_int *)nstr[g]);
 		if (!ntemp)
 			return (EXIT_FAILURE);
 
@@ -208,9 +208,9 @@ int main(void)
 		for (i = len; i > 0; i--)
 		{
 			if (i < len)
-				printf("%09d", (uint32_t)ntemp[i]);
+				printf("%09d", (mid_int)ntemp[i]);
 			else
-				printf("%d", (uint32_t)ntemp[i]);
+				printf("%d", (mid_int)ntemp[i]);
 		}
 
 		printf(" [%d: Blocks]\n", (int)len);

@@ -1,0 +1,13 @@
+SRCS_DIR := src
+SRCDIRS := $(shell find $(SRCS_DIR) -mount -name '*.c' -exec dirname {} \; | sort -u)
+SRC := $(shell find $(SRCDIRS) -mount -name '*.c' -type f | sort)
+
+OBJS_DIR := obj
+OBJDIRS := $(subst $(SRCS_DIR),$(OBJS_DIR),$(SRCDIRS))
+OBJ := $(SRC:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
+
+all: $(OBJ)
+	@printf "%s\n" $(SRC)
+
+$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
+	@printf "	%s <- %s\n" $@ $^

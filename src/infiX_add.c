@@ -7,11 +7,11 @@
  *
  * Return: pointer to result, NULL on failure
  */
-uint32_t *infiX_add(uint32_t *n1_arr, uint32_t *n2_arr)
+mid_int *infiX_add(mid_int *n1_arr, mid_int *n2_arr)
 {
 	ssize_t a_sz = -1, b_sz = -1, sum_sz = 0, g = 1, h = 1, k = 1;
-	uint64_t byt_sum = 0;
-	uint32_t *sum = NULL;
+	hi_int byt_sum = 0;
+	mid_int *sum = NULL;
 
 	if (n1_arr)
 	{
@@ -54,13 +54,13 @@ uint32_t *infiX_add(uint32_t *n1_arr, uint32_t *n2_arr)
 	{
 		if (g <= a_sz)
 		{
-			byt_sum += (uint64_t)n1_arr[g];
+			byt_sum += (hi_int)n1_arr[g];
 			++g;
 		}
 
 		if (h <= b_sz)
 		{
-			byt_sum += (uint64_t)n2_arr[h];
+			byt_sum += (hi_int)n2_arr[h];
 			++h;
 		}
 

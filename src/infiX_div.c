@@ -1,6 +1,6 @@
 #include "infix.h"
 
-uint32_t *remain = NULL;
+mid_int *remain = NULL;
 
 /**
  * infiX_div - divides a numbers stored in an array
@@ -13,11 +13,11 @@ uint32_t *remain = NULL;
  *
  * Return: array with the result, NULL on failure
  */
-uint32_t *infiX_div(uint32_t *dividend, uint32_t *divisor)
+mid_int *infiX_div(mid_int *dividend, mid_int *divisor)
 {
 	size_t len_sor = 0, len_dend = 0, len_rem = 0, len_q = 0, nd = 0, r = 0, q = 0;
-	uint32_t *quotient = NULL;
-	int64_t hold = 0;
+	mid_int *quotient = NULL;
+	hi_int hold = 0;
 
 	remain = NULL;
 	if (dividend)
@@ -109,7 +109,7 @@ uint32_t *infiX_div(uint32_t *dividend, uint32_t *divisor)
  *
  * Return: 1 if true, 0 if false
  */
-int zero_result_check(uint32_t *dend, uint32_t *sor, uint32_t **qt)
+int zero_result_check(mid_int *dend, mid_int *sor, mid_int **qt)
 {
 	ssize_t lsor = -1, ldnd = -1, nd = 0;
 
@@ -168,19 +168,19 @@ int zero_result_check(uint32_t *dend, uint32_t *sor, uint32_t **qt)
  *
  * Return: the quotient, -1 on failure
  */
-int64_t get_quotient(uint32_t *dvsor)
+hi_int get_quotient(mid_int *dvsor)
 {
-	uint32_t *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
-	int64_t hold = 0;
+	mid_int *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
+	hi_int hold = 0;
 
 	if (!dvsor)
 		return (-1);
 
 	hold = remain[remain[0]];
 	if (remain[0] > dvsor[0])
-		hold = (hold * U32_ROLL) + (int64_t)remain[remain[0] - 1];
+		hold = (hold * U32_ROLL) + (hi_int)remain[remain[0] - 1];
 
-	quot_tmp[1] = hold / (int64_t)dvsor[dvsor[0]];
+	quot_tmp[1] = hold / (hi_int)dvsor[dvsor[0]];
 	while (!rem_tmp ||
 		   (((rem_tmp[0] > dvsor[0] ||
 			  (rem_tmp[0] == dvsor[0] && rem_tmp[rem_tmp[0]] >= dvsor[dvsor[0]]))) &&
@@ -229,10 +229,10 @@ int64_t get_quotient(uint32_t *dvsor)
  *
  * Return: the adjusted quotient, -1 on failure
  */
-int64_t adjust_q(uint32_t ds_msd, uint32_t *m_est, uint32_t rem_msd, int64_t q_tmp)
+hi_int adjust_q(mid_int ds_msd, mid_int *m_est, mid_int rem_msd, hi_int q_tmp)
 {
-	uint32_t *tmp_sub = NULL;
-	int64_t hold = 0, o_shoot = 0;
+	mid_int *tmp_sub = NULL;
+	hi_int hold = 0, o_shoot = 0;
 
 	if (rem_msd & U32_NEGBIT)
 	{ /*Decrease the quotient*/
@@ -245,7 +245,7 @@ int64_t adjust_q(uint32_t ds_msd, uint32_t *m_est, uint32_t rem_msd, int64_t q_t
 		if (hold < ds_msd)
 			o_shoot = 1;
 		else
-			o_shoot = hold / (int64_t)ds_msd;
+			o_shoot = hold / (hi_int)ds_msd;
 
 		free(tmp_sub);
 		q_tmp -= o_shoot;
@@ -254,7 +254,7 @@ int64_t adjust_q(uint32_t ds_msd, uint32_t *m_est, uint32_t rem_msd, int64_t q_t
 	{ /*Increase the quotient*/
 		hold = rem_msd;
 		/*How many of ds_msd can fit in hold?*/
-		o_shoot = hold / (int64_t)ds_msd;
+		o_shoot = hold / (hi_int)ds_msd;
 		q_tmp += o_shoot;
 	}
 
