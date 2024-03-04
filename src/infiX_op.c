@@ -10,10 +10,10 @@
  */
 int infiX_op(char *num1, char *sign, char *num2)
 {
-	size_t i = 0;
-	mid_uint *n1_arr = NULL, *n2_arr = NULL, *ans_arr = NULL;
+	int i = 0;
+	mid_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
 	lo_uint *answer = NULL;
-	op_func ops[] = {
+	op_func operators[] = {
 		{"+", infiX_add},
 		{"-", infiX_sub},
 		{"x", infiX_mul},
@@ -27,61 +27,43 @@ int infiX_op(char *num1, char *sign, char *num2)
 		return (EXIT_FAILURE);
 	}
 
-	for (i = 0; ops[i].sign; i++)
+	for (i = 0; operators[i].sign; i++)
 	{
-		errno = 0;
-		if (ops[i].sign[0] == sign[0])
+		if (operators[i].sign[0] == sign[0])
 		{
 			/**
 			 * Send num1 and num2 to the converters first
 			 * Offset pointers by number of leading zeros
 			 */
-			if (num1)
-			{
-				n1_arr = str_to_intarray((lo_uint *)&num1[pad_char(num1, "0")]);
-				if (!n1_arr)
-					return (EXIT_FAILURE);
-			}
+			num1_arr = str_to_intarray((lo_uint *)&num1[pad_char(num1, "0")]);
+			if (!num1_arr)
+				break;
 
-			if (num2)
-			{
-				n2_arr = str_to_intarray((lo_uint *)&num2[pad_char(num2, "0")]);
-				if (!n2_arr)
-				{
-					if (n1_arr)
-						free(n1_arr);
+			num2_arr = str_to_intarray((lo_uint *)&num2[pad_char(num2, "0")]);
+			if (!num2_arr)
+				break;
 
-					return (EXIT_FAILURE);
-				}
-			}
-
-			ans_arr = ops[i].f(n1_arr, n2_arr);
+			ans_arr = operators[i].f(num1_arr, num2_arr);
 			break;
 		}
 	}
 
-	if (n1_arr)
-		free(n1_arr);
-
-	if (n2_arr)
-		free(n2_arr);
-
-	if (remain)
-		free(remain);
-
+	free(num1_arr);
+	free(num2_arr);
+	free(remain);
 	if (ans_arr)
 	{
 		answer = intarr_to_str(ans_arr);
 		free(ans_arr);
 		if (answer)
+		{
 			printf("%s\n", (char *)&answer[pad_char((char *)answer, "0")]);
-		else
-			return (EXIT_FAILURE);
-
-		free(answer);
-		return (EXIT_SUCCESS);
+			free(answer);
+			return (EXIT_SUCCESS);
+		}
 	}
-	else if (!ops[i].sign)
+
+	if (!operators[i].sign)
 		print_help();
 
 	return (EXIT_FAILURE);

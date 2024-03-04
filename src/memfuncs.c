@@ -27,12 +27,12 @@ void *memfill(void *mem, char b, size_t start, size_t nbytes)
  *
  * Return: returns pointer to destination
  */
-char *_memcpy(char *dest, char *src, size_t n)
+void *_memcpy(void *dest, void *src, size_t n)
 {
 	size_t i = 0;
 
 	for (i = 0; i < n; i++)
-		dest[i] = src[i];
+		((char *)dest)[i] = ((char *)src)[i];
 
 	return (dest);
 }

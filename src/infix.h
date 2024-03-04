@@ -29,11 +29,11 @@ typedef uint8_t lo_uint;
 extern mid_uint *remain;
 
 /**
- * struct operations - a structure of an operation and it's function
+ * struct operator_function - a structure of an operation and it's function
  * @sign: the operation
  * @f: a pointer to the corresponding function
  */
-typedef struct operations
+typedef struct operator_function
 {
 	char *sign;
 	mid_uint *(*f)(mid_uint *n1, mid_uint *n2);
@@ -46,7 +46,7 @@ lo_uint *intarr_to_str(mid_uint *u32a);
 void trim_intarr(mid_uint **arr);
 size_t pad_char(char *str, char *ch);
 void *memfill(void *mem, char b, size_t start, size_t nbytes);
-char *_memcpy(char *dest, char *src, size_t n);
+void *_memcpy(void *dest, void *src, size_t n);
 mid_uint *mplug_low(mid_uint **dest, mid_uint *src);
 mid_uint *mplug_num_low(mid_uint **dest, mid_uint src);
 

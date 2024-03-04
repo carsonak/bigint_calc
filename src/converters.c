@@ -28,7 +28,7 @@ mid_uint *str_to_intarray(lo_uint *num_str)
 
 	if (!len)
 	{
-		print_help();
+		print_help(); /*Insufficient digits*/
 		return (NULL);
 	}
 
@@ -69,7 +69,7 @@ mid_uint *str_to_intarray(lo_uint *num_str)
 lo_uint *intarr_to_str(mid_uint *array)
 {
 	size_t array_sz = 0, len = 0, g = 0, h = 0, i = 0;
-	lo_uint *num_str = NULL;
+	lo_uint *num_str = NULL, negative = '\0';
 	ssize_t temp = 0, div = 1;
 
 	if (!array)
@@ -81,7 +81,7 @@ lo_uint *intarr_to_str(mid_uint *array)
 	{
 		array[array_sz] ^= MID_NEGBIT;
 		len += 1;
-		temp = 1;
+		negative = '-';
 	}
 
 	trim_intarr(&array);
@@ -94,8 +94,8 @@ lo_uint *intarr_to_str(mid_uint *array)
 		return (NULL);
 	}
 
-	if (temp)
-		num_str[0] = '-';
+	if (negative)
+		num_str++;
 
 	temp = array[array_sz];
 	while (temp / div >= 10)
@@ -106,11 +106,7 @@ lo_uint *intarr_to_str(mid_uint *array)
 		temp = array[h];
 		for (i = 0; div && (g + i) < len; i++)
 		{
-			if (num_str[0] == '-')
-				num_str[g + i + 1] = (temp / div) + '0';
-			else
-				num_str[g + i] = (temp / div) + '0';
-
+			num_str[g + i] = (temp / div) + '0';
 			temp %= div;
 			div /= 10;
 		}
@@ -119,12 +115,10 @@ lo_uint *intarr_to_str(mid_uint *array)
 		div = (MID_MAX_VAL / 10);
 	}
 
-	if (i)
+	if (negative)
 	{
-		if (num_str[0] == '-')
-			num_str[g + 1] = '\0';
-		else
-			num_str[g] = '\0';
+		num_str--;
+		num_str[0] = '-';
 	}
 
 	return (num_str);
