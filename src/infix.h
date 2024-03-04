@@ -52,9 +52,9 @@ mid_uint *mplug_num_low(mid_uint **dest, mid_uint src);
 
 int infiX_op(char *num1, char *sign, char *num2);
 mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor);
-int zero_result_check(mid_uint *dend, mid_uint *sor, mid_uint **qt);
+int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient);
 hi_uint get_quotient(mid_uint *dvsor);
-hi_uint adjust_q(mid_uint ds_msd, mid_uint *m_est, mid_uint rem_msd, hi_uint q_tmp);
+hi_uint adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd, hi_uint quotient_tmp);
 mid_uint *infiX_sub(mid_uint *n1_arr, mid_uint *n2_arr);
 mid_uint *infiX_mul(mid_uint *n1_arr, mid_uint *n2_arr);
 mid_uint *infiX_add(mid_uint *n1_arr, mid_uint *n2_arr);
