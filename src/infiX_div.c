@@ -18,7 +18,7 @@ mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor)
 	size_t len_sor = 0, len_dend = 0, len_rem = 0, len_quotient = 0;
 	size_t nd_i = 0, r_i = 0, q_i = 0;
 	mid_uint *quotient = NULL;
-	hi_uint hold = 0;
+	int64_t hold = 0;
 
 	remain = NULL;
 	if (dividend)
@@ -169,25 +169,25 @@ int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient)
  *
  * Return: the quotient, -1 on failure
  */
-hi_uint get_quotient(mid_uint *dvsor)
+int64_t get_quotient(mid_uint *dvsor)
 {
 	mid_uint *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
-	hi_uint hold = 0;
+	int64_t hold = 0;
 
 	if (!dvsor)
 		return (-1);
 
 	hold = remain[remain[0]];
 	if (remain[0] > dvsor[0])
-		hold = (hold * U32_ROLL) + (hi_uint)remain[remain[0] - 1];
+		hold = (hold * MID_MAX_VAL) + (int64_t)remain[remain[0] - 1];
 
-	quot_tmp[1] = hold / (hi_uint)dvsor[dvsor[0]];
+	quot_tmp[1] = hold / (int64_t)dvsor[dvsor[0]];
 	while (!rem_tmp ||
 		   (((rem_tmp[0] > dvsor[0] ||
 			  (rem_tmp[0] == dvsor[0] && rem_tmp[rem_tmp[0]] >= dvsor[dvsor[0]]))) &&
 			quot_tmp[1] > 0))
 	{
-		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & U32_NEGBIT)))
+		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & MID_NEGBIT)))
 		{
 			hold = adjust_quotient(dvsor[dvsor[0]], mul_est, rem_tmp[rem_tmp[0]], quot_tmp[1]);
 			if (hold < 0)
@@ -230,12 +230,12 @@ hi_uint get_quotient(mid_uint *dvsor)
  *
  * Return: the adjusted quotient, -1 on failure
  */
-hi_uint adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd, hi_uint quotient_tmp)
+int64_t adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd, int64_t quotient_tmp)
 {
 	mid_uint *tmp_sub = NULL;
-	hi_uint hold = 0, o_shoot = 0;
+	int64_t hold = 0, o_shoot = 0;
 
-	if (rem_msd & U32_NEGBIT)
+	if (rem_msd & MID_NEGBIT)
 	{ /*Decrease the quotient*/
 		tmp_sub = infiX_sub(estimate, remain);
 		if (!tmp_sub)
@@ -246,7 +246,7 @@ hi_uint adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd
 		if (hold < dvsor_msd)
 			o_shoot = 1;
 		else
-			o_shoot = hold / (hi_uint)dvsor_msd;
+			o_shoot = hold / (int64_t)dvsor_msd;
 
 		free(tmp_sub);
 		quotient_tmp -= o_shoot;
@@ -255,7 +255,7 @@ hi_uint adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd
 	{ /*Increase the quotient*/
 		hold = rem_msd;
 		/*How many of dvsor_msd can fit in hold?*/
-		o_shoot = hold / (hi_uint)dvsor_msd;
+		o_shoot = hold / (int64_t)dvsor_msd;
 		quotient_tmp += o_shoot;
 	}
 

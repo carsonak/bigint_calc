@@ -59,11 +59,11 @@ mid_uint *infiX_mul(mid_uint *n1_arr, mid_uint *n2_arr)
 			{
 				byt_mul += (hi_uint)n1_arr[t] * (hi_uint)n2_arr[b];
 				/*Offset to current index of botm*/
-				c_mul[(t - 1) + b] = byt_mul % U32_ROLL;
-				byt_mul /= U32_ROLL;
+				c_mul[(t - 1) + b] = byt_mul % MID_MAX_VAL;
+				byt_mul /= MID_MAX_VAL;
 			}
 
-			c_mul[(t - 1) + b] = byt_mul % U32_ROLL;
+			c_mul[(t - 1) + b] = byt_mul % MID_MAX_VAL;
 			prod = infiX_add(total, c_mul);
 			free(c_mul);
 			if (total)

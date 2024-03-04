@@ -1,4 +1,4 @@
-BINARY := infiX_math
+BINARY := debug_math
 CC := gcc
 
 # Main directory for all source files

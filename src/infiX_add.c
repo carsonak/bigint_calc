@@ -64,8 +64,8 @@ mid_uint *infiX_add(mid_uint *n1_arr, mid_uint *n2_arr)
 			++h;
 		}
 
-		sum[k] = byt_sum % (U32_ROLL);
-		byt_sum /= (U32_ROLL);
+		sum[k] = byt_sum % (MID_MAX_VAL);
+		byt_sum /= (MID_MAX_VAL);
 		++k;
 	}
 

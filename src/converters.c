@@ -2,8 +2,8 @@
 /*#define TESTING_CONVERTERS*/
 
 /**
- * str_u32 - convert a string of numbers to a 32 bit int array
- * @num: a string of only integers
+ * str_to_intarray - convert a string of numbers to a 32 bit int array
+ * @num_str: a string of only integers
  *
  * Description: This function converts a string of numbers to an array of
  * unsigned 32 bit integers.
@@ -13,17 +13,17 @@
  *
  * Return: an array of 32 bit ints, NULL on failure
  */
-mid_uint *str_u32(lo_uint *num)
+mid_uint *str_to_intarray(lo_uint *num_str)
 {
-	size_t u32arr_sz = 0, len = 0, h = 0;
+	size_t array_sz = 0, len = 0, h = 0;
 	int i = 0, g = 0;
-	mid_uint *u32arr = NULL;
+	mid_uint *array = NULL;
 
-	if (!num)
+	if (!num_str)
 		return (NULL);
 
-	num += pad_char((char *)num, "0");
-	for (len = 0; num[len] >= '0' && num[len] <= '9'; len++)
+	num_str += pad_char((char *)num_str, "0");
+	for (len = 0; num_str[len] >= '0' && num_str[len] <= '9'; len++)
 		;
 
 	if (!len)
@@ -32,31 +32,31 @@ mid_uint *str_u32(lo_uint *num)
 		return (NULL);
 	}
 
-	u32arr_sz = (len / U32_DIGITS) + ((len % U32_DIGITS) ? 1 : 0);
-	u32arr = calloc((u32arr_sz + 2), sizeof(*u32arr));
-	if (!u32arr)
+	array_sz = (len / MID_MAX_DIGITS) + ((len % MID_MAX_DIGITS) ? 1 : 0);
+	array = calloc((array_sz + 2), sizeof(*array));
+	if (!array)
 	{
 		perror("Malloc Fail");
 		return (NULL);
 	}
 
 	/*Index 0 will have the size of the array*/
-	u32arr[0] = u32arr_sz;
+	array[0] = array_sz;
 	/*The number in the string will be read from the least significant digit*/
-	for (h = 1, g = (len - 1); h <= u32arr_sz && g >= 0; h++)
+	for (h = 1, g = (len - 1); h <= array_sz && g >= 0; h++)
 	{
-		for (i = 0; i < U32_DIGITS && (g - i) >= 0; i++)
-			u32arr[h] += (num[g - i] - '0') * (mid_uint)(pow(10, i));
+		for (i = 0; i < MID_MAX_DIGITS && (g - i) >= 0; i++)
+			array[h] += (num_str[g - i] - '0') * (mid_uint)(pow(10, i));
 
 		g -= i;
 	}
 
-	return (u32arr);
+	return (array);
 }
 
 /**
- * u32_str - convert a 32 bit int array to a string of numbers
- * @u32a: a 32 bit array
+ * intarr_to_str - convert a 32 bit int array to a string of numbers
+ * @array: a 32 bit array
  *
  * Description: This function converts an array of unsigned 32 bit integers
  * to a string.
@@ -66,68 +66,68 @@ mid_uint *str_u32(lo_uint *num)
  *
  * Return: a string of numbers, NULL on failure
  */
-lo_uint *u32_str(mid_uint *u32a)
+lo_uint *intarr_to_str(mid_uint *array)
 {
-	size_t u32arr_sz = 0, len = 0, g = 0, h = 0, i = 0;
-	lo_uint *num = NULL;
+	size_t array_sz = 0, len = 0, g = 0, h = 0, i = 0;
+	lo_uint *num_str = NULL;
 	ssize_t temp = 0, div = 1;
 
-	if (!u32a)
+	if (!array)
 		return (NULL);
 
-	u32arr_sz = u32a[0];
+	array_sz = array[0];
 	/*Checking if the number is negative*/
-	if (u32a[u32arr_sz] & U32_NEGBIT)
+	if (array[array_sz] & MID_NEGBIT)
 	{
-		u32a[u32arr_sz] ^= U32_NEGBIT;
+		array[array_sz] ^= MID_NEGBIT;
 		len += 1;
 		temp = 1;
 	}
 
-	trim_intarr(&u32a);
-	u32arr_sz = u32a[0];
-	len += u32arr_sz * U32_DIGITS;
-	num = calloc((len + 1), sizeof(*num));
-	if (!num)
+	trim_intarr(&array);
+	array_sz = array[0];
+	len += array_sz * MID_MAX_DIGITS;
+	num_str = calloc((len + 1), sizeof(*num_str));
+	if (!num_str)
 	{
 		perror("Malloc Fail");
 		return (NULL);
 	}
 
 	if (temp)
-		num[0] = '-';
+		num_str[0] = '-';
 
-	temp = u32a[u32arr_sz];
+	temp = array[array_sz];
 	while (temp / div >= 10)
 		div *= 10;
 
-	for (h = u32arr_sz, g = 0; h > 0 && g < len; h--)
+	for (h = array_sz, g = 0; h > 0 && g < len; h--)
 	{
-		temp = u32a[h];
+		temp = array[h];
 		for (i = 0; div && (g + i) < len; i++)
 		{
-			if (num[0] == '-')
-				num[g + i + 1] = (temp / div) + '0';
+			if (num_str[0] == '-')
+				num_str[g + i + 1] = (temp / div) + '0';
 			else
-				num[g + i] = (temp / div) + '0';
+				num_str[g + i] = (temp / div) + '0';
 
 			temp %= div;
 			div /= 10;
 		}
 
 		g += i;
-		div = (U32_ROLL / 10);
+		div = (MID_MAX_VAL / 10);
 	}
 
 	if (i)
 	{
-		if (num[0] == '-')
-			num[g + 1] = '\0';
+		if (num_str[0] == '-')
+			num_str[g + 1] = '\0';
 		else
-			num[g] = '\0';
+			num_str[g] = '\0';
 	}
 
-	return (num);
+	return (num_str);
 }
 
 /**
@@ -198,9 +198,9 @@ int main(void)
 	while (nstr[g])
 	{
 		printf("%s\n", &nstr[g][pad_char(nstr[g], "0")]);
-		/*ntemp = str_u32((lo_uint *)(&nstr[g][pad_char(nstr[g], "0")]));*/
+		/*ntemp = str_to_intarray((lo_uint *)(&nstr[g][pad_char(nstr[g], "0")]));*/
 		/*printf("%s\n", nstr[g]);*/
-		ntemp = str_u32((lo_uint *)nstr[g]);
+		ntemp = str_to_intarray((lo_uint *)nstr[g]);
 		if (!ntemp)
 			return (EXIT_FAILURE);
 
@@ -214,7 +214,7 @@ int main(void)
 		}
 
 		printf(" [%d: Blocks]\n", (int)len);
-		stemp = u32_str(ntemp);
+		stemp = intarr_to_str(ntemp);
 		free(ntemp);
 		if (stemp)
 			printf("%s\n\n", (char *)stemp);

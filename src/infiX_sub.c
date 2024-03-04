@@ -10,7 +10,7 @@
 mid_uint *infiX_sub(mid_uint *n1_arr, mid_uint *n2_arr)
 {
 	ssize_t a_sz = -1, b_sz = -1, res_sz = -1, g = 1, h = 1, k = 1, diff = 0;
-	hi_uint byt_res = 0;
+	int64_t byt_res = 0;
 	mid_uint *res = NULL;
 
 	/*Get and adjust size of the arrays. Stored at index 0.*/
@@ -67,28 +67,28 @@ mid_uint *infiX_sub(mid_uint *n1_arr, mid_uint *n2_arr)
 		if (a_sz > b_sz || (a_sz == b_sz && n1_arr[diff] > n2_arr[diff]))
 		{
 			if (h <= b_sz)
-				byt_res += (hi_uint)n1_arr[g] - (hi_uint)n2_arr[h];
+				byt_res += (int64_t)n1_arr[g] - (int64_t)n2_arr[h];
 			else
-				byt_res += (hi_uint)n1_arr[g];
+				byt_res += (int64_t)n1_arr[g];
 		}
 		else
 		{
 			if (g <= a_sz)
-				byt_res += (hi_uint)n2_arr[h] - (hi_uint)n1_arr[g];
+				byt_res += (int64_t)n2_arr[h] - (int64_t)n1_arr[g];
 			else
-				byt_res += (hi_uint)n2_arr[h];
+				byt_res += (int64_t)n2_arr[h];
 		}
 
 		/*If subtraction results in a -ve number borrow from the next digits*/
 		if (byt_res < 0 && k < res_sz)
 		{
-			byt_res += U32_ROLL;
-			res[k] = byt_res % U32_ROLL;
+			byt_res += MID_MAX_VAL;
+			res[k] = byt_res % MID_MAX_VAL;
 			byt_res = -1;
 		}
 		else
 		{
-			res[k] = byt_res % U32_ROLL;
+			res[k] = byt_res % MID_MAX_VAL;
 			byt_res = 0;
 		}
 
@@ -99,7 +99,7 @@ mid_uint *infiX_sub(mid_uint *n1_arr, mid_uint *n2_arr)
 
 	/*Setting the -ve indicating bit if n2 is greater than n1*/
 	if (a_sz < b_sz || (a_sz == b_sz && n1_arr[diff] < n2_arr[diff]))
-		res[res_sz] |= U32_NEGBIT;
+		res[res_sz] |= MID_NEGBIT;
 
 	trim_intarr(&res);
 	return (res);

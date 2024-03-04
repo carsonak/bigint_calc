@@ -38,14 +38,14 @@ int infiX_op(char *num1, char *sign, char *num2)
 			 */
 			if (num1)
 			{
-				n1_arr = str_u32((lo_uint *)&num1[pad_char(num1, "0")]);
+				n1_arr = str_to_intarray((lo_uint *)&num1[pad_char(num1, "0")]);
 				if (!n1_arr)
 					return (EXIT_FAILURE);
 			}
 
 			if (num2)
 			{
-				n2_arr = str_u32((lo_uint *)&num2[pad_char(num2, "0")]);
+				n2_arr = str_to_intarray((lo_uint *)&num2[pad_char(num2, "0")]);
 				if (!n2_arr)
 				{
 					if (n1_arr)
@@ -71,7 +71,7 @@ int infiX_op(char *num1, char *sign, char *num2)
 
 	if (ans_arr)
 	{
-		answer = u32_str(ans_arr);
+		answer = intarr_to_str(ans_arr);
 		free(ans_arr);
 		if (answer)
 			printf("%s\n", (char *)&answer[pad_char((char *)answer, "0")]);
