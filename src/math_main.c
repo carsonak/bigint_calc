@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 /**
  * main - entry point

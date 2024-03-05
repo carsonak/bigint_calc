@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 /**
  * mplug_low - plugs an int array to the beginnig of another array
@@ -40,7 +40,7 @@ mid_uint *mplug_low(mid_uint **dest, mid_uint *src)
 		if (*dest)
 			free(*dest);
 
-		trim_intarr(&final);
+		trim_intarr(final);
 		*dest = final;
 	}
 	else
@@ -84,7 +84,7 @@ mid_uint *mplug_num_low(mid_uint **dest, mid_uint src)
 		for (f = 2, d = 1; d <= len_d; f++, d++)
 			final[f] = (*dest)[d];
 
-		trim_intarr(&final);
+		trim_intarr(final);
 		if (*dest)
 			free(*dest);
 

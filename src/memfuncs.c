@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 /**
  * memfill - fills a section of memory with a constant byte

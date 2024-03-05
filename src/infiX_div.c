@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 mid_uint *remain = NULL;
 
@@ -23,13 +23,13 @@ mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor)
 	remain = NULL;
 	if (dividend)
 	{
-		trim_intarr(&dividend);
+		trim_intarr(dividend);
 		len_dend = dividend[0];
 	}
 
 	if (divisor)
 	{
-		trim_intarr(&divisor);
+		trim_intarr(divisor);
 		len_sor = divisor[0];
 	}
 
@@ -93,8 +93,8 @@ mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor)
 		nd_i--;
 	}
 
-	trim_intarr(&remain);
-	trim_intarr(&quotient);
+	trim_intarr(remain);
+	trim_intarr(quotient);
 	return (quotient);
 }
 

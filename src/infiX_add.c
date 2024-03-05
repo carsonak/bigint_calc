@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 /**
  * infiX_add - adds integers stored in arrays
@@ -10,25 +10,22 @@
 mid_uint *infiX_add(mid_uint *n1_arr, mid_uint *n2_arr)
 {
 	ssize_t a_sz = -1, b_sz = -1, sum_sz = 0, g = 1, h = 1, k = 1;
-	hi_uint byt_sum = 0;
+	int64_t byt_sum = 0;
 	mid_uint *sum = NULL;
 
 	if (n1_arr)
 	{
-		trim_intarr(&n1_arr);
+		trim_intarr(n1_arr);
 		a_sz = n1_arr[0];
 	}
 
 	if (n2_arr)
 	{
-		trim_intarr(&n2_arr);
+		trim_intarr(n2_arr);
 		b_sz = n2_arr[0];
 	}
 
-	/**
-	 * Size of the sum array = (larger of a_sz or b_sz, +1 for a carry)
-	 * Memalloc sum_array (+1 for storing size, +1 for end padding)
-	 */
+	/*Size of the sum array = (larger of a_sz or b_sz, +1 for a carry)*/
 	sum_sz = ((a_sz > b_sz) ? a_sz : b_sz) + 1;
 	if (sum_sz < 1)
 	{
@@ -41,6 +38,7 @@ mid_uint *infiX_add(mid_uint *n1_arr, mid_uint *n2_arr)
 		return (sum);
 	}
 
+	/*Memalloc sum_array (+1 for storing size, +1 for end padding)*/
 	sum = calloc((sum_sz + 2), sizeof(*sum));
 	if (!sum)
 	{
@@ -49,18 +47,17 @@ mid_uint *infiX_add(mid_uint *n1_arr, mid_uint *n2_arr)
 	}
 
 	sum[0] = sum_sz;
-	/*Adding from the least significant digits going up*/
 	while (g <= a_sz || h <= b_sz || byt_sum > 0)
 	{
 		if (g <= a_sz)
 		{
-			byt_sum += (hi_uint)n1_arr[g];
+			byt_sum += (int64_t)n1_arr[g];
 			++g;
 		}
 
 		if (h <= b_sz)
 		{
-			byt_sum += (hi_uint)n2_arr[h];
+			byt_sum += (int64_t)n2_arr[h];
 			++h;
 		}
 
@@ -69,6 +66,6 @@ mid_uint *infiX_add(mid_uint *n1_arr, mid_uint *n2_arr)
 		++k;
 	}
 
-	trim_intarr(&sum);
+	trim_intarr(sum);
 	return (sum);
 }

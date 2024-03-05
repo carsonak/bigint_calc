@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 /**
  * pad_char - finds the number of leading characters in a string

@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 /**
  * infiX_mul - multiplies numbers stored in arrays.
@@ -16,13 +16,13 @@ mid_uint *infiX_mul(mid_uint *n1_arr, mid_uint *n2_arr)
 	/*Get and adjust size of the arrays. Stored at index 0.*/
 	if (n1_arr)
 	{
-		trim_intarr(&n1_arr);
+		trim_intarr(n1_arr);
 		top = n1_arr[0];
 	}
 
 	if (n2_arr)
 	{
-		trim_intarr(&n2_arr);
+		trim_intarr(n2_arr);
 		botm = n2_arr[0];
 	}
 
@@ -76,6 +76,6 @@ mid_uint *infiX_mul(mid_uint *n1_arr, mid_uint *n2_arr)
 		}
 	}
 
-	trim_intarr(&prod);
+	trim_intarr(prod);
 	return (prod);
 }

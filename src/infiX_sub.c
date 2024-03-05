@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 /**
  * infiX_sub - subtracts numbers in an array
@@ -16,13 +16,13 @@ mid_uint *infiX_sub(mid_uint *n1_arr, mid_uint *n2_arr)
 	/*Get and adjust size of the arrays. Stored at index 0.*/
 	if (n1_arr)
 	{
-		trim_intarr(&n1_arr);
+		trim_intarr(n1_arr);
 		a_sz = n1_arr[0];
 	}
 
 	if (n2_arr)
 	{
-		trim_intarr(&n2_arr);
+		trim_intarr(n2_arr);
 		b_sz = n2_arr[0];
 	}
 
@@ -101,6 +101,6 @@ mid_uint *infiX_sub(mid_uint *n1_arr, mid_uint *n2_arr)
 	if (a_sz < b_sz || (a_sz == b_sz && n1_arr[diff] < n2_arr[diff]))
 		res[res_sz] |= MID_NEGBIT;
 
-	trim_intarr(&res);
+	trim_intarr(res);
 	return (res);
 }

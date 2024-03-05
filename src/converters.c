@@ -1,26 +1,32 @@
-#include "infix.h"
+#include "infiX.h"
 /*#define TESTING_CONVERTERS*/
 
 /**
- * str_to_intarray - convert a string of numbers to a 32 bit int array
- * @num_str: a string of only integers
+ * str_to_intarray - convert a string of numbers to a mid_uint array.
+ * @num_str: a pointer to a string of numbers
  *
- * Description: This function converts a string of numbers to an array of
- * unsigned 32 bit integers.
- * The array will be in little endian style whereby the lower value numbers
- * will be placed in the lower indices. Index 0 will have a value greater
- * than 0 indicating the size of the array.
+ * Description: This function converts a string of numbers to a mid_uint array.
+ * The array will be in little endian order whereby the lower value numbers
+ * will be placed in the lower indices. Index 0 will have a value indicating
+ * the size of the array.
  *
- * Return: an array of 32 bit ints, NULL on failure
+ * Return: pointer to an mid_uint array, NULL on failure
  */
-mid_uint *str_to_intarray(lo_uint *num_str)
+mid_uint *str_to_intarray(lo_uchar *num_str)
 {
-	size_t array_sz = 0, len = 0, h = 0;
-	int i = 0, g = 0;
 	mid_uint *array = NULL;
+	size_t arr_size = 0, len = 0, h = 0;
+	int i = 0, g = 0, negative = '\0';
 
 	if (!num_str)
 		return (NULL);
+
+	/*Check if number is negative*/
+	if (num_str[0] == '-')
+	{
+		num_str++;
+		negative = '-';
+	}
 
 	num_str += pad_char((char *)num_str, "0");
 	for (len = 0; num_str[len] >= '0' && num_str[len] <= '9'; len++)
@@ -32,8 +38,8 @@ mid_uint *str_to_intarray(lo_uint *num_str)
 		return (NULL);
 	}
 
-	array_sz = (len / MID_MAX_DIGITS) + ((len % MID_MAX_DIGITS) ? 1 : 0);
-	array = calloc((array_sz + 2), sizeof(*array));
+	arr_size = (len / MID_MAX_DIGITS) + ((len % MID_MAX_DIGITS) ? 1 : 0);
+	array = calloc((arr_size + 2), sizeof(*array));
 	if (!array)
 	{
 		perror("Malloc Fail");
@@ -41,9 +47,9 @@ mid_uint *str_to_intarray(lo_uint *num_str)
 	}
 
 	/*Index 0 will have the size of the array*/
-	array[0] = array_sz;
+	array[0] = arr_size;
 	/*The number in the string will be read from the least significant digit*/
-	for (h = 1, g = (len - 1); h <= array_sz && g >= 0; h++)
+	for (h = 1, g = (len - 1); h <= arr_size && g >= 0; h++)
 	{
 		for (i = 0; i < MID_MAX_DIGITS && (g - i) >= 0; i++)
 			array[h] += (num_str[g - i] - '0') * (mid_uint)(pow(10, i));
@@ -51,57 +57,60 @@ mid_uint *str_to_intarray(lo_uint *num_str)
 		g -= i;
 	}
 
+	if (negative && array[arr_size] > 0)
+		array[arr_size] |= MID_NEGBIT;
+
 	return (array);
 }
 
 /**
- * intarr_to_str - convert a 32 bit int array to a string of numbers
- * @array: a 32 bit array
+ * intarr_to_str - convert a mid_uint array to a string of numbers.
+ * @array: a mid_uint array
  *
- * Description: This function converts an array of unsigned 32 bit integers
- * to a string.
- * The array should be in little endian style whereby the lower value numbers
- * will be placed in the lower indices. Index 0 will have a value greater
- * than 0 indicating the size of the array.
+ * Description: This function converts a mid_uint array to a string of numbers.
+ * The array should be in little endian order whereby the lower value numbers
+ * will be placed in the lower indices. Index 0 will have a value indicating
+ * the size of the array.
  *
- * Return: a string of numbers, NULL on failure
+ * Return: a pointer to a string of numbers, NULL on failure
  */
-lo_uint *intarr_to_str(mid_uint *array)
+lo_uchar *intarr_to_str(mid_uint *array)
 {
-	size_t array_sz = 0, len = 0, g = 0, h = 0, i = 0;
-	lo_uint *num_str = NULL, negative = '\0';
+	size_t arr_size = 0, len = 0, g = 0, h = 0, i = 0;
+	lo_uchar *num_str = NULL, negative = '\0';
 	ssize_t temp = 0, div = 1;
 
 	if (!array)
 		return (NULL);
 
-	array_sz = array[0];
+	arr_size = array[0];
 	/*Checking if the number is negative*/
-	if (array[array_sz] & MID_NEGBIT)
+	if (array[arr_size] > MID_NEGBIT)
 	{
-		array[array_sz] ^= MID_NEGBIT;
+		array[arr_size] ^= MID_NEGBIT;
 		len += 1;
 		negative = '-';
 	}
 
-	trim_intarr(&array);
-	array_sz = array[0];
-	len += array_sz * MID_MAX_DIGITS;
+	trim_intarr(array);
+	arr_size = array[0];
+	len += arr_size * MID_MAX_DIGITS;
 	num_str = calloc((len + 1), sizeof(*num_str));
 	if (!num_str)
 	{
 		perror("Malloc Fail");
+		free(array);
 		return (NULL);
 	}
 
 	if (negative)
 		num_str++;
 
-	temp = array[array_sz];
+	temp = array[arr_size];
 	while (temp / div >= 10)
 		div *= 10;
 
-	for (h = array_sz, g = 0; h > 0 && g < len; h--)
+	for (h = arr_size, g = 0; h > 0 && g < len; h--)
 	{
 		temp = array[h];
 		for (i = 0; div && (g + i) < len; i++)
@@ -121,6 +130,7 @@ lo_uint *intarr_to_str(mid_uint *array)
 		num_str[0] = '-';
 	}
 
+	free(array);
 	return (num_str);
 }
 
@@ -128,21 +138,31 @@ lo_uint *intarr_to_str(mid_uint *array)
  * trim_intarr - trims empty spaces from the end of an int array
  * @arr: pointer to the mid_uint arrary
  */
-void trim_intarr(mid_uint **arr)
+void trim_intarr(mid_uint *arr)
 {
-	size_t arr_sz = 0;
+	size_t arr_size = 0;
 
-	if (!arr || !(*arr))
+	if (!arr)
 		return;
 
-	arr_sz = (*arr)[0];
-	while (!(*arr)[arr_sz] && arr_sz > 1)
-		--arr_sz;
+	arr_size = arr[0];
+	while (!arr[arr_size] && arr_size > 1)
+		--arr_size;
 
-	(*arr)[0] = arr_sz;
+	arr[0] = arr_size;
 }
 
 #ifdef TESTING_CONVERTERS
+/**
+ * print_help - print help text
+ */
+void print_help(void)
+{
+	fprintf(stderr, "USAGE: <num1> <operand> <num2>\n");
+	fprintf(stderr, "Only base 10 numbers are currently supported.\n");
+	fprintf(stderr, "Currently supported operands: '+' '-' 'x'  '/'.\n");
+}
+
 /**
  * pad_char - calculates length of initial padding characters in a string
  * @str: the string to check
@@ -174,7 +194,7 @@ int main(void)
 {
 	size_t i = 0, g = 0;
 	mid_uint *ntemp = NULL, len = 0;
-	lo_uint *stemp = NULL;
+	lo_uchar *stemp = NULL;
 	char *nstr[] = {
 		"123456789",
 		"12345678912",
@@ -186,15 +206,19 @@ int main(void)
 		"00000678912",
 		"000000000003456",
 		"00000100000000200000000300000000004000000",
+		"-909897004000000000078234587",
+		"-0005",
+		"-1",
+		"-0",
 		NULL,
 	};
 
 	while (nstr[g])
 	{
 		printf("%s\n", &nstr[g][pad_char(nstr[g], "0")]);
-		/*ntemp = str_to_intarray((lo_uint *)(&nstr[g][pad_char(nstr[g], "0")]));*/
+		/*ntemp = str_to_intarray((lo_uchar *)(&nstr[g][pad_char(nstr[g], "0")]));*/
 		/*printf("%s\n", nstr[g]);*/
-		ntemp = str_to_intarray((lo_uint *)nstr[g]);
+		ntemp = str_to_intarray((lo_uchar *)nstr[g]);
 		if (!ntemp)
 			return (EXIT_FAILURE);
 

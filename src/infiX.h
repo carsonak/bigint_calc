@@ -12,7 +12,7 @@
 
 typedef uint64_t hi_uint;
 typedef uint32_t mid_uint;
-typedef uint8_t lo_uint;
+typedef uint8_t lo_uchar;
 
 /*Max number of digits mid_uint should hold*/
 #define MID_MAX_DIGITS (9)
@@ -41,9 +41,9 @@ typedef struct operator_function
 } op_func;
 
 void print_help(void);
-mid_uint *str_to_intarray(lo_uint *num);
-lo_uint *intarr_to_str(mid_uint *u32a);
-void trim_intarr(mid_uint **arr);
+mid_uint *str_to_intarray(lo_uchar *num);
+lo_uchar *intarr_to_str(mid_uint *u32a);
+void trim_intarr(mid_uint *arr);
 size_t pad_char(char *str, char *ch);
 void *memfill(void *mem, char b, size_t start, size_t nbytes);
 void *_memcpy(void *dest, void *src, size_t n);

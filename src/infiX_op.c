@@ -1,4 +1,4 @@
-#include "infix.h"
+#include "infiX.h"
 
 /**
  * infiX_op - a wrapper function for the infiX_math functions
@@ -12,7 +12,7 @@ int infiX_op(char *num1, char *sign, char *num2)
 {
 	int i = 0;
 	mid_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
-	lo_uint *answer = NULL;
+	lo_uchar *answer = NULL;
 	op_func operators[] = {
 		{"+", infiX_add},
 		{"-", infiX_sub},
@@ -35,11 +35,11 @@ int infiX_op(char *num1, char *sign, char *num2)
 			 * Send num1 and num2 to the converters first
 			 * Offset pointers by number of leading zeros
 			 */
-			num1_arr = str_to_intarray((lo_uint *)&num1[pad_char(num1, "0")]);
+			num1_arr = str_to_intarray((lo_uchar *)&num1[pad_char(num1, "0")]);
 			if (!num1_arr)
 				break;
 
-			num2_arr = str_to_intarray((lo_uint *)&num2[pad_char(num2, "0")]);
+			num2_arr = str_to_intarray((lo_uchar *)&num2[pad_char(num2, "0")]);
 			if (!num2_arr)
 				break;
 
@@ -48,13 +48,10 @@ int infiX_op(char *num1, char *sign, char *num2)
 		}
 	}
 
-	free(num1_arr);
-	free(num2_arr);
 	free(remain);
 	if (ans_arr)
 	{
 		answer = intarr_to_str(ans_arr);
-		free(ans_arr);
 		if (answer)
 		{
 			printf("%s\n", (char *)&answer[pad_char((char *)answer, "0")]);
