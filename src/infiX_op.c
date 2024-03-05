@@ -31,15 +31,12 @@ int infiX_op(char *num1, char *sign, char *num2)
 	{
 		if (operators[i].sign[0] == sign[0])
 		{
-			/**
-			 * Send num1 and num2 to the converters first
-			 * Offset pointers by number of leading zeros
-			 */
-			num1_arr = str_to_intarray((lo_uchar *)&num1[pad_char(num1, "0")]);
+			/*Convert num1 and num2 to mid_uint arrays first*/
+			num1_arr = str_to_intarray((lo_uchar *)num1);
 			if (!num1_arr)
 				break;
 
-			num2_arr = str_to_intarray((lo_uchar *)&num2[pad_char(num2, "0")]);
+			num2_arr = str_to_intarray((lo_uchar *)num2);
 			if (!num2_arr)
 				break;
 
@@ -48,12 +45,15 @@ int infiX_op(char *num1, char *sign, char *num2)
 		}
 	}
 
+	free(num1_arr);
+	free(num2_arr);
 	free(remain);
 	if (ans_arr)
 	{
 		answer = intarr_to_str(ans_arr);
 		if (answer)
 		{
+			free(ans_arr);
 			printf("%s\n", (char *)&answer[pad_char((char *)answer, "0")]);
 			free(answer);
 			return (EXIT_SUCCESS);

@@ -28,6 +28,7 @@ mid_uint *str_to_intarray(lo_uchar *num_str)
 		negative = '-';
 	}
 
+	/*Remove leading zeros*/
 	num_str += pad_char((char *)num_str, "0");
 	for (len = 0; num_str[len] >= '0' && num_str[len] <= '9'; len++)
 		;
@@ -99,7 +100,6 @@ lo_uchar *intarr_to_str(mid_uint *array)
 	if (!num_str)
 	{
 		perror("Malloc Fail");
-		free(array);
 		return (NULL);
 	}
 
@@ -130,7 +130,6 @@ lo_uchar *intarr_to_str(mid_uint *array)
 		num_str[0] = '-';
 	}
 
-	free(array);
 	return (num_str);
 }
 
@@ -210,6 +209,10 @@ int main(void)
 		"-0005",
 		"-1",
 		"-0",
+		"a",
+		"-a",
+		"1f",
+		"fff",
 		NULL,
 	};
 
@@ -233,7 +236,6 @@ int main(void)
 
 		printf(" [%d: Blocks]\n", (int)len);
 		stemp = intarr_to_str(ntemp);
-		free(ntemp);
 		if (stemp)
 			printf("%s\n\n", (char *)stemp);
 		else
