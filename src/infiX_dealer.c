@@ -1,5 +1,7 @@
 #include "infiX.h"
 
+static math_func *get_math_func(char *op_symbol);
+
 /**
  * infiX_dealer - determine what operation to carry out based on given symbol
  * @num1: first number
@@ -10,40 +12,27 @@
  */
 int infiX_dealer(char *num1, char *op_symbol, char *num2)
 {
-	int i = 0;
 	mid_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
 	lo_uchar *answer = NULL;
-	op_func operators[] = {
-		{"+", infiX_addition},
-		{"-", infiX_subtraction},
-		{"x", infiX_multiplication},
-		{"/", infiX_division},
-		{NULL, NULL},
-	};
+	math_func *func_ptr = NULL;
 
-	if (!num1 || !num2 || !op_symbol)
-	{
-		print_help();
+	if (!num1 || !op_symbol)
+	{ /*Mandatory arguments missings*/
+		print_help("usage");
 		return (EXIT_FAILURE);
 	}
 
-	for (i = 0; operators[i].symbol; i++)
+	func_ptr = get_math_func(op_symbol);
+	if (func_ptr)
 	{
-		if (operators[i].symbol[0] == op_symbol[0])
-		{
-			/*Convert num1 and num2 to mid_uint arrays first*/
-			num1_arr = str_to_intarray((lo_uchar *)num1);
-			if (!num1_arr)
-				break;
-
+		errno = 0;
+		/*Convert num1 and num2 to mid_uint arrays first*/
+		num1_arr = str_to_intarray((lo_uchar *)num1);
+		if (num1_arr)
 			num2_arr = str_to_intarray((lo_uchar *)num2);
-			if (!num2_arr)
-				break;
 
-			errno = 0;
-			ans_arr = operators[i].f(num1_arr, num2_arr);
-			break;
-		}
+		if (num1_arr && num2_arr)
+			ans_arr = func_ptr(num1_arr, num2_arr);
 	}
 
 	free(num1_arr);
@@ -55,24 +44,38 @@ int infiX_dealer(char *num1, char *op_symbol, char *num2)
 		if (answer)
 		{
 			free(ans_arr);
-			printf("%s\n", (char *)&answer[pad_char((char *)answer, "0")]);
+			printf("%s\n", (char *)answer);
 			free(answer);
 			return (EXIT_SUCCESS);
 		}
 	}
 
-	if (!operators[i].symbol)
-		print_help();
+	if (!func_ptr)
+		print_help("operator"); /*Symbol not found*/
 
 	return (EXIT_FAILURE);
 }
 
 /**
- * print_help - print help text
+ * get_math_func - return the function associated with the give operator
+ * @op_symbol: the operator symbol
+ *
+ * Return: pointer to a function on success, NULL on failure
  */
-void print_help(void)
+math_func *get_math_func(char *op_symbol)
 {
-	fprintf(stderr, "USAGE: <num1> <operand> <num2>\n");
-	fprintf(stderr, "Only base 10 numbers are currently supported.\n");
-	fprintf(stderr, "Operands: '+' '-' 'x'  '/'.\n");
+	int i = 0;
+	op_func operators[] = {
+		{"+", infiX_addition},
+		{"-", infiX_subtraction},
+		{"x", infiX_multiplication},
+		{"/", infiX_division},
+		{NULL, NULL},
+	};
+
+	for (i = 0; op_symbol && operators[i].symbol; i++)
+		if (!_strcmp(operators[i].symbol, op_symbol))
+			return (operators[i].f);
+
+	return (NULL);
 }

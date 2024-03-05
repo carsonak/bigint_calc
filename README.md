@@ -7,7 +7,7 @@ The functions here are still quite simple and need more work.
 -fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-all
 ./src/\*.c -o ./debug_math
 
-**Release:** gcc -std=c17 -pedantic -Wall -Werror -Wextra -O3 ./src/\*.c -o
+**Release:** gcc -std=c17 -g -pedantic -Wall -Werror -Wextra -O3 ./src/\*.c -o
 ./math -lm
 
 ## Usage
@@ -22,7 +22,6 @@ Where *sign* is one of: "+" "-" "/" "x"
 
 ## TODO
 
-- Support for negative numbers
 - Exponetials
 - Square root
 - Floating Points

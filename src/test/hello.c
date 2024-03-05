@@ -1,4 +1,4 @@
-#include "../infix.h"
+#include "../infiX.h"
 
 void say_hello(void);
 

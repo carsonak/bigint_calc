@@ -10,9 +10,9 @@
 int main(int argc, char *argv[])
 {
 	errno = 0;
-	if (argc != 4 || strlen(argv[2]) != 1)
+	if (argc < 4)
 	{
-		print_help();
+		print_help((const char *)NULL);
 		return (EXIT_FAILURE);
 	}
 

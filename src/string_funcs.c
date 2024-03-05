@@ -20,3 +20,21 @@ size_t pad_char(char *str, char *ch)
 
 	return (count);
 }
+
+/**
+ * _strcmp - compares 2 strings
+ * @s1: first string.
+ * @s2: second string.
+ *
+ * Return: 0 if both equal, -ve if s1 shorter, +ve if s1 longer.
+ */
+int _strcmp(const char *s1, const char *s2)
+{
+	size_t i = 0;
+
+	for (i = 0; s2[i] || s1[i]; i++)
+		if (s1[i] != s2[i])
+			return (s1[i] - s2[i]);
+
+	return (0);
+}

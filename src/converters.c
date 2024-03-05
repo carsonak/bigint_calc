@@ -35,7 +35,7 @@ mid_uint *str_to_intarray(lo_uchar *num_str)
 
 	if (!len)
 	{
-		print_help(); /*Insufficient digits*/
+		print_help("base"); /*Insufficient digits*/
 		return (NULL);
 	}
 
@@ -154,12 +154,22 @@ void trim_intarr(mid_uint *arr)
 #ifdef TESTING_CONVERTERS
 /**
  * print_help - print help text
+ * @err_type: a string specifying which message to print
  */
-void print_help(void)
+void print_help(const char *err_type)
 {
-	fprintf(stderr, "USAGE: <num1> <operand> <num2>\n");
-	fprintf(stderr, "Only base 10 numbers are currently supported.\n");
-	fprintf(stderr, "Currently supported operands: '+' '-' 'x'  '/'.\n");
+	if (!_strcmp(err_type, "base"))
+		fprintf(stderr, "Only base 10 numbers are currently supported.\n");
+	else if (!_strcmp(err_type, "operator"))
+		fprintf(stderr, "Only base 10 numbers are currently supported.\n");
+	else if (!_strcmp(err_type, "usage"))
+		fprintf(stderr, "USAGE: <num1> <operand> <num2>\n");
+	else
+	{
+		fprintf(stderr, "USAGE: <num1> <operand> <num2>\n");
+		fprintf(stderr, "Only base 10 numbers are currently supported.\n");
+		fprintf(stderr, "Operands: '+' '-' 'x'  '/'.\n");
+	}
 }
 
 /**

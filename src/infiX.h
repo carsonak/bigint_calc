@@ -13,6 +13,8 @@
 typedef uint64_t hi_uint;
 typedef uint32_t mid_uint;
 typedef uint8_t lo_uchar;
+/* math_func: a function that takes in 2 int arrays and returns an int array*/
+typedef mid_uint *math_func(mid_uint *, mid_uint *);
 
 /*Max number of digits mid_uint should hold*/
 #define MID_MAX_DIGITS (9)
@@ -30,21 +32,21 @@ extern mid_uint *remain;
 
 /**
  * struct operator_function - holds an operator symbol and it's function
- * @op_symbol: the operator symbol
+ * @symbol: the operator symbol
  * @f: a corresponding function pointer
  */
 typedef struct operator_function
 {
 	char *symbol;
-	mid_uint *(*f)(mid_uint *n1, mid_uint *n2);
-
+	math_func *f;
 } op_func;
 
-void print_help(void);
+void print_help(const char *err_type);
 mid_uint *str_to_intarray(lo_uchar *num);
 lo_uchar *intarr_to_str(mid_uint *u32a);
 void trim_intarr(mid_uint *arr);
 size_t pad_char(char *str, char *ch);
+int _strcmp(const char *s1, const char *s2);
 void *memfill(void *mem, char b, size_t start, size_t nbytes);
 void *_memcpy(void *dest, void *src, size_t n);
 mid_uint *mplug_low(mid_uint **dest, mid_uint *src);
