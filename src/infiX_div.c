@@ -1,9 +1,17 @@
 #include "infiX.h"
 
 mid_uint *remain = NULL;
+static int
+divide_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result);
+static int
+zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient);
+static int64_t get_quotient(mid_uint *dvsor);
+static int64_t
+adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd,
+				int64_t quotient_tmp);
 
 /**
- * infiX_div - divides a numbers stored in an array
+ * infiX_division - divides a numbers stored in an array
  * @dividend: dividend
  * @divisor: divisor
  *
@@ -13,7 +21,7 @@ mid_uint *remain = NULL;
  *
  * Return: array with the result, NULL on failure
  */
-mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor)
+mid_uint *infiX_division(mid_uint *dividend, mid_uint *divisor)
 {
 	size_t len_sor = 0, len_dend = 0, len_rem = 0, len_quotient = 0;
 	size_t nd_i = 0, r_i = 0, q_i = 0;
@@ -21,24 +29,21 @@ mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor)
 	int64_t hold = 0;
 
 	remain = NULL;
+	if (divide_negatives(dividend, divisor, &quotient))
+		return (quotient);
+
 	if (dividend)
-	{
-		trim_intarr(dividend);
 		len_dend = dividend[0];
-	}
 
 	if (divisor)
-	{
-		trim_intarr(divisor);
 		len_sor = divisor[0];
-	}
 
 	if (zero_result_check(dividend, divisor, &quotient))
 		return (quotient);
 
 	len_quotient = (len_dend - len_sor) + 1;
 	/*Length of remain will never be greater than len_sor + 1*/
-	remain = calloc(len_sor + 3, sizeof(*remain));
+	remain = calloc(len_sor + 1, sizeof(*remain));
 	if (!remain)
 	{
 		perror("Malloc fail");
@@ -99,6 +104,57 @@ mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor)
 }
 
 /**
+ * divide_negatives - division of only signed numbers (negative numbers)
+ * @n1_arr: number to be divided
+ * @n2_arr: number to divide
+ * @result: address of a pointer to store the result
+ *
+ * Return: 1 if action taken (error or processed results), 0 on failure
+ */
+int divide_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result)
+{
+	mid_uint a_msd = 0, b_msd = 0;
+
+	if (!result)
+	{
+		fprintf(stderr, "divide_negatives: Invalid arguments\n");
+		return (1);
+	}
+
+	trim_intarr(n1_arr);
+	trim_intarr(n2_arr);
+	if (n1_arr)
+		a_msd = n1_arr[n1_arr[0]];
+
+	if (n2_arr)
+		b_msd = n2_arr[n2_arr[0]];
+
+	if ((a_msd & NEGBIT_MIDUINT) && (b_msd & NEGBIT_MIDUINT))
+	{ /* -8 / -5 = 8/5 */
+		n1_arr[n1_arr[0]] ^= NEGBIT_MIDUINT;
+		n2_arr[n2_arr[0]] ^= NEGBIT_MIDUINT;
+		(*result) = infiX_division(n1_arr, n2_arr);
+	}
+	else if (a_msd & NEGBIT_MIDUINT)
+	{ /* -8 / 5 = -(8/5) */
+		n1_arr[n1_arr[0]] ^= NEGBIT_MIDUINT;
+		(*result) = infiX_division(n1_arr, n2_arr);
+		(*result)[(*result)[0]] |= NEGBIT_MIDUINT;
+	}
+	else if (b_msd & NEGBIT_MIDUINT)
+	{ /* 8 / -5 = -(8/5) */
+		n2_arr[n2_arr[0]] ^= NEGBIT_MIDUINT;
+		(*result) = infiX_division(n1_arr, n2_arr);
+		(*result)[(*result)[0]] |= NEGBIT_MIDUINT;
+	}
+
+	if (*result || errno)
+		return (1);
+
+	return (0);
+}
+
+/**
  * zero_result_check - checks if dividend < divisor or divisor == 0
  * @dvdend: dividend array
  * @dvsor: divisor array
@@ -114,45 +170,43 @@ int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient)
 {
 	ssize_t lsor = -1, ldnd = -1, nd_i = 0;
 
+	if (!quotient)
+	{
+		fprintf(stderr, "zero_result_check: Invalid arguments\n");
+		return (1);
+	}
+
 	if (dvdend)
 		ldnd = dvdend[0];
 
 	if (dvsor)
 		lsor = dvsor[0];
 
-	if (quotient)
+	if (!dvdend || ldnd < lsor || (ldnd == 1 && dvdend[1] == 0) ||
+		(ldnd == lsor && dvdend[ldnd] < dvsor[lsor]))
 	{
-		if (!dvdend || ldnd < lsor || (ldnd == 1 && dvdend[1] == 0) ||
-			(ldnd == lsor && dvdend[ldnd] < dvsor[lsor]))
+		if (ldnd < 1)
+			ldnd = 1;
+
+		*quotient = calloc(2, sizeof(**quotient));
+		if (*quotient)
+			(*quotient)[0] = 1;
+
+		remain = calloc(ldnd + 1, sizeof(*remain));
+		if (remain)
 		{
-			if (ldnd < 1)
-				ldnd = 1;
-
-			*quotient = calloc(3, sizeof(**quotient));
-			if (*quotient)
-				(*quotient)[0] = 1;
-
-			remain = calloc(ldnd + 2, sizeof(*remain));
-			if (remain)
-			{
-				remain[0] = ldnd;
-				for (nd_i = 1; dvdend && nd_i <= ldnd; nd_i++)
-					remain[nd_i] = dvdend[nd_i];
-			}
-
-			if (!(*quotient) || !remain)
-				perror("Malloc fail");
-
-			return (1);
+			remain[0] = ldnd;
+			for (nd_i = 1; dvdend && nd_i <= ldnd; nd_i++)
+				remain[nd_i] = dvdend[nd_i];
 		}
-		else if (!dvsor || (lsor == 1 && dvsor[1] == 0))
-			return (1);
-	}
-	else
-	{
-		fprintf(stderr, "zero_result_check: Invalid argument\n");
+
+		if (!(*quotient) || !remain)
+			perror("Malloc fail");
+
 		return (1);
 	}
+	else if (!dvsor || (lsor == 1 && dvsor[1] == 0))
+		return (1);
 
 	return (0);
 }
@@ -187,7 +241,7 @@ int64_t get_quotient(mid_uint *dvsor)
 			  (rem_tmp[0] == dvsor[0] && rem_tmp[rem_tmp[0]] >= dvsor[dvsor[0]]))) &&
 			quot_tmp[1] > 0))
 	{
-		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & MID_NEGBIT)))
+		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & NEGBIT_MIDUINT)))
 		{
 			hold = adjust_quotient(dvsor[dvsor[0]], mul_est, rem_tmp[rem_tmp[0]], quot_tmp[1]);
 			if (hold < 0)
@@ -204,10 +258,10 @@ int64_t get_quotient(mid_uint *dvsor)
 		mul_est = NULL;
 		free(rem_tmp);
 		rem_tmp = NULL;
-		mul_est = infiX_mul(dvsor, quot_tmp);
+		mul_est = infiX_multiplication(dvsor, quot_tmp);
 		if (mul_est)
 		{
-			rem_tmp = infiX_sub(remain, mul_est);
+			rem_tmp = infiX_subtraction(remain, mul_est);
 			if (!rem_tmp)
 				return (-1);
 		}
@@ -230,14 +284,15 @@ int64_t get_quotient(mid_uint *dvsor)
  *
  * Return: the adjusted quotient, -1 on failure
  */
-int64_t adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd, int64_t quotient_tmp)
+int64_t adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate,
+						mid_uint rem_msd, int64_t quotient_tmp)
 {
 	mid_uint *tmp_sub = NULL;
 	int64_t hold = 0, o_shoot = 0;
 
-	if (rem_msd & MID_NEGBIT)
+	if (rem_msd & NEGBIT_MIDUINT)
 	{ /*Decrease the quotient*/
-		tmp_sub = infiX_sub(estimate, remain);
+		tmp_sub = infiX_subtraction(estimate, remain);
 		if (!tmp_sub)
 			return (-1);
 

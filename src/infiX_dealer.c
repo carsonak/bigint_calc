@@ -1,35 +1,35 @@
 #include "infiX.h"
 
 /**
- * infiX_op - a wrapper function for the infiX_math functions
+ * infiX_dealer - determine what operation to carry out based on given symbol
  * @num1: first number
- * @sign: operand
+ * @op_symbol: operand
  * @num2: second number
  *
  * Return: 1 on failure, 0 on success
  */
-int infiX_op(char *num1, char *sign, char *num2)
+int infiX_dealer(char *num1, char *op_symbol, char *num2)
 {
 	int i = 0;
 	mid_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
 	lo_uchar *answer = NULL;
 	op_func operators[] = {
-		{"+", infiX_add},
-		{"-", infiX_sub},
-		{"x", infiX_mul},
-		{"/", infiX_div},
+		{"+", infiX_addition},
+		{"-", infiX_subtraction},
+		{"x", infiX_multiplication},
+		{"/", infiX_division},
 		{NULL, NULL},
 	};
 
-	if (!num1 || !num2 || !sign)
+	if (!num1 || !num2 || !op_symbol)
 	{
 		print_help();
 		return (EXIT_FAILURE);
 	}
 
-	for (i = 0; operators[i].sign; i++)
+	for (i = 0; operators[i].symbol; i++)
 	{
-		if (operators[i].sign[0] == sign[0])
+		if (operators[i].symbol[0] == op_symbol[0])
 		{
 			/*Convert num1 and num2 to mid_uint arrays first*/
 			num1_arr = str_to_intarray((lo_uchar *)num1);
@@ -40,6 +40,7 @@ int infiX_op(char *num1, char *sign, char *num2)
 			if (!num2_arr)
 				break;
 
+			errno = 0;
 			ans_arr = operators[i].f(num1_arr, num2_arr);
 			break;
 		}
@@ -60,7 +61,7 @@ int infiX_op(char *num1, char *sign, char *num2)
 		}
 	}
 
-	if (!operators[i].sign)
+	if (!operators[i].symbol)
 		print_help();
 
 	return (EXIT_FAILURE);
@@ -73,5 +74,5 @@ void print_help(void)
 {
 	fprintf(stderr, "USAGE: <num1> <operand> <num2>\n");
 	fprintf(stderr, "Only base 10 numbers are currently supported.\n");
-	fprintf(stderr, "Currently supported operands: '+' '-' 'x'  '/'.\n");
+	fprintf(stderr, "Operands: '+' '-' 'x'  '/'.\n");
 }

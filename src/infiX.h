@@ -23,19 +23,19 @@ typedef uint8_t lo_uchar;
 /*Max size for uint64_t calculations: 10^18*/
 #define HI_MAX_VAL (MID_MAX_VAL * MID_MAX_VAL)
 /*mid_uint negative bit toggle*/
-#define MID_NEGBIT (1 << 30)
+#define NEGBIT_MIDUINT (1 << 30)
 
-/*A dynamically allocated buffer to store the remainder of division*/
+/*A dynamically allocated buffer to store remainders of division*/
 extern mid_uint *remain;
 
 /**
- * struct operator_function - a structure of an operation and it's function
- * @sign: the operation
- * @f: a pointer to the corresponding function
+ * struct operator_function - holds an operator symbol and it's function
+ * @op_symbol: the operator symbol
+ * @f: a corresponding function pointer
  */
 typedef struct operator_function
 {
-	char *sign;
+	char *symbol;
 	mid_uint *(*f)(mid_uint *n1, mid_uint *n2);
 
 } op_func;
@@ -50,13 +50,10 @@ void *_memcpy(void *dest, void *src, size_t n);
 mid_uint *mplug_low(mid_uint **dest, mid_uint *src);
 mid_uint *mplug_num_low(mid_uint **dest, mid_uint src);
 
-int infiX_op(char *num1, char *sign, char *num2);
-mid_uint *infiX_div(mid_uint *dividend, mid_uint *divisor);
-int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient);
-int64_t get_quotient(mid_uint *dvsor);
-int64_t adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd, int64_t quotient_tmp);
-mid_uint *infiX_sub(mid_uint *n1_arr, mid_uint *n2_arr);
-mid_uint *infiX_mul(mid_uint *n1_arr, mid_uint *n2_arr);
-mid_uint *infiX_add(mid_uint *n1_arr, mid_uint *n2_arr);
+int infiX_dealer(char *num1, char *op_symbol, char *num2);
+mid_uint *infiX_division(mid_uint *dividend, mid_uint *divisor);
+mid_uint *infiX_subtraction(mid_uint *n1_arr, mid_uint *n2_arr);
+mid_uint *infiX_multiplication(mid_uint *n1_arr, mid_uint *n2_arr);
+mid_uint *infiX_addition(mid_uint *n1_arr, mid_uint *n2_arr);
 
 #endif /*_INFIX_H_*/

@@ -40,7 +40,7 @@ mid_uint *str_to_intarray(lo_uchar *num_str)
 	}
 
 	arr_size = (len / MID_MAX_DIGITS) + ((len % MID_MAX_DIGITS) ? 1 : 0);
-	array = calloc((arr_size + 2), sizeof(*array));
+	array = calloc((arr_size + 1), sizeof(*array));
 	if (!array)
 	{
 		perror("Malloc Fail");
@@ -59,7 +59,7 @@ mid_uint *str_to_intarray(lo_uchar *num_str)
 	}
 
 	if (negative && array[arr_size] > 0)
-		array[arr_size] |= MID_NEGBIT;
+		array[arr_size] |= NEGBIT_MIDUINT;
 
 	return (array);
 }
@@ -86,9 +86,9 @@ lo_uchar *intarr_to_str(mid_uint *array)
 
 	arr_size = array[0];
 	/*Checking if the number is negative*/
-	if (array[arr_size] > MID_NEGBIT)
+	if (array[arr_size] > NEGBIT_MIDUINT)
 	{
-		array[arr_size] ^= MID_NEGBIT;
+		array[arr_size] ^= NEGBIT_MIDUINT;
 		len += 1;
 		negative = '-';
 	}

@@ -15,11 +15,6 @@ int main(int argc, char *argv[])
 		print_help();
 		return (EXIT_FAILURE);
 	}
-	else if (!isdigit(argv[1][0]) || !isdigit(argv[3][0]))
-	{
-		fprintf(stderr, "Insufficient digits\n");
-		return (EXIT_FAILURE);
-	}
 
-	return (infiX_op(argv[1], argv[2], argv[3]));
+	return (infiX_dealer(argv[1], argv[2], argv[3]));
 }
