@@ -152,50 +152,9 @@ void trim_intarr(mid_uint *arr)
 }
 
 #ifdef TESTING_CONVERTERS
-/**
- * print_help - print help text
- * @err_type: a string specifying which message to print
- */
-void print_help(const char *err_type)
-{
-	if (!_strcmp(err_type, "base"))
-		fprintf(stderr, "Only base 10 numbers are currently supported.\n");
-	else if (!_strcmp(err_type, "operator"))
-		fprintf(stderr, "Only base 10 numbers are currently supported.\n");
-	else if (!_strcmp(err_type, "usage"))
-		fprintf(stderr, "USAGE: <num1> <operand> <num2>\n");
-	else
-	{
-		fprintf(stderr, "USAGE: <num1> <operand> <num2>\n");
-		fprintf(stderr, "Only base 10 numbers are currently supported.\n");
-		fprintf(stderr, "Operands: '+' '-' 'x'  '/'.\n");
-	}
-}
 
 /**
- * pad_char - calculates length of initial padding characters in a string
- * @str: the string to check
- * @ch: the character
- *
- * Return: number of padding characters
- */
-size_t pad_char(char *str, char *ch)
-{
-	size_t zeros = 0, len = 0;
-
-	if (str)
-	{
-		len = strlen(str);
-		zeros = strspn(str, ch);
-		if (len && (zeros == len))
-			zeros--;
-	}
-
-	return (zeros);
-}
-
-/**
- * main - testing entry point
+ * main - testing converters entry point
  *
  * Return: 0 on success, 1 on failure
  */

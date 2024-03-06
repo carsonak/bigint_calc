@@ -20,7 +20,7 @@ void *memfill(void *mem, char b, size_t start, size_t nbytes)
 }
 
 /**
- * _memcpy - copies a specified about of bytes from one mem to another
+ * _memcpy - copies a specified about of bytes from one memory area to another
  * @dest: the destination
  * @src: the source
  * @n: number of bytes to be copied

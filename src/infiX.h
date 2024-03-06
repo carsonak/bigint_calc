@@ -1,7 +1,7 @@
 #ifndef _INFIX_H_
 #define _INFIX_H_
 
-#define _GNU_SOURCE
+#define _GNU_SOURCE /*program_invocation_name*/
 
 #include <stdio.h>
 #include <string.h>
