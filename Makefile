@@ -43,7 +43,7 @@ $(OBJ):$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 oclean:
-	@$(RM) -rd $(OBJ) $(DEP_FILES)
+	@$(RM) -vrd $(OBJ) $(DEP_FILES)
 
 re: oclean all
 
