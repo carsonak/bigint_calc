@@ -269,7 +269,7 @@ int64_t get_quotient(mid_uint *dvsor)
 			return (-1);
 	}
 
-	_memcpy(remain, rem_tmp, ((rem_tmp[0] + 2) * sizeof(*rem_tmp)));
+	_memcpy(remain, rem_tmp, ((rem_tmp[0] + 1) * sizeof(*rem_tmp)));
 	free(rem_tmp);
 	free(mul_est);
 	return (quot_tmp[1]);

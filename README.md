@@ -1,24 +1,36 @@
 # INFIX MATH
 
-Trying to write abitrary precision math functions in C.
-The functions here are still quite simple and need more work.
+## NOTICE
 
-**Debugging:** gcc -std=c17 -lm -g -pedantic -Wall -Werror -Wextra
--fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-all
-./src/\*.c -o ./debug_math
+This is a personal project meant to challenge myself and practice writing C
+projects. Use of this program is at your own risk.
 
-**Release:** gcc -std=c17 -g -pedantic -Wall -Werror -Wextra -O3 ./src/\*.c -o
+## DESCRIPTION
+
+This project aims to provide several functions that can be used to perform
+calculations on arbitrary large numbers. The project is written in C and does
+not use any external libraries for it's math operations.
+
+This project was compiled using the [gcc](https://gcc.gnu.org/) compiler. The command used
+while **debugging**:
+gcc -std=c17 -lm -g -pedantic -Wall -Werror -Wextra -fsanitize=undefined
+-fsanitize-undefined-trap-on-error -fstack-protector-all ./src/\*.c -o ./debug_math
+
+To use the program as a simple calculator, compile with:
+**Release:** gcc -std=c17 -pedantic -Wall -Werror -Wextra -O3 ./src/\*.c -o
 ./math -lm
 
 ## Usage
 
 As this is still in production not alot can be done. Currently only the basic
-math operations are available.To try out one of the functions run this command
-on a terminal:
+math operations are available. To use the program as a simple calculator type
+the following command in a terminal in the directory where the executable [math](./math)
+is contained.
 
-./math *\<number\>* *\<sign\>* *\<number\>*
+./math *number* *sign* *\[number\]*
 
-Where *sign* is one of: "+" "-" "/" "x"
+Where *sign* is either "+" for addition, "-" for subtration, "/" for division
+or "x" for multiplication.
 
 ## TODO
 
@@ -28,18 +40,30 @@ Where *sign* is one of: "+" "-" "/" "x"
 
 ## Functions
 
-#### infix_add
+The suite of functions meant for use are summarised here. It is recommended
+to interact with the functions via the [manager](src/infiX_manager.c), as it converts strings
+into the correct array format required by most of the functions.
 
-Arbitrary precision addition function.
+#### infiX_manager
 
-#### infix_mul
+The [infiX_manager](./src/infiX_manager.c) function parses user input and calls the right
+functions to perform calculations.
+It is responsible for detecting errors in user input, converting numbers in
+strings into arrays of numbers, calling the required function and returning
+correct output.
 
-Arbitrary precision multiplication function.
+#### infiX_addition
 
-#### infix_sub
+The [infiX_addition](src/infiX_add.c) function adds two numbers stored in arrays.
 
-Arbitrary precision subtraction function.
+#### infiX_multiplication
 
-#### infix_div
+The [infiX_multiplication](src/infiX_mul.c) function mutiplies two numbers stored in arrays.
 
-Arbitrary precision division function.
+#### infiX_subtraction
+
+The [infiX_subtraction](src/infiX_sub.c) function subtracts two numbers stored in arrays.
+
+#### infiX_division
+
+The [infiX_division](src/infiX_div.c) function divides two numbers stored in arrays.

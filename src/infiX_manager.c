@@ -3,14 +3,14 @@
 static math_func *get_math_func(char *op_symbol);
 
 /**
- * infiX_dealer - determine what operation to carry out based on given symbol
+ * infiX_manager - determine what operation to carry out based on given symbol
  * @num1: first number
  * @op_symbol: operand
  * @num2: second number
  *
- * Return: 1 on failure, 0 on success
+ * Return: Pointer to answer string on sucess, NULL on failure
  */
-int infiX_dealer(char *num1, char *op_symbol, char *num2)
+char *infiX_manager(char *num1, char *op_symbol, char *num2)
 {
 	mid_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
 	lo_uchar *answer = NULL;
@@ -19,7 +19,7 @@ int infiX_dealer(char *num1, char *op_symbol, char *num2)
 	if (!num1 || !op_symbol)
 	{ /*Mandatory arguments missings*/
 		print_help("usage");
-		return (EXIT_FAILURE);
+		return (NULL);
 	}
 
 	func_ptr = get_math_func(op_symbol);
@@ -44,16 +44,14 @@ int infiX_dealer(char *num1, char *op_symbol, char *num2)
 		if (answer)
 		{
 			free(ans_arr);
-			printf("%s\n", (char *)answer);
-			free(answer);
-			return (EXIT_SUCCESS);
+			return ((char *)answer);
 		}
 	}
 
 	if (!func_ptr)
 		print_help("operator"); /*Symbol not found*/
 
-	return (EXIT_FAILURE);
+	return (NULL);
 }
 
 /**

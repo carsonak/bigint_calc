@@ -2,7 +2,7 @@
 
 /**
  * print_help - print help text
- * @err_type: a string specifying which message to print
+ * @err_type: a string specifying which text to print
  */
 void print_help(const char *err_type)
 {

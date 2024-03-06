@@ -52,7 +52,7 @@ void *_memcpy(void *dest, void *src, size_t n);
 mid_uint *mplug_low(mid_uint **dest, mid_uint *src);
 mid_uint *mplug_num_low(mid_uint **dest, mid_uint src);
 
-int infiX_dealer(char *num1, char *op_symbol, char *num2);
+char *infiX_manager(char *num1, char *op_symbol, char *num2);
 mid_uint *infiX_division(mid_uint *dividend, mid_uint *divisor);
 mid_uint *infiX_subtraction(mid_uint *n1_arr, mid_uint *n2_arr);
 mid_uint *infiX_multiplication(mid_uint *n1_arr, mid_uint *n2_arr);

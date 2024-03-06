@@ -9,6 +9,8 @@
  */
 int main(int argc, char *argv[])
 {
+	char *answer = NULL;
+
 	errno = 0;
 	if (argc < 4)
 	{
@@ -16,5 +18,11 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
-	return (infiX_dealer(argv[1], argv[2], argv[3]));
+	answer = infiX_manager(argv[1], argv[2], argv[3]);
+	if (!answer)
+		return (EXIT_FAILURE);
+
+	printf("%s\n", answer);
+	free(answer);
+	return (EXIT_SUCCESS);
 }
