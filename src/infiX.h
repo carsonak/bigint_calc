@@ -1,6 +1,8 @@
 #ifndef _INFIX_H_
 #define _INFIX_H_
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>

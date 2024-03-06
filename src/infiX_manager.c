@@ -37,21 +37,20 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 
 	free(num1_arr);
 	free(num2_arr);
-	free(remain);
 	if (ans_arr)
 	{
-		answer = intarr_to_str(ans_arr);
-		if (answer)
-		{
-			free(ans_arr);
-			return ((char *)answer);
-		}
+		if (!_strcmp(op_symbol, "%"))
+			answer = intarr_to_str(remain);
+		else
+			answer = intarr_to_str(ans_arr);
 	}
 
+	free(remain);
+	free(ans_arr);
 	if (!func_ptr)
 		print_help("operator"); /*Symbol not found*/
 
-	return (NULL);
+	return ((char *)answer);
 }
 
 /**
@@ -68,6 +67,7 @@ math_func *get_math_func(char *op_symbol)
 		{"-", infiX_subtraction},
 		{"x", infiX_multiplication},
 		{"/", infiX_division},
+		{"%", infiX_division},
 		{NULL, NULL},
 	};
 

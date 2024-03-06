@@ -9,7 +9,7 @@ own risk.
 
 ## DESCRIPTION
 
-This project aims to provide several functions that can be used to perform
+This project aims to provide some functions that can be used to perform basic
 calculations on arbitrary large numbers. The project is written in C and does
 not use any external libraries for it's math operations.
 
@@ -33,8 +33,12 @@ is contained.
 
 **./math *number* *sign* *\[number\]***
 
-Where ***sign*** is either "**+**" for addition, "**-**" for subtration, "**/**" for division
-or "**x**" for multiplication.
+Where ***sign*** is either "**+**" for addition, "**-**" for subtration,
+"**x**" for multiplication "**/**" for division or "**%**" for modulus.
+
+Calling **./math** with no arguments or incorrect arguments will cause some
+helpful text to be printed on the terminal. The program requires atleast two
+arguments in order to start processing input.
 
 ## TODO
 
@@ -71,3 +75,7 @@ The [infiX_subtraction](src/infiX_sub.c) function subtracts two numbers stored i
 ### infiX_division
 
 The [infiX_division](src/infiX_div.c) function divides two numbers stored in arrays.
+
+### print_help
+
+The [print_help](src/print_help.c) function prints some help text.
