@@ -1,2 +1,8 @@
 # Ignore vscode configurations
 .vscode
+
+# replit stuff
+.cache
+.ccls-cache
+.replit
+replit.nix
