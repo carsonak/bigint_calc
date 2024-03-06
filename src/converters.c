@@ -19,7 +19,13 @@ mid_uint *str_to_intarray(lo_uchar *num_str)
 	int i = 0, g = 0, negative = '\0';
 
 	if (!num_str)
-		return (NULL);
+	{
+		array = calloc(2, sizeof(*array));
+		if (array)
+			array[0] = 1;
+		
+		return (array);
+	}
 
 	/*Check if number is negative*/
 	if (num_str[0] == '-')
