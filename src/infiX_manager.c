@@ -18,7 +18,7 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 
 	if (!num1 || !op_symbol)
 	{ /*Mandatory arguments missings*/
-		print_help("usage");
+		panic("usage");
 		return (NULL);
 	}
 
@@ -48,7 +48,7 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 	free(remain);
 	free(ans_arr);
 	if (!func_ptr)
-		print_help("operator"); /*Symbol not found*/
+		panic("ops"); /*Symbol not found*/
 
 	return ((char *)answer);
 }

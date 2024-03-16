@@ -4,7 +4,7 @@ CC := gcc
 
 SRCS_DIR := ../src
 SRCDIRS := $(shell find $(SRCS_DIR) -mount -name '*.c' -exec dirname {} \; | sort -u)
-SRC := $(SRCS_DIR)/converters.c $(SRCS_DIR)/hello/hello.c $(SRCS_DIR)/print_help.c $(SRCS_DIR)/string_funcs.c
+SRC := $(SRCS_DIR)/converters.c $(SRCS_DIR)/hello/hello.c $(SRCS_DIR)/panic.c $(SRCS_DIR)/string_funcs.c
 
 OBJS_DIR := ../obj
 OBJ := $(SRC:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)

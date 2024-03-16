@@ -43,7 +43,8 @@ typedef struct operator_function
 	math_func *f;
 } op_func;
 
-void print_help(const char *err_type);
+void panic(const char *err_type);
+void helpme(const char *which_help);
 mid_uint *str_to_intarray(lo_uchar *num);
 lo_uchar *intarr_to_str(mid_uint *u32a);
 void trim_intarr(mid_uint *arr);

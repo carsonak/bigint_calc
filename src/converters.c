@@ -23,7 +23,7 @@ mid_uint *str_to_intarray(lo_uchar *num_str)
 		array = calloc(2, sizeof(*array));
 		if (array)
 			array[0] = 1;
-		
+
 		return (array);
 	}
 
@@ -41,7 +41,7 @@ mid_uint *str_to_intarray(lo_uchar *num_str)
 
 	if (!len)
 	{
-		print_help("base"); /*Insufficient digits*/
+		panic("base"); /*Insufficient digits*/
 		return (NULL);
 	}
 

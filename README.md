@@ -16,11 +16,11 @@ not use any external libraries for it's math operations.
 This project was compiled using the [gcc](https://gcc.gnu.org/) compiler. Invoke
 the make command in a terminal to compile the project for **debugging**:
 
-> `make`
+`make`
 
 To use the program as a simple calculator, invoke make with **release:**
 
-> `make release`
+`make release`
 
 ## Usage
 
@@ -34,8 +34,8 @@ is contained.
 Where ***sign*** is either "**+**" for addition, "**-**" for subtration,
 "**x**" for multiplication "**/**" for division or "**%**" for modulus.
 
-Calling **./math** with no arguments or incorrect arguments will cause some
-helpful text to be printed on the terminal. The program requires atleast two
+Calling **./math** with no arguments or incorrect arguments will cause the
+program to abort and print out an error message. The program requires atleast two
 arguments in order to start processing input.
 
 ## TODO
@@ -74,6 +74,6 @@ The [infiX_subtraction](src/infiX_sub.c) function subtracts two numbers stored i
 
 The [infiX_division](src/infiX_div.c) function divides two numbers stored in arrays.
 
-### print_help
+### panic
 
-The [print_help](src/print_help.c) function prints some help text.
+The [panic](src/panic.c) function prints some help text.
