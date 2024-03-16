@@ -13,16 +13,14 @@ This project aims to provide some functions that can be used to perform basic
 calculations on arbitrary large numbers. The project is written in C and does
 not use any external libraries for it's math operations.
 
-This project was compiled using the [gcc](https://gcc.gnu.org/) compiler. The command used
-while **debugging**:
+This project was compiled using the [gcc](https://gcc.gnu.org/) compiler. Invoke
+the make command in a terminal to compile the project for **debugging**:
 
-gcc -std=c17 -lm -g -pedantic -Wall -Werror -Wextra -fsanitize=undefined
--fsanitize-undefined-trap-on-error -fstack-protector-all ./src/\*.c -o ./debug_math
+> `make`
 
-To use the program as a simple calculator, compile with **release:**
+To use the program as a simple calculator, invoke make with **release:**
 
-gcc -std=c17 -pedantic -Wall -Werror -Wextra -O3 ./src/\*.c -o
-./math -lm
+> `make release`
 
 ## Usage
 

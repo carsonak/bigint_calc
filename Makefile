@@ -1,17 +1,14 @@
-BINARY := debug_math
+BINARY := math
 CC := gcc
+SRC_DIR := src
+# All the sub-directories with .c files
+CHILD_DIRS := $(shell find $(SRC_DIR) -mount -name '*.c' -exec dirname {} \; | sort -u)
+# All .c files
+SRC := $(shell find $(CHILD_DIRS) -mount -maxdepth 1 -name '*.c' -type f | sort)
 
-# Main directory for all source files
-SRCS_DIR := src
-# Finding all the sub-directories with .c files
-SRCDIRS := $(shell find $(SRCS_DIR) -mount -name '*.c' -exec dirname {} \; | sort -u)
-# Extracting .c files from all source sub-directories
-SRC := $(shell find $(SRCDIRS) -mount -maxdepth 1 -name '*.c' -type f | sort)
-
-# Main directory for all the object files
-OBJS_DIR := obj
-# Creating object files by renaming .c to .o then replacing src/ with obj/
-OBJ := $(SRC:$(SRCS_DIR)/%.c=$(OBJS_DIR)/%.o)
+OBJ_DIR := obj
+# OBJ_DIR will have the same file system structure as in the SRC_DIR
+OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track included files (i.e .h files)
 DEP_FILES := $(OBJ:.o=.d)
 
@@ -19,7 +16,7 @@ DEP_FILES := $(OBJ:.o=.d)
 LDLIBS := -lm
 LDFLAGS =
 # Include flags so all header files are discovered
-INC_FLAGS := $(addprefix -I,$(SRCDIRS))
+INC_FLAGS := $(addprefix -I,$(CHILD_DIRS))
 DEBUG_FLAGS := -g -pedantic -fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-all
 WARN_FLAGS := -std=c17 -Wall -Werror -Wextra
 CFLAGS := $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS)
@@ -33,18 +30,24 @@ all: $(BINARY)
 # @^ - names of all the prerequisites
 # $@ - the name of the target
 $(BINARY): $(OBJ)
-	$(CC) $^ -o $@ $(LDLIBS)
+	$(CC) $^ -o $@ $(LDLIBS) $(LDFLAGS)
 
 # @< - name of only the first prequisite
 # @D - the directory of the target
-$(OBJ):$(OBJS_DIR)/%.o: $(SRCS_DIR)/%.c
-# This static rule allows us to specify only the object files we want compiled
+$(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+# Static rule for object files heading to obj directory
+# https://www.gnu.org/software/make/manual/html_node/Static-versus-Implicit.html
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
+release: CFLAGS := $(WARN_FLAGS) -O3
+# Redefining CFLAGS for release build
+# https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
+release: oclean $(BINARY)
+
 oclean:
-	@$(RM) -vrd $(OBJ) $(DEP_FILES)
+	@$(RM) -vrd $(OBJ_DIR)/*
 
 re: oclean all
 
-.PHONY: all oclean re
+.PHONY: all oclean release
