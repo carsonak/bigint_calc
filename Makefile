@@ -50,7 +50,7 @@ oclean:
 fclean:
 	@$(RM) -vrd $(OBJ_DIR) $(BINARY)
 
-re: oclean all
+re: fclean all
 
 .PHONY: all oclean fclean release re
 
