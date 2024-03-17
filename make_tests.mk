@@ -18,7 +18,7 @@ $(T_BINDIR)/%: $(T_SRCDIR)/%.c $(OBJ)
 	$(CC) $(CFLAGS) $< $(OBJ) -o $@ $(LDLIBS)
 
 tclean:
-	@$(RM) -vdr $(T_BIN)
+	@$(RM) -vdr $(T_BINDIR)/*
 
 retest: tclean test
 
