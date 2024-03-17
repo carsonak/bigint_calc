@@ -1,8 +1,0 @@
-SRC_DIR := src
-CHILD_DIRS := $(shell find $(SRC_DIR) -mount -mindepth 2 -name '*.c' -exec dirname {} \; | sort -u)
-SRC := $(shell find $(SRC_DIR) $(CHILD_DIRS) -mount -maxdepth 1 -name '*.c' -type f | sort)
-
-test:
-	@echo $(CHILD_DIRS:$(SRC_DIR)/%=$(OBJ_DIR)/%)
-
-.PHONY: test

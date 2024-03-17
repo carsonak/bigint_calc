@@ -1,3 +1,4 @@
+# Beware of spaces after variable assignments.
 BINARY := math
 CC := gcc
 SRC_DIR := src
@@ -41,16 +42,22 @@ $(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 release: CFLAGS := $(WARN_FLAGS) -MMD -O3
 # Redefining CFLAGS for release build
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
-release: oclean $(BINARY)
+release: fclean $(BINARY)
 
 oclean:
-	@$(RM) -vrd $(OBJ) $(DEP_FILES) $(CHILD_DIRS:$(SRC_DIR)/%=$(OBJ_DIR)/%)
+	@$(RM) -vrd $(OBJ) $(DEP_FILES)
+
+fclean:
+	@$(RM) -vrd $(OBJ_DIR) $(BINARY)
 
 re: oclean all
 
-.PHONY: all oclean release re
+.PHONY: all oclean fclean release re
 
+# include will "paste" the rules it finds in the icluded files at this
+# location, therefore best to place it at end of file so as not to interfere
+# with other rules. The "-" suppresses missing file errors, as .d files are
+# generated automatically by gcc.
 # https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html
-# This placed at the bottom of the file as all the content from the included
-# files will be "pasted" here.
-include $(DEP_FILES)
+-include $(DEP_FILES)
+include make_tests.mk

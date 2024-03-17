@@ -168,7 +168,7 @@ int divide_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result)
  */
 int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient)
 {
-	ssize_t lsor = -1, ldnd = -1, nd_i = 0;
+	ssize_t l_dvsor = -1, l_dvdend = -1, nd_i = 0;
 
 	if (!quotient)
 	{
@@ -177,26 +177,26 @@ int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient)
 	}
 
 	if (dvdend)
-		ldnd = dvdend[0];
+		l_dvdend = dvdend[0];
 
 	if (dvsor)
-		lsor = dvsor[0];
+		l_dvsor = dvsor[0];
 
-	if (!dvdend || ldnd < lsor || (ldnd == 1 && dvdend[1] == 0) ||
-		(ldnd == lsor && dvdend[ldnd] < dvsor[lsor]))
+	if (!dvdend || l_dvdend < l_dvsor || (l_dvdend == 1 && dvdend[1] == 0) ||
+		(l_dvdend == l_dvsor && dvdend[l_dvdend] < dvsor[l_dvsor]))
 	{
-		if (ldnd < 1)
-			ldnd = 1;
+		if (l_dvdend < 1)
+			l_dvdend = 1;
 
 		*quotient = calloc(2, sizeof(**quotient));
 		if (*quotient)
 			(*quotient)[0] = 1;
 
-		remain = calloc(ldnd + 1, sizeof(*remain));
+		remain = calloc(l_dvdend + 1, sizeof(*remain));
 		if (remain)
 		{
-			remain[0] = ldnd;
-			for (nd_i = 1; dvdend && nd_i <= ldnd; nd_i++)
+			remain[0] = l_dvdend;
+			for (nd_i = 1; dvdend && nd_i <= l_dvdend; nd_i++)
 				remain[nd_i] = dvdend[nd_i];
 		}
 
@@ -205,7 +205,7 @@ int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient)
 
 		return (1);
 	}
-	else if (!dvsor || (lsor == 1 && dvsor[1] == 0))
+	else if (!dvsor || (l_dvsor == 1 && dvsor[1] == 0))
 		return (1);
 
 	return (0);
