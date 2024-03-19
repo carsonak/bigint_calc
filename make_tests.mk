@@ -1,4 +1,3 @@
-TESTS_DIR := tests
 T_SRCDIR := $(TESTS_DIR)/src
 T_BINDIR := $(TESTS_DIR)/bin
 
@@ -19,7 +18,7 @@ $(T_BINDIR)/%: $(T_SRCDIR)/%.c $(OBJ)
 
 tclean:
 ifdef T_BINDIR
-	@$(RM) -vdr --preserve-root $(T_BINDIR)/*
+	@$(RM) -vdr --preserve-root -- $(T_BINDIR)/*
 else
 	@echo "Tests' bin directory has not been defined."
 endif
