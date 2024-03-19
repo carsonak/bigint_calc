@@ -45,10 +45,10 @@ release: CFLAGS := $(WARN_FLAGS) -MMD -O3
 release: fclean $(BINARY)
 
 oclean:
-	@$(RM) -vrd $(OBJ) $(DEP_FILES)
+	@$(RM) -vrd --preserve-root $(OBJ) $(DEP_FILES)
 
 fclean:
-	@$(RM) -vrd $(OBJ_DIR) $(BINARY)
+	@$(RM) -vrd --preserve-root $(OBJ_DIR) $(BINARY)
 
 re: fclean all
 

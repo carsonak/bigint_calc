@@ -18,7 +18,11 @@ $(T_BINDIR)/%: $(T_SRCDIR)/%.c $(OBJ)
 	$(CC) $(CFLAGS) $< $(OBJ) -o $@ $(LDLIBS)
 
 tclean:
-	@$(RM) -vdr $(T_BINDIR)/*
+ifdef T_BINDIR
+	@$(RM) -vdr --preserve-root $(T_BINDIR)/*
+else
+	@echo "Tests' bin directory has not been defined."
+endif
 
 retest: tclean test
 
