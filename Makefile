@@ -5,24 +5,24 @@ SRC_DIR := src
 OBJ_DIR := obj
 TESTS_DIR := tests
 # All the sub-directories with .h files
-INCLUDE_DIRS := $(shell find $(SRC_DIR) -mount -name '*.h' -exec dirname {} \; | sort -u)
+INCLUDE_DIRS = $(shell find $(SRC_DIR) -mount -name '*.h' -exec dirname {} \; | sort -u)
 
 # All .c files
-SRC := $(shell find $(SRC_DIR) -mount -name '*.c' -type f | sort)
+SRC = $(shell find $(SRC_DIR) -mount -name '*.c' -type f | sort)
 # OBJ_DIR will have the same file tree as in the SRC_DIR
-OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track include files (i.e .h files)
-DEP_FILES := $(OBJ:.o=.d)
+DEP_FILES = $(OBJ:.o=.d)
 
 # Linker flags
 LDLIBS := -lm
 LDFLAGS :=
 # Include flags
-INC_FLAGS := $(addprefix -I,$(INCLUDE_DIRS))
+INC_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
 DEBUG_FLAGS := -g -pedantic -fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-all
 WARN_FLAGS := -std=c17 -Wall -Werror -Wextra
-CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS)
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
+CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS)
 
 
 all: $(BINARY)
