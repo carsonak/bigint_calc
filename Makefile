@@ -16,12 +16,12 @@ DEP_FILES := $(OBJ:.o=.d)
 
 # Linker flags
 LDLIBS := -lm
-LDFLAGS =
+LDFLAGS :=
 # Include flags
 INC_FLAGS := $(addprefix -I,$(INCLUDE_DIRS))
 DEBUG_FLAGS := -g -pedantic -fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-all
 WARN_FLAGS := -std=c17 -Wall -Werror -Wextra
-CFLAGS := $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS)
+CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS)
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 
 
