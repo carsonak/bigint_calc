@@ -1,7 +1,14 @@
 #ifndef _INFIX_H_
 #define _INFIX_H_
 
+#ifdef __cplusplus
+extern "C"
+{
+#endif /*__cplusplus*/
+
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE /*program_invocation_name*/
+#endif
 
 #include <stdio.h>
 #include <string.h>
@@ -16,7 +23,7 @@ typedef uint64_t hi_uint;
 typedef uint32_t mid_uint;
 typedef uint8_t lo_uchar;
 /* math_func: a function that takes in 2 int arrays and returns an int array*/
-typedef mid_uint *math_func(mid_uint *, mid_uint *);
+typedef mid_uint * math_func(mid_uint *, mid_uint *);
 
 /*Max number of digits mid_uint should hold*/
 #define MID_MAX_DIGITS (9)
@@ -60,5 +67,9 @@ mid_uint *infiX_division(mid_uint *dividend, mid_uint *divisor);
 mid_uint *infiX_subtraction(mid_uint *n1_arr, mid_uint *n2_arr);
 mid_uint *infiX_multiplication(mid_uint *n1_arr, mid_uint *n2_arr);
 mid_uint *infiX_addition(mid_uint *n1_arr, mid_uint *n2_arr);
+
+#ifdef __cplusplus
+}
+#endif /*__cplusplus*/
 
 #endif /*_INFIX_H_*/

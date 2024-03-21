@@ -16,13 +16,15 @@ DEP_FILES = $(OBJ:.o=.d)
 
 # Linker flags
 LDLIBS := -lm
-LDFLAGS :=
+LDFLAGS := -pie -Wl,-z,relro
 # Include flags
 INC_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
-DEBUG_FLAGS := -g -pedantic -fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-all
-WARN_FLAGS := -std=c17 -Wall -Werror -Wextra
+HARDENING_FLAGS := -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-strong -fstack-clash-protection -fPIE
+DEBUG_FLAGS := -Og
+WARN_FLAGS := -std=c17 -Wall -Werror -Wextra -Wformat -Wformat-security -pedantic
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
-CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS)
+CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS) $(HARDENING_FLAGS)
+CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))
 
 
 all: $(BINARY)
@@ -30,7 +32,7 @@ all: $(BINARY)
 # @^ - names of all the prerequisites
 # $@ - the name of the target
 $(BINARY): $(OBJ)
-	$(CC) $^ -o $@ $(LDLIBS) $(LDFLAGS)
+	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS) $(LDFLAGS)
 
 # @< - name of only the first prequisite
 # @D - the directory of the target
@@ -40,12 +42,12 @@ $(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-release: CFLAGS := $(WARN_FLAGS) -MMD -O3
+release: DEBUG_FLAGS := -O3
 # Redefining CFLAGS for release build
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
 release: fclean all
 
-oclean:
+clean:
 	@$(RM) -vrd --preserve-root -- $(OBJ) $(DEP_FILES)
 
 fclean:
@@ -57,7 +59,7 @@ endif
 
 re: fclean all
 
-.PHONY: all oclean fclean release re
+.PHONY: all clean fclean release re
 
 # include will "paste" the rules it finds in the icluded files at this
 # location, therefore best to place it at end of file so as not to interfere
@@ -65,7 +67,4 @@ re: fclean all
 # generated automatically by gcc.
 # https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html
 -include $(DEP_FILES)
-
-ifdef TESTS_DIR
 include make_tests.mk
-endif

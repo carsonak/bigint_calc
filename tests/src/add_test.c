@@ -1,27 +1,10 @@
 #include "tests.h"
 
-/**
- * setup_suite1 - setup
- */
-void setup_suite1(void)
+// Demonstrate some basic assertions.
+TEST(HelloTest, BasicAssertions)
 {
-}
-
-/**
- * teardown_suite1 - teardown
- */
-void teardown_suite1(void)
-{
-}
-
-TestSuite(suite1, .init = setup_suite1, .fini = teardown_suite1);
-
-Test(suite1, test_0)
-{
-	mid_uint num[2] = {1, 0};
-	mid_uint *out = infiX_addition(num, num);
-	mid_uint output[2] = {out[0], out[1]};
-
-	cr_expect(eq(u32[2], num, output), "{1, 0} + {1, 0} == {1, 0}");
-	/*cr_expect_arr_eq(&num, output, sizeof(num), "{1, 0} + {1, 0} == {1, 0}");*/
+    // Expect two strings not to be equal.
+    EXPECT_STRNE("hello", "world");
+    // Expect equality.
+    EXPECT_EQ(7 * 6, 42);
 }

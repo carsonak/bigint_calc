@@ -2,7 +2,7 @@ T_SRCDIR := $(TESTS_DIR)/src
 T_BINDIR := $(TESTS_DIR)/bin
 
 T_SRC := $(wildcard $(T_SRCDIR)/*.c)
-T_BIN := $(T_SRC:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
+T_BIN := $(T_SRC:$(T_SRCDIR)/%.cpp=$(T_BINDIR)/%)
 T_DEP := $(T_BIN:%=%.d)
 
 test: $(T_BIN)
@@ -13,8 +13,9 @@ $(T_BINDIR)/%: OBJ := $(filter-out %main.o,$(OBJ))
 $(T_BINDIR)/%: LDLIBS += -lcriterion
 $(T_BINDIR)/%: INC_FLAGS += -I$(T_SRCDIR)
 
-$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(OBJ)
-	$(CC) $(CFLAGS) $< $(OBJ) -o $@ $(LDLIBS)
+$(T_BINDIR)/%: $(T_SRCDIR)/%.cpp $(OBJ)
+	@mkdir -p $(@D)
+	$(CXX) $< $(OBJ) -o $@ $(LDLIBS)
 
 tclean:
 ifdef T_BINDIR
