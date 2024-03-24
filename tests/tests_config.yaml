@@ -1,2 +1,2 @@
 :unity:
-  :cmdline_args
+  :cmdline_args: true
