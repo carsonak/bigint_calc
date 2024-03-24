@@ -2,19 +2,19 @@
 /*#define TESTING_CONVERTERS*/
 
 /**
- * str_to_intarray - convert a string of numbers to a mid_uint array.
+ * str_to_intarray - convert a string of numbers to a m_uint array.
  * @num_str: a pointer to a string of numbers
  *
- * Description: This function converts a string of numbers to a mid_uint array.
+ * Description: This function converts a string of numbers to a m_uint array.
  * The array will be in little endian order whereby the lower value numbers
  * will be placed in the lower indices. Index 0 will have a value indicating
  * the size of the array.
  *
- * Return: pointer to an mid_uint array, NULL on failure
+ * Return: pointer to an m_uint array, NULL on failure
  */
-mid_uint *str_to_intarray(lo_uchar *num_str)
+m_uint *str_to_intarray(s_uchar *num_str)
 {
-	mid_uint *array = NULL;
+	m_uint *array = NULL;
 	size_t arr_size = 0, len = 0, h = 0;
 	int i = 0, g = 0, negative = '\0';
 
@@ -59,32 +59,70 @@ mid_uint *str_to_intarray(lo_uchar *num_str)
 	for (h = 1, g = (len - 1); h <= arr_size && g >= 0; h++)
 	{
 		for (i = 0; i < MID_MAX_DIGITS && (g - i) >= 0; i++)
-			array[h] += (num_str[g - i] - '0') * (mid_uint)(pow(10, i));
+			array[h] += (num_str[g - i] - '0') * (m_uint)(pow(10, i));
 
 		g -= i;
 	}
 
 	if (negative && array[arr_size] > 0)
-		array[arr_size] |= NEGBIT_MIDUINT;
+		array[arr_size] |= NEGBIT_UI32;
 
 	return (array);
 }
 
 /**
- * intarr_to_str - convert a mid_uint array to a string of numbers.
- * @array: a mid_uint array
+ * parse_numstr -
+ */
+int parse_numstr(str_attr *numstr)
+{
+	size_t len = 0, digits = 0;
+
+	if (!numstr)
+		return (0);
+
+	if (numstr->str[0] == '-')
+	{
+		numstr->str++;
+		numstr->is_positive = 0;
+	}
+	else
+		numstr->is_positive = 1;
+
+	numstr->str += pad_char((char *)numstr->str, "0, ");
+	while (numstr->str && numstr->str[len])
+	{
+		if (numstr->str[len] >= '0' && numstr->str[len] <= '9')
+			digits++;
+		else if (numstr->str[len] == ',' || numstr->str[len] <= ' ')
+			len++;
+		else
+		{
+			return (0);
+		}
+
+		len++;
+	}
+
+	numstr->len = len;
+	numstr->digits = digits;
+	return (1);
+}
+
+/**
+ * intarr_to_str - convert a m_uint array to a string of numbers.
+ * @array: a m_uint array
  *
- * Description: This function converts a mid_uint array to a string of numbers.
+ * Description: This function converts a m_uint array to a string of numbers.
  * The array should be in little endian order whereby the lower value numbers
  * will be placed in the lower indices. Index 0 will have a value indicating
  * the size of the array.
  *
  * Return: a pointer to a string of numbers, NULL on failure
  */
-lo_uchar *intarr_to_str(mid_uint *array)
+s_uchar *intarr_to_str(m_uint *array)
 {
 	size_t arr_size = 0, len = 0, g = 0, h = 0, i = 0;
-	lo_uchar *num_str = NULL, negative = '\0';
+	s_uchar *num_str = NULL, negative = '\0';
 	ssize_t temp = 0, div = 1;
 
 	if (!array)
@@ -92,9 +130,9 @@ lo_uchar *intarr_to_str(mid_uint *array)
 
 	arr_size = array[0];
 	/*Checking if the number is negative*/
-	if (array[arr_size] > NEGBIT_MIDUINT)
+	if (array[arr_size] > NEGBIT_UI32)
 	{
-		array[arr_size] ^= NEGBIT_MIDUINT;
+		array[arr_size] ^= NEGBIT_UI32;
 		len += 1;
 		negative = '-';
 	}
@@ -141,9 +179,9 @@ lo_uchar *intarr_to_str(mid_uint *array)
 
 /**
  * trim_intarr - trims empty spaces from the end of an int array
- * @arr: pointer to the mid_uint arrary
+ * @arr: pointer to the m_uint arrary
  */
-void trim_intarr(mid_uint *arr)
+void trim_intarr(m_uint *arr)
 {
 	size_t arr_size = 0;
 
@@ -167,8 +205,8 @@ void trim_intarr(mid_uint *arr)
 int main(void)
 {
 	size_t i = 0, g = 0;
-	mid_uint *ntemp = NULL, len = 0;
-	lo_uchar *stemp = NULL;
+	m_uint *ntemp = NULL, len = 0;
+	s_uchar *stemp = NULL;
 	char *nstr[] = {
 		"123456789",
 		"12345678912",
@@ -194,9 +232,9 @@ int main(void)
 	while (nstr[g])
 	{
 		printf("%s\n", &nstr[g][pad_char(nstr[g], "0")]);
-		/*ntemp = str_to_intarray((lo_uchar *)(&nstr[g][pad_char(nstr[g], "0")]));*/
+		/*ntemp = str_to_intarray((s_uchar *)(&nstr[g][pad_char(nstr[g], "0")]));*/
 		/*printf("%s\n", nstr[g]);*/
-		ntemp = str_to_intarray((lo_uchar *)nstr[g]);
+		ntemp = str_to_intarray((s_uchar *)nstr[g]);
 		if (!ntemp)
 			return (EXIT_FAILURE);
 
@@ -204,9 +242,9 @@ int main(void)
 		for (i = len; i > 0; i--)
 		{
 			if (i < len)
-				printf("%09d", (mid_uint)ntemp[i]);
+				printf("%09d", (m_uint)ntemp[i]);
 			else
-				printf("%d", (mid_uint)ntemp[i]);
+				printf("%d", (m_uint)ntemp[i]);
 		}
 
 		printf(" [%d: Blocks]\n", (int)len);

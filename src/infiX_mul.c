@@ -1,6 +1,13 @@
 #include "infiX.h"
 
-static mid_uint *multiply_negatives(mid_uint *n1_arr, mid_uint *n2_arr);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+	static m_uint *multiply_negatives(m_uint *n1_arr, m_uint *n2_arr);
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * infiX_multiplication - multiplies numbers stored in arrays.
@@ -9,11 +16,11 @@ static mid_uint *multiply_negatives(mid_uint *n1_arr, mid_uint *n2_arr);
  *
  * Return: pointer to result, NULL on failure
  */
-mid_uint *infiX_multiplication(mid_uint *n1_arr, mid_uint *n2_arr)
+m_uint *infiX_multiplication(m_uint *n1_arr, m_uint *n2_arr)
 {
-	hi_uint byt_mul = 0;
+	l_uint byt_mul = 0;
 	ssize_t top = -1, botm = -1, c_mulsz = 0, t = 1, b = 1;
-	mid_uint *c_mul = NULL, *prod = NULL, *total = NULL;
+	m_uint *c_mul = NULL, *prod = NULL, *total = NULL;
 
 	prod = multiply_negatives(n1_arr, n2_arr);
 	if (prod || errno)
@@ -45,7 +52,7 @@ mid_uint *infiX_multiplication(mid_uint *n1_arr, mid_uint *n2_arr)
 		byt_mul = 0;
 		for (t = 1; t <= top; t++)
 		{
-			byt_mul += (hi_uint)n1_arr[t] * (hi_uint)n2_arr[b];
+			byt_mul += (l_uint)n1_arr[t] * (l_uint)n2_arr[b];
 			/*Offset to current index of botm*/
 			c_mul[(t - 1) + b] = byt_mul % MID_MAX_VAL;
 			byt_mul /= MID_MAX_VAL;
@@ -72,9 +79,9 @@ mid_uint *infiX_multiplication(mid_uint *n1_arr, mid_uint *n2_arr)
  *
  * Return: pointer to the result, NULL on failure
  */
-mid_uint *multiply_negatives(mid_uint *n1_arr, mid_uint *n2_arr)
+m_uint *multiply_negatives(m_uint *n1_arr, m_uint *n2_arr)
 {
-	mid_uint *result = NULL, a_msd = 0, b_msd = 0;
+	m_uint *result = NULL, a_msd = 0, b_msd = 0;
 
 	trim_intarr(n1_arr);
 	trim_intarr(n2_arr);
@@ -84,23 +91,25 @@ mid_uint *multiply_negatives(mid_uint *n1_arr, mid_uint *n2_arr)
 	if (n2_arr)
 		b_msd = n2_arr[n2_arr[0]];
 
-	if ((a_msd & NEGBIT_MIDUINT) && (b_msd & NEGBIT_MIDUINT))
+	if ((a_msd & NEGBIT_UI32) && (b_msd & NEGBIT_UI32))
 	{ /* -8 * -7 = 8*7 */
-		n1_arr[n1_arr[0]] ^= NEGBIT_MIDUINT;
-		n2_arr[n2_arr[0]] ^= NEGBIT_MIDUINT;
+		n1_arr[n1_arr[0]] ^= NEGBIT_UI32;
+		if (n1_arr != n2_arr)
+			n2_arr[n2_arr[0]] ^= NEGBIT_UI32;
+
 		result = infiX_multiplication(n1_arr, n2_arr);
 	}
-	else if (a_msd & NEGBIT_MIDUINT)
+	else if (a_msd & NEGBIT_UI32)
 	{ /* -8 * 7 = -(8*7) */
-		n1_arr[n1_arr[0]] ^= NEGBIT_MIDUINT;
+		n1_arr[n1_arr[0]] ^= NEGBIT_UI32;
 		result = infiX_multiplication(n1_arr, n2_arr);
-		result[result[0]] |= NEGBIT_MIDUINT;
+		result[result[0]] |= NEGBIT_UI32;
 	}
-	else if (b_msd & NEGBIT_MIDUINT)
+	else if (b_msd & NEGBIT_UI32)
 	{ /* 8 * -7 = -(8*7) */
-		n2_arr[n2_arr[0]] ^= NEGBIT_MIDUINT;
+		n2_arr[n2_arr[0]] ^= NEGBIT_UI32;
 		result = infiX_multiplication(n1_arr, n2_arr);
-		result[result[0]] |= NEGBIT_MIDUINT;
+		result[result[0]] |= NEGBIT_UI32;
 	}
 	else if (!n1_arr || !n2_arr || (n1_arr[0] == 1 && a_msd == 0) ||
 			 (n2_arr[0] == 1 && b_msd == 0))

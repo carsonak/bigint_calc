@@ -1,6 +1,13 @@
 #include "infiX.h"
 
-static math_func *get_math_func(char *op_symbol);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+	static math_func *get_math_func(char *op_symbol);
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * infiX_manager - determine what operation to carry out based on given symbol
@@ -12,8 +19,8 @@ static math_func *get_math_func(char *op_symbol);
  */
 char *infiX_manager(char *num1, char *op_symbol, char *num2)
 {
-	mid_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
-	lo_uchar *answer = NULL;
+	m_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
+	s_uchar *answer = NULL;
 	math_func *func_ptr = NULL;
 
 	if (!num1 || !op_symbol)
@@ -26,10 +33,10 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 	if (func_ptr)
 	{
 		errno = 0;
-		/*Convert num1 and num2 to mid_uint arrays first*/
-		num1_arr = str_to_intarray((lo_uchar *)num1);
+		/*Convert num1 and num2 to m_uint arrays first*/
+		num1_arr = str_to_intarray((s_uchar *)num1);
 		if (num1_arr)
-			num2_arr = str_to_intarray((lo_uchar *)num2);
+			num2_arr = str_to_intarray((s_uchar *)num2);
 
 		if (num1_arr && num2_arr)
 			ans_arr = func_ptr(num1_arr, num2_arr);

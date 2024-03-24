@@ -12,7 +12,7 @@ size_t pad_char(char *str, char *ch)
 {
 	size_t count = 0;
 
-	if (str)
+	if (str && ch && *ch)
 	{
 		count = strspn(str, ch);
 		if (count && !str[count])
@@ -61,6 +61,8 @@ int main(void)
 	printf("compare: 'AcA' 'AAA' => %d\n", _strcmp("AcA", "AAA"));
 	printf("compare: 'AAA' 'AcA' => %d\n", _strcmp("AAA", "AcA"));
 
-	return (0);
+	printf("")
+
+		return (0);
 }
 #endif /*TESTING_STRINGFUNCTIONS*/

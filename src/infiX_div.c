@@ -1,14 +1,25 @@
 #include "infiX.h"
 
-mid_uint *remain = NULL;
-static int
-divide_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result);
-static int
-zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient);
-static int64_t get_quotient(mid_uint *dvsor);
-static int64_t
-adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd,
-				int64_t quotient_tmp);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+	m_uint *remain = NULL;
+
+	static int
+	divide_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result);
+
+	static int
+	zero_result_check(m_uint *dvdend, m_uint *dvsor, m_uint **quotient);
+
+	static int64_t get_quotient(m_uint *dvsor);
+
+	static int64_t
+	adjust_quotient(m_uint dvsor_msd, m_uint *estimate, m_uint rem_msd,
+					int64_t quotient_tmp);
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * infiX_division - divides a numbers stored in an array
@@ -21,11 +32,11 @@ adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate, mid_uint rem_msd,
  *
  * Return: array with the result, NULL on failure
  */
-mid_uint *infiX_division(mid_uint *dividend, mid_uint *divisor)
+m_uint *infiX_division(m_uint *dividend, m_uint *divisor)
 {
 	size_t len_sor = 0, len_dend = 0, len_rem = 0, len_quotient = 0;
 	size_t nd_i = 0, r_i = 0, q_i = 0;
-	mid_uint *quotient = NULL;
+	m_uint *quotient = NULL;
 	int64_t hold = 0;
 
 	remain = NULL;
@@ -111,9 +122,9 @@ mid_uint *infiX_division(mid_uint *dividend, mid_uint *divisor)
  *
  * Return: 1 if action taken (error or processed results), 0 on failure
  */
-int divide_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result)
+int divide_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result)
 {
-	mid_uint a_msd = 0, b_msd = 0;
+	m_uint a_msd = 0, b_msd = 0;
 
 	if (!result)
 	{
@@ -129,23 +140,25 @@ int divide_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result)
 	if (n2_arr)
 		b_msd = n2_arr[n2_arr[0]];
 
-	if ((a_msd & NEGBIT_MIDUINT) && (b_msd & NEGBIT_MIDUINT))
+	if ((a_msd & NEGBIT_UI32) && (b_msd & NEGBIT_UI32))
 	{ /* -8 / -5 = 8/5 */
-		n1_arr[n1_arr[0]] ^= NEGBIT_MIDUINT;
-		n2_arr[n2_arr[0]] ^= NEGBIT_MIDUINT;
+		n1_arr[n1_arr[0]] ^= NEGBIT_UI32;
+		if (n1_arr != n2_arr)
+			n2_arr[n2_arr[0]] ^= NEGBIT_UI32;
+
 		(*result) = infiX_division(n1_arr, n2_arr);
 	}
-	else if (a_msd & NEGBIT_MIDUINT)
+	else if (a_msd & NEGBIT_UI32)
 	{ /* -8 / 5 = -(8/5) */
-		n1_arr[n1_arr[0]] ^= NEGBIT_MIDUINT;
+		n1_arr[n1_arr[0]] ^= NEGBIT_UI32;
 		(*result) = infiX_division(n1_arr, n2_arr);
-		(*result)[(*result)[0]] |= NEGBIT_MIDUINT;
+		(*result)[(*result)[0]] |= NEGBIT_UI32;
 	}
-	else if (b_msd & NEGBIT_MIDUINT)
+	else if (b_msd & NEGBIT_UI32)
 	{ /* 8 / -5 = -(8/5) */
-		n2_arr[n2_arr[0]] ^= NEGBIT_MIDUINT;
+		n2_arr[n2_arr[0]] ^= NEGBIT_UI32;
 		(*result) = infiX_division(n1_arr, n2_arr);
-		(*result)[(*result)[0]] |= NEGBIT_MIDUINT;
+		(*result)[(*result)[0]] |= NEGBIT_UI32;
 	}
 
 	if (*result || errno)
@@ -166,7 +179,7 @@ int divide_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result)
  *
  * Return: 1 if true, 0 if false
  */
-int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient)
+int zero_result_check(m_uint *dvdend, m_uint *dvsor, m_uint **quotient)
 {
 	ssize_t l_dvsor = -1, l_dvdend = -1, nd_i = 0;
 
@@ -223,9 +236,9 @@ int zero_result_check(mid_uint *dvdend, mid_uint *dvsor, mid_uint **quotient)
  *
  * Return: the quotient, -1 on failure
  */
-int64_t get_quotient(mid_uint *dvsor)
+int64_t get_quotient(m_uint *dvsor)
 {
-	mid_uint *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
+	m_uint *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
 	int64_t hold = 0;
 
 	if (!dvsor)
@@ -241,7 +254,7 @@ int64_t get_quotient(mid_uint *dvsor)
 			  (rem_tmp[0] == dvsor[0] && rem_tmp[rem_tmp[0]] >= dvsor[dvsor[0]]))) &&
 			quot_tmp[1] > 0))
 	{
-		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & NEGBIT_MIDUINT)))
+		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & NEGBIT_UI32)))
 		{
 			hold = adjust_quotient(dvsor[dvsor[0]], mul_est, rem_tmp[rem_tmp[0]], quot_tmp[1]);
 			if (hold < 0)
@@ -284,13 +297,13 @@ int64_t get_quotient(mid_uint *dvsor)
  *
  * Return: the adjusted quotient, -1 on failure
  */
-int64_t adjust_quotient(mid_uint dvsor_msd, mid_uint *estimate,
-						mid_uint rem_msd, int64_t quotient_tmp)
+int64_t adjust_quotient(m_uint dvsor_msd, m_uint *estimate,
+						m_uint rem_msd, int64_t quotient_tmp)
 {
-	mid_uint *tmp_sub = NULL;
+	m_uint *tmp_sub = NULL;
 	int64_t hold = 0, o_shoot = 0;
 
-	if (rem_msd & NEGBIT_MIDUINT)
+	if (rem_msd & NEGBIT_UI32)
 	{ /*Decrease the quotient*/
 		tmp_sub = infiX_subtraction(estimate, remain);
 		if (!tmp_sub)

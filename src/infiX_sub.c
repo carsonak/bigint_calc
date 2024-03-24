@@ -1,7 +1,14 @@
 #include "infiX.h"
 
-static int
-subtract_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result);
+#ifdef __cplusplus
+extern "C"
+{
+#endif
+	static int
+	subtract_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result);
+#ifdef __cplusplus
+}
+#endif
 
 /**
  * infiX_subtraction - subtract large numbers stored in arrays
@@ -10,12 +17,12 @@ subtract_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result);
  *
  * Return: pointer to the result, NULL on failure
  */
-mid_uint *infiX_subtraction(mid_uint *n1_arr, mid_uint *n2_arr)
+m_uint *infiX_subtraction(m_uint *n1_arr, m_uint *n2_arr)
 {
 	ssize_t a_size = -1, b_size = -1, res_sz = -1, diff = 0;
 	ssize_t n1_i = 1, n2_i = 1, res_i = 1;
 	int64_t byt_res = 0;
-	mid_uint *res = NULL;
+	m_uint *res = NULL;
 
 	if (subtract_negatives(n1_arr, n2_arr, &res))
 		return (res);
@@ -93,7 +100,7 @@ mid_uint *infiX_subtraction(mid_uint *n1_arr, mid_uint *n2_arr)
 
 	/*Setting the -ve indicating bit if n5 is greater than n1*/
 	if (a_size < b_size || (a_size == b_size && n1_arr[diff] < n2_arr[diff]))
-		res[res_sz] |= NEGBIT_MIDUINT;
+		res[res_sz] |= NEGBIT_UI32;
 
 	trim_intarr(res);
 	return (res);
@@ -107,9 +114,9 @@ mid_uint *infiX_subtraction(mid_uint *n1_arr, mid_uint *n2_arr)
  *
  * Return: 1 if action taken (error or processed results), 0 if no action taken
  */
-int subtract_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result)
+int subtract_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result)
 {
-	mid_uint a_msd = 0, b_msd = 0;
+	m_uint a_msd = 0, b_msd = 0;
 
 	if (!result)
 	{
@@ -125,21 +132,23 @@ int subtract_negatives(mid_uint *n1_arr, mid_uint *n2_arr, mid_uint **result)
 	if (n2_arr)
 		b_msd = n2_arr[n2_arr[0]];
 
-	if ((a_msd & NEGBIT_MIDUINT) && (b_msd & NEGBIT_MIDUINT))
+	if ((a_msd & NEGBIT_UI32) && (b_msd & NEGBIT_UI32))
 	{ /*-8 - -5 = -8 + 5 = 5-8*/
-		n1_arr[n1_arr[0]] ^= NEGBIT_MIDUINT;
-		n2_arr[n2_arr[0]] ^= NEGBIT_MIDUINT;
+		n1_arr[n1_arr[0]] ^= NEGBIT_UI32;
+		if (n1_arr != n2_arr)
+			n2_arr[n2_arr[0]] ^= NEGBIT_UI32;
+
 		(*result) = infiX_subtraction(n2_arr, n1_arr);
 	}
-	else if (a_msd & NEGBIT_MIDUINT)
+	else if (a_msd & NEGBIT_UI32)
 	{ /*-8 - 5 = -(8+5)*/
-		n1_arr[n1_arr[0]] ^= NEGBIT_MIDUINT;
+		n1_arr[n1_arr[0]] ^= NEGBIT_UI32;
 		(*result) = infiX_addition(n1_arr, n2_arr);
-		(*result)[(*result)[0]] |= NEGBIT_MIDUINT;
+		(*result)[(*result)[0]] |= NEGBIT_UI32;
 	}
-	else if (b_msd & NEGBIT_MIDUINT)
+	else if (b_msd & NEGBIT_UI32)
 	{ /*8 - -5 = 8+5*/
-		n2_arr[n2_arr[0]] ^= NEGBIT_MIDUINT;
+		n2_arr[n2_arr[0]] ^= NEGBIT_UI32;
 		(*result) = infiX_addition(n1_arr, n2_arr);
 	}
 
