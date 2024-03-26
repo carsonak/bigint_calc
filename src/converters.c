@@ -1,5 +1,4 @@
 #include "infiX.h"
-/*#define TESTING_CONVERTERS*/
 
 /**
  * str_to_intarray - convert a string of numbers to a m_uint u32array.
@@ -220,72 +219,3 @@ void trim_intarr(m_uint *arr)
 
 	arr[0] = arr_size;
 }
-
-#ifdef TESTING_CONVERTERS
-
-/**
- * main - testing converters entry point
- *
- * Return: 0 on success, 1 on failure
- */
-int main(void)
-{
-	size_t i = 0, g = 0;
-	m_uint *ntemp = NULL, len = 0;
-	s_uchar *stemp = NULL;
-	char *nstr[] = {
-		"123456789",
-		"12345678912",
-		"1000000000",
-		"909897004000000000078234587",
-		"0",
-		"12",
-		"00000678",
-		"00000678912",
-		"000000000003456",
-		"00000100000000200000000300000000004000000",
-		"-909897004000000000078234587",
-		"-0005",
-		"-1",
-		"-0",
-		"a",
-		"-a",
-		"1f",
-		"fff",
-		NULL,
-	};
-
-	while (nstr[g])
-	{
-		printf("%s\n", &nstr[g][padding_chars_len(nstr[g], "0")]);
-		/*ntemp = str_to_intarray((s_uchar *)(&nstr[g][padding_chars_len(nstr[g], "0")]));*/
-		/*printf("%s\n", nstr[g]);*/
-		ntemp = str_to_intarray((s_uchar *)nstr[g]);
-		if (!ntemp)
-			return (EXIT_FAILURE);
-
-		len = ntemp[0];
-		for (i = len; i > 0; i--)
-		{
-			if (i < len)
-				printf("%09d", (m_uint)ntemp[i]);
-			else
-				printf("%d", (m_uint)ntemp[i]);
-		}
-
-		printf(" [%d: Blocks]\n", (int)len);
-		stemp = intarr_to_str(ntemp);
-		if (stemp)
-			printf("%s\n\n", (char *)stemp);
-		else
-			return (EXIT_FAILURE);
-
-		free(stemp);
-		ntemp = NULL;
-		stemp = NULL;
-		g++;
-	}
-
-	return (EXIT_SUCCESS);
-}
-#endif
