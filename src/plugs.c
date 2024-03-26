@@ -27,7 +27,7 @@ m_uint *mplug_low(m_uint **dest, m_uint *src)
 		len_s = src[0];
 
 	f = (len_d + len_s) ? (len_d + len_s) : 1;
-	final = calloc(f + 2, sizeof(*final));
+	final = calloc_check(f + 2, sizeof(*final));
 	if (final)
 	{
 		final[0] = f;
@@ -43,8 +43,6 @@ m_uint *mplug_low(m_uint **dest, m_uint *src)
 		trim_intarr(final);
 		*dest = final;
 	}
-	else
-		perror("Malloc Fail");
 
 	return (final);
 }
@@ -76,7 +74,7 @@ m_uint *mplug_num_low(m_uint **dest, m_uint src)
 		len_d = (*dest)[0];
 
 	f = len_d ? (len_d + 1) : 1;
-	final = calloc(f + 2, sizeof(*final));
+	final = calloc_check(f + 2, sizeof(*final));
 	if (final)
 	{
 		final[0] = f;
@@ -90,8 +88,6 @@ m_uint *mplug_num_low(m_uint **dest, m_uint src)
 
 		*dest = final;
 	}
-	else
-		perror("Malloc Fail");
 
 	return (final);
 }

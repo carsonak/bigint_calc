@@ -4,7 +4,7 @@
 #ifdef __cplusplus
 extern "C"
 {
-#endif /*__cplusplus*/
+#endif
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE /*program_invocation_name*/
@@ -55,24 +55,25 @@ extern "C"
 	 * @str: the number string
 	 * @len: length of the string
 	 * @digits: number of digits in the string
-	 * @is_positive: atleast one bit should be set if positive
+	 * @is_negative: atleast one bit should be set if negative
 	 */
 	typedef struct numstring_attributes
 	{
 		s_uchar *str;
 		size_t len;
 		size_t digits;
-		s_uchar is_positive;
+		s_uchar is_negative;
 	} str_attr;
 
 	void panic(const char *err_type);
 	void helpme(const char *which_help);
-	int parse_numstr(str_attr *numstr);
-	m_uint *str_to_intarray(s_uchar *num);
-	s_uchar *intarr_to_str(m_uint *u32a);
+	void *malloc_check(size_t size);
+	void *calloc_check(size_t items, size_t sizeof_item);
+	str_attr *parse_numstr(const char *numstr);
+	m_uint *str_to_intarray(const char *num_str);
+	char *intarr_to_str(m_uint *u32array);
 	void trim_intarr(m_uint *arr);
-	size_t pad_char(char *str, char *ch);
-	int _strcmp(const char *s1, const char *s2);
+	size_t padding_chars_len(char *str, char *ch);
 	void *memfill(void *mem, char b, size_t start, size_t nbytes);
 	void *_memcpy(void *dest, void *src, size_t n);
 	m_uint *mplug_low(m_uint **dest, m_uint *src);
@@ -86,6 +87,6 @@ extern "C"
 
 #ifdef __cplusplus
 }
-#endif /*__cplusplus*/
+#endif
 
 #endif /*_INFIX_H_*/

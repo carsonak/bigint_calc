@@ -41,12 +41,9 @@ m_uint *infiX_multiplication(m_uint *n1_arr, m_uint *n2_arr)
 		/*Size of c_mul = Array size of top + Current index of botm (b)*/
 		c_mulsz = top + b;
 		/*Memalloc c_mul (+1 for storing size of the array)*/
-		c_mul = calloc((c_mulsz + 1), sizeof(*c_mul));
+		c_mul = calloc_check((c_mulsz + 1), sizeof(*c_mul));
 		if (!c_mul)
-		{
-			perror("Malloc fail");
 			return (NULL);
-		}
 
 		c_mul[0] = c_mulsz;
 		byt_mul = 0;
@@ -113,11 +110,8 @@ m_uint *multiply_negatives(m_uint *n1_arr, m_uint *n2_arr)
 	}
 	else if (!n1_arr || !n2_arr || (n1_arr[0] == 1 && a_msd == 0) ||
 			 (n2_arr[0] == 1 && b_msd == 0))
-	{ /*Multiplication by zero or NULL*/
-		result = calloc(2, sizeof(*result));
-		if (!result)
-			perror("Malloc fail");
-	}
+		/*Multiplication by zero or NULL*/
+		result = calloc_check(2, sizeof(*result));
 
 	return (result);
 }

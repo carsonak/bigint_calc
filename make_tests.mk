@@ -14,11 +14,12 @@ ASSERT_SCRIPTS := $(shell find tests/src -name "*.c" -type f | grep -E -ve '.*Ru
 RUN_SCRIPTS := $(addsuffix _Runner.c,$(basename $(ASSERT_SCRIPTS)))
 T_BIN := $(ASSERT_SCRIPTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 T_DEP := $(T_BIN:%=%.d)
-T_RESULT := $(T_RESDIR)/output.txt
+T_RESOUT := $(T_RESDIR)/output.txt
+T_RESERR := $(T_RESDIR)/errors.txt
 YAML_CONFIG := $(TESTS_DIR)/tests_config.yaml
 
 test: $(T_BINDIR) $(T_RESDIR) $(T_BIN)
-	@for xtest in $(wordlist 3, $(words $^), $^); do ./$$xtest; done > $(T_RESULT); $(RUBY) $(RESULT_PARSER) $(T_RESULT)
+	@for xtest in $(wordlist 3, $(words $^), $^); do ./$$xtest; done 1> $(T_RESOUT) 2> $(T_RESERR); $(RUBY) $(RESULT_PARSER) $(T_RESOUT)
 
 $(T_SRCDIR)/%_Runner.c: $(T_SRCDIR)/%.c
 	@./$(GENARATOR) $< $@
@@ -36,11 +37,7 @@ $(T_RESDIR):
 	@mkdir -p $@
 
 tclean_bin:
-ifdef T_BINDIR
-	@$(RM) -vdr --preserve-root -- $(T_BINDIR)/*
-else
-	@echo "Tests' bin directory has not been defined."
-endif
+	@$(RM) -vdr --preserve-root -- $(T_BINDIR)
 
 tclean_run_scripts:
 	@$(RM) -vdr --preserve-root -- $(RUN_SCRIPTS)

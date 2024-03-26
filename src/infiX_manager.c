@@ -20,7 +20,7 @@ extern "C"
 char *infiX_manager(char *num1, char *op_symbol, char *num2)
 {
 	m_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
-	s_uchar *answer = NULL;
+	char *answer = NULL;
 	math_func *func_ptr = NULL;
 
 	if (!num1 || !op_symbol)
@@ -34,9 +34,9 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 	{
 		errno = 0;
 		/*Convert num1 and num2 to m_uint arrays first*/
-		num1_arr = str_to_intarray((s_uchar *)num1);
+		num1_arr = str_to_intarray(num1);
 		if (num1_arr)
-			num2_arr = str_to_intarray((s_uchar *)num2);
+			num2_arr = str_to_intarray(num2);
 
 		if (num1_arr && num2_arr)
 			ans_arr = func_ptr(num1_arr, num2_arr);
@@ -46,7 +46,7 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 	free(num2_arr);
 	if (ans_arr)
 	{
-		if (!_strcmp(op_symbol, "%"))
+		if (!strcmp(op_symbol, "%"))
 			answer = intarr_to_str(remain);
 		else
 			answer = intarr_to_str(ans_arr);
@@ -57,7 +57,7 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 	if (!func_ptr)
 		panic("ops"); /*Symbol not found*/
 
-	return ((char *)answer);
+	return (answer);
 }
 
 /**
@@ -79,7 +79,7 @@ math_func *get_math_func(char *op_symbol)
 	};
 
 	for (i = 0; op_symbol && operators[i].symbol; i++)
-		if (!_strcmp(operators[i].symbol, op_symbol))
+		if (!strcmp(operators[i].symbol, op_symbol))
 			return (operators[i].f);
 
 	return (NULL);

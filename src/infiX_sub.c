@@ -45,22 +45,17 @@ m_uint *infiX_subtraction(m_uint *n1_arr, m_uint *n2_arr)
 	/*Subtracting NULLs or matching numbers*/
 	if (res_sz < 1)
 	{
-		res = calloc(2, sizeof(*res));
-		if (!res)
-			perror("Malloc fail");
-		else
+		res = calloc_check(2, sizeof(*res));
+		if (res)
 			res[0] = 1;
 
 		return (res);
 	}
 
 	diff = res_sz;
-	res = calloc((res_sz + 1), sizeof(*res));
+	res = calloc_check((res_sz + 1), sizeof(*res));
 	if (!res)
-	{
-		perror("Malloc fail");
 		return (NULL);
-	}
 
 	res[0] = res_sz;
 	while ((n1_i <= a_size || n2_i <= b_size) && res_i <= res_sz)

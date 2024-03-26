@@ -36,22 +36,17 @@ m_uint *infiX_addition(m_uint *n1_arr, m_uint *n2_arr)
 	sum_sz = ((a_sz > b_sz) ? a_sz : b_sz) + 1;
 	if (sum_sz < 1)
 	{
-		sum = calloc(2, sizeof(*sum));
+		sum = calloc_check(2, sizeof(*sum));
 		if (sum)
 			sum[0] = 1;
-		else
-			perror("Malloc fail");
 
 		return (sum);
 	}
 
 	/*Memalloc sum_array (+1 for storing size)*/
-	sum = calloc((sum_sz + 1), sizeof(*sum));
+	sum = calloc_check((sum_sz + 1), sizeof(*sum));
 	if (!sum)
-	{
-		perror("Malloc fail");
 		return (NULL);
-	}
 
 	sum[0] = sum_sz;
 	while (g <= a_sz || h <= b_sz || byt_sum > 0)

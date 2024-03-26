@@ -2,161 +2,176 @@
 /*#define TESTING_CONVERTERS*/
 
 /**
- * str_to_intarray - convert a string of numbers to a m_uint array.
+ * str_to_intarray - convert a string of numbers to a m_uint u32array.
  * @num_str: a pointer to a string of numbers
  *
- * Description: This function converts a string of numbers to a m_uint array.
- * The array will be in little endian order whereby the lower value numbers
+ * Description: This function converts a string of numbers to a m_uint u32array.
+ * The u32array will be in little endian order whereby the lower value numbers
  * will be placed in the lower indices. Index 0 will have a value indicating
- * the size of the array.
+ * the size of the u32array.
  *
- * Return: pointer to an m_uint array, NULL on failure
+ * Return: pointer to an m_uint u32array, NULL on failure
  */
-m_uint *str_to_intarray(s_uchar *num_str)
+m_uint *str_to_intarray(const char *num_str)
 {
-	m_uint *array = NULL;
-	size_t arr_size = 0, len = 0, h = 0;
-	int i = 0, g = 0, negative = '\0';
+	m_uint *u32array = NULL;
+	size_t arr_size = 0, h = 0;
+	int i = 0, g = 0;
+	str_attr *attrs = NULL;
 
-	if (!num_str)
+	if (!num_str || !num_str[0])
 	{
-		array = calloc(2, sizeof(*array));
-		if (array)
-			array[0] = 1;
+		u32array = calloc_check(2, sizeof(*u32array));
+		if (u32array)
+			u32array[0] = 1;
 
-		return (array);
+		return (u32array);
 	}
 
-	/*Check if number is negative*/
-	if (num_str[0] == '-')
-	{
-		num_str++;
-		negative = '-';
-	}
+	attrs = parse_numstr(num_str);
+	if (!attrs)
+		return (NULL);
 
-	/*Remove leading zeros*/
-	num_str += pad_char((char *)num_str, "0");
-	for (len = 0; num_str[len] >= '0' && num_str[len] <= '9'; len++)
-		;
-
-	if (!len)
+	arr_size = (attrs->digits / MID_MAX_DIGITS) + ((attrs->digits % MID_MAX_DIGITS) ? 1 : 0);
+	u32array = calloc_check((arr_size + 1), sizeof(*u32array));
+	if (!u32array)
 	{
-		panic("base"); /*Insufficient digits*/
+		free(attrs);
 		return (NULL);
 	}
 
-	arr_size = (len / MID_MAX_DIGITS) + ((len % MID_MAX_DIGITS) ? 1 : 0);
-	array = calloc((arr_size + 1), sizeof(*array));
-	if (!array)
-	{
-		perror("Malloc Fail");
-		return (NULL);
-	}
-
-	/*Index 0 will have the size of the array*/
-	array[0] = arr_size;
+	/*Index 0 will have the size of the u32array*/
+	u32array[0] = arr_size;
 	/*The number in the string will be read from the least significant digit*/
-	for (h = 1, g = (len - 1); h <= arr_size && g >= 0; h++)
+	for (h = 1, g = (attrs->len - 1); h <= arr_size && g >= 0; h++)
 	{
-		for (i = 0; i < MID_MAX_DIGITS && (g - i) >= 0; i++)
-			array[h] += (num_str[g - i] - '0') * (m_uint)(pow(10, i));
+		i = 0;
+		while (i < MID_MAX_DIGITS && (g - i) >= 0)
+		{
+			if (attrs->str[g - i] >= '0' && attrs->str[g - i] <= '9')
+			{
+				u32array[h] += (attrs->str[g - i] - '0') * (m_uint)(pow(10, i));
+				i++;
+			}
+			else
+				g--;
+		}
 
 		g -= i;
 	}
 
-	if (negative && array[arr_size] > 0)
-		array[arr_size] |= NEGBIT_UI32;
+	if (attrs->is_negative && u32array[arr_size] > 0)
+		u32array[arr_size] |= NEGBIT_UI32;
 
-	return (array);
+	free(attrs->str);
+	free(attrs);
+	return (u32array);
 }
 
 /**
- * parse_numstr -
+ * parse_numstr - strip the string of some leading chars and collect info
+ * @num_str: a string of numbers.
+ *
+ * Description: the string will be stripped of leading "0", "," or " ". The
+ * returned struct will store a copy of this resultant string, its length and
+ * number of digits in it.
+ *
+ * Return: a struct with useful info about the number string.
  */
-int parse_numstr(str_attr *numstr)
+str_attr *parse_numstr(const char *num_str)
 {
-	size_t len = 0, digits = 0;
+	size_t i = 0;
+	str_attr ns = {(s_uchar *)num_str, 1, 0, 0}, *attributes = NULL;
 
-	if (!numstr)
-		return (0);
+	if (!num_str || !num_str[0])
+		return (NULL);
 
-	if (numstr->str[0] == '-')
+	if (ns.str[0] == '-')
 	{
-		numstr->str++;
-		numstr->is_positive = 0;
+		ns.str++;
+		ns.is_negative = 1;
 	}
-	else
-		numstr->is_positive = 1;
 
-	numstr->str += pad_char((char *)numstr->str, "0, ");
-	while (numstr->str && numstr->str[len])
+	ns.str += padding_chars_len((char *)ns.str, "0, ");
+	for (i = 0; ns.str && ns.str[i]; i++)
 	{
-		if (numstr->str[len] >= '0' && numstr->str[len] <= '9')
-			digits++;
-		else if (numstr->str[len] == ',' || numstr->str[len] <= ' ')
-			len++;
-		else
+		if (ns.str[i] >= '0' && ns.str[i] <= '9')
 		{
-			return (0);
+			ns.digits++;
+			ns.len = i + 1;
+		}
+		else if (ns.str[i] != ',' && ns.str[i] != ' ')
+		{
+			panic("Unrecognised character");
+			return (NULL);
+		}
+	}
+
+	attributes = calloc_check(1, sizeof(*attributes));
+	if (attributes)
+	{
+		attributes->str = (s_uchar *)strndup((char *)ns.str, ns.len);
+		if (!attributes->str)
+		{
+			perror("Malloc fail");
+			free(attributes);
+			return (NULL);
 		}
 
-		len++;
+		attributes->len = ns.len;
+		attributes->digits = ns.digits;
+		attributes->is_negative = ns.is_negative;
 	}
 
-	numstr->len = len;
-	numstr->digits = digits;
-	return (1);
+	return (attributes);
 }
 
 /**
- * intarr_to_str - convert a m_uint array to a string of numbers.
- * @array: a m_uint array
+ * intarr_to_str - convert a m_uint u32array to a string of numbers.
+ * @u32array: a m_uint u32array
  *
- * Description: This function converts a m_uint array to a string of numbers.
- * The array should be in little endian order whereby the lower value numbers
+ * Description: This function converts a m_uint u32array to a string of numbers.
+ * The u32array should be in little endian order whereby the lower value numbers
  * will be placed in the lower indices. Index 0 will have a value indicating
- * the size of the array.
+ * the size of the u32array.
  *
  * Return: a pointer to a string of numbers, NULL on failure
  */
-s_uchar *intarr_to_str(m_uint *array)
+char *intarr_to_str(m_uint *u32array)
 {
 	size_t arr_size = 0, len = 0, g = 0, h = 0, i = 0;
-	s_uchar *num_str = NULL, negative = '\0';
+	char *num_str = NULL, negative = '\0';
 	ssize_t temp = 0, div = 1;
 
-	if (!array)
+	if (!u32array)
 		return (NULL);
 
-	arr_size = array[0];
+	arr_size = u32array[0];
 	/*Checking if the number is negative*/
-	if (array[arr_size] > NEGBIT_UI32)
+	if (u32array[arr_size] > NEGBIT_UI32)
 	{
-		array[arr_size] ^= NEGBIT_UI32;
+		u32array[arr_size] ^= NEGBIT_UI32;
 		len += 1;
 		negative = '-';
 	}
 
-	trim_intarr(array);
-	arr_size = array[0];
+	trim_intarr(u32array);
+	arr_size = u32array[0];
 	len += arr_size * MID_MAX_DIGITS;
-	num_str = calloc((len + 1), sizeof(*num_str));
+	num_str = calloc_check((len + 1), sizeof(*num_str));
 	if (!num_str)
-	{
-		perror("Malloc Fail");
 		return (NULL);
-	}
 
 	if (negative)
 		num_str++;
 
-	temp = array[arr_size];
+	temp = u32array[arr_size];
 	while (temp / div >= 10)
 		div *= 10;
 
 	for (h = arr_size, g = 0; h > 0 && g < len; h--)
 	{
-		temp = array[h];
+		temp = u32array[h];
 		for (i = 0; div && (g + i) < len; i++)
 		{
 			num_str[g + i] = (temp / div) + '0';
@@ -178,7 +193,7 @@ s_uchar *intarr_to_str(m_uint *array)
 }
 
 /**
- * trim_intarr - trims empty spaces from the end of an int array
+ * trim_intarr - trims empty spaces from the i of an int u32array
  * @arr: pointer to the m_uint arrary
  */
 void trim_intarr(m_uint *arr)
@@ -231,8 +246,8 @@ int main(void)
 
 	while (nstr[g])
 	{
-		printf("%s\n", &nstr[g][pad_char(nstr[g], "0")]);
-		/*ntemp = str_to_intarray((s_uchar *)(&nstr[g][pad_char(nstr[g], "0")]));*/
+		printf("%s\n", &nstr[g][padding_chars_len(nstr[g], "0")]);
+		/*ntemp = str_to_intarray((s_uchar *)(&nstr[g][padding_chars_len(nstr[g], "0")]));*/
 		/*printf("%s\n", nstr[g]);*/
 		ntemp = str_to_intarray((s_uchar *)nstr[g]);
 		if (!ntemp)

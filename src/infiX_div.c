@@ -54,12 +54,9 @@ m_uint *infiX_division(m_uint *dividend, m_uint *divisor)
 
 	len_quotient = (len_dend - len_sor) + 1;
 	/*Length of remain will never be greater than len_sor + 1*/
-	remain = calloc(len_sor + 1, sizeof(*remain));
+	remain = calloc_check(len_sor + 1, sizeof(*remain));
 	if (!remain)
-	{
-		perror("Malloc fail");
 		return (NULL);
-	}
 
 	len_rem = len_sor;
 	remain[0] = len_rem;
@@ -201,11 +198,11 @@ int zero_result_check(m_uint *dvdend, m_uint *dvsor, m_uint **quotient)
 		if (l_dvdend < 1)
 			l_dvdend = 1;
 
-		*quotient = calloc(2, sizeof(**quotient));
+		*quotient = calloc_check(2, sizeof(**quotient));
 		if (*quotient)
 			(*quotient)[0] = 1;
 
-		remain = calloc(l_dvdend + 1, sizeof(*remain));
+		remain = calloc_check(l_dvdend + 1, sizeof(*remain));
 		if (remain)
 		{
 			remain[0] = l_dvdend;
@@ -213,13 +210,13 @@ int zero_result_check(m_uint *dvdend, m_uint *dvsor, m_uint **quotient)
 				remain[nd_i] = dvdend[nd_i];
 		}
 
-		if (!(*quotient) || !remain)
-			perror("Malloc fail");
-
 		return (1);
 	}
 	else if (!dvsor || (l_dvsor == 1 && dvsor[1] == 0))
+	{
+		panic("division by zero");
 		return (1);
+	}
 
 	return (0);
 }
