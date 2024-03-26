@@ -25,6 +25,7 @@ RES_ERR := $(T_RESULTS)/errors.txt
 test: $(T_BINARY) $(T_RESULTS) $(T_RUNNERS) $(T_BINS)
 	@for xtest in $(wordlist 4, $(words $^), $^); do ./$$xtest; done 1> $(RES_OUT) 2> $(RES_ERR) &
 	@$(RUBY) $(RESULT_PARSER) $(RES_OUT)
+	@echo
 	@./$(ERROR_PARSER) $(RES_ERR)
 
 $(T_RUNNERS)/%_Runner.c: $(T_SOURCES)/%.c

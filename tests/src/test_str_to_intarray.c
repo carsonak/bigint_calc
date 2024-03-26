@@ -48,5 +48,201 @@ void test_under10Digits(void)
 {
 	m_uint expected[3] = {1, 123456789, 0};
 
-	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456789"), 2, "123456789 => [1, 123456789]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456789"), 2, "=> [1, 123456789]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123 456 789"), 2, "'123 456 789' => [1, 123456789]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123,456,789"), 2, "123,456,789 => [1, 123456789]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123, 456, 789"), 2, "'123, 456, 789' => [1, 123456789]");
+
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("   123 456789"), 2, "'   123 456789' => [1, 123456789]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1 2 34 56 789   "), 2, "'1 2 34 56 789   ' => [1, 123456789]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray(",,123, ,456 7,89"), 2, "',,123, ,456 7,89' => [1, 123456789]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123,456,789, ,,"), 2, "'123,456,789, ,,' => [1, 123456789]");
+
+	expected[1] = 0;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("00"), 2, "00 => [1, 0]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-0"), 2, "'-0' => [1, 0]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("   0"), 2, "'   0' => [1, 0]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("0, 0"), 2, "'0, 0' => [1, 0]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("0,0"), 2, "'0,0' => [1, 0]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("0000,,,"), 2, "'0000,,,' => [1, 0]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("   000,  000,   "), 2, "'   000,  000,   ' => [1, 0]");
+
+	expected[1] = 1 + (NEGBIT_UI32);
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1"), 2, "'-1' => [1, 1 + (1 << 30)]");
+}
+
+void test_leading0(void)
+{
+	m_uint expected[3] = {1, 12345, 0};
+
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("000, 123, 45"), 2, "'000, 123, 45' => [1, 12345]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("00000123, 45"), 2, "'00000123, 45' => [1, 12345]");
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("000 000 000 000 123, 45"), 2, "'000 000 000 000 123, 45' => [1, 12345]");
+	expected[1] = 5 + (NEGBIT_UI32);
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-00005"), 2, "'-00005' => [1, 5 + (1 << 30)]");
+}
+
+/**
+ *
+ */
+void test_input1Billion(void)
+{
+	m_uint expected[5] = {2, 0, 1, 0};
+
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1 000000000"), 3, "'1 000000000' => [1, 0, 1]");
+}
+
+void test_0sandwich(void)
+{
+	m_uint expected[7] = {3, 78234587, 0, 909897004, 0, 0, 0};
+
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("909897004 000000000 078234587"), 4, "'909897004 000000000 078234587' => [3, 78234587, 0, 909897004]");
+
+	expected[3] += (NEGBIT_UI32);
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-,909897004, 000000000, 078234587,"), 4, "'-,909897004, 000000000, 078234587,' => [3, 78234587, 0, 909897004 + (1 << 30)]");
+
+	expected[0] = 4;
+	expected[1] = 4000000;
+	expected[2] = 300000000;
+	expected[3] = 200000000;
+	expected[4] = 100000000;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("00000,100000000,200000000,300000000,004000000"), 5, "'00000,100000000,200000000,300000000,004000000' => [4, 4000000, 300000000, 200000000, 100000000]");
+}
+
+/**
+ * test_increaseTo27Digits - gradual increase from 0 digits to 27 digits
+ */
+void test_increaseTo27Digits(void)
+{
+	m_uint expected[5] = {1, 0, 0, 0};
+
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("0"), 2, "'0' => [1, 0]");
+	expected[1] = 1;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1"), 2, "'1' => [1, 1]");
+	expected[1] = 12;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12"), 2, "'12' => [1, 12]");
+	expected[1] = 123;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123"), 2, "'123' => [1, 123]");
+	expected[1] = 1234;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1234"), 2, "'1234' => [1, 1234]");
+	expected[1] = 12345;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12345"), 2, "'12345' => [1, 12345]");
+	expected[1] = 123456;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456"), 2, "'123456' => [1, 123456]");
+	expected[1] = 1234567;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1234567"), 2, "'1234567' => [1, 1234567]");
+	expected[1] = 12345678;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12345678"), 2, "'12345678' => [1, 12345678]");
+	expected[1] = 123456789;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456789"), 2, "'123456789' => [1, 123456789]");
+
+	expected[0] += 1;
+	expected[2] = 1;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1 123456789"), 3, "'1 123456789' => [1, 123456789, 1]");
+	expected[2] = 12;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12 123456789"), 3, "'12 123456789' => [1, 123456789, 12]");
+	expected[2] = 123;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123 123456789"), 3, "'123 123456789' => [1, 123456789, 123]");
+	expected[2] = 1234;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1234 123456789"), 3, "'1234 123456789' => [1, 123456789, 1234]");
+	expected[2] = 12345;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12345 123456789"), 3, "'12345 123456789' => [1, 123456789, 12345]");
+	expected[2] = 123456;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456 123456789"), 3, "'123456 123456789' => [1, 123456789, 123456]");
+	expected[2] = 1234567;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1234567 123456789"), 3, "'1234567 123456789' => [1, 123456789, 1234567]");
+	expected[2] = 12345678;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12345678 123456789"), 3, "'12345678 123456789' => [1, 123456789, 12345678]");
+	expected[2] = 123456789;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456789 123456789"), 3, "'123456789 123456789' => [1, 123456789, 123456789]");
+
+	expected[0] += 1;
+	expected[3] = 1;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1 123456789 123456789"), 4, "'1 123456789 123456789' => [1, 123456789, 123456789, 1]");
+	expected[3] = 12;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12 123456789 123456789"), 4, "'12 123456789 123456789' => [1, 123456789, 123456789, 12]");
+	expected[3] = 123;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123 123456789 123456789"), 4, "'123 123456789 123456789' => [1, 123456789, 123456789, 123]");
+	expected[3] = 1234;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1234 123456789 123456789"), 4, "'1234 123456789 123456789' => [1, 123456789, 123456789, 1234]");
+	expected[3] = 12345;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12345 123456789 123456789"), 4, "'12345 123456789 123456789' => [1, 123456789, 123456789, 12345]");
+	expected[3] = 123456;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456 123456789 123456789"), 4, "'123456 123456789 123456789' => [1, 123456789, 123456789, 123456]");
+	expected[3] = 1234567;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1234567 123456789 123456789"), 4, "'1234567 123456789 123456789' => [1, 123456789, 123456789, 1234567]");
+	expected[3] = 12345678;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("12345678 123456789 123456789"), 4, "'12345678 123456789 123456789' => [1, 123456789, 123456789, 12345678]");
+	expected[3] = 123456789;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456789 123456789 123456789"), 4, "'123456789 123456789 123456789' => [1, 123456789, 123456789, 123456789]");
+}
+
+/**
+ * test_increaseTo27DigitsNegatives - gradual increase from 0 digits to 27 digits (negative values)
+ */
+void test_increaseTo27DigitsNegatives(void)
+{
+	m_uint expected[5] = {1, 0, 0, 0};
+
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-0"), 2, "'0' => [1, 0]");
+	expected[1] = (NEGBIT_UI32) + 1;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1"), 2, "'1' => [1, 1 + (1 << 30)]");
+	expected[1] = (NEGBIT_UI32) + 12;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12"), 2, "'12' => [1, 12 + (1 << 30)]");
+	expected[1] = (NEGBIT_UI32) + 123;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123"), 2, "'123' => [1, 123 + (1 << 30)]");
+	expected[1] = (NEGBIT_UI32) + 1234;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1234"), 2, "'1234' => [1, 1234 + (1 << 30)]");
+	expected[1] = (NEGBIT_UI32) + 12345;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12345"), 2, "'12345' => [1, 12345 + (1 << 30)]");
+	expected[1] = (NEGBIT_UI32) + 123456;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123456"), 2, "'123456' => [1, 123456 + (1 << 30)]");
+	expected[1] = (NEGBIT_UI32) + 1234567;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1234567"), 2, "'1234567' => [1, 1234567 + (1 << 30)]");
+	expected[1] = (NEGBIT_UI32) + 12345678;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12345678"), 2, "'12345678' => [1, 12345678 + (1 << 30)]");
+	expected[1] = (NEGBIT_UI32) + 123456789;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123456789"), 2, "'123456789' => [1, 123456789 + (1 << 30)]");
+
+	expected[0] += 1;
+	expected[1] -= (NEGBIT_UI32);
+	expected[2] = (NEGBIT_UI32) + 1;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1 123456789"), 3, "'1 123456789' => [1, 123456789, 1 + (1 << 30)]");
+	expected[2] = (NEGBIT_UI32) + 12;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12 123456789"), 3, "'12 123456789' => [1, 123456789, 12 + (1 << 30)]");
+	expected[2] = (NEGBIT_UI32) + 123;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123 123456789"), 3, "'123 123456789' => [1, 123456789, 123 + (1 << 30)]");
+	expected[2] = (NEGBIT_UI32) + 1234;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1234 123456789"), 3, "'1234 123456789' => [1, 123456789, 1234 + (1 << 30)]");
+	expected[2] = (NEGBIT_UI32) + 12345;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12345 123456789"), 3, "'12345 123456789' => [1, 123456789, 12345 + (1 << 30)]");
+	expected[2] = (NEGBIT_UI32) + 123456;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123456 123456789"), 3, "'123456 123456789' => [1, 123456789, 123456 + (1 << 30)]");
+	expected[2] = (NEGBIT_UI32) + 1234567;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1234567 123456789"), 3, "'1234567 123456789' => [1, 123456789, 1234567 + (1 << 30)]");
+	expected[2] = (NEGBIT_UI32) + 12345678;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12345678 123456789"), 3, "'12345678 123456789' => [1, 123456789, 12345678 + (1 << 30)]");
+	expected[2] = (NEGBIT_UI32) + 123456789;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123456789 123456789"), 3, "'123456789 123456789' => [1, 123456789, 123456789 + (1 << 30)]");
+
+	expected[0] += 1;
+	expected[2] -= (NEGBIT_UI32);
+	expected[3] = (NEGBIT_UI32) + 1;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1 123456789 123456789"), 4, "'1 123456789 123456789' => [1, 123456789, 123456789, 1 + (1 << 30)]");
+	expected[3] = (NEGBIT_UI32) + 12;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12 123456789 123456789"), 4, "'12 123456789 123456789' => [1, 123456789, 123456789, 12 + (1 << 30)]");
+	expected[3] = (NEGBIT_UI32) + 123;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123 123456789 123456789"), 4, "'123 123456789 123456789' => [1, 123456789, 123456789, 123 + (1 << 30)]");
+	expected[3] = (NEGBIT_UI32) + 1234;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1234 123456789 123456789"), 4, "'1234 123456789 123456789' => [1, 123456789, 123456789, 1234 + (1 << 30)]");
+	expected[3] = (NEGBIT_UI32) + 12345;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12345 123456789 123456789"), 4, "'12345 123456789 123456789' => [1, 123456789, 123456789, 12345 + (1 << 30)]");
+	expected[3] = (NEGBIT_UI32) + 123456;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123456 123456789 123456789"), 4, "'123456 123456789 123456789' => [1, 123456789, 123456789, 123456 + (1 << 30)]");
+	expected[3] = (NEGBIT_UI32) + 1234567;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1234567 123456789 123456789"), 4, "'1234567 123456789 123456789' => [1, 123456789, 123456789, 1234567 + (1 << 30)]");
+	expected[3] = (NEGBIT_UI32) + 12345678;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-12345678 123456789 123456789"), 4, "'12345678 123456789 123456789' => [1, 123456789, 123456789, 12345678 + (1 << 30)]");
+	expected[3] = (NEGBIT_UI32) + 123456789;
+	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-123456789 123456789 123456789"), 4, "'123456789 123456789 123456789' => [1, 123456789, 123456789, 123456789 + (1 << 30)]");
 }

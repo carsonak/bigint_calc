@@ -1,6 +1,8 @@
 #!/usr/bin/gawk -f
 
 BEGIN {
+  tempfile = "/tmp/aggregateErrorsData.txt"
+  print "=================== ERRORS =====================\n" > tempfile
 }
 
 {
@@ -9,13 +11,11 @@ BEGIN {
 }
 
 END {
-  temp = "tempfile.txt"
-  print "=================== ERRORS =====================" > temp
   # Print the count and the unique lines
   for (line in count) {
-      printf "[% 4d cases] %s\n", count[line], line >> temp
+      printf "[% 4d cases] %s\n", count[line], line >> tempfile
   }
 
-  system("cat " temp)
-  system("rm " temp)
+  system("cat " tempfile)
+  system("rm " tempfile)
 }

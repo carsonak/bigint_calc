@@ -22,21 +22,21 @@ extern "C"
 	typedef uint64_t l_uint;
 	typedef uint32_t m_uint;
 	typedef uint8_t s_uchar;
-	/* math_func: a function that takes in 2 int arrays and returns an int array*/
+	/*math_func: a function that takes in 2 int arrays and returns an int array.*/
 	typedef m_uint *math_func(m_uint *, m_uint *);
 
-/*Max number of digits m_uint should hold*/
+/*Max number of digits m_uint should hold.*/
 #define MID_MAX_DIGITS (9)
-/*Max size for m_uint: 10^9*/
+/*Max size for m_uint: 10^9.*/
 #define MID_MAX_VAL (1000000000)
-/*Max nnumber of digits for uint64_t*/
+/*Max nnumber of digits for uint64_t.*/
 #define HI_MAX_DIGITS (MID_MAX_DIGITS * MID_MAX_DIGITS)
-/*Max size for uint64_t calculations: 10^18*/
+/*Max size for uint64_t calculations: 10^18.*/
 #define HI_MAX_VAL (MID_MAX_VAL * MID_MAX_VAL)
-/*m_uint negative bit toggle*/
+/*Negative bit toggle for m_uint types.*/
 #define NEGBIT_UI32 (1 << 30)
 
-	/*A dynamically allocated buffer to store remainders of division*/
+	/*A dynamically allocated buffer to store remainders of division.*/
 	extern m_uint *remain;
 
 	/**
