@@ -1,3 +1,4 @@
+#!/usr/bin/make -f
 # Beware of trailing white spaces.
 BINARY := math
 CC := gcc
@@ -22,6 +23,7 @@ INC_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
 HARDENING_FLAGS := -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-strong -fstack-clash-protection -fPIE
 DEBUG_FLAGS := -g -Og
 WARN_FLAGS := -std=c17 -Wall -Werror -Wextra -Wformat -Wformat-security -pedantic
+
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS) $(HARDENING_FLAGS)
 CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))
@@ -35,15 +37,15 @@ $(BINARY): $(OBJ)
 
 # @< - name of only the first prequisite
 # @D - the directory of the target
-$(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # Static rule for object files compiled to obj directory
 # https://www.gnu.org/software/make/manual/html_node/Static-versus-Implicit.html
+$(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-release: DEBUG_FLAGS := -O3
 # Redefining CFLAGS for release build
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
+release: DEBUG_FLAGS := -O3
 release: fclean all
 
 clean:

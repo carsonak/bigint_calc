@@ -19,16 +19,22 @@ m_uint *str_to_intarray(const char *num_str)
 	int i = 0, g = 0;
 	str_attr *attrs = NULL;
 
-	if (!num_str || !num_str[0])
+	attrs = parse_numstr(num_str);
+	if (!num_str || !num_str[0] || (attrs && !attrs->digits))
 	{
 		u32array = calloc_check(2, sizeof(*u32array));
 		if (u32array)
 			u32array[0] = 1;
 
+		if (attrs)
+		{
+			free(attrs->str);
+			free(attrs);
+		}
+
 		return (u32array);
 	}
 
-	attrs = parse_numstr(num_str);
 	if (!attrs)
 		return (NULL);
 
@@ -102,7 +108,12 @@ str_attr *parse_numstr(const char *num_str)
 		}
 		else if (ns.str[i] != ',' && ns.str[i] != ' ')
 		{
-			panic("Unrecognised character");
+			if ((ns.str[i] >= 'a' && ns.str[i] <= 'z') ||
+				(ns.str[i] >= 'A' && ns.str[i] <= 'Z'))
+				panic("base");
+			else
+				panic("invalid char");
+
 			return (NULL);
 		}
 	}

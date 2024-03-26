@@ -43,16 +43,16 @@ void test_nullInputs(void)
  */
 void test_invalidInputs(void)
 {
-	char c = 0;
+	char c[2] = {0};
 
 	TEST_ASSERT_NULL_MESSAGE(parse_numstr("123-456-789"), "123-456-789");
 	TEST_ASSERT_NULL_MESSAGE(parse_numstr("--40"), "--40");
 	TEST_ASSERT_NULL_MESSAGE(parse_numstr("839475+8889"), "839475+8889");
 	TEST_ASSERT_NULL_MESSAGE(parse_numstr("Two"), "Two");
-	for (c = 0; c < 127; c++)
+	for (c[0] = 0; c[0] < 127; c[0]++)
 	{
-		if (!(c >= '0' && c <= '9') && c != ' ' && c != ',' && c != '-')
-			TEST_ASSERT_NULL_MESSAGE(parse_numstr(&c), &c);
+		if (!(c[0] >= '0' && c[0] <= '9') && c[0] != ' ' && c[0] != ',' && c[0] != '-')
+			TEST_ASSERT_NULL_MESSAGE(parse_numstr(c), c);
 	}
 }
 
@@ -118,8 +118,30 @@ void test_onlyNegatives(void)
  */
 void test_validInputs(void)
 {
-	char *input = "123456789";
-	str_attr expected = {(s_uchar *)"123456789", 9, 9, 0};
+	str_attr expected = {(s_uchar *)"0", 1, 1, 0};
 
-	str_attr_assert(&expected, parse_numstr(input), __LINE__, input);
+	str_attr_assert(&expected, parse_numstr("0"), __LINE__, "0");
+	str_attr_assert(&expected, parse_numstr("00000"), __LINE__, "00000");
+	str_attr_assert(&expected, parse_numstr("000, 000"), __LINE__, "000, 000");
+	str_attr_assert(&expected, parse_numstr("     0"), __LINE__, "     0");
+	expected.str = (s_uchar *)"1234567";
+	expected.len = 7;
+	expected.digits = 7;
+	str_attr_assert(&expected, parse_numstr("1234567"), __LINE__, "1234567");
+	expected.str = (s_uchar *)"1,234,567";
+	expected.len = 9;
+	str_attr_assert(&expected, parse_numstr("1,234,567"), __LINE__, ",1,234,567");
+	expected.str = (s_uchar *)"1 234 567";
+	str_attr_assert(&expected, parse_numstr(" 1 234 567"), __LINE__, " 1 234 567");
+	expected.str = (s_uchar *)"1234567";
+	expected.len = 7;
+	str_attr_assert(&expected, parse_numstr("0001234567"), __LINE__, "0001234567");
+	expected.str = (s_uchar *)"1, 234, 56700";
+	expected.len = 13;
+	expected.digits = 9;
+	str_attr_assert(&expected, parse_numstr(",  1, 234, 56700"), __LINE__, "',  1, 234, 56700'");
+	str_attr_assert(&expected, parse_numstr(",  1, 234, 56700,"), __LINE__, "',  1, 234, 56700'");
+	str_attr_assert(&expected, parse_numstr("1, 234, 56700 "), __LINE__, "1, 234, 56700");
+	str_attr_assert(&expected, parse_numstr("1, 234, 56700                                  "), __LINE__, "'1, 234, 56700                                  '");
+	str_attr_assert(&expected, parse_numstr("1, 234, 56700,   ,   ,  ,, ,"), __LINE__, "'1, 234, 56700,   ,   ,  ,, ,'");
 }

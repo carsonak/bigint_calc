@@ -74,7 +74,6 @@ extern "C"
 	char *intarr_to_str(m_uint *u32array);
 	void trim_intarr(m_uint *arr);
 	size_t padding_chars_len(char *str, char *ch);
-	void *memfill(void *mem, char b, size_t start, size_t nbytes);
 	void *_memcpy(void *dest, void *src, size_t n);
 	m_uint *mplug_low(m_uint **dest, m_uint *src);
 	m_uint *mplug_num_low(m_uint **dest, m_uint src);

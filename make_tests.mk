@@ -3,51 +3,55 @@ RUBY := $(shell which ruby)
 GENARATOR := Unity/auto/generate_test_runner.rb
 # Unity result parsing script
 RESULT_PARSER := Unity/auto/parse_output.rb
+# Error file parser script
+ERROR_PARSER := $(TESTS_DIR)/aggregate_errors.awk
+YAML_CONFIG := $(TESTS_DIR)/tests_config.yaml
 
-T_SRCDIR := $(TESTS_DIR)/src
-T_BINDIR := $(TESTS_DIR)/bin
-T_RESDIR := $(TESTS_DIR)/results
+T_BINARY := $(TESTS_DIR)/bin
+T_SOURCES := $(TESTS_DIR)/src
+T_RESULTS := $(TESTS_DIR)/results
+T_RUNNERS := $(T_SOURCES)/runners
 UNITY_SRCDIR := Unity/src $(shell find Unity/extras -name 'src' -type d | grep -E -ve '.*fixture.*')
 
 UNITY_SCRIPTS := $(shell find $(UNITY_SRCDIR) -mount -name '*.c' -type f)
-ASSERT_SCRIPTS := $(shell find tests/src -name "*.c" -type f | grep -E -ve '.*Runner.c')
-RUN_SCRIPTS := $(addsuffix _Runner.c,$(basename $(ASSERT_SCRIPTS)))
-T_BIN := $(ASSERT_SCRIPTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
-T_DEP := $(T_BIN:%=%.d)
-T_RESOUT := $(T_RESDIR)/output.txt
-T_RESERR := $(T_RESDIR)/errors.txt
-YAML_CONFIG := $(TESTS_DIR)/tests_config.yaml
+ASSERT_SCRIPTS := $(wildcard $(T_SOURCES)/*.c)
+RUNNER_SCRIPTS := $(addsuffix _Runner.c,$(basename $(ASSERT_SCRIPTS:$(T_SOURCES)/%=$(T_RUNNERS)/%)))
 
-test: $(T_BINDIR) $(T_RESDIR) $(T_BIN)
-	@for xtest in $(wordlist 3, $(words $^), $^); do ./$$xtest; done 1> $(T_RESOUT) 2> $(T_RESERR); $(RUBY) $(RESULT_PARSER) $(T_RESOUT)
+T_BINS := $(ASSERT_SCRIPTS:$(T_SOURCES)/%.c=$(T_BINARY)/%)
+T_DEPS := $(T_BINS:%=%.d)
+RES_OUT := $(T_RESULTS)/output.txt
+RES_ERR := $(T_RESULTS)/errors.txt
 
-$(T_SRCDIR)/%_Runner.c: $(T_SRCDIR)/%.c
+test: $(T_BINARY) $(T_RESULTS) $(T_RUNNERS) $(T_BINS)
+	@for xtest in $(wordlist 4, $(words $^), $^); do ./$$xtest; done 1> $(RES_OUT) 2> $(RES_ERR) &
+	@$(RUBY) $(RESULT_PARSER) $(RES_OUT)
+	@./$(ERROR_PARSER) $(RES_ERR)
+
+$(T_RUNNERS)/%_Runner.c: $(T_SOURCES)/%.c
 	@./$(GENARATOR) $< $@
 	@echo 'Generated $@'
 
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
-$(T_BINDIR)/%: INC_FLAGS += $(addprefix -I,$(T_SRCDIR) $(UNITY_SRCDIR))
-$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(T_SRCDIR)/%_Runner.c $(UNITY_SCRIPTS) $(OBJ)
+$(T_BINARY)/%: INC_FLAGS += $(addprefix -I,$(T_SOURCES) $(UNITY_SRCDIR))
+$(T_BINARY)/%: $(T_SOURCES)/%.c $(T_RUNNERS)/%_Runner.c $(UNITY_SCRIPTS) $(OBJ)
 	$(CC) $(CFLAGS) $(filter-out %.h %main.o,$^) -o $@ $(LDLIBS)
 
-$(T_BINDIR):
+$(T_BINARY):
 	@mkdir -p $@
 
-$(T_RESDIR):
+$(T_RESULTS):
 	@mkdir -p $@
 
-tclean_bin:
-	@$(RM) -vdr --preserve-root -- $(T_BINDIR)
+$(T_RUNNERS):
+	@mkdir -p $@
 
-tclean_run_scripts:
-	@$(RM) -vdr --preserve-root -- $(RUN_SCRIPTS)
-
-tclean: tclean_bin tclean_run_scripts
+tclean:
+	@$(RM) -vdr --preserve-root -- $(T_BINARY) $(T_RUNNERS) $(T_RESULTS)
 
 retest: tclean test
 
+.PHONY: test retest tclean
 # Prevent automatic deletion of intermediate files
 # https://www.gnu.org/software/make/manual/html_node/Special-Targets.html#index-_002ePRECIOUS
-.PRECIOUS: $(RUN_SCRIPTS)
-.PHONY: test retest tclean tclean_bin tclean_run_scripts
--include $(T_DEP)
+.PRECIOUS: $(RUNNER_SCRIPTS)
+-include $(T_DEPS)

@@ -16,24 +16,22 @@ void panic(const char *err_type)
 	{
 		helpme(err_type++);
 	}
+	else if (!strcmp(err_type, "invlaid chars"))
+	{
+		fprintf(stderr, "The string contains an invalid character. ");
+		fprintf(stderr, "Valid characters [0-9].\n");
+	}
 	else if (!strcmp(err_type, "base"))
 	{
-		fprintf(stderr, "Only decimals (base 10) are currently supported.\n");
-		fprintf(stderr, "-Any character that does not represent a number in ");
-		fprintf(stderr, "the specified base will\n");
-		fprintf(stderr, " cause the rest of the string to be ignored.\n");
+		fprintf(stderr, "Only decimals (0-9) are currently supported.\n");
 	}
 	else if (!strcmp(err_type, "ops"))
 	{
-		fprintf(stderr, "OPERATORS:\n'+': addition, '-': subtraction,");
-		fprintf(stderr, " 'x': multiplication, '/': division,\n'%%': ");
-		fprintf(stderr, "modulus.\n");
+		fprintf(stderr, "OPERATORS:\n'+', '-', 'x', '/', '%%'\n");
 	}
 	else
 	{
-		fprintf(stderr, "USAGE: num1 operator [num2]\nFor operators requring ");
-		fprintf(stderr, "two numbers, second number will be assumed as 0\n");
-		fprintf(stderr, "if not given.\n");
+		fprintf(stderr, "USAGE: num1 operator [num2]\n");
 	}
 }
 
@@ -48,6 +46,13 @@ void helpme(const char *which_help)
 		printf("OPERATORS:\n'+': addition, '-': subtraction,");
 		printf(" 'x': multiplication, '/': division,\n'%%': ");
 		printf("modulus.\n");
+	}
+	else if (!strcmp(which_help, "base"))
+	{
+		fprintf(stderr, "Only decimals (0-9) are currently supported.\n");
+		fprintf(stderr, "-Any character that does not represent a number in ");
+		fprintf(stderr, "the specified base will\n");
+		fprintf(stderr, " cause the rest of the string to be ignored.\n");
 	}
 	else if (!strcmp(which_help, "usage"))
 	{

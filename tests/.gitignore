@@ -1,4 +1,6 @@
+# ignore result files
 results
+# ignore binary files
 bin
 # ignore auto genarated files
-src/*Runner.c
+runners

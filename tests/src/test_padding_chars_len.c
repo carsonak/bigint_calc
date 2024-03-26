@@ -28,9 +28,15 @@ void test_nullInputs(void)
  */
 void test_withASCII(void)
 {
-	TEST_ASSERT_EQUAL_size_t_MESSAGE(0, padding_chars_len(" ", " "), "[' ', ' ']");
+	char c[2] = {0}, text[20] = {0};
+
 	TEST_ASSERT_EQUAL_size_t_MESSAGE(4, padding_chars_len("    Ahem!   000", " "), "['    Ahem!   000', ' ']");
 	TEST_ASSERT_EQUAL_size_t_MESSAGE(0, padding_chars_len("123,456, 789", ","), "['123,456, 789', ',']");
+	for (c[0] = 0; c[0] < 127; c[0]++)
+	{
+		sprintf(text, "['%c', '%c']", *c, *c);
+		TEST_ASSERT_EQUAL_size_t_MESSAGE(0, padding_chars_len(c, c), text);
+	}
 }
 
 /**
