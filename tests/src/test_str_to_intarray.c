@@ -71,6 +71,9 @@ void test_under10Digits(void)
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-1"), 2, "'-1' => [1, 1 + (1 << 30)]");
 }
 
+/**
+ * test_leading0 - input has leading zeros
+ */
 void test_leading0(void)
 {
 	m_uint expected[3] = {1, 12345, 0};
@@ -83,7 +86,7 @@ void test_leading0(void)
 }
 
 /**
- *
+ * test_input1Billion - input has alot of trailing zeros
  */
 void test_input1Billion(void)
 {
@@ -92,6 +95,9 @@ void test_input1Billion(void)
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1 000000000"), 3, "'1 000000000' => [1, 0, 1]");
 }
 
+/**
+ * test_0sandwich - input has a embedded zeros
+ */
 void test_0sandwich(void)
 {
 	m_uint expected[7] = {3, 78234587, 0, 909897004, 0, 0, 0};
