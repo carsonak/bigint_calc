@@ -4,7 +4,7 @@
 extern "C"
 {
 #endif
-	static math_func *get_math_func(char *op_symbol);
+	static math_function *get_math_function(char *op_symbol);
 #ifdef __cplusplus
 }
 #endif
@@ -19,9 +19,9 @@ extern "C"
  */
 char *infiX_manager(char *num1, char *op_symbol, char *num2)
 {
-	m_uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
+	uint32_t *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
 	char *answer = NULL;
-	math_func *func_ptr = NULL;
+	math_function *func_ptr = NULL;
 
 	if (!num1 || !op_symbol)
 	{ /*Mandatory arguments missings*/
@@ -29,11 +29,11 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 		return (NULL);
 	}
 
-	func_ptr = get_math_func(op_symbol);
+	func_ptr = get_math_function(op_symbol);
 	if (func_ptr)
 	{
 		errno = 0;
-		/*Convert num1 and num2 to m_uint arrays first*/
+		/*Convert num1 and num2 to uint32_t arrays first*/
 		num1_arr = str_to_intarray(num1);
 		if (num1_arr)
 			num2_arr = str_to_intarray(num2);
@@ -47,12 +47,12 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 	if (ans_arr)
 	{
 		if (!strcmp(op_symbol, "%"))
-			answer = intarr_to_str(remain);
+			answer = intarr_to_str(remains);
 		else
 			answer = intarr_to_str(ans_arr);
 	}
 
-	free(remain);
+	free(remains);
 	free(ans_arr);
 	if (!func_ptr)
 		panic("ops"); /*Symbol not found*/
@@ -61,12 +61,12 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 }
 
 /**
- * get_math_func - return the function associated with the give operator
+ * get_math_function - return the function associated with the give operator
  * @op_symbol: the operator symbol
  *
  * Return: pointer to a function on success, NULL on failure
  */
-math_func *get_math_func(char *op_symbol)
+math_function *get_math_function(char *op_symbol)
 {
 	int i = 0;
 	op_func operators[] = {

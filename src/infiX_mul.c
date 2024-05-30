@@ -4,7 +4,7 @@
 extern "C"
 {
 #endif
-	static m_uint *multiply_negatives(m_uint *n1_arr, m_uint *n2_arr);
+	static uint32_t *multiply_negatives(uint32_t *n1_arr, uint32_t *n2_arr);
 #ifdef __cplusplus
 }
 #endif
@@ -16,11 +16,11 @@ extern "C"
  *
  * Return: pointer to result, NULL on failure
  */
-m_uint *infiX_multiplication(m_uint *n1_arr, m_uint *n2_arr)
+uint32_t *infiX_multiplication(uint32_t *n1_arr, uint32_t *n2_arr)
 {
-	l_uint byt_mul = 0;
+	uint64_t byt_mul = 0;
 	ssize_t top = -1, botm = -1, c_mulsz = 0, t = 1, b = 1;
-	m_uint *c_mul = NULL, *prod = NULL, *total = NULL;
+	uint32_t *c_mul = NULL, *prod = NULL, *total = NULL;
 
 	prod = multiply_negatives(n1_arr, n2_arr);
 	if (prod || errno)
@@ -49,7 +49,7 @@ m_uint *infiX_multiplication(m_uint *n1_arr, m_uint *n2_arr)
 		byt_mul = 0;
 		for (t = 1; t <= top; t++)
 		{
-			byt_mul += (l_uint)n1_arr[t] * (l_uint)n2_arr[b];
+			byt_mul += (uint64_t)n1_arr[t] * (uint64_t)n2_arr[b];
 			/*Offset to current index of botm*/
 			c_mul[(t - 1) + b] = byt_mul % MID_MAX_VAL;
 			byt_mul /= MID_MAX_VAL;
@@ -76,9 +76,9 @@ m_uint *infiX_multiplication(m_uint *n1_arr, m_uint *n2_arr)
  *
  * Return: pointer to the result, NULL on failure
  */
-m_uint *multiply_negatives(m_uint *n1_arr, m_uint *n2_arr)
+uint32_t *multiply_negatives(uint32_t *n1_arr, uint32_t *n2_arr)
 {
-	m_uint *result = NULL, a_msd = 0, b_msd = 0;
+	uint32_t *result = NULL, a_msd = 0, b_msd = 0;
 
 	trim_intarr(n1_arr);
 	trim_intarr(n2_arr);

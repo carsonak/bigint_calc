@@ -14,7 +14,7 @@ void tearDown(void)
 void test_simpleAdittion(void)
 {
 	uint32_t expected[2] = {1, 44};
-	m_uint num1[2] = {1, 22};
+	uint32_t num1[2] = {1, 22};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, infiX_addition(num1, num1), 2, "22 + 22 = 44");
 }
@@ -25,7 +25,7 @@ void test_simpleAdittion(void)
 void test_carryOverAddition(void)
 {
 	uint32_t expected[3] = {2, 951394658, 1};
-	m_uint num1[2] = {1, 975697329};
+	uint32_t num1[2] = {1, 975697329};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, infiX_addition(num1, num1), 2, "975,697,329 + 975,697,329 = 1,951,394,658");
 }
@@ -36,8 +36,8 @@ void test_carryOverAddition(void)
 void test_negativeAddPositive(void)
 {
 	uint32_t expected[2] = {1, 735919929};
-	m_uint num1[2] = {1, 975697329};
-	m_uint num2[2] = {1, (NEGBIT_UI32 + 239777400)};
+	uint32_t num1[2] = {1, 975697329};
+	uint32_t num2[2] = {1, (NEGBIT_UI32 + 239777400)};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, infiX_addition(num1, num2), 2, "975,697,329 + -239,777,400 = 735,919,929");
 	num2[1] = NEGBIT_UI32 + 239777400;
@@ -50,7 +50,7 @@ void test_negativeAddPositive(void)
 void test_negativeAddNegative(void)
 {
 	uint32_t expected[2] = {1, (NEGBIT_UI32 + 479554800)};
-	m_uint num1[2] = {1, (NEGBIT_UI32 + 239777400)};
+	uint32_t num1[2] = {1, (NEGBIT_UI32 + 239777400)};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, infiX_addition(num1, num1), 2, "-239,777,400 + -239,777,400 = -479554800");
 }

@@ -13,9 +13,7 @@
 void panic(const char *err_type)
 {
 	if (!err_type || (err_type && err_type[0] == 'H'))
-	{
-		helpme(err_type++);
-	}
+		helpme(err_type);
 	else if (!strcmp(err_type, "invlaid chars"))
 	{
 		fprintf(stderr, "The string contains an invalid character. ");
@@ -41,20 +39,20 @@ void panic(const char *err_type)
  */
 void helpme(const char *which_help)
 {
-	if (!strcmp(which_help, "ops"))
+	if (which_help && !strcmp(which_help, "Hops"))
 	{
 		printf("OPERATORS:\n'+': addition, '-': subtraction,");
 		printf(" 'x': multiplication, '/': division,\n'%%': ");
 		printf("modulus.\n");
 	}
-	else if (!strcmp(which_help, "base"))
+	else if (which_help && !strcmp(which_help, "Hbase"))
 	{
 		fprintf(stderr, "Only decimals (0-9) are currently supported.\n");
 		fprintf(stderr, "-Any character that does not represent a number in ");
 		fprintf(stderr, "the specified base will\n");
 		fprintf(stderr, " cause the rest of the string to be ignored.\n");
 	}
-	else if (!strcmp(which_help, "usage"))
+	else if (which_help && !strcmp(which_help, "Husage"))
 	{
 		printf("USAGE:\n%s num1 operator [num2]\n", program_invocation_name);
 		printf("For operators requring two numbers, second number will be ");

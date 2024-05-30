@@ -1,22 +1,22 @@
 #include "infiX.h"
 
 /**
- * str_to_intarray - convert a string of numbers to a m_uint u32array.
+ * str_to_intarray - convert a string of numbers to a uint32_t u32array.
  * @num_str: a pointer to a string of numbers
  *
- * Description: This function converts a string of numbers to a m_uint u32array.
+ * Description: This function converts a string of numbers to a uint32_t u32array.
  * The u32array will be in little endian order whereby the lower value numbers
  * will be placed in the lower indices. Index 0 will have a value indicating
  * the size of the u32array.
  *
- * Return: pointer to an m_uint u32array, NULL on failure
+ * Return: pointer to an uint32_t u32array, NULL on failure
  */
-m_uint *str_to_intarray(const char *num_str)
+uint32_t *str_to_intarray(const char *num_str)
 {
-	m_uint *u32array = NULL;
+	uint32_t *u32array = NULL;
 	size_t arr_size = 0, h = 0;
 	int i = 0, g = 0;
-	str_attr *attrs = NULL;
+	str_array *attrs = NULL;
 
 	attrs = parse_numstr(num_str);
 	if (!num_str || !num_str[0] || (attrs && !attrs->digits))
@@ -55,7 +55,7 @@ m_uint *str_to_intarray(const char *num_str)
 		{
 			if (attrs->str[g - i] >= '0' && attrs->str[g - i] <= '9')
 			{
-				u32array[h] += (attrs->str[g - i] - '0') * (m_uint)(pow(10, i));
+				u32array[h] += (attrs->str[g - i] - '0') * (uint32_t)(pow(10, i));
 				i++;
 			}
 			else
@@ -83,10 +83,10 @@ m_uint *str_to_intarray(const char *num_str)
  *
  * Return: a struct with useful info about the number string.
  */
-str_attr *parse_numstr(const char *num_str)
+str_array *parse_numstr(const char *num_str)
 {
 	size_t i = 0;
-	str_attr ns = {(s_uchar *)num_str, 1, 0, 0}, *attributes = NULL;
+	str_array ns = {(uint8_t *)num_str, 1, 0, 0}, *attributes = NULL;
 
 	if (!num_str || !num_str[0])
 		return (NULL);
@@ -120,7 +120,7 @@ str_attr *parse_numstr(const char *num_str)
 	attributes = calloc_check(1, sizeof(*attributes));
 	if (attributes)
 	{
-		attributes->str = (s_uchar *)strndup((char *)ns.str, ns.len);
+		attributes->str = (uint8_t *)strndup((char *)ns.str, ns.len);
 		if (!attributes->str)
 		{
 			perror("Malloc fail");
@@ -137,17 +137,17 @@ str_attr *parse_numstr(const char *num_str)
 }
 
 /**
- * intarr_to_str - convert a m_uint u32array to a string of numbers.
- * @u32array: a m_uint u32array
+ * intarr_to_str - convert a uint32_t u32array to a string of numbers.
+ * @u32array: a uint32_t u32array
  *
- * Description: This function converts a m_uint u32array to a string of numbers.
+ * Description: This function converts a uint32_t u32array to a string of numbers.
  * The u32array should be in little endian order whereby the lower value numbers
  * will be placed in the lower indices. Index 0 will have a value indicating
  * the size of the u32array.
  *
  * Return: a pointer to a string of numbers, NULL on failure
  */
-char *intarr_to_str(m_uint *u32array)
+char *intarr_to_str(uint32_t *u32array)
 {
 	size_t arr_size = 0, len = 0, g = 0, h = 0, i = 0;
 	char *num_str = NULL, negative = '\0';
@@ -204,9 +204,9 @@ char *intarr_to_str(m_uint *u32array)
 
 /**
  * trim_intarr - trims empty spaces from the i of an int u32array
- * @arr: pointer to the m_uint arrary
+ * @arr: pointer to the uint32_t arrary
  */
-void trim_intarr(m_uint *arr)
+void trim_intarr(uint32_t *arr)
 {
 	size_t arr_size = 0;
 

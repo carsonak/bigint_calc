@@ -4,18 +4,18 @@
 extern "C"
 {
 #endif
-	m_uint *remain = NULL;
+	uint32_t *remains = NULL;
 
 	static int
-	divide_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result);
+	divide_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result);
 
 	static int
-	zero_result_check(m_uint *dvdend, m_uint *dvsor, m_uint **quotient);
+	zero_result_check(uint32_t *dvdend, uint32_t *dvsor, uint32_t **quotient);
 
-	static int64_t get_quotient(m_uint *dvsor);
+	static int64_t get_quotient(uint32_t *dvsor);
 
 	static int64_t
-	adjust_quotient(m_uint dvsor_msd, m_uint *estimate, m_uint rem_msd,
+	adjust_quotient(uint32_t dvsor_msd, uint32_t *estimate, uint32_t rem_msd,
 					int64_t quotient_tmp);
 #ifdef __cplusplus
 }
@@ -27,19 +27,19 @@ extern "C"
  * @divisor: divisor
  *
  * Description: this function will store the remainder of any division
- * in a global variable "remain". This variable should be freed after
+ * in a global variable "remains". This variable should be freed after
  * this function has returned.
  *
  * Return: array with the result, NULL on failure
  */
-m_uint *infiX_division(m_uint *dividend, m_uint *divisor)
+uint32_t *infiX_division(uint32_t *dividend, uint32_t *divisor)
 {
 	size_t len_sor = 0, len_dend = 0, len_rem = 0, len_quotient = 0;
 	size_t nd_i = 0, r_i = 0, q_i = 0;
-	m_uint *quotient = NULL;
+	uint32_t *quotient = NULL;
 	int64_t hold = 0;
 
-	remain = NULL;
+	remains = NULL;
 	if (divide_negatives(dividend, divisor, &quotient))
 		return (quotient);
 
@@ -53,20 +53,20 @@ m_uint *infiX_division(m_uint *dividend, m_uint *divisor)
 		return (quotient);
 
 	len_quotient = (len_dend - len_sor) + 1;
-	/*Length of remain will never be greater than len_sor + 1*/
-	remain = calloc_check(len_sor + 1, sizeof(*remain));
-	if (!remain)
+	/*Length of remains will never be greater than len_sor + 1*/
+	remains = calloc_check(len_sor + 1, sizeof(*remains));
+	if (!remains)
 		return (NULL);
 
 	len_rem = len_sor;
-	remain[0] = len_rem;
-	/*Copy dividend into remain*/
+	remains[0] = len_rem;
+	/*Copy dividend into remains*/
 	for (nd_i = len_dend, r_i = len_rem; r_i > 0; nd_i--, r_i--)
-		remain[r_i] = dividend[nd_i];
+		remains[r_i] = dividend[nd_i];
 
-	if (remain[len_rem] < divisor[len_sor])
+	if (remains[len_rem] < divisor[len_sor])
 	{
-		if (!mplug_num_low(&remain, dividend[nd_i]))
+		if (!mplug_num_low(&remains, dividend[nd_i]))
 		{
 			free(quotient);
 			return (NULL);
@@ -78,10 +78,10 @@ m_uint *infiX_division(m_uint *dividend, m_uint *divisor)
 	for (q_i = len_quotient; q_i > 0; q_i--)
 	{
 		errno = 0;
-		len_rem = remain[0];
+		len_rem = remains[0];
 		for (; q_i && nd_i && len_rem < len_sor; q_i--, nd_i--, len_rem++)
 		{
-			if (!mplug_num_low(&remain, dividend[nd_i]) || !mplug_num_low(&quotient, 0))
+			if (!mplug_num_low(&remains, dividend[nd_i]) || !mplug_num_low(&quotient, 0))
 			{
 				free(quotient);
 				return (NULL);
@@ -97,7 +97,7 @@ m_uint *infiX_division(m_uint *dividend, m_uint *divisor)
 
 		if (nd_i > 0)
 		{
-			if (!mplug_num_low(&remain, dividend[nd_i]))
+			if (!mplug_num_low(&remains, dividend[nd_i]))
 				return (NULL);
 		}
 		else
@@ -106,7 +106,7 @@ m_uint *infiX_division(m_uint *dividend, m_uint *divisor)
 		nd_i--;
 	}
 
-	trim_intarr(remain);
+	trim_intarr(remains);
 	trim_intarr(quotient);
 	return (quotient);
 }
@@ -119,9 +119,9 @@ m_uint *infiX_division(m_uint *dividend, m_uint *divisor)
  *
  * Return: 1 if action taken (error or processed results), 0 on failure
  */
-int divide_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result)
+int divide_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result)
 {
-	m_uint a_msd = 0, b_msd = 0;
+	uint32_t a_msd = 0, b_msd = 0;
 
 	if (!result)
 	{
@@ -176,7 +176,7 @@ int divide_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result)
  *
  * Return: 1 if true, 0 if false
  */
-int zero_result_check(m_uint *dvdend, m_uint *dvsor, m_uint **quotient)
+int zero_result_check(uint32_t *dvdend, uint32_t *dvsor, uint32_t **quotient)
 {
 	ssize_t l_dvsor = -1, l_dvdend = -1, nd_i = 0;
 
@@ -202,12 +202,12 @@ int zero_result_check(m_uint *dvdend, m_uint *dvsor, m_uint **quotient)
 		if (*quotient)
 			(*quotient)[0] = 1;
 
-		remain = calloc_check(l_dvdend + 1, sizeof(*remain));
-		if (remain)
+		remains = calloc_check(l_dvdend + 1, sizeof(*remains));
+		if (remains)
 		{
-			remain[0] = l_dvdend;
+			remains[0] = l_dvdend;
 			for (nd_i = 1; dvdend && nd_i <= l_dvdend; nd_i++)
-				remain[nd_i] = dvdend[nd_i];
+				remains[nd_i] = dvdend[nd_i];
 		}
 
 		return (1);
@@ -222,28 +222,28 @@ int zero_result_check(m_uint *dvdend, m_uint *dvsor, m_uint **quotient)
 }
 
 /**
- * get_quotient - calculates the quotient of number currently in "remain"
+ * get_quotient - calculates the quotient of number currently in "remains"
  * @dvsor: divisor array
  *
- * Description: the current dividend is stored in the global array "remain"
+ * Description: the current dividend is stored in the global array "remains"
  * The function will try to estimate the precise quotient for the number
- * currently stored in "remain". The estimates may overshoot and undershoot
+ * currently stored in "remains". The estimates may overshoot and undershoot
  * and the function will use the difference to make the next estimate and
  * therefore will oscilate closer and closer to the answer.
  *
  * Return: the quotient, -1 on failure
  */
-int64_t get_quotient(m_uint *dvsor)
+int64_t get_quotient(uint32_t *dvsor)
 {
-	m_uint *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
+	uint32_t *rem_tmp = NULL, *mul_est = NULL, quot_tmp[] = {1, 0, 0};
 	int64_t hold = 0;
 
 	if (!dvsor)
 		return (-1);
 
-	hold = remain[remain[0]];
-	if (remain[0] > dvsor[0])
-		hold = (hold * MID_MAX_VAL) + (int64_t)remain[remain[0] - 1];
+	hold = remains[remains[0]];
+	if (remains[0] > dvsor[0])
+		hold = (hold * MID_MAX_VAL) + (int64_t)remains[remains[0] - 1];
 
 	quot_tmp[1] = hold / (int64_t)dvsor[dvsor[0]];
 	while (!rem_tmp ||
@@ -271,7 +271,7 @@ int64_t get_quotient(m_uint *dvsor)
 		mul_est = infiX_multiplication(dvsor, quot_tmp);
 		if (mul_est)
 		{
-			rem_tmp = infiX_subtraction(remain, mul_est);
+			rem_tmp = infiX_subtraction(remains, mul_est);
 			if (!rem_tmp)
 				return (-1);
 		}
@@ -279,7 +279,7 @@ int64_t get_quotient(m_uint *dvsor)
 			return (-1);
 	}
 
-	memmove(remain, rem_tmp, ((rem_tmp[0] + 1) * sizeof(*rem_tmp)));
+	memmove(remains, rem_tmp, ((rem_tmp[0] + 1) * sizeof(*rem_tmp)));
 	free(rem_tmp);
 	free(mul_est);
 	return (quot_tmp[1]);
@@ -294,15 +294,15 @@ int64_t get_quotient(m_uint *dvsor)
  *
  * Return: the adjusted quotient, -1 on failure
  */
-int64_t adjust_quotient(m_uint dvsor_msd, m_uint *estimate,
-						m_uint rem_msd, int64_t quotient_tmp)
+int64_t adjust_quotient(uint32_t dvsor_msd, uint32_t *estimate,
+						uint32_t rem_msd, int64_t quotient_tmp)
 {
-	m_uint *tmp_sub = NULL;
+	uint32_t *tmp_sub = NULL;
 	int64_t hold = 0, o_shoot = 0;
 
 	if (rem_msd & NEGBIT_UI32)
 	{ /*Decrease the quotient*/
-		tmp_sub = infiX_subtraction(estimate, remain);
+		tmp_sub = infiX_subtraction(estimate, remains);
 		if (!tmp_sub)
 			return (-1);
 

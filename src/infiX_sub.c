@@ -5,7 +5,7 @@ extern "C"
 {
 #endif
 	static int
-	subtract_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result);
+	subtract_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result);
 #ifdef __cplusplus
 }
 #endif
@@ -17,12 +17,12 @@ extern "C"
  *
  * Return: pointer to the result, NULL on failure
  */
-m_uint *infiX_subtraction(m_uint *n1_arr, m_uint *n2_arr)
+uint32_t *infiX_subtraction(uint32_t *n1_arr, uint32_t *n2_arr)
 {
 	ssize_t a_size = -1, b_size = -1, res_sz = -1, diff = 0;
 	ssize_t n1_i = 1, n2_i = 1, res_i = 1;
 	int64_t byt_res = 0;
-	m_uint *res = NULL;
+	uint32_t *res = NULL;
 
 	if (subtract_negatives(n1_arr, n2_arr, &res))
 		return (res);
@@ -109,9 +109,9 @@ m_uint *infiX_subtraction(m_uint *n1_arr, m_uint *n2_arr)
  *
  * Return: 1 if action taken (error or processed results), 0 if no action taken
  */
-int subtract_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result)
+int subtract_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result)
 {
-	m_uint a_msd = 0, b_msd = 0;
+	uint32_t a_msd = 0, b_msd = 0;
 
 	if (!result)
 	{

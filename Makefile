@@ -1,12 +1,12 @@
 #!/usr/bin/make -f
 # Beware of trailing white spaces.
 BINARY := math
-CC := gcc
+CC := clang
 SRC_DIR := src
 OBJ_DIR := obj
 TESTS_DIR := tests
 # All the sub-directories with .h files
-INCLUDE_DIRS = $(shell find $(SRC_DIR) -mount -name '*.h' -exec dirname {} \; | sort -u)
+INCLUDE_DIRS = include $(shell find $(SRC_DIR) -mount -name '*.h' -exec dirname {} \; | sort -u)
 
 # All .c files
 SRC = $(shell find $(SRC_DIR) -mount -name '*.c' -type f | sort)
@@ -15,17 +15,28 @@ OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track include files (i.e .h files)
 DEP_FILES = $(OBJ:.o=.d)
 
-# Linker flags
-LDLIBS := -lm
-LDFLAGS := -pie -Wl,-z,relro
+# https://clang.llvm.org/docs/AddressSanitizer.html
+ADDRESS_SANITISER := -fsanitize=address
+# https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
+UNDEFINED_SANITISER := -fsanitize=undefined
+# https://www.gnu.org/software/libc/manual/html_node/Source-Fortification.html
+HARDENING_FLAGS := -D_FORTIFY_SOURCE=2
+ifeq ($(CC),gcc)
+# https://gcc.gnu.org/onlinedocs/gcc-13.3.0/gcc/Instrumentation-Options.html#index-fstack-protector-strong
+  STACK_CHECKER := -fstack-protector-strong
+endif
+
 # Include flags
 INC_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
-HARDENING_FLAGS := -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS -fsanitize=undefined -fsanitize-undefined-trap-on-error -fstack-protector-strong -fstack-clash-protection -fPIE
-DEBUG_FLAGS := -g -Og
-WARN_FLAGS := -std=c17 -Wall -Werror -Wextra -Wformat -Wformat-security -pedantic
-
+# Linker flags
+LDLIBS := -lm
+LDFLAGS := -Wl,-z,relro
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
-CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) -MMD $(DEBUG_FLAGS) $(HARDENING_FLAGS)
+CPPFLAGS := -MMD
+DEBUG_FLAGS := -g -Og
+WARN_FLAGS := -std=c17 -Wall -Wextra -Wformat=2 -pedantic -Werror
+INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKER) -fsanitize-trap=all -fno-omit-frame-pointer
+CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) $(CPPFLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING_FLAGS)
 CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))
 
 all: $(BINARY)
@@ -46,6 +57,8 @@ $(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # Redefining CFLAGS for release build
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
 release: DEBUG_FLAGS := -O3
+release: INSTRUMENTATION_FLAGS :=
+release: HARDENING_FLAGS :=
 release: fclean all
 
 clean:

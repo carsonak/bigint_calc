@@ -5,7 +5,7 @@ extern "C"
 {
 #endif
 	static int
-	add_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result);
+	add_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result);
 #ifdef __cplusplus
 }
 #endif
@@ -17,11 +17,11 @@ extern "C"
  *
  * Return: pointer to result, NULL on failure
  */
-m_uint *infiX_addition(m_uint *n1_arr, m_uint *n2_arr)
+uint32_t *infiX_addition(uint32_t *n1_arr, uint32_t *n2_arr)
 {
 	ssize_t a_sz = -1, b_sz = -1, sum_sz = 0, g = 1, h = 1, k = 1;
 	int64_t byt_sum = 0;
-	m_uint *sum = NULL;
+	uint32_t *sum = NULL;
 
 	if (add_negatives(n1_arr, n2_arr, &sum))
 		return (sum);
@@ -80,9 +80,9 @@ m_uint *infiX_addition(m_uint *n1_arr, m_uint *n2_arr)
  *
  * Return: 1 if action taken (error or processed results), 0 if no action taken
  */
-int add_negatives(m_uint *n1_arr, m_uint *n2_arr, m_uint **result)
+int add_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result)
 {
-	m_uint a_msd = 0, b_msd = 0;
+	uint32_t a_msd = 0, b_msd = 0;
 
 	if (!result)
 	{
