@@ -1,26 +1,26 @@
+#!/usr/bin/awk -f
+
 BEGIN {
-    filename = "./debug_out"  # Replace with your actual file name
-    # filename = "./bc_out"
-    tempfile = "temp_file.txt"
+    tempfile = system("mktemp /tmp/add_spaces.awk.XXXXXXXXX > /dev/null")
+}
 
+{
     # Read all lines in the file
-    while (getline file_contents < filename) {
-        reversed_contents = file_contents
-
-        # Process the reversed contents and write to a temporary file
-        g = 1
-        for (i = length(reversed_contents); i >= 1; i--) {
-            printf "%s", substr(reversed_contents, i, 1) >> tempfile
-            if (g % 9 == 0 && i - 1 > 0 && substr(reversed_contents, i - 1, 1) != " ") {
-                printf " " >> tempfile
-            }
-
-            g++
+    g = 1
+    for (i = length($0); i >= 1; i--) {
+        printf "%s", substr($0, i, 1) >> tempfile
+        if (g % 9 == 0 && i - 1 > 0 && substr($0, i - 1, 1) != " ") {
+            printf " " >> tempfile
         }
-        printf "\n" >> tempfile
+
+        g++
     }
 
+    printf "\n\n" >> tempfile
+}
+
+END {
     # Reverse the temporary file and overwrite the original file
-    system("rev " tempfile " > " filename)
+    system("rev " tempfile " > " FILENAME)
     system("rm " tempfile)  # Remove the temporary file
 }

@@ -47,7 +47,7 @@ u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2)
 	{
 		/*If n1 is greater than n2*/
 		if (n1->len > n2->len ||
-			(n1->len == n2->len && n1->array[diff->len] > n2->array[diff->len]))
+			(n1->len == n2->len && n1->array[diff->len - 1] > n2->array[diff->len - 1]))
 		{
 			if (n2_i < n2->len) /*n1 - n2*/
 				byt_diff += (int64_t)n1->array[n1_i] - n2->array[n2_i];
