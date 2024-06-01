@@ -1,7 +1,7 @@
 #!/usr/bin/make -f
 # Beware of trailing white spaces.
 BINARY := math
-CC := clang
+CC := gcc
 SRC_DIR := src
 OBJ_DIR := obj
 TESTS_DIR := tests
@@ -27,16 +27,16 @@ ifeq ($(CC),gcc)
 endif
 
 # Include flags
-INC_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
+INCL_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
 # Linker flags
 LDLIBS := -lm
 LDFLAGS := -Wl,-z,relro
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 CPPFLAGS := -MMD
-DEBUG_FLAGS := -g -Og
+DEBUG_FLAGS := -g -Og -fno-omit-frame-pointer
 WARN_FLAGS := -std=c17 -Wall -Wextra -Wformat=2 -pedantic -Werror
-INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKER) -fsanitize-trap=all -fno-omit-frame-pointer
-CFLAGS = $(WARN_FLAGS) $(INC_FLAGS) $(CPPFLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING_FLAGS)
+INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKER) -fsanitize-trap=all
+CFLAGS = $(WARN_FLAGS) $(INCL_FLAGS) $(CPPFLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING_FLAGS)
 CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))
 
 all: $(BINARY)

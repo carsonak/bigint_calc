@@ -21,27 +21,25 @@ uint32_t *str_to_intarray(const char *num_str)
 	attrs = parse_numstr(num_str);
 	if (!num_str || !num_str[0] || (attrs && !attrs->digits))
 	{
-		u32array = calloc_check(2, sizeof(*u32array));
+		u32array = check_calloc(2, sizeof(*u32array));
 		if (u32array)
 			u32array[0] = 1;
 
 		if (attrs)
-		{
-			free(attrs->str);
-			free(attrs);
-		}
+			free_n_null(attrs->str);
 
+		free_n_null(attrs);
 		return (u32array);
 	}
 
 	if (!attrs)
 		return (NULL);
 
-	arr_size = (attrs->digits / MID_MAX_DIGITS) + ((attrs->digits % MID_MAX_DIGITS) ? 1 : 0);
-	u32array = calloc_check((arr_size + 1), sizeof(*u32array));
+	arr_size = (attrs->digits / MAX_DIGITS_u4b) + ((attrs->digits % MAX_DIGITS_u4b) ? 1 : 0);
+	u32array = check_calloc((arr_size + 1), sizeof(*u32array));
 	if (!u32array)
 	{
-		free(attrs);
+		free_n_null(attrs);
 		return (NULL);
 	}
 
@@ -51,7 +49,7 @@ uint32_t *str_to_intarray(const char *num_str)
 	for (h = 1, g = (attrs->len - 1); h <= arr_size && g >= 0; h++)
 	{
 		i = 0;
-		while (i < MID_MAX_DIGITS && (g - i) >= 0)
+		while (i < MAX_DIGITS_u4b && (g - i) >= 0)
 		{
 			if (attrs->str[g - i] >= '0' && attrs->str[g - i] <= '9')
 			{
@@ -66,10 +64,10 @@ uint32_t *str_to_intarray(const char *num_str)
 	}
 
 	if (attrs->is_negative && u32array[arr_size] > 0)
-		u32array[arr_size] |= NEGBIT_UI32;
+		u32array[arr_size] |= NEGBIT_u4b;
 
-	free(attrs->str);
-	free(attrs);
+	free_n_null(attrs->str);
+	free_n_null(attrs);
 	return (u32array);
 }
 
@@ -117,14 +115,14 @@ str_array *parse_numstr(const char *num_str)
 		}
 	}
 
-	attributes = calloc_check(1, sizeof(*attributes));
+	attributes = check_calloc(1, sizeof(*attributes));
 	if (attributes)
 	{
 		attributes->str = (uint8_t *)strndup((char *)ns.str, ns.len);
 		if (!attributes->str)
 		{
 			perror("Malloc fail");
-			free(attributes);
+			free_n_null(attributes);
 			return (NULL);
 		}
 
@@ -158,17 +156,17 @@ char *intarr_to_str(uint32_t *u32array)
 
 	arr_size = u32array[0];
 	/*Checking if the number is negative*/
-	if (u32array[arr_size] > NEGBIT_UI32)
+	if (u32array[arr_size] > NEGBIT_u4b)
 	{
-		u32array[arr_size] ^= NEGBIT_UI32;
+		u32array[arr_size] ^= NEGBIT_u4b;
 		len += 1;
 		negative = '-';
 	}
 
-	trim_intarr(u32array);
+	trim_u4b_array(u32array);
 	arr_size = u32array[0];
-	len += arr_size * MID_MAX_DIGITS;
-	num_str = calloc_check((len + 1), sizeof(*num_str));
+	len += arr_size * MAX_DIGITS_u4b;
+	num_str = check_calloc((len + 1), sizeof(*num_str));
 	if (!num_str)
 		return (NULL);
 
@@ -190,7 +188,7 @@ char *intarr_to_str(uint32_t *u32array)
 		}
 
 		g += i;
-		div = (MID_MAX_VAL / 10);
+		div = (MAX_VAL_u4b / 10);
 	}
 
 	if (negative)
@@ -203,19 +201,14 @@ char *intarr_to_str(uint32_t *u32array)
 }
 
 /**
- * trim_intarr - trims empty spaces from the i of an int u32array
- * @arr: pointer to the uint32_t arrary
+ * trim_u4b_array - trims zeros from end of an array
+ * @arr: pointer to a u4b_array struct
  */
-void trim_intarr(uint32_t *arr)
+void trim_u4b_array(u4b_array *arr)
 {
-	size_t arr_size = 0;
-
 	if (!arr)
 		return;
 
-	arr_size = arr[0];
-	while (!arr[arr_size] && arr_size > 1)
-		--arr_size;
-
-	arr[0] = arr_size;
+	while (!arr->array[arr->len - 1] && arr->len > 1)
+		--arr->len;
 }

@@ -23,6 +23,6 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 
 	printf("%s\n", answer);
-	free(answer);
+	free_n_null(answer);
 	return (EXIT_SUCCESS);
 }

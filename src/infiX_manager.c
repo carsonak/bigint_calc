@@ -1,13 +1,6 @@
 #include "infiX.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-	static math_function *get_math_function(char *op_symbol);
-#ifdef __cplusplus
-}
-#endif
+static math_function *get_math_function(char *op_symbol);
 
 /**
  * infiX_manager - determine what operation to carry out based on given symbol
@@ -42,8 +35,8 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 			ans_arr = func_ptr(num1_arr, num2_arr);
 	}
 
-	free(num1_arr);
-	free(num2_arr);
+	free_n_null(num1_arr);
+	free_n_null(num2_arr);
 	if (ans_arr)
 	{
 		if (!strcmp(op_symbol, "%"))
@@ -52,8 +45,8 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 			answer = intarr_to_str(ans_arr);
 	}
 
-	free(remains);
-	free(ans_arr);
+	free_n_null(remains);
+	free_n_null(ans_arr);
 	if (!func_ptr)
 		panic("ops"); /*Symbol not found*/
 

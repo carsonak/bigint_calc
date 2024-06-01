@@ -27,7 +27,7 @@ uint32_t *mplug_low(uint32_t **dest, uint32_t *src)
 		len_s = src[0];
 
 	f = (len_d + len_s) ? (len_d + len_s) : 1;
-	final = calloc_check(f + 2, sizeof(*final));
+	final = check_calloc(f + 2, sizeof(*final));
 	if (final)
 	{
 		final[0] = f;
@@ -38,9 +38,9 @@ uint32_t *mplug_low(uint32_t **dest, uint32_t *src)
 			final[f] = (*dest)[d];
 
 		if (*dest)
-			free(*dest);
+			free_n_null(*dest);
 
-		trim_intarr(final);
+		trim_u4b_array(final);
 		*dest = final;
 	}
 
@@ -74,7 +74,7 @@ uint32_t *mplug_num_low(uint32_t **dest, uint32_t src)
 		len_d = (*dest)[0];
 
 	f = len_d ? (len_d + 1) : 1;
-	final = calloc_check(f + 2, sizeof(*final));
+	final = check_calloc(f + 2, sizeof(*final));
 	if (final)
 	{
 		final[0] = f;
@@ -82,9 +82,9 @@ uint32_t *mplug_num_low(uint32_t **dest, uint32_t src)
 		for (f = 2, d = 1; d <= len_d; f++, d++)
 			final[f] = (*dest)[d];
 
-		trim_intarr(final);
+		trim_u4b_array(final);
 		if (*dest)
-			free(*dest);
+			free_n_null(*dest);
 
 		*dest = final;
 	}

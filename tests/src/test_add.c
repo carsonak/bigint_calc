@@ -37,10 +37,10 @@ void test_negativeAddPositive(void)
 {
 	uint32_t expected[2] = {1, 735919929};
 	uint32_t num1[2] = {1, 975697329};
-	uint32_t num2[2] = {1, (NEGBIT_UI32 + 239777400)};
+	uint32_t num2[2] = {1, (NEGBIT_u4b + 239777400)};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, infiX_addition(num1, num2), 2, "975,697,329 + -239,777,400 = 735,919,929");
-	num2[1] = NEGBIT_UI32 + 239777400;
+	num2[1] = NEGBIT_u4b + 239777400;
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, infiX_addition(num2, num1), 2, "-239,777,400 + 975,697,329 = 735,919,929");
 }
 
@@ -49,8 +49,8 @@ void test_negativeAddPositive(void)
  */
 void test_negativeAddNegative(void)
 {
-	uint32_t expected[2] = {1, (NEGBIT_UI32 + 479554800)};
-	uint32_t num1[2] = {1, (NEGBIT_UI32 + 239777400)};
+	uint32_t expected[2] = {1, (NEGBIT_u4b + 479554800)};
+	uint32_t num1[2] = {1, (NEGBIT_u4b + 239777400)};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, infiX_addition(num1, num1), 2, "-239,777,400 + -239,777,400 = -479554800");
 }

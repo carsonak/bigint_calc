@@ -1,39 +1,12 @@
 #include "infiX.h"
 
 /**
- * _memcpy - copies a specified about of bytes from one memory area to another
- * @dest: the destination
- * @src: the source
- * @n: number of bytes to be copied
- *
- * Return: returns pointer to destination
- */
-void *_memcpy(void *dest, void *src, size_t n)
-{
-	size_t i = 0;
-	char *d = dest, *s = src;
-
-	if (src < dest)
-	{
-		for (i = n; i < n && dest != src; i--)
-			d[i] = s[i];
-	}
-	else if (src > dest)
-	{
-		for (i = 0; i < n && dest != src; i++)
-			d[i] = s[i];
-	}
-
-	return (dest);
-}
-
-/**
  * malloc_check - allocate memory with malloc and check for failure.
  * @size: size in bytes to allocate
  *
  * Return: a pointer to the memory area, NULL on failure
  */
-void *malloc_check(size_t size)
+void *check_malloc(size_t size)
 {
 	void *ptr = malloc(size);
 
@@ -50,7 +23,7 @@ void *malloc_check(size_t size)
  *
  * Return: a pointer to the memory area, NULL on failure
  */
-void *calloc_check(size_t items, size_t sizeof_item)
+void *check_calloc(size_t items, size_t sizeof_item)
 {
 	void *ptr = calloc(items, sizeof_item);
 
@@ -58,4 +31,26 @@ void *calloc_check(size_t items, size_t sizeof_item)
 		perror("Calloc fail");
 
 	return (ptr);
+}
+
+/**
+ * free_n_null - frees and nulls a pointer
+ * @ptr: a freeable pointer
+ */
+void free_n_null(void *ptr)
+{
+	free(ptr);
+	ptr = NULL;
+}
+
+/**
+ * free_u4b_array - free a u4b_array
+ * @arr: pointer to a u4b_array
+ */
+void free_u4b_array(u4b_array *arr)
+{
+	if (arr)
+		free_n_null(arr->array);
+
+	free_n_null(arr);
 }

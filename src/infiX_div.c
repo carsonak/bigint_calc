@@ -1,25 +1,18 @@
 #include "infiX.h"
 
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-	uint32_t *remains = NULL;
+uint32_t *remains = NULL;
 
-	static int
-	divide_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result);
+static int
+divide_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result);
 
-	static int
-	zero_result_check(uint32_t *dvdend, uint32_t *dvsor, uint32_t **quotient);
+static int
+zero_result_check(uint32_t *dvdend, uint32_t *dvsor, uint32_t **quotient);
 
-	static int64_t get_quotient(uint32_t *dvsor);
+static int64_t get_quotient(uint32_t *dvsor);
 
-	static int64_t
-	adjust_quotient(uint32_t dvsor_msd, uint32_t *estimate, uint32_t rem_msd,
-					int64_t quotient_tmp);
-#ifdef __cplusplus
-}
-#endif
+static int64_t
+adjust_quotient(uint32_t dvsor_msd, uint32_t *estimate, uint32_t rem_msd,
+				int64_t quotient_tmp);
 
 /**
  * infiX_division - divides a numbers stored in an array
@@ -54,7 +47,7 @@ uint32_t *infiX_division(uint32_t *dividend, uint32_t *divisor)
 
 	len_quotient = (len_dend - len_sor) + 1;
 	/*Length of remains will never be greater than len_sor + 1*/
-	remains = calloc_check(len_sor + 1, sizeof(*remains));
+	remains = check_calloc(len_sor + 1, sizeof(*remains));
 	if (!remains)
 		return (NULL);
 
@@ -68,7 +61,7 @@ uint32_t *infiX_division(uint32_t *dividend, uint32_t *divisor)
 	{
 		if (!mplug_num_low(&remains, dividend[nd_i]))
 		{
-			free(quotient);
+			free_n_null(quotient);
 			return (NULL);
 		}
 
@@ -83,7 +76,7 @@ uint32_t *infiX_division(uint32_t *dividend, uint32_t *divisor)
 		{
 			if (!mplug_num_low(&remains, dividend[nd_i]) || !mplug_num_low(&quotient, 0))
 			{
-				free(quotient);
+				free_n_null(quotient);
 				return (NULL);
 			}
 		}
@@ -91,7 +84,7 @@ uint32_t *infiX_division(uint32_t *dividend, uint32_t *divisor)
 		hold = get_quotient(divisor);
 		if (hold < 0 || !mplug_num_low(&quotient, hold))
 		{
-			free(quotient);
+			free_n_null(quotient);
 			return (NULL);
 		}
 
@@ -106,8 +99,8 @@ uint32_t *infiX_division(uint32_t *dividend, uint32_t *divisor)
 		nd_i--;
 	}
 
-	trim_intarr(remains);
-	trim_intarr(quotient);
+	trim_u4b_array(remains);
+	trim_u4b_array(quotient);
 	return (quotient);
 }
 
@@ -129,33 +122,33 @@ int divide_negatives(uint32_t *n1_arr, uint32_t *n2_arr, uint32_t **result)
 		return (1);
 	}
 
-	trim_intarr(n1_arr);
-	trim_intarr(n2_arr);
+	trim_u4b_array(n1_arr);
+	trim_u4b_array(n2_arr);
 	if (n1_arr)
 		a_msd = n1_arr[n1_arr[0]];
 
 	if (n2_arr)
 		b_msd = n2_arr[n2_arr[0]];
 
-	if ((a_msd & NEGBIT_UI32) && (b_msd & NEGBIT_UI32))
+	if ((a_msd & NEGBIT_u4b) && (b_msd & NEGBIT_u4b))
 	{ /* -8 / -5 = 8/5 */
-		n1_arr[n1_arr[0]] ^= NEGBIT_UI32;
+		n1_arr[n1_arr[0]] ^= NEGBIT_u4b;
 		if (n1_arr != n2_arr)
-			n2_arr[n2_arr[0]] ^= NEGBIT_UI32;
+			n2_arr[n2_arr[0]] ^= NEGBIT_u4b;
 
 		(*result) = infiX_division(n1_arr, n2_arr);
 	}
-	else if (a_msd & NEGBIT_UI32)
+	else if (a_msd & NEGBIT_u4b)
 	{ /* -8 / 5 = -(8/5) */
-		n1_arr[n1_arr[0]] ^= NEGBIT_UI32;
+		n1_arr[n1_arr[0]] ^= NEGBIT_u4b;
 		(*result) = infiX_division(n1_arr, n2_arr);
-		(*result)[(*result)[0]] |= NEGBIT_UI32;
+		(*result)[(*result)[0]] |= NEGBIT_u4b;
 	}
-	else if (b_msd & NEGBIT_UI32)
+	else if (b_msd & NEGBIT_u4b)
 	{ /* 8 / -5 = -(8/5) */
-		n2_arr[n2_arr[0]] ^= NEGBIT_UI32;
+		n2_arr[n2_arr[0]] ^= NEGBIT_u4b;
 		(*result) = infiX_division(n1_arr, n2_arr);
-		(*result)[(*result)[0]] |= NEGBIT_UI32;
+		(*result)[(*result)[0]] |= NEGBIT_u4b;
 	}
 
 	if (*result || errno)
@@ -198,11 +191,11 @@ int zero_result_check(uint32_t *dvdend, uint32_t *dvsor, uint32_t **quotient)
 		if (l_dvdend < 1)
 			l_dvdend = 1;
 
-		*quotient = calloc_check(2, sizeof(**quotient));
+		*quotient = check_calloc(2, sizeof(**quotient));
 		if (*quotient)
 			(*quotient)[0] = 1;
 
-		remains = calloc_check(l_dvdend + 1, sizeof(*remains));
+		remains = check_calloc(l_dvdend + 1, sizeof(*remains));
 		if (remains)
 		{
 			remains[0] = l_dvdend;
@@ -243,7 +236,7 @@ int64_t get_quotient(uint32_t *dvsor)
 
 	hold = remains[remains[0]];
 	if (remains[0] > dvsor[0])
-		hold = (hold * MID_MAX_VAL) + (int64_t)remains[remains[0] - 1];
+		hold = (hold * MAX_VAL_u4b) + (int64_t)remains[remains[0] - 1];
 
 	quot_tmp[1] = hold / (int64_t)dvsor[dvsor[0]];
 	while (!rem_tmp ||
@@ -251,22 +244,22 @@ int64_t get_quotient(uint32_t *dvsor)
 			  (rem_tmp[0] == dvsor[0] && rem_tmp[rem_tmp[0]] >= dvsor[dvsor[0]]))) &&
 			quot_tmp[1] > 0))
 	{
-		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & NEGBIT_UI32)))
+		if (rem_tmp && ((rem_tmp[0] >= dvsor[0]) || (rem_tmp[rem_tmp[0]] & NEGBIT_u4b)))
 		{
 			hold = adjust_quotient(dvsor[dvsor[0]], mul_est, rem_tmp[rem_tmp[0]], quot_tmp[1]);
 			if (hold < 0)
 			{
-				free(rem_tmp);
-				free(mul_est);
+				free_n_null(rem_tmp);
+				free_n_null(mul_est);
 				return (-1);
 			}
 
 			quot_tmp[1] = hold;
 		}
 
-		free(mul_est);
+		free_n_null(mul_est);
 		mul_est = NULL;
-		free(rem_tmp);
+		free_n_null(rem_tmp);
 		rem_tmp = NULL;
 		mul_est = infiX_multiplication(dvsor, quot_tmp);
 		if (mul_est)
@@ -280,8 +273,8 @@ int64_t get_quotient(uint32_t *dvsor)
 	}
 
 	memmove(remains, rem_tmp, ((rem_tmp[0] + 1) * sizeof(*rem_tmp)));
-	free(rem_tmp);
-	free(mul_est);
+	free_n_null(rem_tmp);
+	free_n_null(mul_est);
 	return (quot_tmp[1]);
 }
 
@@ -300,7 +293,7 @@ int64_t adjust_quotient(uint32_t dvsor_msd, uint32_t *estimate,
 	uint32_t *tmp_sub = NULL;
 	int64_t hold = 0, o_shoot = 0;
 
-	if (rem_msd & NEGBIT_UI32)
+	if (rem_msd & NEGBIT_u4b)
 	{ /*Decrease the quotient*/
 		tmp_sub = infiX_subtraction(estimate, remains);
 		if (!tmp_sub)
@@ -313,7 +306,7 @@ int64_t adjust_quotient(uint32_t dvsor_msd, uint32_t *estimate,
 		else
 			o_shoot = hold / (int64_t)dvsor_msd;
 
-		free(tmp_sub);
+		free_n_null(tmp_sub);
 		quotient_tmp -= o_shoot;
 	}
 	else
