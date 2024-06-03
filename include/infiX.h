@@ -77,6 +77,7 @@ void helpme(const char *which_help);
 void *check_calloc(size_t items, size_t sizeof_item);
 void *check_malloc(size_t size);
 void free_n_null(void *ptr);
+u4b_array *alloc_u4b_array(size_t len);
 void free_u4b_array(u4b_array *arr);
 
 str_array *parse_numstr(const char *numstr);

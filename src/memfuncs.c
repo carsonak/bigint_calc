@@ -44,6 +44,29 @@ void free_n_null(void *ptr)
 }
 
 /**
+ * alloc_u4b_array - allocates memory for a u4b_array of a given length
+ * @len: length of the array
+ *
+ * Return: a pointer to the u4b_array struct, NULL on failure
+ */
+u4b_array *alloc_u4b_array(size_t len)
+{
+	u4b_array *arr = check_calloc(1, sizeof(*arr));
+
+	if (!arr)
+		return (NULL);
+
+	arr->array = check_calloc(len, sizeof(*arr->array));
+	if (!arr->array)
+	{
+		free_n_null(arr);
+		return (NULL);
+	}
+
+	return (arr);
+}
+
+/**
  * free_u4b_array - free a u4b_array
  * @arr: pointer to a u4b_array
  */
