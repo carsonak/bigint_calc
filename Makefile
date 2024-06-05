@@ -75,10 +75,10 @@ re: fclean all
 
 .PHONY: all clean fclean release re
 
-# include will "paste" the rules it finds in the icluded files at this
+# include will "paste" the rules it finds in the included files at this
 # location, therefore best to place it at end of file so as not to interfere
 # with other rules. The "-" suppresses missing file errors, as .d files are
 # generated automatically by gcc.
 # https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html
 -include $(DEP_FILES)
-include make_tests.mk
+include ./tests/make_tests.mk

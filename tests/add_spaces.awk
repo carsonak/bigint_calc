@@ -3,7 +3,7 @@
 # Ideally it is used to break long numbers with commas and therefore reads lines
 # from right to left.
 
-# BUG: Duplicates some characters in the last field to if length of the line was not
+# BUG: Duplicates some characters in the last field if length of the line was not
 # a multiple of `step`.
 
 BEGIN {

@@ -3,6 +3,7 @@
 
 from argparse import ArgumentParser
 import json
+from os import path
 import sys
 from typing import Callable, NamedTuple, TypeVar
 
@@ -35,7 +36,7 @@ def parse_argv(
     """Process argv into operation to be executed."""
     parser = ArgumentParser(
         description="Perform some simple math operations on "
-        "numbers from a json file.", add_help=False
+        "numbers from json file.", add_help=False
     )
     parser.add_argument("num1_token", metavar="category_name.number_key")
     parser.add_argument(
@@ -75,8 +76,9 @@ def main(argv: list[str]) -> None:
     }
 
     num1_keys, operator, num2_keys = parse_argv(argv)
-
-    with open("large_numbers_as_str.json", encoding="utf-8") as f:
+    json_file: str = path.sep.join(
+        [path.dirname(path.realpath(__file__)), "large_numbers_as_str.json"])
+    with open(json_file, encoding="utf-8") as f:
         numstr_dict: dict[str, dict[str, str]] = json.load(f)
 
     n1 = get_value(numstr_dict, num1_keys)
