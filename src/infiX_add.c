@@ -81,6 +81,8 @@ u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
 		n1->is_negative = 0;
 		n2->is_negative = 0;
 		result = infiX_addition(n1, n2);
+		n1->is_negative = 1;
+		n2->is_negative = 1;
 		if (result)
 			result->is_negative = 1;
 	}
@@ -89,12 +91,14 @@ u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
 		/*-8 + 7 = 7-8*/
 		n1->is_negative = 0;
 		result = infiX_subtraction(n2, n1);
+		n1->is_negative = 1;
 	}
 	else if (n2->is_negative)
 	{
 		/*8 + -7 = 8-7*/
 		n2->is_negative = 0;
 		result = infiX_subtraction(n1, n2);
+		n2->is_negative = 1;
 	}
 	else
 		result = infiX_addition(n1, n2);

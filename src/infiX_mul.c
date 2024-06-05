@@ -1,6 +1,6 @@
 #include "infiX.h"
 
-static uint32_t *multiply_negatives(uint32_t *n1, uint32_t *n2);
+static u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2);
 
 /**
  * infiX_multiplication - multiplies numbers stored in arrays.
@@ -15,12 +15,25 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 	size_t cur_mul_len = 0, n1_i = 0, n2_i = 0;
 	u4b_array *product = NULL, *cur_mul = NULL, *sum = NULL;
 
+	if (!n1 || !n2)
+		return (NULL);
+
 	if (n1->is_negative || n2->is_negative)
 		return (multiply_negatives(n1, n2));
 
+	trim_u4b_array(n1);
+	trim_u4b_array(n2);
+	/*length of the product will be the sum of the lengths of the 2 arrays.*/
 	product = alloc_u4b_array(n1->len + n2->len);
-	if (!product || product->len < 1)
+	if (!product)
+		return (NULL);
+
+	if (!n1->array || !n2->array)
+	{
+		product->len = 0;
+		free_n_null(product->array);
 		return (product);
+	}
 
 	product->len = 1;
 	/*Iterate over every number in n2 and multiply with every number in n1.*/
@@ -96,24 +109,29 @@ u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 		n1->is_negative = 0;
 		n2->is_negative = 0;
 		result = infiX_multiplication(n1, n2);
+		n1->is_negative = 1;
+		n2->is_negative = 1;
 	}
 	else if (n1->is_negative)
 	{
 		/* -8 * 7 = -(8*7) */
-		n1[n1[0]] ^= NEGBIT_u4b;
+		n1->is_negative = 0;
 		result = infiX_multiplication(n1, n2);
-		result[result[0]] |= NEGBIT_u4b;
+		n1->is_negative = 1;
+		if (result)
+			result->is_negative = 1;
 	}
 	else if (n2->is_negative)
-	{ /* 8 * -7 = -(8*7) */
-		n2[n2[0]] ^= NEGBIT_u4b;
+	{
+		/* 8 * -7 = -(8*7) */
+		n2->is_negative = 0;
 		result = infiX_multiplication(n1, n2);
-		result[result[0]] |= NEGBIT_u4b;
+		n2->is_negative = 1;
+		if (result)
+			result->is_negative = 1;
 	}
-	else if (!n1 || !n2 || (n1[0] == 1 && a_msd == 0) ||
-			 (n2[0] == 1 && b_msd == 0))
-		/*Multiplication by zero or NULL*/
-		result = check_calloc(2, sizeof(*result));
+	else
+		result = infiX_multiplication(n1, n2);
 
 	return (result);
 }

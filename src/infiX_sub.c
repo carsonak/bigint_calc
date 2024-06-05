@@ -108,12 +108,14 @@ u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
 		/*-8 - -5 = -8 + 5 = 5-8*/
 		n2->is_negative = 0;
 		difference = infiX_subtraction(n2, n1);
+		n2->is_negative = 1;
 	}
 	else if (n1->is_negative)
 	{
 		/*-8 - 5 = -(8+5)*/
 		n1->is_negative = 0;
 		difference = infiX_addition(n1, n2);
+		n1->is_negative = 1;
 		if (difference)
 			difference->is_negative = 1;
 	}
@@ -122,6 +124,7 @@ u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
 		/*8 - -5 = 8+5*/
 		n2->is_negative = 0;
 		difference = infiX_addition(n1, n2);
+		n2->is_negative = 1;
 	}
 	else
 		difference = infiX_subtraction(n1, n2);

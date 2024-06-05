@@ -25,22 +25,18 @@
 /*Negative bit toggle for uint32_t types.*/
 #define NEGBIT_u4b (1 << 30)
 
-/*A dynamically allocated array to store remainders of division.*/
-extern uint32_t *remains;
-
-/*A function that operates on two int arrays and returns a new array.*/
-typedef uint32_t *math_function(uint32_t *, uint32_t *);
-
 /**
- * struct operator_function - holds an operator symbol and it's function
- * @symbol: the operator symbol
- * @f: a corresponding function pointer
+ * struct uint32_t_array_attributes - an array of unsigned 4 byte ints
+ * @len: number of items in the array
+ * @is_negative: flag for signedness of number
+ * @array: pointer to an array of 4 byte ints
  */
-typedef struct operator_function
+typedef struct uint32_t_array_attributes
 {
-	char *symbol;
-	math_function *f;
-} op_func;
+	size_t len;
+	char is_negative;
+	uint32_t *array;
+} u4b_array;
 
 /**
  * struct string_attributes - holds details about a string of characters
@@ -57,18 +53,22 @@ typedef struct string_attributes
 	uint8_t is_negative;
 } str_array;
 
+/*A function that operates on two int arrays and returns a new array.*/
+typedef u4b_array *math_function(u4b_array *, u4b_array *);
+
 /**
- * struct uint32_t_array_attributes - an array of unsigned 4 byte ints
- * @len: number of items in the array
- * @is_negative: flag for signedness of number
- * @array: pointer to an array of 4 byte ints
+ * struct operator_function - holds an operator symbol and it's function
+ * @symbol: the operator symbol
+ * @f: a corresponding function pointer
  */
-typedef struct uint32_t_array_attributes
+typedef struct operator_function
 {
-	size_t len;
-	char is_negative;
-	uint32_t *array;
-} u4b_array;
+	char *symbol;
+	math_function *f;
+} op_func;
+
+/*A dynamically allocated array to store remainders of division.*/
+extern u4b_array *remains;
 
 char *infiX_manager(char *num1, char *op_symbol, char *num2);
 void panic(const char *err_type);
