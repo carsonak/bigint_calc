@@ -1,108 +1,117 @@
 #include "infiX.h"
 
-static uint32_t *multiply_negatives(uint32_t *n1_arr, uint32_t *n2_arr);
+static uint32_t *multiply_negatives(uint32_t *n1, uint32_t *n2);
 
 /**
  * infiX_multiplication - multiplies numbers stored in arrays.
- * @n1_arr: the first integer array (base 10)
- * @n2_arr: the second integer array (base 10)
+ * @n1: the first integer array (base 10)
+ * @n2: the second integer array (base 10)
  *
  * Return: pointer to result, NULL on failure
  */
-uint32_t *infiX_multiplication(uint32_t *n1_arr, uint32_t *n2_arr)
+u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 {
-	uint64_t byt_mul = 0;
-	ssize_t top = -1, botm = -1, c_mulsz = 0, t = 1, b = 1;
-	uint32_t *c_mul = NULL, *prod = NULL, *total = NULL;
+	int64_t byt_mul = 0;
+	size_t cur_mul_len = 0, n1_i = 0, n2_i = 0;
+	u4b_array *product = NULL, *cur_mul = NULL, *sum = NULL;
 
-	prod = multiply_negatives(n1_arr, n2_arr);
-	if (prod || errno)
-		return (prod);
+	if (n1->is_negative || n2->is_negative)
+		return (multiply_negatives(n1, n2));
 
-	if (n1_arr)
-		top = n1_arr[0];
+	product = alloc_u4b_array(n1->len + n2->len);
+	if (!product || product->len < 1)
+		return (product);
 
-	if (n2_arr)
-		botm = n2_arr[0];
-
-	for (b = 1; b <= botm; b++)
+	product->len = 1;
+	/*Iterate over every number in n2 and multiply with every number in n1.*/
+	for (n2_i = 0; n2_i <= n2->len; n2_i++)
 	{
 		/*Skip multiplication by zero*/
-		if (n2_arr[b] == 0)
+		if (n2->array[n2_i] == 0)
 			continue;
 
-		/*Size of c_mul = Array size of top + Current index of botm (b)*/
-		c_mulsz = top + b;
-		/*Memalloc c_mul (+1 for storing size of the array)*/
-		c_mul = check_calloc((c_mulsz + 1), sizeof(*c_mul));
-		if (!c_mul)
-			return (NULL);
-
-		c_mul[0] = c_mulsz;
-		byt_mul = 0;
-		for (t = 1; t <= top; t++)
+		/*Length of cur_mul = length of n1 + current index of n2*/
+		cur_mul_len = n1->len + n2_i;
+		cur_mul = alloc_u4b_array(cur_mul_len);
+		if (!cur_mul)
 		{
-			byt_mul += (uint64_t)n1_arr[t] * (uint64_t)n2_arr[b];
-			/*Offset to current index of botm*/
-			c_mul[(t - 1) + b] = byt_mul % MAX_VAL_u4b;
+			free_u4b_array(product);
+			return (NULL);
+		}
+
+		byt_mul = 0;
+		for (n1_i = 0; n1_i <= n1->len; n1_i++)
+		{
+			byt_mul += (int64_t)n2->array[n2_i] * n1->array[n1_i];
+			cur_mul->array[n2_i + n1_i] = byt_mul % MAX_VAL_u4b;
 			byt_mul /= MAX_VAL_u4b;
 		}
 
-		c_mul[(t - 1) + b] = byt_mul;
-		prod = infiX_addition(total, c_mul);
-		free_n_null(c_mul);
-		free_n_null(total);
-		if (!prod)
-			return (NULL);
+		cur_mul->array[n2_i + n1_i] = byt_mul;
+		sum = infiX_addition(product, cur_mul);
+		if (sum)
+		{
+			product->len = sum->len;
+			/*Skip over the first n2_i indices as they will be unchanged.*/
+			memmove(product->array, sum->array + n2_i, sum->len - n2_i);
+		}
 
-		total = prod;
+		free_u4b_array(cur_mul);
+		if (!sum)
+		{
+			free_u4b_array(product);
+			return (NULL);
+		}
+
+		free_u4b_array(sum);
 	}
 
-	trim_u4b_array(prod);
-	return (prod);
+	trim_u4b_array(product);
+	return (product);
 }
 
 /**
- * nultiply_negatives - nultiplication of signed numbers (-ve numbers) or zero
- * @n1_arr: number to be nultiplied
- * @n2_arr: number to nultiply
+ * multiply_negatives - multiplication of signed numbers (-ve numbers) or zero
+ * @n1: number to be multiplied
+ * @n2: number to multiply
  *
  * Return: pointer to the result, NULL on failure
  */
-uint32_t *multiply_negatives(uint32_t *n1_arr, uint32_t *n2_arr)
+u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 {
-	uint32_t *result = NULL, a_msd = 0, b_msd = 0;
+	u4b_array *result = NULL;
 
-	trim_u4b_array(n1_arr);
-	trim_u4b_array(n2_arr);
-	if (n1_arr)
-		a_msd = n1_arr[n1_arr[0]];
+	if (!n1 || !n2)
+		return (NULL);
 
-	if (n2_arr)
-		b_msd = n2_arr[n2_arr[0]];
+	if (!n1->array)
+		n1->is_negative = 0;
 
-	if ((a_msd & NEGBIT_u4b) && (b_msd & NEGBIT_u4b))
-	{ /* -8 * -7 = 8*7 */
-		n1_arr[n1_arr[0]] ^= NEGBIT_u4b;
-		if (n1_arr != n2_arr)
-			n2_arr[n2_arr[0]] ^= NEGBIT_u4b;
+	if (!n1->array)
+		n1->is_negative = 0;
 
-		result = infiX_multiplication(n1_arr, n2_arr);
+	if (n1->is_negative && n2->is_negative)
+	{
+		/* -8 * -7 = 8*7 */
+		n1->is_negative = 0;
+		n2->is_negative = 0;
+		result = infiX_multiplication(n1, n2);
 	}
-	else if (a_msd & NEGBIT_u4b)
-	{ /* -8 * 7 = -(8*7) */
-		n1_arr[n1_arr[0]] ^= NEGBIT_u4b;
-		result = infiX_multiplication(n1_arr, n2_arr);
+	else if (n1->is_negative)
+	{
+		/* -8 * 7 = -(8*7) */
+		n1[n1[0]] ^= NEGBIT_u4b;
+		result = infiX_multiplication(n1, n2);
 		result[result[0]] |= NEGBIT_u4b;
 	}
-	else if (b_msd & NEGBIT_u4b)
+	else if (n2->is_negative)
 	{ /* 8 * -7 = -(8*7) */
-		n2_arr[n2_arr[0]] ^= NEGBIT_u4b;
-		result = infiX_multiplication(n1_arr, n2_arr);
+		n2[n2[0]] ^= NEGBIT_u4b;
+		result = infiX_multiplication(n1, n2);
 		result[result[0]] |= NEGBIT_u4b;
 	}
-	else if (!n1_arr || !n2_arr || (n1_arr[0] == 1 && a_msd == 0) ||
-			 (n2_arr[0] == 1 && b_msd == 0))
+	else if (!n1 || !n2 || (n1[0] == 1 && a_msd == 0) ||
+			 (n2[0] == 1 && b_msd == 0))
 		/*Multiplication by zero or NULL*/
 		result = check_calloc(2, sizeof(*result));
 

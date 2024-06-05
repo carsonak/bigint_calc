@@ -1,6 +1,7 @@
 #!/usr/bin/python
 """Operate on numbers from json document."""
 
+from argparse import ArgumentParser
 import json
 import sys
 from typing import Callable, NamedTuple, TypeVar
@@ -29,52 +30,51 @@ def get_accesskeys(token: str, delimeter: str = ".") -> AccessKeys:
     return AccessKeys(*token.split(delimeter))
 
 
-def parse_argv(argv: list[str]) -> tuple[str, str | None, str | None] | None:
+def parse_argv(
+        argv: list[str]) -> tuple[AccessKeys, str | None, AccessKeys | None]:
     """Process argv into operation to be executed."""
-    if not 2 <= len(argv) <= 4:
-        return None
+    parser = ArgumentParser(
+        description="Perform some simple math operations on "
+        "numbers from a json file.", add_help=False
+    )
+    parser.add_argument("num1_token", metavar="category_name.number_key")
+    parser.add_argument(
+        "operator", choices=["+", "-", "*", "/", "**"], nargs="?")
+    parser.add_argument(
+        "num2_token", metavar="category_name.number_key", nargs="?")
 
-    num1_token = argv[1]
-    op: str | None = argv[2] if len(argv) > 2 else None
-    num2_token = argv[3] if len(argv) > 3 else None
-    return num1_token, op, num2_token
+    tokens = parser.parse_args(argv)
+    num1_keys: AccessKeys = get_accesskeys(tokens.num1_token)
+
+    operator: str | None = tokens.operator
+
+    num2_keys: AccessKeys | None = None
+    if tokens.num2_token is not None:
+        num2_keys = get_accesskeys(tokens.num2_token)
+
+    if (
+        operator is None and num2_keys is not None or
+        operator is not None and num2_keys is None
+    ):
+        parser.error(
+            "invalid syntax: the operator and "
+            "second number key are mutually inclusive"
+        )
+
+    return num1_keys, operator, num2_keys
 
 
 def main(argv: list[str]) -> None:
     """Entry point."""
-    operators: dict[str, Callable[[_IORS, _IORS], int]] = {
+    ops: dict[str, Callable[[_IORS, _IORS], int]] = {
         "+": lambda x, y: int(x) + int(y),
         "-": lambda x, y: int(x) - int(y),
         "*": lambda x, y: int(x) * int(y),
         "/": lambda x, y: int(int(x) / int(y)),
         "**": lambda x, y: int(x) ** int(y),
     }
-    usage_message: str = (
-        f"USAGE: {argv[0]} 'category_name.number_key' "
-        f"[ '{"|".join(operators)}' "  # noqa: B907
-        "[ 'category_name.number_key' ] ]"
-    )
 
-    tokens = parse_argv(argv)
-    if tokens is None:
-        print(usage_message, file=sys.stderr)
-        return
-
-    num1_keys: AccessKeys = get_accesskeys(tokens[0])
-    op: Callable[[_IORS, _IORS], int] | None = None
-    if tokens[1] is not None:
-        op = operators.get(tokens[1])
-        if op is None:
-            print(usage_message, file=sys.stderr)
-            return
-
-    num2_keys: AccessKeys | None = None
-    if tokens[2] is not None:
-        num2_keys = get_accesskeys(tokens[2])
-
-    if op is not None and num2_keys is None:
-        print(usage_message, file=sys.stderr)
-        return
+    num1_keys, operator, num2_keys = parse_argv(argv)
 
     with open("large_numbers_as_str.json", encoding="utf-8") as f:
         numstr_dict: dict[str, dict[str, str]] = json.load(f)
@@ -84,11 +84,11 @@ def main(argv: list[str]) -> None:
     if num2_keys is not None:
         n2 = get_value(numstr_dict, num2_keys)
 
-    if op is not None:
-        print(f"{n1} {tokens[1]} {n2} = {op(n1, n2)}")
+    if operator is not None:
+        print(f"{n1} '{operator}' {n2} =", ops[operator](n1, n2))  # noqa: B907
     else:
         print(n1)
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main(sys.argv[1:])

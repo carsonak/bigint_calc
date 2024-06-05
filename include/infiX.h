@@ -90,7 +90,7 @@ uint32_t *mplug_num_low(uint32_t **dest, uint32_t src);
 
 uint32_t *infiX_division(uint32_t *dividend, uint32_t *divisor);
 u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2);
-uint32_t *infiX_multiplication(uint32_t *n1_arr, uint32_t *n2_arr);
+u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2);
 u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2);
 
 #endif /* !INFIX_H */

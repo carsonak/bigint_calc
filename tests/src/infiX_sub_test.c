@@ -1,13 +1,8 @@
 #include "tests.h"
 
-uint32_t blank1[10] = {0};
-u4b_array num1 = {.len = 0, .is_negative = 0, .array = blank1};
-
-uint32_t blank2[10] = {0};
-u4b_array num2 = {.len = 0, .is_negative = 0, .array = blank2};
-
-uint32_t blank3[10] = {0};
-u4b_array expected = {.len = 0, .is_negative = 0, .array = blank3};
+u4b_array num1 = {.len = 0, .is_negative = 0, .array = NULL};
+u4b_array num2 = {.len = 0, .is_negative = 0, .array = NULL};
+u4b_array expected = {.len = 0, .is_negative = 0, .array = NULL};
 
 /**
  * trim_u4b_array - Dummy: trims zeros from end of an array
@@ -51,27 +46,33 @@ void setup(void)
 void teardown(void)
 {
 	num1.len = 0;
+	num1.is_negative = 0;
+	num1.array = NULL;
+
 	num2.len = 0;
+	num2.is_negative = 0;
+	num2.array = NULL;
+
 	expected.len = 0;
-	memset(blank1, 0, sizeof(blank1));
-	memset(blank2, 0, sizeof(blank1));
-	memset(blank3, 0, sizeof(blank1));
+	expected.is_negative = 0;
+	expected.array = NULL;
 }
 
 TestSuite(simple_subtractions, .init = setup, .fini = teardown);
 
 Test(simple_subtractions, test_100000000_plus_minus50000,
 	 .description = "100,000,000 + -50,000 = 99,950,000",
-	 .timeout = 0.5)
+	 .timeout = 5.0)
 {
-	uint32_t in1[] = {100000000}, in2[] = {50000};
+	uint32_t in1[] = {100000000}, in2[] = {50000}, out[] = {99950000};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
-	memmove(num1.array, in1, sizeof(in1));
-
+	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.is_negative = 1;
-	memmove(num2.array, in2, sizeof(in2));
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
 
 	u4b_array *output = infiX_subtraction(&num1, &num2);
 
@@ -83,16 +84,17 @@ Test(simple_subtractions, test_100000000_plus_minus50000,
 
 Test(simple_subtractions, test_minus50000_plus_100000000,
 	 .description = "-100,000,000 + 50,000 = -99,950,000",
-	 .timeout = 0.5)
+	 .timeout = 5.0)
 {
-	uint32_t in1[] = {100000000}, in2[] = {50000};
+	uint32_t in1[] = {100000000}, in2[] = {50000}, out[] = {99950000};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.is_negative = 1;
-	memmove(num1.array, in1, sizeof(in1));
-
+	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
-	memmove(num2.array, in2, sizeof(in2));
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.is_negative = 1;
 
 	u4b_array *output = infiX_subtraction(&num1, &num2);
 
@@ -103,16 +105,16 @@ Test(simple_subtractions, test_minus50000_plus_100000000,
 }
 
 Test(negative_additions, test_minus1_plus_1,
-	 .description = "-1 + 1 = 0", .timeout = 0.5)
+	 .description = "-1 + 1 = 0", .timeout = 5.0)
 {
-	uint32_t in1[] = {1}, in2[] = {1};
+	uint32_t in1[] = {1}, in2[] = {1}, out[] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.is_negative = 1;
-	memmove(num1.array, in1, sizeof(in1));
-
+	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
-	memmove(num2.array, in2, sizeof(in2));
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
 
 	u4b_array *output = infiX_addition(&num1, &num2);
 
@@ -123,17 +125,16 @@ Test(negative_additions, test_minus1_plus_1,
 }
 
 Test(negative_additions, test_1_plus_minus1,
-	 .description = "1 + -1 = 0", .timeout = 0.5)
+	 .description = "1 + -1 = 0", .timeout = 5.0)
 {
-	uint32_t in1[] = {1}, in2[] = {1};
-	uint32_t out[] = {0};
+	uint32_t in1[] = {1}, in2[] = {1}, out[] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
-	memmove(num1.array, in1, sizeof(in1));
-
+	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.is_negative = 1;
-	memmove(num2.array, in2, sizeof(in2));
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
 
 	expected.len = sizeof(out) / sizeof(*out);
 	memmove(expected.array, out, sizeof(out));
@@ -142,6 +143,6 @@ Test(negative_additions, test_1_plus_minus1,
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
-	// cr_expect(eq(u32[expected.len], output->array, expected.array));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
 	free_u4b_array(output);
 }

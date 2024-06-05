@@ -1,6 +1,6 @@
 #include "infiX.h"
 
-u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2);
+static u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2);
 
 /**
  * infiX_subtraction - subtract large numbers stored in arrays
@@ -11,11 +11,11 @@ u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2);
  */
 u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2)
 {
-	size_t n1_i = 0, n2_i = 0, diff_i = 0;
+	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
 	int64_t byt_diff = 0;
 	u4b_array *diff = NULL;
 
-	if (!n1 || !n2 || !n1->array || !n2->array)
+	if (!n1 || !n2)
 		return (NULL);
 
 	if (n1->is_negative || n2->is_negative)
@@ -23,25 +23,18 @@ u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2)
 
 	trim_u4b_array(n1);
 	trim_u4b_array(n2);
-	diff = check_calloc(1, sizeof(*diff));
-	if (!diff)
-		return (NULL);
-
-	/*diff->len = len of longest index*/
-	diff->len = (n1->len > n2->len) ? n1->len : n2->len;
-	/*If both are the same size;*/
-	/*reduce diff->len by length of consecutive matching ints in n1 and n2*/
-	/*from their highest index.*/
+	/*result_len = len of longest length*/
+	result_len = (n1->len > n2->len) ? n1->len : n2->len;
+	/*If both arrays are of the same length;*/
+	/*We can reduce result_len as long as digits in n1 are equal to digits*/
+	/*in n2, starting from the most significant digits.*/
 	if (n1->len == n2->len)
-		while (diff->len > 1 && n1->array[diff->len] == n2->array[diff->len])
-			diff->len--;
+		while (result_len > 1 && n1->array[result_len] == n2->array[result_len])
+			result_len--;
 
-	diff->array = check_calloc((diff->len), sizeof(*diff->array));
-	if (!diff->array)
-	{
-		free_n_null(diff);
-		return (NULL);
-	}
+	diff = alloc_u4b_array(result_len);
+	if (!result_len || !diff)
+		return (diff);
 
 	while ((n1_i < n1->len || n2_i < n2->len) && diff_i < diff->len)
 	{
@@ -101,11 +94,15 @@ u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
 {
 	u4b_array *difference = NULL;
 
-	if (!n1 || !n2 || !n1->array || !n2->array)
+	if (!n1 || !n2)
 		return (NULL);
 
-	trim_u4b_array(n1);
-	trim_u4b_array(n2);
+	if (!n1->array)
+		n1->is_negative = 0;
+
+	if (!n1->array)
+		n1->is_negative = 0;
+
 	if (n1->is_negative && n2->is_negative)
 	{
 		/*-8 - -5 = -8 + 5 = 5-8*/
@@ -117,7 +114,8 @@ u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
 		/*-8 - 5 = -(8+5)*/
 		n1->is_negative = 0;
 		difference = infiX_addition(n1, n2);
-		difference->is_negative = 1;
+		if (difference)
+			difference->is_negative = 1;
 	}
 	else if (n2->is_negative)
 	{

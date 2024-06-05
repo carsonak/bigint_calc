@@ -209,6 +209,13 @@ void trim_u4b_array(u4b_array *arr)
 	if (!arr)
 		return;
 
+	if (!arr->array)
+	{
+		arr->len = 0;
+		arr->is_negative = 0;
+		return;
+	}
+
 	while (!arr->array[arr->len - 1] && arr->len > 1)
 		--arr->len;
 }
