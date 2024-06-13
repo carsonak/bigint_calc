@@ -20,10 +20,10 @@ $(T_BINDIR):
 $(T_BINDIR)/test_infiX_mul: $(SRC_DIR)/infiX_add.c
 
 $(T_BINDIR)/test_%: $(T_SRCDIR)/test_%.c $(SRC_DIR)/%.c $(UTILITIES)
-	$(CC) $(CFLAGS) $(wordlist 1,$(words $^),$^) -o $@
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
 
 $(T_BINDIR)/test_infiX_div: $(T_SRCDIR)/test_infiX_div.c $(SRC_DIR)/infiX_add.c $(SRC_DIR)/infiX_sub.c $(SRC_DIR)/infiX_mul.c $(UTILITIES)
-	$(CC) $(CFLAGS) $(wordlist 1,$(words $^),$^) -o $@
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
 
 tclean:
 	@$(RM) -vdr --preserve-root -- $(T_BINDIR)

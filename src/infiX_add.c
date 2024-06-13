@@ -24,16 +24,13 @@ u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
 
 	trim_u4b_array(n1);
 	trim_u4b_array(n2);
-	/*Size of the sum array = (larger of n1->len or n2->len, +1 for a carry)*/
+	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	if (result_len <= 1)
 		return (alloc_u4b_array(0));
 
 	sum = alloc_u4b_array(result_len);
-	if (!sum)
-		return (NULL);
-
-	while (n1_i < n1->len || n2_i < n2->len || byt_sum > 0)
+	while (sum && (n1_i < n1->len || n2_i < n2->len || byt_sum > 0))
 	{
 		if (n1_i < n1->len)
 		{

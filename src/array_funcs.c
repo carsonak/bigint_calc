@@ -1,8 +1,10 @@
 #include "infiX.h"
 
 /**
- * trim_u4b_array - trims zeros from end of an array
+ * trim_u4b_array - truncate length of a u4b_array to ignore trailing zeros.
  * @arr: pointer to a u4b_array struct
+ *
+ * Also sets the is_negative flag to 0 for 0s and NULL arrays.
  */
 void trim_u4b_array(u4b_array *arr)
 {

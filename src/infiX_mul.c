@@ -13,7 +13,7 @@ static u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 {
 	int64_t byt_mul = 0;
-	size_t cur_mul_len = 0, n1_i = 0, n2_i = 0;
+	size_t n1_i = 0, n2_i = 0;
 	u4b_array *product = NULL, *cur_mul = NULL, *sum = NULL;
 
 	if (!n1 || !n2)
@@ -24,17 +24,16 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 
 	trim_u4b_array(n1);
 	trim_u4b_array(n2);
-	/*product digits = n1 digits + n2 digits - (0 or 1).*/
+	/*Multiplication by zero.*/
+	if (!n1->len || !n2->len)
+		return (alloc_u4b_array(0));
+	else if ((n1->len == 1 && !n1->array[0]) || (n2->len == 1 && !n2->array[0]))
+		return (alloc_u4b_array(1));
+
+	/*product->len = n1->len + n2->len - (0 or 1).*/
 	product = alloc_u4b_array(n1->len + n2->len);
 	if (!product)
 		return (NULL);
-
-	if (!n1->array || !n2->array)
-	{
-		product->len = 0;
-		product->array = free_n_null(product->array);
-		return (product);
-	}
 
 	product->len = 1;
 	/*Iterate over every number in n2 and multiply with every number in n1.*/
@@ -45,16 +44,12 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 			continue;
 
 		/*Length of cur_mul = length of n1 + current index of n2*/
-		cur_mul_len = n1->len + n2_i;
-		cur_mul = alloc_u4b_array(cur_mul_len);
+		cur_mul = alloc_u4b_array(n1->len + n2_i);
 		if (!cur_mul)
-		{
-			product = free_u4b_array(product);
-			return (NULL);
-		}
+			return (free_u4b_array(product));
 
 		byt_mul = 0;
-		for (n1_i = 0; n1_i <= n1->len; n1_i++)
+		for (n1_i = 0; n1_i < n1->len; n1_i++)
 		{
 			byt_mul += (int64_t)n2->array[n2_i] * n1->array[n1_i];
 			cur_mul->array[n2_i + n1_i] = byt_mul % MAX_VAL_u4b;

@@ -58,3 +58,25 @@ Test(large_divisions, test_largenum1_over_largenum2,
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
 	output = free_u4b_array(output);
 }
+
+Test(large_divisions, test_medium_largenum1_over_medium_largenum2,
+	 .description = "medium_large1 / medium_large2 = medium_large3",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {555555555, 55555555, 0, 0, 0, 0, 222222, 0, 0, 0, 0, 0, 0, 0, 0, 888888888, 888888888, 888888888, 888888888, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110000000, 111111111, 111111111, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 770000000, 777777777, 777777777, 777777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 999000000, 99999999};
+	uint32_t in2[] = {470282653, 363502795, 428381283, 187482382, 467199043, 93190808, 0, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 737842756, 975675668, 665546560, 147030781, 113541635, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 746086661, 442022266, 249623720, 646946071, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 44149526, 436038339, 561338441, 16196762, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4};
+	uint32_t out[] = {164342, 0, 0, 0, 0, 999775000, 22499999};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_division(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
