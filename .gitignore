@@ -7,3 +7,7 @@
 .replit
 .local
 replit.nix
+
+# python caches
+__pycache__
+.mypy_cache

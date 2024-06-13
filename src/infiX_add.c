@@ -1,6 +1,7 @@
 #include "infiX.h"
 
-static u4b_array *add_negatives(u4b_array *n1, u4b_array *n2);
+static u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
+	__attribute__((nonnull));
 
 /**
  * infiX_addition - adds integers stored in arrays
@@ -72,8 +73,8 @@ u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
 	if (!n1->array)
 		n1->is_negative = 0;
 
-	if (!n1->array)
-		n1->is_negative = 0;
+	if (!n2->array)
+		n2->is_negative = 0;
 
 	if (n1->is_negative && n2->is_negative)
 	{

@@ -1,35 +1,22 @@
 #include "tests.h"
+#include "../../src/infiX_sub.c"
 
 u4b_array num1 = {.len = 0, .is_negative = 0, .array = NULL};
 u4b_array num2 = {.len = 0, .is_negative = 0, .array = NULL};
 u4b_array expected = {.len = 0, .is_negative = 0, .array = NULL};
 
 /**
- * trim_u4b_array - Dummy: trims zeros from end of an array
- * @arr: pointer to a u4b_array struct
- */
-void trim_u4b_array(u4b_array *arr)
-{
-	if (!arr)
-		return;
-
-	while (!arr->array[arr->len - 1] && arr->len > 1)
-		--arr->len;
-}
-
-/**
  * infiX_addition - Dummy
  * @n1: unused
  * @n2: unused
  *
- * Return: empty array, NULL on error
+ * Return: NULL always.
  */
-u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
+u4b_array *infiX_addition(
+	u4b_array *n1 __attribute__((__unused__)),
+	u4b_array *n2 __attribute__((__unused__)))
 {
-	if (!n1 || !n2)
-		return (NULL);
-
-	return (alloc_u4b_array(1));
+	return (NULL);
 }
 
 /**
@@ -79,7 +66,7 @@ Test(simple_subtractions, test_100000000_plus_minus50000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	free_u4b_array(output);
+	output = free_u4b_array(output);
 }
 
 Test(simple_subtractions, test_minus50000_plus_100000000,
@@ -101,7 +88,7 @@ Test(simple_subtractions, test_minus50000_plus_100000000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	free_u4b_array(output);
+	output = free_u4b_array(output);
 }
 
 Test(negative_additions, test_minus1_plus_1,
@@ -121,7 +108,7 @@ Test(negative_additions, test_minus1_plus_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	free_u4b_array(output);
+	output = free_u4b_array(output);
 }
 
 Test(negative_additions, test_1_plus_minus1,
@@ -144,5 +131,5 @@ Test(negative_additions, test_1_plus_minus1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	free_u4b_array(output);
+	output = free_u4b_array(output);
 }

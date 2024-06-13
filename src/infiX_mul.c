@@ -1,6 +1,7 @@
 #include "infiX.h"
 
-static u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2);
+static u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
+	__attribute__((nonnull));
 
 /**
  * infiX_multiplication - multiplies numbers stored in arrays.
@@ -23,7 +24,7 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 
 	trim_u4b_array(n1);
 	trim_u4b_array(n2);
-	/*length of the product will be the sum of the lengths of the 2 arrays.*/
+	/*product digits = n1 digits + n2 digits - (0 or 1).*/
 	product = alloc_u4b_array(n1->len + n2->len);
 	if (!product)
 		return (NULL);
@@ -31,7 +32,7 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 	if (!n1->array || !n2->array)
 	{
 		product->len = 0;
-		free_n_null(product->array);
+		product->array = free_n_null(product->array);
 		return (product);
 	}
 
@@ -48,7 +49,7 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 		cur_mul = alloc_u4b_array(cur_mul_len);
 		if (!cur_mul)
 		{
-			free_u4b_array(product);
+			product = free_u4b_array(product);
 			return (NULL);
 		}
 
@@ -69,14 +70,14 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 			memmove(product->array, sum->array + n2_i, sum->len - n2_i);
 		}
 
-		free_u4b_array(cur_mul);
+		cur_mul = free_u4b_array(cur_mul);
 		if (!sum)
 		{
-			free_u4b_array(product);
+			product = free_u4b_array(product);
 			return (NULL);
 		}
 
-		free_u4b_array(sum);
+		sum = free_u4b_array(sum);
 	}
 
 	trim_u4b_array(product);
@@ -100,8 +101,8 @@ u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 	if (!n1->array)
 		n1->is_negative = 0;
 
-	if (!n1->array)
-		n1->is_negative = 0;
+	if (!n2->array)
+		n2->is_negative = 0;
 
 	if (n1->is_negative && n2->is_negative)
 	{

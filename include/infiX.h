@@ -14,11 +14,15 @@
 #include <errno.h>
 #include <math.h> /*pow(), Need to link with -lm*/
 
+/*https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-cleanup-variable-attribute*/
+#define autofree_gen_p __attribute__((cleanup(free_n_null)))
+#define autofree_u4b_array __attribute__((cleanup(free_u4b_array)))
+
 /*Max number of digits uint32_t should hold.*/
 #define MAX_DIGITS_u4b (9)
 /*Max size for uint32_t: 10^9.*/
 #define MAX_VAL_u4b (1000000000)
-/*Max nnumber of digits for uint64_t.*/
+/*Max number of digits for uint64_t.*/
 #define MAX_DIGITS_u8b (MAX_DIGITS_u4b * MAX_DIGITS_u4b)
 /*Max size for uint64_t calculations: 10^18.*/
 #define MAX_VAL_u8b (MAX_VAL_u4b * MAX_VAL_u4b)
@@ -74,23 +78,34 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2);
 void panic(const char *err_type);
 void helpme(const char *which_help);
 
-void *check_calloc(size_t items, size_t sizeof_item);
-void *check_malloc(size_t size);
-void free_n_null(void *ptr);
+/*mem_funcs*/
+void *free_n_null(void *ptr);
+void *free_u4b_array(u4b_array *arr);
 u4b_array *alloc_u4b_array(size_t len);
-void free_u4b_array(u4b_array *arr);
+__attribute__((malloc(free_n_null))) void *
+xcalloc(size_t items, size_t sizeof_item);
+__attribute__((malloc(free_n_null))) void *xmalloc(size_t size);
 
+/*string_funcs*/
 str_array *parse_numstr(const char *numstr);
 uint32_t *str_to_intarray(const char *num_str);
 char *intarr_to_str(uint32_t *u32array);
-void trim_u4b_array(u4b_array *arr);
 size_t padding_chars_len(char *str, char *ch);
-uint32_t *mplug_low(uint32_t **dest, uint32_t *src);
-uint32_t *mplug_num_low(uint32_t **dest, uint32_t src);
 
-uint32_t *infiX_division(uint32_t *dividend, uint32_t *divisor);
-u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2);
-u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2);
-u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2);
+/*array_funcs*/
+__attribute__((nonnull)) void trim_u4b_array(u4b_array *arr);
+__attribute__((nonnull(1, 2))) ssize_t
+cmp_u4barray(u4b_array *arr1, u4b_array *arr2);
+void print_u4b_array(u4b_array *arr);
+
+/*math_funcs*/
+__attribute__((nonnull)) u4b_array *
+infiX_division(u4b_array *n1, u4b_array *n2);
+__attribute__((nonnull)) u4b_array *
+infiX_subtraction(u4b_array *n1, u4b_array *n2);
+__attribute__((nonnull)) u4b_array *
+infiX_multiplication(u4b_array *n1, u4b_array *n2);
+__attribute__((nonnull)) u4b_array *
+infiX_addition(u4b_array *n1, u4b_array *n2);
 
 #endif /* !INFIX_H */

@@ -35,8 +35,8 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 			ans_arr = func_ptr(num1_arr, num2_arr);
 	}
 
-	free_n_null(num1_arr);
-	free_n_null(num2_arr);
+	num1_arr = free_n_null(num1_arr);
+	num2_arr = free_n_null(num2_arr);
 	if (ans_arr)
 	{
 		if (!strcmp(op_symbol, "%"))
@@ -45,8 +45,8 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 			answer = intarr_to_str(ans_arr);
 	}
 
-	free_n_null(remains);
-	free_n_null(ans_arr);
+	remains = free_n_null(remains);
+	ans_arr = free_n_null(ans_arr);
 	if (!func_ptr)
 		panic("ops"); /*Symbol not found*/
 

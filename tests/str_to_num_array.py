@@ -5,16 +5,17 @@ from collections.abc import Iterable
 import sys
 
 
-if sys.version_info.major > 2 and sys.version_info.minor > 10:
+if hasattr(sys, "set_int_max_str_digits"):
     sys.set_int_max_str_digits(200_000)
 
 
-def main(input_strings: Iterable[str]) -> None:
-    """Entry point."""
+def numstr_to_numarray(input_strings: Iterable[str]) -> str:
+    """Return the repr of a list of ints from a string of decimals."""
+    output: str = ""
     for numstr in input_strings:
         numstr = numstr.strip()
         if not numstr[0].isdigit() and not numstr.startswith("-"):
-            print(numstr)
+            output = "".join([output, numstr, "\n"])
             continue
 
         str_i: int = len(numstr)
@@ -30,11 +31,13 @@ def main(input_strings: Iterable[str]) -> None:
 
             prev = str_i
 
-        print(num_list)
+        output = "".join([output, str(num_list), "\n"])
+
+    return output.strip()
 
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
-        main(sys.argv[1:])
+        print(numstr_to_numarray(sys.argv[1:]))
     else:
-        main(sys.stdin)
+        print(numstr_to_numarray(sys.stdin))

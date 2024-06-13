@@ -21,14 +21,14 @@ uint32_t *str_to_intarray(const char *num_str)
 	attrs = parse_numstr(num_str);
 	if (!num_str || !num_str[0] || (attrs && !attrs->digits))
 	{
-		u32array = check_calloc(2, sizeof(*u32array));
+		u32array = xcalloc(2, sizeof(*u32array));
 		if (u32array)
 			u32array[0] = 1;
 
 		if (attrs)
-			free_n_null(attrs->str);
+			attrs->str = free_n_null(attrs->str);
 
-		free_n_null(attrs);
+		attrs = free_n_null(attrs);
 		return (u32array);
 	}
 
@@ -36,10 +36,10 @@ uint32_t *str_to_intarray(const char *num_str)
 		return (NULL);
 
 	arr_size = (attrs->digits / MAX_DIGITS_u4b) + ((attrs->digits % MAX_DIGITS_u4b) ? 1 : 0);
-	u32array = check_calloc((arr_size + 1), sizeof(*u32array));
+	u32array = xcalloc((arr_size + 1), sizeof(*u32array));
 	if (!u32array)
 	{
-		free_n_null(attrs);
+		attrs = free_n_null(attrs);
 		return (NULL);
 	}
 
@@ -66,8 +66,8 @@ uint32_t *str_to_intarray(const char *num_str)
 	if (attrs->is_negative && u32array[arr_size] > 0)
 		u32array[arr_size] |= NEGBIT_u4b;
 
-	free_n_null(attrs->str);
-	free_n_null(attrs);
+	attrs->str = free_n_null(attrs->str);
+	attrs = free_n_null(attrs);
 	return (u32array);
 }
 
@@ -115,14 +115,14 @@ str_array *parse_numstr(const char *num_str)
 		}
 	}
 
-	attributes = check_calloc(1, sizeof(*attributes));
+	attributes = xcalloc(1, sizeof(*attributes));
 	if (attributes)
 	{
 		attributes->str = (uint8_t *)strndup((char *)ns.str, ns.len);
 		if (!attributes->str)
 		{
 			perror("Malloc fail");
-			free_n_null(attributes);
+			attributes = free_n_null(attributes);
 			return (NULL);
 		}
 
@@ -166,7 +166,7 @@ char *intarr_to_str(uint32_t *u32array)
 	trim_u4b_array(u32array);
 	arr_size = u32array[0];
 	len += arr_size * MAX_DIGITS_u4b;
-	num_str = check_calloc((len + 1), sizeof(*num_str));
+	num_str = xcalloc((len + 1), sizeof(*num_str));
 	if (!num_str)
 		return (NULL);
 
@@ -198,24 +198,4 @@ char *intarr_to_str(uint32_t *u32array)
 	}
 
 	return (num_str);
-}
-
-/**
- * trim_u4b_array - trims zeros from end of an array
- * @arr: pointer to a u4b_array struct
- */
-void trim_u4b_array(u4b_array *arr)
-{
-	if (!arr)
-		return;
-
-	if (!arr->array)
-	{
-		arr->len = 0;
-		arr->is_negative = 0;
-		return;
-	}
-
-	while (!arr->array[arr->len - 1] && arr->len > 1)
-		--arr->len;
 }

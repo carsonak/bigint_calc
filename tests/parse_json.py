@@ -7,6 +7,9 @@ from os import path
 import sys
 from typing import Callable, NamedTuple, TypeVar
 
+if hasattr(sys, "set_int_max_str_digits"):
+    sys.set_int_max_str_digits(200_000)
+
 
 class AccessKeys(NamedTuple):
     """Keys to extract numbers from a dict of dicts of str."""
@@ -16,9 +19,6 @@ class AccessKeys(NamedTuple):
 
 
 _IORS = TypeVar("_IORS", bound=int | str)
-
-if sys.version_info.major > 2 and sys.version_info.minor > 10:
-    sys.set_int_max_str_digits(200_000)
 
 
 def get_value(d: dict[str, dict[str, str]], k: AccessKeys) -> str:

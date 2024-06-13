@@ -2,18 +2,19 @@
 
 u4b_array *remains = NULL;
 
-static u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2);
-static int check_0_result(u4b_array *n1, u4b_array *n2);
-static int check_division_by_0(u4b_array *n2);
-static int64_t get_quotient(uint32_t *n2);
-static int64_t adjust_quotient(
-	uint32_t dvsor_msd, uint32_t *estimate, uint32_t rem_msd,
-	int64_t quotient_tmp);
+static u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
+	__attribute__((nonnull));
+static int check_0_result(u4b_array *n1, u4b_array *n2)
+	__attribute__((nonnull));
+static int check_division_by_0(u4b_array *n2)
+	__attribute__((nonnull));
+static ssize_t __attribute__((nonnull(1, 3)))
+get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2);
 
 /**
  * infiX_division - divides a numbers stored in an array
- * @n1: dividend
- * @n2: divisor
+ * @n1: numerator
+ * @n2: denominator
  *
  * Description: this function will store the remainder of any division
  * in a global variable "remains". This variable should be freed after
@@ -23,98 +24,129 @@ static int64_t adjust_quotient(
  */
 u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 {
-	size_t len_quotient = 0, len_rem = 0;
-	size_t n1_i = 0, rem_i = 0, quot_i = 0;
+	ssize_t n1_i = 0, q_i = 0, tmp = 0;
+	size_t len_slice = 0;
 	u4b_array *quotient = NULL;
-	int64_t hold = 0;
+	/*slice stores the current chunk being divided*/
+	uint32_t *slice = NULL;
+	ssize_t slice_offset = 1;
 
 	if (!n1 || !n2)
 		return (NULL);
 
-	remains = NULL;
+	remains = free_u4b_array(remains);
 	if (n1->is_negative || n2->is_negative)
 		return (divide_negatives(n1, n2));
 
 	if (check_division_by_0(n2))
 		return (NULL);
 
-	hold = check_0_result(n1, n2);
-	if (hold < 0)
+	tmp = check_0_result(n1, n2);
+	if (tmp < 0)
 		return (NULL);
 
-	if (hold > 0)
+	if (tmp > 0)
 	{
 		quotient = alloc_u4b_array(1);
 		if (!quotient)
-			free_u4b_array(remains);
+			remains = free_u4b_array(remains);
 
 		return (quotient);
 	}
 
-	len_quotient = (n1->len - n2->len) + 1;
-	quotient = alloc_u4b_array(len_quotient);
-	if (!quotient)
-		return (NULL);
+	/**
+	 * Since division is reverse of multiplication then;
+	 * quotient digits = numerator digits - denominator digits + (0 or 1).
+	 */
+	if (n1->array[n1->len - 1] < n2->array[n2->len - 1])
+		quotient = alloc_u4b_array(n1->len - n2->len);
+	else
+		quotient = alloc_u4b_array(n1->len - n2->len + 1);
 
-	/*Length of remains will never be greater than n2->len*/
-	remains = alloc_u4b_array(n2->len);
-	if (!remains)
+	/*len_slice = len of n2, +1 for a dropdown*/
+	len_slice = n2->len + 1;
+	slice = xcalloc(len_slice, sizeof(*slice));
+	if (!slice || !quotient)
 	{
-		free_u4b_array(quotient);
+		quotient = free_u4b_array(quotient);
+		slice = free_n_null(slice);
 		return (NULL);
 	}
 
-	memmove(remains->array, n1->array, n1->len);
-	// if (remains->array[remains->len] < n2->array[n2->len - 1])
-	// {
-	// 	if (!mplug_num_low(&remains, n1[n1_i]))
-	// 	{
-	// 		free_n_null(quotient);
-	// 		return (NULL);
-	// 	}
-
-	// 	n1_i--;
-	// }
-
-	for (quot_i = len_quotient; quot_i > 0; quot_i--)
+	memmove(slice + slice_offset, n1->array, n2->len);
+	n1_i = n1->len - n2->len - 1;
+	if (slice[len_slice - 1] < n2->array[n2->len - 1])
 	{
-		len_rem = remains->len;
-		for (; quot_i && n1_i && len_rem < n2->len; quot_i--, n1_i--, len_rem++)
-		{
-			if (!mplug_num_low(&remains, n1[n1_i]) || !mplug_num_low(&quotient, 0))
-			{
-				free_n_null(quotient);
-				return (NULL);
-			}
-		}
-
-		hold = get_quotient(n2);
-		if (hold < 0 || !mplug_num_low(&quotient, hold))
-		{
-			free_n_null(quotient);
-			return (NULL);
-		}
-
-		if (n1_i > 0)
-		{
-			if (!mplug_num_low(&remains, n1[n1_i]))
-				return (NULL);
-		}
-		else
-			break;
-
+		/**
+		 * If most significant digit (msd) of slice < msd of denominator then;
+		 * dropdown an extra digit from the numerator.
+		 */
+		slice_offset = 0;
+		slice[0] = n1->array[n1_i];
 		n1_i--;
 	}
 
-	trim_u4b_array(remains);
+	tmp = 0;
+	q_i = quotient->len - 1;
+	while (q_i >= 0)
+	{
+		tmp = get_current_quotient(slice + slice_offset, len_slice - slice_offset, n2);
+		if (tmp < 0)
+		{
+			quotient = free_u4b_array(quotient);
+			slice = free_n_null(slice);
+			return (NULL);
+		}
+
+		quotient->array[q_i] = tmp;
+
+		slice_offset = len_slice - remains->len;
+		/*Copy the remainder into slice starting from most significant digits.*/
+		memmove(slice + slice_offset, remains->array, remains->len);
+		slice_offset = 1;
+		tmp = n2->len - remains->len;
+		if (tmp)
+		{
+			if (n1_i + 1 > tmp)
+				n1_i -= tmp;
+			else
+			{
+				slice_offset += tmp - (n1_i + 1);
+				tmp = (n1_i + 1);
+				n1_i = 0;
+			}
+
+			/*Ensure slice has atleast n1->len digits by */
+			/*dropping more from numerator.*/
+			memmove(slice + slice_offset, n1->array[n1_i], tmp);
+		}
+
+		if (n1_i && slice[len_slice - 1] < n2->array[n2->len - 1])
+		{
+			slice_offset = 0;
+			slice[0] = n1->array[n1_i];
+			n1_i--;
+		}
+
+		q_i--;
+	}
+
+	remains = free_u4b_array(remains);
+	remains = alloc_u4b_array(len_slice - slice_offset);
+	if (remains)
+		memmove(remains->array, slice + slice_offset, len_slice - slice_offset);
+	else
+		quotient = free_u4b_array(quotient);
+
+	free_n_null(slice);
 	trim_u4b_array(quotient);
 	return (quotient);
 }
 
 /**
  * divide_negatives - division of signed numbers (negative numbers).
- * @n1: dividend.
- * @n2: divisor.
+ * @n1: numerator.
+ * @n2: denominator.
  *
  * Return: pointer to the results, NULL on failure.
  */
@@ -123,7 +155,7 @@ u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
 	u4b_array *result = NULL;
 
 	if (!n1 || !n2)
-		return NULL;
+		return (NULL);
 
 	if (!n1->array)
 		n1->is_negative = 0;
@@ -161,210 +193,131 @@ u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
 	else
 		result = infiX_division(n1, n2);
 
-	if (!result)
-	{
-		free_u4b_array(remains);
-		return (NULL);
-	}
-
 	return (result);
 }
 
 /**
- * check_division_by_0 - checks if the divisor is zero.
- * @n2: divisor
+ * check_division_by_0 - checks if the denominator is zero.
+ * @n2: denominator
  *
  * Return: 1 if n2 is zero, else 0
  */
 int check_division_by_0(u4b_array *n2)
 {
 	if (!n2)
-		return (0);
+		return (NULL);
 
 	trim_u4b_array(n2);
-	if ((n2->len == 1 && n2->array[0] == 0) || n2->len == 0)
+	if (!n2->len || (n2->len == 1 && !n2->array[0]))
+	{
+		fprintf(stderr, "Division by zero error.\n");
 		return (1);
+	}
 
 	return (0);
 }
 
 /**
- * check_0_result - checks if n1 < n2.
- * @n1: dividend
- * @n2: divisor
+ * check_0_result - checks if numerator < denominator.
+ * @n1: numerator
+ * @n2: denominator
  *
- * Description: If n1 < n2 then; quotient = 0 and remains = n1.
- * If n2 == 0 function will just return 0.
+ * Description: If numerator < denominator then;
+ * quotient = 0 and remainder = n1.
  *
  * Return: 1 if result will be 0, 0 if not, -1 on error.
  */
 int check_0_result(u4b_array *n1, u4b_array *n2)
 {
-	size_t i = 0;
-	u4b_array *quotient = NULL;
-
-	if (!n1 || !n2)
+	if (!n1 || !n2 || check_division_by_0(n2))
 		return (-1);
 
-	remains = NULL;
-	trim_u4b_array(n1);
-	trim_u4b_array(n2);
-	if (
-		n1->len > n2->len ||
-		n1->array == NULL ||
-		n2->array == NULL ||
-		(n2->len == 1 && n2->array[0] == 0))
+	remains = free_u4b_array(remains);
+	if (cmp_u4barray(n1, n2) < 0)
 	{
-		return (0);
-	}
-
-	if (n1->len < n2->len)
-	{
-		if (n1->len == 1 && n1->array[0] == 0)
-			i = 0;
-		else
-			i = n1->len;
-	}
-	else if (n1->len == n2->len)
-	{
-		/*Determine smaller number.*/
-		for (i = n1->len - 1; i > 0; i--)
-		{
-			if (n1->array[i] > n2->array[i])
-				return (0);
-
-			if (n1->array[i] < n2->array[i])
-				break;
-		}
-	}
-
-	if (i > 0)
 		remains = alloc_u4b_array(n1->len);
-	else
-		remains = alloc_u4b_array(1);
+		if (!remains)
+			return (-1);
 
-	if (!remains)
-		return (-1);
-
-	if (i > 0)
 		memmove(remains->array, n1->array, n1->len);
+		return (1);
+	}
 
-	return (1);
+	return (0);
 }
 
 /**
- * get_quotient - calculates the quotient of number currently in "remains"
- * @n2: n2 array
+ * get_current_quotient - calculate the current quotient.
+ * @slice: the current digits being divided in an array.
+ * @len_slice: length of slice.
+ * @n2: the denominator.
  *
- * Description: the current n1 is stored in the global array "remains"
- * The function will try to estimate the precise quotient for the number
- * currently stored in "remains". The estimates may overshoot and undershoot
- * and the function will use the difference to make the next estimate and
- * therefore will oscilate closer and closer to the answer.
- *
- * Return: the quotient, -1 on failure
+ * Return: an int representing current quotient, -1 on error.
  */
-int64_t get_quotient(u4b_array *n2)
+ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 {
-	u4b_array *rem_tmp = NULL, *mul_est = NULL;
-	uint32_t blank[] = {0};
-	u4b_array quot_tmp = {.len = 1, .is_negative = 0, .array = blank};
-	int64_t hold = 0;
+	uint32_t temp_array[1] = {0};
+	u4b_array estimate = {.len = 1, .is_negative = 0, .array = temp_array};
+	u4b_array slice_array = {0}, *estimate_check = NULL;
+	int64_t msd_slice = 0;
 
-	if (!n2)
-		return (-1);
+	if (!slice || !n2)
+		return (NULL);
+
+	remains = free_u4b_array(remains);
+	slice_array.array = slice;
+	slice_array.len = len_slice;
+	msd_slice = slice_array.array[len_slice - 1];
+	if (len_slice > n2->len)
+		msd_slice = (msd_slice * MAX_VAL_u4b) + slice_array.array[len_slice - 2];
 
 	/**
-	 * Compare most significant digits of dividend and divisor.
-	 * If divisor's >= dividend's borrow an extra digit.
+	 * The quotient is approximated by dividing the most significant digits
+	 * of current slice and denominator.
+	 * The approximate is then adjusted depending on how much it's product
+	 * with the denominator overshoot/undershoots the slice.
 	 */
-	hold = remains->array[remains->len - 1];
-	if (remains->len > n2->len)
-		hold = (hold * MAX_VAL_u4b) + remains->array[remains->len - 2];
-
-	/**
-	 * Divided those most significant digits.
-	 * If result >= 1 then; return
-	 * else; 
-	*/
-	quot_tmp.array[0] = hold / n2->array[n2->len - 1];
-	while (!rem_tmp ||
-		   ((rem_tmp->len > n2->len ||
-			 (rem_tmp->len == n2->len && rem_tmp->array[rem_tmp->len - 1] >= n2->array[n2->len - 1])) &&
-			quot_tmp.array[0] > 0))
+	estimate.array[0] = msd_slice / n2->array[n2->len - 1];
+	estimate_check = infiX_multiplication(n2, &estimate);
+	remains = infiX_subtraction(&slice_array, estimate_check);
+	if (!remains)
 	{
-		if (rem_tmp && ((rem_tmp->len >= n2->len) || (rem_tmp->array[rem_tmp->len - 1] & NEGBIT_u4b)))
-		{
-			hold = adjust_quotient(n2->array[n2->len - 1], mul_est, rem_tmp->array[rem_tmp->len - 1], quot_tmp.array[0]);
-			if (hold < 0)
-			{
-				free_n_null(rem_tmp);
-				free_n_null(mul_est);
-				return (-1);
-			}
+		free_u4b_array(estimate_check);
+		return (-1);
+	}
 
-			quot_tmp.array[0] = hold;
-		}
-
-		free_n_null(mul_est);
-		mul_est = NULL;
-		free_n_null(rem_tmp);
-		rem_tmp = NULL;
-		mul_est = infiX_multiplication(n2, quot_tmp);
-		if (mul_est)
+	while (remains->is_negative || cmp_u4barray(remains, n2) > -1)
+	{
+		if (remains->is_negative)
 		{
-			rem_tmp = infiX_subtraction(remains, mul_est);
-			if (!rem_tmp)
-				return (-1);
+			/*estimate was too big.*/
+			/*over_shoot = ceil(msd remains / msd denominator)*/
+
+			/*Test for possible overflow.*/
+			/*Test for longer remains than denominator.*/
+			estimate.array[0] -= remains->array[remains->len - 1] / n2->array[n2->len - 1];
+			if (remains->array[remains->len - 1] % n2->array[n2->len - 1])
+				estimate.array[0]--;
 		}
 		else
+		{
+			/*estimate was too small.*/
+			/*under_shoot = floor(msd remains / msd denominator)*/
+			estimate.array[0] += remains->array[remains->len - 1] / n2->array[n2->len - 1];
+		}
+
+		estimate_check = free_u4b_array(estimate_check);
+		remains = free_u4b_array(remains);
+
+		estimate_check = infiX_multiplication(n2, &estimate);
+		remains = infiX_subtraction(&slice_array, estimate_check);
+		if (!remains)
+		{
+			free_u4b_array(estimate_check);
 			return (-1);
+		}
 	}
 
-	memmove(remains, rem_tmp, ((rem_tmp->len + 1) * sizeof(*rem_tmp)));
-	free_n_null(rem_tmp);
-	free_n_null(mul_est);
-	return (quot_tmp.array[0]);
-}
-
-/**
- * adjust_quotient - check for overshoot or undershoot in quotient and adjust appropriately
- * @dvsor_msd: number in the highest index of the n2 array
- * @estimate: multiplied estimate
- * @rem_msd: number in the highest index of the temporary remainder array
- * @quotient_tmp: current quotient to be adjuststed
- *
- * Return: the adjusted quotient, -1 on failure
- */
-int64_t adjust_quotient(uint32_t dvsor_msd, uint32_t *estimate,
-						uint32_t rem_msd, int64_t quotient_tmp)
-{
-	uint32_t *tmp_sub = NULL;
-	int64_t hold = 0, o_shoot = 0;
-
-	if (rem_msd & NEGBIT_u4b)
-	{ /*Decrease the quotient*/
-		tmp_sub = infiX_subtraction(estimate, remains);
-		if (!tmp_sub)
-			return (-1);
-
-		hold = tmp_sub[tmp_sub[0]];
-		/*How many of dvsor_msd can fit in hold?*/
-		if (hold < dvsor_msd)
-			o_shoot = 1;
-		else
-			o_shoot = hold / (int64_t)dvsor_msd;
-
-		free_n_null(tmp_sub);
-		quotient_tmp -= o_shoot;
-	}
-	else
-	{ /*Increase the quotient*/
-		hold = rem_msd;
-		/*How many of dvsor_msd can fit in hold?*/
-		o_shoot = hold / (int64_t)dvsor_msd;
-		quotient_tmp += o_shoot;
-	}
-
-	return (quotient_tmp);
+	free_u4b_array(estimate_check);
+	return (estimate.array[0]);
 }
