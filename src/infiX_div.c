@@ -118,7 +118,7 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 
 			/*Ensure slice has atleast n1->len digits by */
 			/*dropping more from numerator.*/
-			memmove(slice + slice_offset, n1->array[n1_i], tmp);
+			memmove(slice + slice_offset, &n1->array[n1_i], tmp);
 		}
 
 		if (n1_i && slice[len_slice - 1] < n2->array[n2->len - 1])
@@ -205,7 +205,7 @@ u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
 int check_division_by_0(u4b_array *n2)
 {
 	if (!n2)
-		return (NULL);
+		return (0);
 
 	trim_u4b_array(n2);
 	if (!n2->len || (n2->len == 1 && !n2->array[0]))
@@ -262,7 +262,7 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 	int64_t msd_slice = 0;
 
 	if (!slice || !n2)
-		return (NULL);
+		return (-1);
 
 	remains = free_u4b_array(remains);
 	slice_array.array = slice;

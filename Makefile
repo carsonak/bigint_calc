@@ -1,15 +1,16 @@
 #!/usr/bin/make -f
 # Beware of trailing white spaces.
+SHELL := bash
 BINARY := math
 CC := gcc
 SRC_DIR := src
 OBJ_DIR := obj
 TESTS_DIR := tests
 # All the sub-directories with .h files
-INCLUDE_DIRS = include $(shell find $(SRC_DIR) -mount -name '*.h' -exec dirname {} \; | sort -u)
+INCLUDE_DIRS = include $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \; | sort -u)
 
 # All .c files
-SRC = $(shell find $(SRC_DIR) -mount -name '*.c' -type f | sort)
+SRC = $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
 # OBJ_DIR will have the same file tree as in the SRC_DIR
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track include files (i.e .h files)
@@ -21,10 +22,8 @@ ADDRESS_SANITISER := -fsanitize=address
 UNDEFINED_SANITISER := -fsanitize=undefined
 # https://www.gnu.org/software/libc/manual/html_node/Source-Fortification.html
 HARDENING_FLAGS := -D_FORTIFY_SOURCE=2
-ifeq ($(CC),gcc)
 # https://gcc.gnu.org/onlinedocs/gcc-13.3.0/gcc/Instrumentation-Options.html#index-fstack-protector-strong
-  STACK_CHECKER := -fstack-protector-strong
-endif
+STACK_CHECKER := -fstack-protector-strong
 
 # Include flags
 INCL_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
@@ -33,10 +32,11 @@ LDLIBS := -lm -lcriterion
 LDFLAGS := -Wl,-z,relro
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 CPPFLAGS := -MMD
-DEBUG_FLAGS := -g -Og -fno-omit-frame-pointer
+OPTIMISATION_FLAGS := -Og
+DEBUG_FLAGS := -g -fno-omit-frame-pointer
 WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -pedantic -Werror -Wno-nonnull-compare
 INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKER) -fsanitize-trap=all
-CFLAGS = $(WARN_FLAGS) $(INCL_FLAGS) $(CPPFLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING_FLAGS)
+CFLAGS = $(WARN_FLAGS) $(INCL_FLAGS) $(CPPFLAGS) $(OPTIMISATION_FLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING_FLAGS)
 CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))
 
 all: $(BINARY)
@@ -56,7 +56,8 @@ $(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 
 # Redefining CFLAGS for release build
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
-release: DEBUG_FLAGS := -O3
+release: OPTIMISATION_FLAGS := -O3
+release: DEBUG_FLAGS :=
 release: INSTRUMENTATION_FLAGS :=
 release: HARDENING_FLAGS :=
 release: fclean all

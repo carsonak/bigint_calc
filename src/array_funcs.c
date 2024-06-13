@@ -10,14 +10,16 @@ void trim_u4b_array(u4b_array *arr)
 		return;
 
 	if (!arr->array)
-	{
 		arr->len = 0;
-		arr->is_negative = 0;
-		return;
-	}
 
-	while (!arr->array[arr->len - 1] && arr->len > 1)
+	while (arr->len > 1 && !arr->array[arr->len - 1])
 		--arr->len;
+
+	if (arr->len <= 1)
+	{
+		if (!arr->array || !arr->array[0])
+			arr->is_negative = 0;
+	}
 }
 
 /**

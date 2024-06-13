@@ -14,10 +14,6 @@
 #include <errno.h>
 #include <math.h> /*pow(), Need to link with -lm*/
 
-/*https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-cleanup-variable-attribute*/
-#define autofree_gen_p __attribute__((cleanup(free_n_null)))
-#define autofree_u4b_array __attribute__((cleanup(free_u4b_array)))
-
 /*Max number of digits uint32_t should hold.*/
 #define MAX_DIGITS_u4b (9)
 /*Max size for uint32_t: 10^9.*/
@@ -76,15 +72,17 @@ extern u4b_array *remains;
 
 char *infiX_manager(char *num1, char *op_symbol, char *num2);
 void panic(const char *err_type);
-void helpme(const char *which_help);
+void help_me(const char *which_help);
 
 /*mem_funcs*/
+/*https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html*/
 void *free_n_null(void *ptr);
 void *free_u4b_array(u4b_array *arr);
 u4b_array *alloc_u4b_array(size_t len);
-__attribute__((malloc(free_n_null))) void *
+__attribute__((malloc(free_n_null), alloc_size(1, 2))) void *
 xcalloc(size_t items, size_t sizeof_item);
-__attribute__((malloc(free_n_null))) void *xmalloc(size_t size);
+__attribute__((malloc(free_n_null), alloc_size(1))) void *
+xmalloc(size_t size);
 
 /*string_funcs*/
 str_array *parse_numstr(const char *numstr);

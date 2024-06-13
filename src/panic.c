@@ -13,7 +13,7 @@
 void panic(const char *err_type)
 {
 	if (!err_type || (err_type && err_type[0] == 'H'))
-		helpme(err_type);
+		help_me(err_type);
 	else if (!strcmp(err_type, "invlaid chars"))
 	{
 		fprintf(stderr, "The string contains an invalid character. ");
@@ -34,10 +34,10 @@ void panic(const char *err_type)
 }
 
 /**
- * helpme - print help text
+ * help_me - print help text
  * @which_help: a string specifying which text to print
  */
-void helpme(const char *which_help)
+void help_me(const char *which_help)
 {
 	if (which_help && !strcmp(which_help, "Hops"))
 	{

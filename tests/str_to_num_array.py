@@ -14,7 +14,7 @@ def numstr_to_numarray(input_strings: Iterable[str]) -> str:
     output: str = ""
     for numstr in input_strings:
         numstr = numstr.strip()
-        if not numstr[0].isdigit() and not numstr.startswith("-"):
+        if not numstr or not numstr[0].isdigit() and len(numstr) < 2:
             output = "".join([output, numstr, "\n"])
             continue
 
@@ -24,7 +24,7 @@ def numstr_to_numarray(input_strings: Iterable[str]) -> str:
         while str_i > 0:
             str_i = 0 if str_i - 9 < 0 else str_i - 9
             section: str = numstr[str_i:prev]
-            if section == "-":
+            if section == "-" and len(numstr) > 1:
                 num_list[-1] *= -1
             else:
                 num_list.append(int(section))

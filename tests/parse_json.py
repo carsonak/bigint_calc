@@ -71,7 +71,7 @@ def main(argv: list[str]) -> None:
         "+": lambda x, y: int(x) + int(y),
         "-": lambda x, y: int(x) - int(y),
         "*": lambda x, y: int(x) * int(y),
-        "/": lambda x, y: int(int(x) / int(y)),
+        "/": lambda x, y: int(x) // int(y),
         "**": lambda x, y: int(x) ** int(y),
     }
 
