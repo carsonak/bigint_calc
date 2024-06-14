@@ -12,7 +12,13 @@ tests: OPTIMISATION_FLAGS :=
 tests: ADDRESS_SANITISER :=
 tests: CFLAGS += $(LDFLAGS) $(LDLIBS)
 tests: $(T_BINDIR) $(T_SRCS) $(T_BINS)
-	$(shell for test_bin in $(T_BINS); do if [[ -f $$test_bin && -x $$test_bin ]]; then ./$$test_bin; fi; done)
+	$(shell \
+		for test_bin in $(T_BINS); \
+			do if [[ -f $$test_bin && -x $$test_bin ]]; \
+				then printf "\033[1;94m%s\033[0m\n" "./$$test_bin" >&2 && ./$$test_bin; \
+			fi; \
+		done\
+	)
 
 $(T_BINDIR):
 	@mkdir -p $@

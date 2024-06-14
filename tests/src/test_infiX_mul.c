@@ -21,9 +21,7 @@ u4b_array *infiX_subtraction(
 /**
  * setup - initialises variables for tests.
  */
-void setup(void)
-{
-}
+void setup(void) {}
 
 /**
  * teardown - resets variables for tests.
@@ -41,6 +39,90 @@ void teardown(void)
 	expected.len = 0;
 	expected.is_negative = 0;
 	expected.array = NULL;
+}
+
+TestSuite(null_inputs, .init = setup, .fini = teardown);
+
+Test(null_inputs, test_null_times_null,
+	 .description = "NULL * NULL = NULL", .timeout = 0)
+{
+	u4b_array *output = infiX_multiplication(NULL, NULL);
+
+	cr_expect(zero(ptr, output));
+}
+
+Test(null_inputs, test_1_times_null,
+	 .description = "1 * NULL = NULL", .timeout = 0)
+{
+	uint32_t in1[] = {1};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	u4b_array *output = infiX_multiplication(&num1, NULL);
+
+	cr_expect(zero(ptr, output));
+}
+
+Test(null_inputs, test_null_times_1,
+	 .description = "NULL * 1 = NULL", .timeout = 0)
+{
+	uint32_t in2[] = {1};
+
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	u4b_array *output = infiX_multiplication(NULL, &num2);
+
+	cr_expect(zero(ptr, output));
+}
+
+Test(null_inputs, test_0_times_null,
+	 .description = "0 * NULL = NULL", .timeout = 0)
+{
+	uint32_t in1[] = {0};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	u4b_array *output = infiX_multiplication(&num1, NULL);
+
+	cr_expect(zero(ptr, output));
+}
+
+Test(null_inputs, test_null_times_0,
+	 .description = "NULL * 0 = NULL", .timeout = 0)
+{
+	uint32_t in2[] = {0};
+
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	u4b_array *output = infiX_multiplication(NULL, &num2);
+
+	cr_expect(zero(ptr, output));
+}
+
+Test(null_inputs, test_minus1_times_null,
+	 .description = "-1 * NULL = NULL", .timeout = 0)
+{
+	uint32_t in1[] = {1};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num1.is_negative = 1;
+	u4b_array *output = infiX_multiplication(&num1, NULL);
+
+	cr_expect(zero(ptr, output));
+}
+
+Test(null_inputs, test_null_times_minus1,
+	 .description = "NULL * -1 = NULL", .timeout = 0)
+{
+	uint32_t in2[] = {1};
+
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	num2.is_negative = 1;
+	u4b_array *output = infiX_multiplication(NULL, &num2);
+
+	cr_expect(zero(ptr, output));
 }
 
 TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
