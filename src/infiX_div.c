@@ -35,6 +35,8 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 		return (NULL);
 
 	remains = free_u4b_array(remains);
+	trim_u4b_array(n1);
+	trim_u4b_array(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (divide_negatives(n1, n2));
 
@@ -77,10 +79,8 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 	n1_i = n1->len - n2->len - 1;
 	if (slice[len_slice - 1] < n2->array[n2->len - 1])
 	{
-		/**
-		 * If most significant digit (msd) of slice < msd of denominator then;
-		 * dropdown an extra digit from the numerator.
-		 */
+		/*If most significant digit (msd) of slice < msd of denominator then;*/
+		/*dropdown an extra digit from the numerator.*/
 		slice_offset = 0;
 		slice[0] = n1->array[n1_i];
 		n1_i--;
@@ -154,15 +154,6 @@ u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
 {
 	u4b_array *result = NULL;
 
-	if (!n1 || !n2)
-		return (NULL);
-
-	if (!n1->array)
-		n1->is_negative = 0;
-
-	if (!n2->array)
-		n2->is_negative = 0;
-
 	if (n1->is_negative && n2->is_negative)
 	{
 		/* -8 / -5 = 8/5 */
@@ -204,10 +195,6 @@ u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
  */
 int check_division_by_0(u4b_array *n2)
 {
-	if (!n2)
-		return (0);
-
-	trim_u4b_array(n2);
 	if (!n2->len || (n2->len == 1 && !n2->array[0]))
 	{
 		fprintf(stderr, "Division by zero error.\n");
@@ -222,14 +209,14 @@ int check_division_by_0(u4b_array *n2)
  * @n1: numerator
  * @n2: denominator
  *
- * Description: If numerator < denominator then;
- * quotient = 0 and remainder = n1.
+ * Description: If numerator is less than denominator then;
+ * quotient will be 0 and remainder will be equal to numerator.
  *
  * Return: 1 if result will be 0, 0 if not, -1 on error.
  */
 int check_0_result(u4b_array *n1, u4b_array *n2)
 {
-	if (!n1 || !n2 || check_division_by_0(n2))
+	if (check_division_by_0(n2))
 		return (-1);
 
 	remains = free_u4b_array(remains);
@@ -260,9 +247,6 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 	u4b_array estimate = {.len = 1, .is_negative = 0, .array = temp_array};
 	u4b_array slice_array = {0}, *estimate_check = NULL;
 	int64_t msd_slice = 0;
-
-	if (!slice || !n2)
-		return (-1);
 
 	remains = free_u4b_array(remains);
 	slice_array.array = slice;

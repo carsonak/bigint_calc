@@ -34,7 +34,7 @@ LDFLAGS := -Wl,-z,relro
 CPPFLAGS := -MMD
 OPTIMISATION_FLAGS := -Og
 DEBUG_FLAGS := -g -fno-omit-frame-pointer
-WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -pedantic -Werror -Wno-nonnull-compare
+WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -pedantic -Werror
 INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKER) -fsanitize-trap=all
 CFLAGS = $(WARN_FLAGS) $(INCL_FLAGS) $(CPPFLAGS) $(OPTIMISATION_FLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING_FLAGS)
 CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))

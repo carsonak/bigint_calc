@@ -53,7 +53,9 @@ typedef struct string_attributes
 	uint8_t is_negative;
 } str_array;
 
-/*A function that operates on two int arrays and returns a new array.*/
+/**
+ * math_function - generic prototype for basic arithmetic functions.
+ */
 typedef u4b_array *math_function(u4b_array *, u4b_array *);
 
 /**
@@ -91,19 +93,14 @@ char *intarr_to_str(uint32_t *u32array);
 size_t padding_chars_len(char *str, char *ch);
 
 /*array_funcs*/
-__attribute__((nonnull)) void trim_u4b_array(u4b_array *arr);
-__attribute__((nonnull(1, 2))) ssize_t
-cmp_u4barray(u4b_array *arr1, u4b_array *arr2);
+void trim_u4b_array(u4b_array *arr);
+ssize_t cmp_u4barray(u4b_array *arr1, u4b_array *arr2);
 void print_u4b_array(u4b_array *arr);
 
 /*math_funcs*/
-__attribute__((nonnull)) u4b_array *
-infiX_division(u4b_array *n1, u4b_array *n2);
-__attribute__((nonnull)) u4b_array *
-infiX_subtraction(u4b_array *n1, u4b_array *n2);
-__attribute__((nonnull)) u4b_array *
-infiX_multiplication(u4b_array *n1, u4b_array *n2);
-__attribute__((nonnull)) u4b_array *
-infiX_addition(u4b_array *n1, u4b_array *n2);
+u4b_array *infiX_division(u4b_array *n1, u4b_array *n2);
+u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2);
+u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2);
+u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2);
 
 #endif /* !INFIX_H */

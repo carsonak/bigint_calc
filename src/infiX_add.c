@@ -19,11 +19,11 @@ u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
 	if (!n1 || !n2)
 		return (NULL);
 
+	trim_u4b_array(n1);
+	trim_u4b_array(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (add_negatives(n1, n2));
 
-	trim_u4b_array(n1);
-	trim_u4b_array(n2);
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	if (result_len <= 1)
@@ -63,15 +63,6 @@ u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
 u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
 {
 	u4b_array *result = NULL;
-
-	if (!n1 || !n2)
-		return (NULL);
-
-	if (!n1->array)
-		n1->is_negative = 0;
-
-	if (!n2->array)
-		n2->is_negative = 0;
 
 	if (n1->is_negative && n2->is_negative)
 	{
