@@ -14,7 +14,7 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 {
 	int64_t byt_mul = 0;
 	size_t n1_i = 0, n2_i = 0;
-	u4b_array *product = NULL, *cur_mul = NULL, *sum = NULL;
+	u4b_array *product = NULL, *current_mul = NULL, *increment = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
@@ -30,49 +30,39 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 	else if ((n1->len == 1 && !n1->array[0]) || (n2->len == 1 && !n2->array[0]))
 		return (alloc_u4b_array(1));
 
-	/*product->len = n1->len + n2->len - (0 or 1).*/
-	product = alloc_u4b_array(n1->len + n2->len);
-	if (!product)
+	increment = alloc_u4b_array(0);
+	if (!increment)
 		return (NULL);
 
-	product->len = 1;
 	/*Iterate over every number in n2 and multiply with every number in n1.*/
-	for (n2_i = 0; n2_i <= n2->len; n2_i++)
+	for (n2_i = 0; n2_i < n2->len; n2_i++)
 	{
 		/*Skip multiplication by zero*/
 		if (n2->array[n2_i] == 0)
 			continue;
 
-		/*Length of cur_mul = length of n1 + current index of n2*/
-		cur_mul = alloc_u4b_array(n1->len + n2_i);
-		if (!cur_mul)
+		/*Length of current_mul = */
+		/*length of n1 + (number of digits between n2[0] and n2[n2_i])*/
+		current_mul = alloc_u4b_array(n1->len + n2_i + 1);
+		if (!current_mul)
 			return (free_u4b_array(product));
 
 		byt_mul = 0;
 		for (n1_i = 0; n1_i < n1->len; n1_i++)
 		{
 			byt_mul += (int64_t)n2->array[n2_i] * n1->array[n1_i];
-			cur_mul->array[n2_i + n1_i] = byt_mul % MAX_VAL_u4b;
+			current_mul->array[n2_i + n1_i] = byt_mul % MAX_VAL_u4b;
 			byt_mul /= MAX_VAL_u4b;
 		}
 
-		cur_mul->array[n2_i + n1_i] = byt_mul;
-		sum = infiX_addition(product, cur_mul);
-		if (sum)
-		{
-			product->len = sum->len;
-			/*Skip over the first n2_i indices as they will be unchanged.*/
-			memmove(product->array, sum->array + n2_i, sum->len - n2_i);
-		}
-
-		cur_mul = free_u4b_array(cur_mul);
-		if (!sum)
-		{
-			product = free_u4b_array(product);
+		current_mul->array[n2_i + n1_i] = byt_mul;
+		product = infiX_addition(increment, current_mul);
+		current_mul = free_u4b_array(current_mul);
+		increment = free_u4b_array(increment);
+		if (!product)
 			return (NULL);
-		}
 
-		sum = free_u4b_array(sum);
+		increment = product;
 	}
 
 	trim_u4b_array(product);

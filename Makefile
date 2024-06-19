@@ -58,8 +58,7 @@ $(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
 release: OPTIMISATION_FLAGS := -O3
 release: DEBUG_FLAGS :=
-release: INSTRUMENTATION_FLAGS :=
-release: HARDENING_FLAGS :=
+release: INSTRUMENTATION_FLAGS := $(STACK_CHECKER)
 release: fclean all
 
 clean:

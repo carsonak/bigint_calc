@@ -61,6 +61,7 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 	 * quotient digits = numerator digits - denominator digits + (0 or 1).
 	 */
 	if (n1->array[n1->len - 1] < n2->array[n2->len - 1])
+		/*If msd of numerator < msd denominator.*/
 		quotient = alloc_u4b_array(n1->len - n2->len);
 	else
 		quotient = alloc_u4b_array(n1->len - n2->len + 1);
@@ -219,7 +220,6 @@ int check_0_result(u4b_array *n1, u4b_array *n2)
 	if (check_division_by_0(n2))
 		return (-1);
 
-	remains = free_u4b_array(remains);
 	if (cmp_u4barray(n1, n2) < 0)
 	{
 		remains = alloc_u4b_array(n1->len);
