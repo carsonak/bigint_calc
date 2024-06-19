@@ -76,8 +76,9 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 		return (NULL);
 	}
 
-	memmove(slice + slice_offset, n1->array, n2->len);
-	n1_i = n1->len - n2->len - 1;
+	n1_i = n1->len - n2->len;
+	memmove(slice + slice_offset, &n1->array[n1_i], (sizeof(*n1->array) * n2->len));
+	n1_i--;
 	if (slice[len_slice - 1] < n2->array[n2->len - 1])
 	{
 		/*If most significant digit (msd) of slice < msd of denominator then;*/
@@ -108,6 +109,7 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 		tmp = n2->len - remains->len;
 		if (tmp)
 		{
+			/*Reduce n1_i and check for overflow.*/
 			if (n1_i + 1 > tmp)
 				n1_i -= tmp;
 			else
@@ -245,12 +247,12 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 {
 	uint32_t temp_array[1] = {0};
 	u4b_array estimate = {.len = 1, .is_negative = 0, .array = temp_array};
-	u4b_array slice_array = {0}, *estimate_check = NULL;
-	int64_t msd_slice = 0;
+	u4b_array slice_array = {.len = len_slice, .is_negative = 0, .array = NULL};
+	u4b_array *estimate_check = NULL;
+	ssize_t msd_slice = 0, cmp_res = 0, i = 0;
 
 	remains = free_u4b_array(remains);
 	slice_array.array = slice;
-	slice_array.len = len_slice;
 	msd_slice = slice_array.array[len_slice - 1];
 	if (len_slice > n2->len)
 		msd_slice = (msd_slice * MAX_VAL_u4b) + slice_array.array[len_slice - 2];
@@ -261,17 +263,20 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 	 * The approximate is then adjusted depending on how much it's product
 	 * with the denominator overshoot/undershoots the slice.
 	 */
-	estimate.array[0] = msd_slice / n2->array[n2->len - 1];
+	estimate.array[0] = (int64_t)msd_slice / n2->array[n2->len - 1];
 	estimate_check = infiX_multiplication(n2, &estimate);
 	remains = infiX_subtraction(&slice_array, estimate_check);
-	if (!remains)
+	if (!remains || !estimate_check)
 	{
+		remains = free_u4b_array(remains);
 		free_u4b_array(estimate_check);
 		return (-1);
 	}
 
-	while (remains->is_negative || cmp_u4barray(remains, n2) > -1)
+	cmp_res = cmp_u4barray(remains, n2);
+	while (remains->is_negative || cmp_res >= 0)
 	{
+		i++;
 		if (remains->is_negative)
 		{
 			/*estimate was too big.*/
@@ -295,13 +300,17 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 
 		estimate_check = infiX_multiplication(n2, &estimate);
 		remains = infiX_subtraction(&slice_array, estimate_check);
-		if (!remains)
+		if (!remains || !estimate_check)
 		{
+			remains = free_u4b_array(remains);
 			free_u4b_array(estimate_check);
 			return (-1);
 		}
+
+		cmp_res = cmp_u4barray(remains, n2);
 	}
 
+	printf("iterations: %ld\n", i);
 	free_u4b_array(estimate_check);
 	return (estimate.array[0]);
 }

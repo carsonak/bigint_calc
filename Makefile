@@ -1,6 +1,7 @@
 #!/usr/bin/make -f
 # Beware of trailing white spaces.
 SHELL := bash
+TIMEOUT := timeout --preserve-status --kill-after=6.0 5.0
 BINARY := math
 CC := gcc
 SRC_DIR := src
