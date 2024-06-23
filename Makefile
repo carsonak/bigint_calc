@@ -8,7 +8,7 @@ SRC_DIR := src
 OBJ_DIR := obj
 TESTS_DIR := tests
 # All the sub-directories with .h files
-INCLUDE_DIRS = include $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \; | sort -u)
+INCLUDE_DIRS = $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \; | sort -u)
 
 # All .c files
 SRC = $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)

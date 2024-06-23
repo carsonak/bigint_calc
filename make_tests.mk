@@ -2,7 +2,6 @@ T_BINDIR := $(TESTS_DIR)/bin
 T_SRCDIR := $(TESTS_DIR)/src
 
 UTILITIES := $(SRC_DIR)/mem_funcs.c $(SRC_DIR)/string_funcs.c $(SRC_DIR)/array_funcs.c
-INCLUDE_DIRS += $(TESTS_DIR)/include
 
 T_SRCS = $(shell find $(T_SRCDIR) -mount -name 'test_*.c' -type f | sort)
 T_BINS = $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)

@@ -41,309 +41,309 @@ void teardown(void)
 	expected.array = NULL;
 }
 
-// TestSuite(null_inputs, .init = setup, .fini = teardown);
+TestSuite(null_inputs, .init = setup, .fini = teardown);
 
-// Test(null_inputs, test_null_plus_null,
-// 	 .description = "NULL + NULL = NULL", .timeout = 0)
-// {
-// 	u4b_array *output = infiX_addition(NULL, NULL);
+Test(null_inputs, test_null_plus_null,
+	 .description = "NULL + NULL = NULL", .timeout = 0)
+{
+	u4b_array *output = infiX_addition(NULL, NULL);
 
-// 	cr_expect(zero(ptr, output));
-// }
+	cr_expect(zero(ptr, output));
+}
 
-// Test(null_inputs, test_1_plus_null,
-// 	 .description = "1 + NULL = NULL", .timeout = 0)
-// {
-// 	uint32_t in1[] = {1};
+Test(null_inputs, test_1_plus_null,
+	 .description = "1 + NULL = NULL", .timeout = 0)
+{
+	uint32_t in1[] = {1};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	u4b_array *output = infiX_addition(&num1, NULL);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	u4b_array *output = infiX_addition(&num1, NULL);
 
-// 	cr_expect(zero(ptr, output));
-// }
+	cr_expect(zero(ptr, output));
+}
 
-// Test(null_inputs, test_null_plus_1,
-// 	 .description = "NULL + 1 = NULL", .timeout = 0)
-// {
-// 	uint32_t in2[] = {1};
+Test(null_inputs, test_null_plus_1,
+	 .description = "NULL + 1 = NULL", .timeout = 0)
+{
+	uint32_t in2[] = {1};
 
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	u4b_array *output = infiX_addition(NULL, &num2);
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	u4b_array *output = infiX_addition(NULL, &num2);
 
-// 	cr_expect(zero(ptr, output));
-// }
+	cr_expect(zero(ptr, output));
+}
 
-// Test(null_inputs, test_0_plus_null,
-// 	 .description = "0 + NULL = NULL", .timeout = 0)
-// {
-// 	uint32_t in1[] = {0};
+Test(null_inputs, test_0_plus_null,
+	 .description = "0 + NULL = NULL", .timeout = 0)
+{
+	uint32_t in1[] = {0};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	u4b_array *output = infiX_addition(&num1, NULL);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	u4b_array *output = infiX_addition(&num1, NULL);
 
-// 	cr_expect(zero(ptr, output));
-// }
+	cr_expect(zero(ptr, output));
+}
 
-// Test(null_inputs, test_null_plus_0,
-// 	 .description = "NULL + 0 = NULL", .timeout = 0)
-// {
-// 	uint32_t in2[] = {0};
+Test(null_inputs, test_null_plus_0,
+	 .description = "NULL + 0 = NULL", .timeout = 0)
+{
+	uint32_t in2[] = {0};
 
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	u4b_array *output = infiX_addition(NULL, &num2);
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	u4b_array *output = infiX_addition(NULL, &num2);
 
-// 	cr_expect(zero(ptr, output));
-// }
+	cr_expect(zero(ptr, output));
+}
 
-// Test(null_inputs, test_minus1_plus_null,
-// 	 .description = "-1 + NULL = NULL", .timeout = 0)
-// {
-// 	uint32_t in1[] = {1};
+Test(null_inputs, test_minus1_plus_null,
+	 .description = "-1 + NULL = NULL", .timeout = 0)
+{
+	uint32_t in1[] = {1};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	num1.is_negative = 1;
-// 	u4b_array *output = infiX_addition(&num1, NULL);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num1.is_negative = 1;
+	u4b_array *output = infiX_addition(&num1, NULL);
 
-// 	cr_expect(zero(ptr, output));
-// }
+	cr_expect(zero(ptr, output));
+}
 
-// Test(null_inputs, test_null_plus_minus1,
-// 	 .description = "NULL + -1 = NULL", .timeout = 0)
-// {
-// 	uint32_t in2[] = {1};
+Test(null_inputs, test_null_plus_minus1,
+	 .description = "NULL + -1 = NULL", .timeout = 0)
+{
+	uint32_t in2[] = {1};
 
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	num2.is_negative = 1;
-// 	u4b_array *output = infiX_addition(NULL, &num2);
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	num2.is_negative = 1;
+	u4b_array *output = infiX_addition(NULL, &num2);
 
-// 	cr_expect(zero(ptr, output));
-// }
+	cr_expect(zero(ptr, output));
+}
 
-// TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
+TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
 
-// Test(zero_len_arrays, test_nullarray_plus_nullarray,
-// 	 .description = "null_array + null_array = null_array", .timeout = 0)
-// {
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+Test(zero_len_arrays, test_nullarray_plus_nullarray,
+	 .description = "null_array + null_array = null_array", .timeout = 0)
+{
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(zero(sz, output->len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(zero(ptr, output->array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(zero(sz, output->len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(zero(ptr, output->array));
+	output = free_u4b_array(output);
+}
 
-// Test(zero_len_arrays, test_4490998_plus_nullarray,
-// 	 .description = "4,490,998 + null_array = 4,490,998", .timeout = 0)
-// {
-// 	uint32_t in1[] = {4490998}, out[] = {4490998};
+Test(zero_len_arrays, test_4490998_plus_nullarray,
+	 .description = "4,490,998 + null_array = 4,490,998", .timeout = 0)
+{
+	uint32_t in1[] = {4490998}, out[] = {4490998};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// Test(zero_len_arrays, test_nullarray_plus_largenum,
-// 	 .description = "null_array + 99,992,175, 712,000,569, 0, 0, 6,086, 232,509,426, 238,542,068 = 99,992,175, 712,000,569, 0, 0, 6,086, 232,509,426, 238,542,068",
-// 	 .timeout = 0)
-// {
-// 	uint32_t in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-// 	uint32_t out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+Test(zero_len_arrays, test_nullarray_plus_largenum,
+	 .description = "null_array + 99,992,175, 712,000,569, 0, 0, 6,086, 232,509,426, 238,542,068 = 99,992,175, 712,000,569, 0, 0, 6,086, 232,509,426, 238,542,068",
+	 .timeout = 0)
+{
+	uint32_t in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+	uint32_t out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// TestSuite(simple_additions, .init = setup, .fini = teardown);
+TestSuite(simple_additions, .init = setup, .fini = teardown);
 
-// Test(simple_additions, test_0_plus_0,
-// 	 .description = "0 + 0 = 0", .timeout = 0)
-// {
-// 	uint32_t in1[] = {0}, out[] = {0};
+Test(simple_additions, test_0_plus_0,
+	 .description = "0 + 0 = 0", .timeout = 0)
+{
+	uint32_t in1[] = {0}, out[] = {0};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num1);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num1);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// Test(simple_additions, test_1_plus_0,
-// 	 .description = "1 + 0 = 1", .timeout = 0)
-// {
-// 	uint32_t in1[] = {1}, in2[] = {0}, out[] = {1};
+Test(simple_additions, test_1_plus_0,
+	 .description = "1 + 0 = 1", .timeout = 0)
+{
+	uint32_t in1[] = {1}, in2[] = {0}, out[] = {1};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// Test(simple_additions, test_0_plus_1,
-// 	 .description = "0 + 1 = 1", .timeout = 0)
-// {
-// 	uint32_t in1[] = {0}, in2[] = {1}, out[] = {1};
+Test(simple_additions, test_0_plus_1,
+	 .description = "0 + 1 = 1", .timeout = 0)
+{
+	uint32_t in1[] = {0}, in2[] = {1}, out[] = {1};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// Test(simple_additions, test_1_plus_1,
-// 	 .description = "1 + 1 = 2", .timeout = 0)
-// {
-// 	uint32_t in1[] = {1}, out[] = {2};
+Test(simple_additions, test_1_plus_1,
+	 .description = "1 + 1 = 2", .timeout = 0)
+{
+	uint32_t in1[] = {1}, out[] = {2};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num1);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num1);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// Test(simple_additions, test_999999999_plus_1,
-// 	 .description = "999,999,999 + 1 = 1,000,000,000", .timeout = 0)
-// {
-// 	uint32_t in1[] = {1000000000 - 1}, in2[] = {1}, out[] = {0, 1};
+Test(simple_additions, test_999999999_plus_1,
+	 .description = "999,999,999 + 1 = 1,000,000,000", .timeout = 0)
+{
+	uint32_t in1[] = {1000000000 - 1}, in2[] = {1}, out[] = {0, 1};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// Test(simple_additions, test_999999999999999999_plus_999999999,
-// 	 .description = "999,999,999,999,999,999 + 999,999,999 = 1,000,000,000,999,999,998",
-// 	 .timeout = 0)
-// {
-// 	uint32_t in1[] = {1000000000 - 1, 1000000000 - 1}, in2[] = {1000000000 - 1};
-// 	uint32_t out[] = {999999998, 0, 1};
+Test(simple_additions, test_999999999999999999_plus_999999999,
+	 .description = "999,999,999,999,999,999 + 999,999,999 = 1,000,000,000,999,999,998",
+	 .timeout = 0)
+{
+	uint32_t in1[] = {1000000000 - 1, 1000000000 - 1}, in2[] = {1000000000 - 1};
+	uint32_t out[] = {999999998, 0, 1};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// TestSuite(negative_additions, .init = setup, .fini = teardown);
+TestSuite(negative_additions, .init = setup, .fini = teardown);
 
-// Test(negative_additions, test_minus1_plus_minus1,
-// 	 .description = "-1 + -1 = -2", .timeout = 0)
-// {
-// 	uint32_t in1[] = {1}, in2[] = {1};
-// 	uint32_t out[] = {2};
+Test(negative_additions, test_minus1_plus_minus1,
+	 .description = "-1 + -1 = -2", .timeout = 0)
+{
+	uint32_t in1[] = {1}, in2[] = {1};
+	uint32_t out[] = {2};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.is_negative = 1;
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.is_negative = 1;
-// 	num2.array = in2;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.is_negative = 1;
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.is_negative = 1;
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.is_negative = 1;
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.is_negative = 1;
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
-// Test(negative_additions, test_1_plus_minus1,
-// 	 .description = "1 + -1 = 0 (does subtraction)", .timeout = 0)
-// {
-// 	uint32_t in1[] = {1}, in2[] = {1};
+Test(negative_additions, test_1_plus_minus1,
+	 .description = "1 + -1 = 0 (does subtraction)", .timeout = 0)
+{
+	uint32_t in1[] = {1}, in2[] = {1};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.is_negative = 1;
-// 	num2.array = in2;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.is_negative = 1;
+	num2.array = in2;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(zero(chr, output->is_negative));
-// 	free_u4b_array(output);
-// }
+	cr_expect(zero(chr, output->is_negative));
+	free_u4b_array(output);
+}
 
-// Test(negative_additions, test_minus1_plus_1,
-// 	 .description = "-1 + 1 = 0 (does subtraction)", .timeout = 0)
-// {
-// 	uint32_t in1[] = {1}, in2[] = {1};
+Test(negative_additions, test_minus1_plus_1,
+	 .description = "-1 + 1 = 0 (does subtraction)", .timeout = 0)
+{
+	uint32_t in1[] = {1}, in2[] = {1};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.is_negative = 1;
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.is_negative = 1;
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(zero(chr, output->is_negative));
-// 	free_u4b_array(output);
-// }
+	cr_expect(zero(chr, output->is_negative));
+	free_u4b_array(output);
+}
 
 TestSuite(large_additions, .init = setup, .fini = teardown);
 
@@ -368,24 +368,24 @@ Test(large_additions, test_largenum1_plus_largenum2,
 	output = free_u4b_array(output);
 }
 
-// Test(large_additions, test_medium_largenum1_plus_medium_largenum2,
-// 	 .description = "medium_large1 + medium_large2 = medium_large3",
-// 	 .timeout = 0)
-// {
-// 	uint32_t in1[] = {555555555, 55555555, 0, 0, 0, 0, 222222, 0, 0, 0, 0, 0, 0, 0, 0, 888888888, 888888888, 888888888, 888888888, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110000000, 111111111, 111111111, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 770000000, 777777777, 777777777, 777777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 999000000, 99999999};
-// 	uint32_t in2[] = {470282653, 363502795, 428381283, 187482382, 467199043, 93190808, 0, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 737842756, 975675668, 665546560, 147030781, 113541635, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 746086661, 442022266, 249623720, 646946071, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 44149526, 436038339, 561338441, 16196762, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4};
-// 	uint32_t out[] = {25838208, 419058351, 428381283, 187482382, 467199043, 93190808, 222222, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 626731644, 864564557, 554435449, 35919670, 113541636, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 856086661, 553133377, 360734831, 646946182, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 814149526, 213816116, 339116219, 16974540, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4, 0, 0, 0, 0, 999000000, 99999999};
+Test(large_additions, test_medium_largenum1_plus_medium_largenum2,
+	 .description = "medium_large1 + medium_large2 = medium_large3",
+	 .timeout = 0)
+{
+	uint32_t in1[] = {555555555, 55555555, 0, 0, 0, 0, 222222, 0, 0, 0, 0, 0, 0, 0, 0, 888888888, 888888888, 888888888, 888888888, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110000000, 111111111, 111111111, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 770000000, 777777777, 777777777, 777777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 999000000, 99999999};
+	uint32_t in2[] = {470282653, 363502795, 428381283, 187482382, 467199043, 93190808, 0, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 737842756, 975675668, 665546560, 147030781, 113541635, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 746086661, 442022266, 249623720, 646946071, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 44149526, 436038339, 561338441, 16196762, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4};
+	uint32_t out[] = {25838208, 419058351, 428381283, 187482382, 467199043, 93190808, 222222, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 626731644, 864564557, 554435449, 35919670, 113541636, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 856086661, 553133377, 360734831, 646946182, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 814149526, 213816116, 339116219, 16974540, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4, 0, 0, 0, 0, 999000000, 99999999};
 
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	expected.len = sizeof(out) / sizeof(*out);
-// 	expected.array = out;
-// 	u4b_array *output = infiX_addition(&num1, &num2);
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_addition(&num1, &num2);
 
-// 	cr_expect(eq(sz, output->len, expected.len));
-// 	cr_expect(zero(chr, output->is_negative));
-// 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-// 	output = free_u4b_array(output);
-// }
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
