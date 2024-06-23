@@ -9,6 +9,7 @@ T_BINS = $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 T_DEPS = $(T_BINS:%=%.d)
 
 ADDRESS_SANITISER :=
+LDLIBS += -lcriterion
 CFLAGS += $(LDFLAGS) $(LDLIBS)
 
 tests: unit-tests

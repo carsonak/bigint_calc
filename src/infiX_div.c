@@ -246,10 +246,10 @@ int check_0_result(u4b_array *n1, u4b_array *n2)
 ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 {
 	uint32_t temp_array[1] = {0};
-	u4b_array estimate = {.len = 1, .is_negative = 0, .array = temp_array};
+	u4b_array q_estimate = {.len = 1, .is_negative = 0, .array = temp_array};
 	u4b_array slice_array = {.len = len_slice, .is_negative = 0, .array = NULL};
 	u4b_array *estimate_check = NULL;
-	ssize_t msd_slice = 0, cmp_res = 0, i = 0;
+	ssize_t msd_slice = 0, is_larger = 0, i = 0;
 
 	remains = free_u4b_array(remains);
 	slice_array.array = slice;
@@ -257,14 +257,10 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 	if (len_slice > n2->len)
 		msd_slice = (msd_slice * MAX_VAL_u4b) + slice_array.array[len_slice - 2];
 
-	/**
-	 * The quotient is approximated by dividing the most significant digits
-	 * of current slice and denominator.
-	 * The approximate is then adjusted depending on how much it's product
-	 * with the denominator overshoot/undershoots the slice.
-	 */
-	estimate.array[0] = (int64_t)msd_slice / n2->array[n2->len - 1];
-	estimate_check = infiX_multiplication(n2, &estimate);
+	/*quotient approximation ≈ most significant digit of current slice / */
+	/*msd of denominator.*/
+	q_estimate.array[0] = (int64_t)msd_slice / n2->array[n2->len - 1];
+	estimate_check = infiX_multiplication(n2, &q_estimate);
 	remains = infiX_subtraction(&slice_array, estimate_check);
 	if (!remains || !estimate_check)
 	{
@@ -273,32 +269,33 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 		return (-1);
 	}
 
-	cmp_res = cmp_u4barray(remains, n2);
-	while (remains->is_negative || cmp_res >= 0)
+	/*0 <= (current slice - (q_estimate * denominator)) < denominator*/
+	is_larger = cmp_u4barray(remains, n2);
+	while (remains->is_negative || is_larger >= 0)
 	{
 		i++;
 		if (remains->is_negative)
 		{
-			/*estimate was too big.*/
+			/*q_estimate was too big.*/
 			/*over_shoot = ceil(msd remains / msd denominator)*/
 
 			/*Test for possible overflow.*/
 			/*Test for longer remains than denominator.*/
-			estimate.array[0] -= remains->array[remains->len - 1] / n2->array[n2->len - 1];
+			q_estimate.array[0] -= remains->array[remains->len - 1] / n2->array[n2->len - 1];
 			if (remains->array[remains->len - 1] % n2->array[n2->len - 1])
-				estimate.array[0]--;
+				q_estimate.array[0]--;
 		}
 		else
 		{
-			/*estimate was too small.*/
+			/*q_estimate was too small.*/
 			/*under_shoot = floor(msd remains / msd denominator)*/
-			estimate.array[0] += remains->array[remains->len - 1] / n2->array[n2->len - 1];
+			q_estimate.array[0] += remains->array[remains->len - 1] / n2->array[n2->len - 1];
 		}
 
 		estimate_check = free_u4b_array(estimate_check);
 		remains = free_u4b_array(remains);
 
-		estimate_check = infiX_multiplication(n2, &estimate);
+		estimate_check = infiX_multiplication(n2, &q_estimate);
 		remains = infiX_subtraction(&slice_array, estimate_check);
 		if (!remains || !estimate_check)
 		{
@@ -307,10 +304,10 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 			return (-1);
 		}
 
-		cmp_res = cmp_u4barray(remains, n2);
+		is_larger = cmp_u4barray(remains, n2);
 	}
 
 	printf("iterations: %ld\n", i);
 	free_u4b_array(estimate_check);
-	return (estimate.array[0]);
+	return (q_estimate.array[0]);
 }

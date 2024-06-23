@@ -29,13 +29,13 @@ STACK_CHECKER := -fstack-protector-strong
 # Include flags
 INCL_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
 # Linker flags
-LDLIBS := -lm -lcriterion
+LDLIBS := -lm
 LDFLAGS := -Wl,-z,relro
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 CPPFLAGS := -MMD
 OPTIMISATION_FLAGS := -Og
 DEBUG_FLAGS := -g -fno-omit-frame-pointer
-WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -pedantic -Werror
+WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -Werror
 INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKER) -fsanitize-trap=all
 CFLAGS = $(WARN_FLAGS) $(INCL_FLAGS) $(CPPFLAGS) $(OPTIMISATION_FLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING_FLAGS)
 CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))
