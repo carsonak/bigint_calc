@@ -1,16 +1,9 @@
 # infiX_math
 
-## Notice
+This project aims to provide basic calculator functionality for numbers of
+arbitrary length. This is a personal project meant to challenge myself and
+just to practice C.
 
-This is a personal project meant to challenge myself and just to practice
-writing C projects. Therefore this program and the suite of functions
-thereof are not guaranteed to be up to production standards. Use at your
-own risk.
-
-## Description
-
-This project aims to provide basic calculator functionality for numbers of arbitrary
-length.
 The [math](./math) executable was compiled with [gcc version 13.2.0](https://gcc.gnu.org/gcc-13/).
 
 ## Building from source
@@ -23,14 +16,16 @@ You can build the program by cloning the project into your own machine and runni
 
 The executable can be run as a command line tool as follows:
 
-**./math *number* '*operator*' *number***
+`./math <number> '<operator>' <number>`
 
-| ***Operator*** | ***Description*** |
+`<number>` is a decimal number not containing any spaces.
+
+| **Operator** | **Description** |
 | ------ | ------- |
-| **+** | Addition |
-| **-** | Subtraction |
-| **\*** | Multiplication |
-| **%** | Modulus |
+| `+` | Addition |
+| `-` | Subtraction |
+| `*` | Multiplication |
+| `%` | Modulus |
 
 Shell metacharacters such as `*` should be quoted.
 
