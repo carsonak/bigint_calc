@@ -1,14 +1,12 @@
 #!/usr/bin/make -f
 # Beware of trailing white spaces.
-SHELL := bash
-TIMEOUT := timeout --preserve-status --kill-after=6.0 5.0
 BINARY := math
 CC := gcc
 SRC_DIR := src
 OBJ_DIR := obj
 TESTS_DIR := tests
 # All the sub-directories with .h files
-INCLUDE_DIRS = $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \; | sort -u)
+INCLUDE_DIRS = $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
 
 # All .c files
 SRC = $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
@@ -19,12 +17,16 @@ DEP_FILES = $(OBJ:.o=.d)
 
 # https://clang.llvm.org/docs/AddressSanitizer.html
 ADDRESS_SANITISER := -fsanitize=address
+ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=1
+LSAN_OPTIONS := LSAN_OPTIONS=suppressions="$(TESTS_DIR)/lsan.supp"
 # https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 UNDEFINED_SANITISER := -fsanitize=undefined
 # https://www.gnu.org/software/libc/manual/html_node/Source-Fortification.html
-HARDENING_FLAGS := -D_FORTIFY_SOURCE=2
-# https://gcc.gnu.org/onlinedocs/gcc-13.3.0/gcc/Instrumentation-Options.html#index-fstack-protector-strong
-STACK_CHECKER := -fstack-protector-strong
+HARDENING := -D_FORTIFY_SOURCE=0
+# https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fstack-protector-strong
+STACK_CHECKS := -fstack-protector-strong -fstack-clash-protection
+# https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fcf-protection
+CONTROL_TRANSFER_CHECKS := -fcf-protection=full
 
 # Include flags
 INCL_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
@@ -34,10 +36,10 @@ LDFLAGS := -Wl,-z,relro
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 CPPFLAGS := -MMD
 OPTIMISATION_FLAGS := -Og
-DEBUG_FLAGS := -g -fno-omit-frame-pointer
+DEBUG_FLAGS := -g3 -fno-omit-frame-pointer
 WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -Werror
-INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKER) -fsanitize-trap=all
-CFLAGS = $(WARN_FLAGS) $(INCL_FLAGS) $(CPPFLAGS) $(OPTIMISATION_FLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING_FLAGS)
+INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKS) $(CONTROL_TRANSFER_CHECKS) -fsanitize-trap=all
+CFLAGS = $(WARN_FLAGS) $(INCL_FLAGS) $(CPPFLAGS) $(OPTIMISATION_FLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING)
 CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))
 
 all: $(BINARY)
@@ -59,7 +61,8 @@ $(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
 release: OPTIMISATION_FLAGS := -O3
 release: DEBUG_FLAGS :=
-release: INSTRUMENTATION_FLAGS := $(STACK_CHECKER)
+release: ADDRESS_SANITISER :=
+release: HARDENING := -D_FORTIFY_SOURCE=2
 release: fclean all
 
 clean:
@@ -78,8 +81,8 @@ re: fclean all
 
 # include will "paste" the rules it finds in the included files at this
 # location, therefore best to place it at end of file so as not to interfere
-# with other rules. The "-" suppresses missing file errors, as .d files are
+# with other rules. The "-"/s suppresses missing file errors, as .d files are
 # generated automatically by gcc.
 # https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html
--include $(DEP_FILES)
+sinclude $(DEP_FILES)
 include make_tests.mk

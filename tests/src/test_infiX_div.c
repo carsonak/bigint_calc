@@ -8,7 +8,10 @@ u4b_array expected = {.len = 0, .is_negative = 0, .array = NULL};
 /**
  * setup - initialises variables for tests.
  */
-void setup(void) {}
+void setup(void)
+{
+	remains = NULL;
+}
 
 /**
  * teardown - resets variables for tests.
@@ -26,6 +29,8 @@ void teardown(void)
 	expected.len = 0;
 	expected.is_negative = 0;
 	expected.array = NULL;
+
+	free_u4b_array(remains);
 }
 
 // TestSuite(null_inputs, .init = setup, .fini = teardown);

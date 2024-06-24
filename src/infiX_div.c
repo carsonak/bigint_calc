@@ -307,7 +307,7 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 		is_larger = cmp_u4barray(remains, n2);
 	}
 
-	printf("iterations: %ld\n", i);
+	// printf("iterations: %ld\n", i);
 	free_u4b_array(estimate_check);
 	return (q_estimate.array[0]);
 }

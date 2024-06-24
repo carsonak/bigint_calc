@@ -1,0 +1,2 @@
+leak:cri_fmt_vbprintf
+leak:cri_assert_node_add
