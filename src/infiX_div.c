@@ -3,13 +3,13 @@
 u4b_array *remains = NULL;
 
 static u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
-	__attribute__((nonnull));
+	ATTR_NONNULL;
 static int check_0_result(u4b_array *n1, u4b_array *n2)
-	__attribute__((nonnull));
+	ATTR_NONNULL;
 static int check_division_by_0(u4b_array *n2)
-	__attribute__((nonnull));
-static ssize_t __attribute__((nonnull(1, 3)))
-get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2);
+	ATTR_NONNULL;
+static ssize_t ATTR_NONNULL_IDX(1, 3)
+	get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2);
 
 /**
  * infiX_division - divides a numbers stored in an array

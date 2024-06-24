@@ -14,6 +14,38 @@
 #include <errno.h>
 #include <math.h> /*pow(), Need to link with -lm*/
 
+#define ATTR_MALLOC
+#define ATTR_MALLOC_FREE(...)
+#define ATTR_ALLOC_SIZE(...)
+#define ATTR_NONNULL
+#define ATTR_NONNULL_IDX(...)
+
+#if defined __has_attribute
+
+/*https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute*/
+#if __has_attribute(malloc)
+#undef ATTR_MALLOC
+#define ATTR_MALLOC __attribute__((malloc))
+#undef ATTR_MALLOC_FREE
+#define ATTR_MALLOC_FREE(...) __attribute__((malloc))
+#endif /*__has_attribute(malloc)*/
+
+/*https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-alloc_005fsize-variable-attribute*/
+#if __has_attribute(alloc_size)
+#undef ATTR_ALLOC_SIZE
+#define ATTR_ALLOC_SIZE(...) __attribute__((alloc_size(__VA_ARGS__)))
+#endif /*__has_attribute(alloc_size)*/
+
+/*https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute*/
+#if __has_attribute(nonnull)
+#undef ATTR_NONNULL
+#define ATTR_NONNULL __attribute__((nonnull))
+#undef ATTR_NONNULL_IDX
+#define ATTR_NONNULL_IDX(...) __attribute__((nonnull(__VA_ARGS__)))
+#endif /*__has_attribute(nonnull)*/
+
+#endif /*defined __has_attribute*/
+
 /*Max number of digits uint32_t should hold.*/
 #define MAX_DIGITS_u4b (9)
 /*Max size for uint32_t: 10^9.*/
@@ -77,14 +109,17 @@ void panic(const char *err_type);
 void help_me(const char *which_help);
 
 /*mem_funcs*/
-/*https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html*/
 void *free_n_null(void *ptr);
 void *free_u4b_array(u4b_array *arr);
 u4b_array *alloc_u4b_array(size_t len);
-__attribute__((malloc(free_n_null), alloc_size(1, 2))) void *
-xcalloc(size_t items, size_t sizeof_item);
-__attribute__((malloc(free_n_null), alloc_size(1))) void *
-xmalloc(size_t size);
+
+ATTR_MALLOC_FREE(free_n_null)
+ATTR_ALLOC_SIZE(1, 2)
+void *xcalloc(size_t items, size_t sizeof_item);
+
+ATTR_MALLOC_FREE(free_n_null)
+ATTR_ALLOC_SIZE(1)
+void *xmalloc(size_t size);
 
 /*string_funcs*/
 str_array *parse_numstr(const char *numstr);

@@ -1,7 +1,7 @@
 #include "infiX.h"
 
 static u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
-	__attribute__((nonnull));
+	ATTR_NONNULL;
 
 /**
  * infiX_addition - adds integers stored in arrays
