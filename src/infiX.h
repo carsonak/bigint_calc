@@ -101,9 +101,6 @@ typedef struct operator_function
 	math_function *f;
 } op_func;
 
-/*A dynamically allocated array to store remainders of division.*/
-extern u4b_array *remains;
-
 char *infiX_manager(char *num1, char *op_symbol, char *num2);
 void panic(const char *err_type);
 void help_me(const char *which_help);
@@ -129,11 +126,13 @@ size_t padding_chars_len(char *str, char *ch);
 
 /*array_funcs*/
 void trim_u4b_array(u4b_array *arr);
-ssize_t cmp_u4barray(u4b_array *arr1, u4b_array *arr2);
 void print_u4b_array(u4b_array *arr);
+ssize_t cmp_u4barray(u4b_array *arr1, u4b_array *arr2);
+ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len);
 
 /*math_funcs*/
 u4b_array *infiX_division(u4b_array *n1, u4b_array *n2);
+u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2);
 u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2);
 u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2);
 u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2);

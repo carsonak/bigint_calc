@@ -26,6 +26,12 @@ $(T_BINDIR)/test_%: $(T_SRCDIR)/test_%.c $(SRC_DIR)/%.c $(UTILITY_FUNCS)
 $(T_BINDIR)/test_infiX_div: $(T_SRCDIR)/test_infiX_div.c $(SRC_DIR)/infiX_add.c $(SRC_DIR)/infiX_sub.c $(SRC_DIR)/infiX_mul.c $(UTILITY_FUNCS)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
 
+$(T_BINDIR)/test_infiX_mod: $(T_SRCDIR)/test_infiX_mod.c $(SRC_DIR)/infiX_add.c $(SRC_DIR)/infiX_sub.c $(SRC_DIR)/infiX_mul.c $(UTILITY_FUNCS)
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
+
+$(T_BINDIR)/test_cmp_u4barray: $(T_SRCDIR)/test_cmp_u4barray.c $(SRC_DIR)/array_funcs.c
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
+
 unit-tests: TIMEOUT_OPTS += --kill-after=6.0 5.0
 unit-tests: $(T_BINDIR) $(T_SRCS) $(T_BINS)
 	$(shell export $(ASAN_OPTIONS) && export $(LSAN_OPTIONS); \

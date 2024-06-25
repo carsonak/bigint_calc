@@ -89,8 +89,6 @@ u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
 		result = infiX_subtraction(n1, n2);
 		n2->is_negative = 1;
 	}
-	else
-		result = infiX_addition(n1, n2);
 
 	return (result);
 }

@@ -107,8 +107,6 @@ u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 		if (result)
 			result->is_negative = 1;
 	}
-	else
-		result = infiX_multiplication(n1, n2);
 
 	return (result);
 }

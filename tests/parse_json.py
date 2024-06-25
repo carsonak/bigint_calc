@@ -40,7 +40,7 @@ def parse_argv(
     )
     parser.add_argument("num1_token", metavar="category_name.number_key")
     parser.add_argument(
-        "operator", choices=["+", "-", "*", "/", "**"], nargs="?")
+        "operator", choices=["+", "-", "*", "/", "%", "**"], nargs="?")
     parser.add_argument(
         "num2_token", metavar="category_name.number_key", nargs="?")
 
@@ -72,6 +72,7 @@ def main(argv: list[str]) -> None:
         "-": lambda x, y: int(x) - int(y),
         "*": lambda x, y: int(x) * int(y),
         "/": lambda x, y: int(x) // int(y),
+        "%": lambda x, y: int(x) % int(y),
         "**": lambda x, y: int(x) ** int(y),
     }
 
