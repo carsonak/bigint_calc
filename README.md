@@ -25,6 +25,7 @@ The executable can be run as a command line tool as follows:
 | `+` | Addition |
 | `-` | Subtraction |
 | `*` | Multiplication |
+| `//` | Division |
 | `%` | Modulus |
 
 Shell metacharacters such as `*` should be quoted.
