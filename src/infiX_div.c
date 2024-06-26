@@ -8,12 +8,14 @@ static int check_0_result(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
 static int check_division_by_0(u4b_array *n2) ATTR_NONNULL;
 static u4b_array *divide(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
 static ssize_t ATTR_NONNULL_IDX(1, 3)
-	get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2);
+	get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_array *n2);
 
 /**
- * infiX_division - preliminary checks before division
+ * infiX_division - divides a numbers stored in an array
  * @n1: numerator
  * @n2: denominator
+ *
+ * @description
  *
  * Return: array with the result, NULL on failure
  */
@@ -191,69 +193,66 @@ int check_0_result(u4b_array *n1, u4b_array *n2)
  */
 u4b_array *divide(u4b_array *n1, u4b_array *n2)
 {
-	ssize_t q_i = 0, tmp = 0;
-	size_t n1_i = 0, len_slice = 0;
+	uint32_t *working_slice = NULL;
+	size_t slice_offset = 1, q_i = 0, n1_i = 0, len_slice = 0;
+	ssize_t tmp = 0;
 	u4b_array *quotient = NULL;
-	/*slice stores the current chunk being divided*/
-	uint32_t *slice = NULL;
-	size_t slice_offset = 1;
 
-	/**
-	 * Since division is reverse of multiplication then;
-	 * quotient digits = numerator digits - denominator digits + (0 or 1).
-	 */
+	/*Since division is reverse of multiplication then;*/
+	/*quotient digits = numerator digits - denominator digits + (0 or 1).*/
 	if (n1->array[n1->len - 1] < n2->array[n2->len - 1])
 		/*If msd of numerator < msd denominator.*/
-		quotient = alloc_u4b_array(n1->len - n2->len);
+		quotient = alloc_u4b_array((n1->len - n2->len ? n1->len - n2->len : 1));
 	else
 		quotient = alloc_u4b_array(n1->len - n2->len + 1);
 
 	/*len_slice = len of n2, +1 for a dropdown*/
 	len_slice = n2->len + 1;
-	slice = xcalloc(len_slice, sizeof(*slice));
-	if (!slice || !quotient)
+	working_slice = xcalloc(len_slice, sizeof(*working_slice));
+	if (!working_slice || !quotient)
 	{
 		quotient = free_u4b_array(quotient);
-		slice = free_n_null(slice);
+		working_slice = free_n_null(working_slice);
 		return (NULL);
 	}
 
 	n1_i = n1->len - n2->len;
-	memmove(&slice[slice_offset], &n1->array[n1_i], sizeof(*n1->array) * n2->len);
+	memmove(&working_slice[slice_offset], &n1->array[n1_i], sizeof(*n1->array) * n2->len);
 	if (n1_i)
 		n1_i--;
 
-	if (slice[len_slice - 1] < n2->array[n2->len - 1])
+	if (working_slice[len_slice - 1] < n2->array[n2->len - 1])
 	{
-		/*If most significant digit (msd) of slice < msd of denominator then;*/
+		/*If most significant digit (msd) of working_slice < msd of denominator then;*/
 		/*dropdown an extra digit from the numerator.*/
 		slice_offset = 0;
-		slice[0] = n1->array[n1_i];
+		working_slice[0] = n1->array[n1_i];
 		if (n1_i)
 			n1_i--;
 	}
 
 	tmp = 0;
-	q_i = quotient->len - 1;
-	while (q_i >= 0)
+	q_i = quotient->len;
+	while (q_i > 0)
 	{
-		tmp = get_current_quotient(slice + slice_offset, len_slice - slice_offset, n2);
+		q_i--;
+		tmp = get_current_quotient(working_slice + slice_offset,
+								   len_slice - slice_offset, n2);
 		if (tmp < 0)
 		{
 			quotient = free_u4b_array(quotient);
-			slice = free_n_null(slice);
+			working_slice = free_n_null(working_slice);
 			return (NULL);
 		}
 
 		quotient->array[q_i] = tmp;
-
-		/*Copy the remainder into slice starting from most significant digits.*/
-		memmove(&slice[len_slice - remains->len], remains->array,
+		/*Copy remainder into working_slice starting from most significant digits.*/
+		memmove(&working_slice[len_slice - remains->len], remains->array,
 				sizeof(*remains->array) * remains->len);
 		slice_offset = 1;
 		tmp = n2->len - remains->len;
 		/*If remainder is shorter than denominator then; drop in more digits*/
-		if ((size_t)tmp > 0)
+		if (q_i && (size_t)tmp > 0)
 		{
 			/*Checking for overflow.*/
 			if (n1_i + 1 > (size_t)tmp)
@@ -265,43 +264,43 @@ u4b_array *divide(u4b_array *n1, u4b_array *n2)
 				n1_i = 0;
 			}
 
-			memmove(&slice[slice_offset], &n1->array[n1_i], sizeof(*n1->array) * tmp);
+			memmove(&working_slice[slice_offset], &n1->array[n1_i],
+					sizeof(*n1->array) * tmp);
 			q_i -= tmp - 1;
 		}
 
-		if (cmp_rev_uint32array(&slice[slice_offset], n2->array, n2->len) < 0)
+		if (q_i &&
+			cmp_rev_uint32array(&working_slice[slice_offset], n2->array, n2->len) < 0)
 		{
 			slice_offset = 0;
-			slice[0] = n1->array[n1_i];
+			working_slice[0] = n1->array[n1_i];
 			if (n1_i)
 				n1_i--;
 		}
-
-		q_i--;
 	}
 
 	remains = free_u4b_array(remains);
 	remains = alloc_u4b_array(len_slice - slice_offset);
 	if (remains)
-		memmove(remains->array, slice + slice_offset,
-				sizeof(*slice) * (len_slice - slice_offset));
+		memmove(remains->array, working_slice + slice_offset,
+				sizeof(*working_slice) * (len_slice - slice_offset));
 	else
 		quotient = free_u4b_array(quotient);
 
-	free_n_null(slice);
+	free_n_null(working_slice);
 	trim_u4b_array(quotient);
 	return (quotient);
 }
 
 /**
  * get_current_quotient - calculate the current quotient.
- * @slice: the current digits being divided in an array.
- * @len_slice: length of slice.
+ * @working_slice: the current digits being divided in an array.
+ * @len_slice: length of working_slice.
  * @n2: the denominator.
  *
  * Return: an int representing current quotient, -1 on error.
  */
-ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
+ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_array *n2)
 {
 	uint32_t temp_array[1] = {0};
 	u4b_array q_estimate = {.len = 1, .is_negative = 0, .array = temp_array};
@@ -310,12 +309,12 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 	ssize_t msd_slice = 0, is_larger = 0;
 
 	remains = free_u4b_array(remains);
-	slice_array.array = slice;
+	slice_array.array = working_slice;
 	msd_slice = slice_array.array[len_slice - 1];
 	if (len_slice > n2->len)
 		msd_slice = (msd_slice * MAX_VAL_u4b) + slice_array.array[len_slice - 2];
 
-	/*quotient approximation ≈ most significant digit of current slice / */
+	/*quotient approximation ≈ most significant digit of current working_slice / */
 	/*msd of denominator.*/
 	q_estimate.array[0] = (int64_t)msd_slice / n2->array[n2->len - 1];
 	estimate_check = infiX_multiplication(n2, &q_estimate);
@@ -327,7 +326,7 @@ ssize_t get_current_quotient(uint32_t *slice, size_t len_slice, u4b_array *n2)
 		return (-1);
 	}
 
-	/*0 <= (current slice - (q_estimate * denominator)) < denominator*/
+	/*0 <= (current working_slice - (q_estimate * denominator)) < denominator*/
 	is_larger = cmp_u4barray(remains, n2);
 	while (remains->is_negative || is_larger >= 0)
 	{

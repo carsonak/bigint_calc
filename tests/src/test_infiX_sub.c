@@ -156,7 +156,7 @@ Test(zero_len_arrays, test_4490998_minus_null,
 }
 
 Test(zero_len_arrays, test_null_minus_largenum,
-	 .description = "null_array - 99,992,175, 712,000,569, 0, 0, 6,086, 232,509,426, 238,542,068 = -99,992,175, 712,000,569, 0, 0, 6,086, 232,509,426, 238,542,068",
+	 .description = "null_array - 99992175,712000569,0,0,6086,232509426,238542068 = -99992175,712000569,0,0,6086,232509426,238542068",
 	 .timeout = 2.0)
 {
 	uint32_t in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
@@ -259,7 +259,7 @@ Test(simple_subtractions, test_1_minus_1,
 }
 
 Test(simple_subtractions, test_1000000000_minus_minus50000,
-	 .description = "1,000,000,000 - 50,000 = 999,950,000",
+	 .description = "1,0 - 50,000 = 999,950,000",
 	 .timeout = 2.0)
 {
 	uint32_t in1[] = {0, 1}, in2[] = {50000}, out[] = {999950000};
@@ -302,7 +302,7 @@ Test(simple_subtractions, test_50000_minus_100000000,
 }
 
 Test(simple_subtractions, test_4000000000678_minus_999999000,
-	 .description = "4,000,000,000,678 - 999,999,000 = 3,999,000,001,678",
+	 .description = "4000,678 - 999,999,000 = 3999,1678",
 	 .timeout = 2.0)
 {
 	uint32_t in1[] = {678, 4000}, in2[] = {999999000}, out[] = {1678, 3999};
@@ -323,7 +323,7 @@ Test(simple_subtractions, test_4000000000678_minus_999999000,
 }
 
 Test(simple_subtractions, test_999999000_minus_4000000000678,
-	 .description = "999,999,000 - 4,000,000,000,678 = -3,999,000,001,678",
+	 .description = "999,999,000 - 4000,678 = -3999,1678",
 	 .timeout = 2.0)
 {
 	uint32_t in1[] = {999999000}, in2[] = {678, 4000}, out[] = {1678, 3999};

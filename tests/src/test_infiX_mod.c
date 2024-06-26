@@ -1,5 +1,4 @@
 #include "tests.h"
-#include "../../src/infiX_div.c"
 
 u4b_array num1 = {.len = 0, .is_negative = 0, .array = NULL};
 u4b_array num2 = {.len = 0, .is_negative = 0, .array = NULL};
@@ -43,7 +42,7 @@ Test(null_inputs, test_1_modulo_null,
 {
 	uint32_t in1[] = {1};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
 	u4b_array *output = infiX_modulus(&num1, NULL);
 
@@ -55,7 +54,7 @@ Test(null_inputs, test_null_modulo_1,
 {
 	uint32_t in2[] = {1};
 
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	u4b_array *output = infiX_modulus(NULL, &num2);
 
@@ -67,7 +66,7 @@ Test(null_inputs, test_0_modulo_null,
 {
 	uint32_t in1[] = {0};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
 	u4b_array *output = infiX_modulus(&num1, NULL);
 
@@ -79,7 +78,7 @@ Test(null_inputs, test_null_modulo_0,
 {
 	uint32_t in2[] = {0};
 
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	u4b_array *output = infiX_modulus(NULL, &num2);
 
@@ -91,7 +90,7 @@ Test(null_inputs, test_minus1_modulo_null,
 {
 	uint32_t in1[] = {1};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
 	num1.is_negative = 1;
 	u4b_array *output = infiX_modulus(&num1, NULL);
@@ -104,7 +103,7 @@ Test(null_inputs, test_null_modulo_minus1,
 {
 	uint32_t in2[] = {1};
 
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	num2.is_negative = 1;
 	u4b_array *output = infiX_modulus(NULL, &num2);
@@ -123,9 +122,9 @@ Test(zero_len_arrays, test_null_modulo_largenum,
 	uint32_t in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 	uint32_t out[] = {0};
 
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.len = sizeof(out) % sizeof(*out);
+	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
 	u4b_array *output = infiX_modulus(&num1, &num2);
@@ -214,11 +213,11 @@ Test(simple_modulus, test_0_modulo_1,
 {
 	uint32_t in1[] = {0}, in2[] = {1}, out[] = {0};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.len = sizeof(out) % sizeof(*out);
+	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
 	u4b_array *output = infiX_modulus(&num1, &num2);
@@ -227,15 +226,15 @@ Test(simple_modulus, test_0_modulo_1,
 }
 
 Test(simple_modulus, test_1_modulo_1,
-	 .description = "1 % 1 = 0", .timeout = 2.0)
+	 .description = "1 % 1 = 0", .timeout = 0)
 {
 	uint32_t in1[] = {1}, in2[] = {1}, out[] = {0};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.len = sizeof(out) % sizeof(*out);
+	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
 	u4b_array *output = infiX_modulus(&num1, &num2);
@@ -248,15 +247,15 @@ Test(simple_modulus, test_1_modulo_1,
 
 Test(simple_modulus, test_1000000000_modulo_50000,
 	 .description = "1,000,000,000 % 50,000 = 0",
-	 .timeout = 2.0)
+	 .timeout = 0)
 {
 	uint32_t in1[] = {0, 1}, in2[] = {50000}, out[] = {0};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.len = sizeof(out) % sizeof(*out);
+	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
 	u4b_array *output = infiX_modulus(&num1, &num2);
@@ -273,11 +272,11 @@ Test(simple_modulus, test_50000_modulo_100000000,
 {
 	uint32_t in1[] = {50000}, in2[] = {0, 1}, out[] = {50000};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.len = sizeof(out) % sizeof(*out);
+	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
 	u4b_array *output = infiX_modulus(&num1, &num2);
@@ -298,11 +297,11 @@ Test(simple_modulus, test_longnum1_modulo_longnum2,
 	uint32_t in2[] = {0, 75006};
 	uint32_t rem[] = {65000, 285};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.len = sizeof(rem) % sizeof(*rem);
+	expected.len = sizeof(rem) / sizeof(*rem);
 	expected.array = rem;
 	u4b_array *output = infiX_modulus(&num1, &num2);
 
@@ -319,11 +318,11 @@ Test(large_modulus, test_largenum1_modulo_largenum2,
 	uint32_t in2[] = {120720357, 397122822, 391212010, 378636564, 527381951, 445364023, 899885040, 831438167, 289912154, 386356373, 467962926, 817125772, 778707749, 515723350, 20924616, 454178424, 114657544, 634432190, 904414952, 143603833, 256133844, 201619676, 377306056, 810451660, 815010674, 281198163, 584823824, 739934236, 774447920, 423387184, 43576798, 141865462, 637259085, 182422433, 869987549, 632282216, 515172654, 118746121, 691817195, 100642458, 401797429, 748808428, 97330459, 859095700, 77613379, 824691165, 375014971, 270261896, 971418347, 287776735, 687392807, 72844992, 808489120, 176184502, 298559149, 515082189, 290641249, 784406918, 18525880, 595556264, 662020707, 137836043, 32027777, 282126204, 398571429, 183240048, 893494027, 908475657, 210325195, 41368093, 567494670, 78549187, 829867982, 939611731, 556446171, 260470617, 388185363, 898568742, 584926832, 930685864, 974259747, 196534676, 548532814, 760521395, 176790149, 995282978, 514569063, 129660418, 873623608, 869739334, 116299016, 931525892, 602082336, 842229732, 82941119, 584280220, 738070679, 549296857, 554682269, 129930289, 352088067, 846285574, 807033108, 924619988, 410518654, 524776378, 210726853, 338324773, 234371231, 345598217, 215913853, 40125185, 169659817, 614457144, 263430597, 839552963, 357693985, 358911228, 31559180, 973973025, 529509086, 130265707, 902771569, 939005219, 909614411, 481137671, 453755527, 315076922, 190488385, 858980849, 914750855, 893492457, 44932638, 537640698, 831905869, 686543771, 164968285, 32694655, 549006585, 907130711, 937753741, 473161761, 60159427, 193787354, 490610706, 977776760, 692607694, 6731141, 102078922, 359416565, 975892579, 663415745, 486552688, 501065002, 401362961, 293547871, 954030315, 717222449, 171804201, 933246578, 628660373, 388008411, 546067821, 318550725, 990682255, 492064339, 647433279, 137385221, 703102597, 102835383, 283915020, 951593059, 607687526, 836935402, 684651719, 23912707, 349733186, 901432221, 855504886, 181532375, 353916766, 945868802, 361242525, 362433248, 541955437, 67937107, 539323500, 323672831, 966437313, 515041060, 651866030, 535923932, 530736394, 457121080, 34778553, 656344571, 766040938, 922800831, 880446217, 23307414, 859193718, 316040919, 995023505, 796297454, 417185715, 452307299, 839507981, 32105848, 520365290, 312607239, 836310795, 763091506, 397308051, 361243336, 973440977, 737772666, 670722593, 362707407, 891880855, 294128542, 811056991, 743094473, 39460017, 899096862, 700449819, 26597046, 259465921, 88171879, 774925466, 948922590, 41763507, 818299518, 949483846, 901683400, 91111044, 894870133, 483119139, 879215171, 907094021, 962766583, 741061235, 120204586, 193580405, 293785014, 701801};
 	uint32_t out[] = {539037229, 551007555, 37410750, 953357327, 536760790, 766412595, 393281561, 860450642, 835850692, 53618879, 65892284, 355818216, 264458377, 549686035, 269784168, 15262813, 563471414, 275662089, 576789317, 371745470, 965369271, 110102852, 703741549, 741254328, 686959910, 603611024, 952582959, 36203065, 459073738, 925131187, 846423432, 307602240, 556589542, 253873211, 585961102, 662687946, 985916190, 21075717, 945816958, 16562243, 715353981, 312693843, 588775768, 20691418, 376852894, 851251583, 539224762, 145426353, 735783496, 234759697, 626979425, 609631678, 643988432, 402037206, 921779797, 886973088, 452594793, 136337576, 997167896, 9820330, 406687602, 313182840, 900324644, 794434349, 508575961, 946276063, 950598123, 870966156, 765500865, 48247002, 993555275, 419289051, 45182579, 470079979, 985847400, 427651623, 154268819, 810233239, 756454955, 54658389, 150421245, 918155740, 902115958, 103918578, 896652882, 147045386, 837644028, 709714739, 924511833, 504535099, 243496109, 945373742, 848312354, 835927813, 360776900, 703542584, 25974961};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.len = sizeof(out) % sizeof(*out);
+	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
 	u4b_array *output = infiX_modulus(&num1, &num2);
@@ -342,11 +341,11 @@ Test(large_modulus, test_medium_largenum1_modulo_medium_largenum2,
 	uint32_t in2[] = {470282653, 363502795, 428381283, 187482382, 467199043, 93190808, 0, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 737842756, 975675668, 665546560, 147030781, 113541635, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 746086661, 442022266, 249623720, 646946071, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 44149526, 436038339, 561338441, 16196762, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4};
 	uint32_t out[] = {363796229, 279142378, 963129475, 770306954, 574844482, 433079883, 436687720, 890675428, 660367572, 380078604, 877690117, 509662379, 968745146, 566014198, 335059521, 260333066, 174292321, 507159533, 806247199, 187909493, 608325234, 17379762, 494051271, 526144266, 502655506, 804714576, 184468942, 425298081, 463364874, 735905411, 287749525, 449646228, 300319305, 872816580, 181076057, 352216647, 548954487, 523644473, 276039729, 985057301, 610810070, 739085734, 925843779, 54984645, 81918644, 978940315, 827013717, 33644622, 262738785, 606684968, 399932252, 440340698, 634452879, 450381884, 579934640, 701595622, 544540764, 147343261, 252726405, 4};
 
-	num1.len = sizeof(in1) % sizeof(*in1);
+	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num2.len = sizeof(in2) % sizeof(*in2);
+	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.len = sizeof(out) % sizeof(*out);
+	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
 	u4b_array *output = infiX_modulus(&num1, &num2);

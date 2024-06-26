@@ -154,7 +154,7 @@ Test(zero_len_arrays, test_4490998_times_null,
 }
 
 Test(zero_len_arrays, test_null_times_largenum,
-	 .description = "null_array * 99,992,175, 712,000,569, 0, 0, 6,086, 232,509,426, 238,542,068 = null_array",
+	 .description = "null_array * 99992175,712000569,0,0,6086,232509426,238542068 = null_array",
 	 .timeout = 2.0)
 {
 	uint32_t in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};

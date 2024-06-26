@@ -1,5 +1,4 @@
 #include "tests.h"
-#include "../../src/infiX_div.c"
 
 u4b_array num1 = {.len = 0, .is_negative = 0, .array = NULL};
 u4b_array num2 = {.len = 0, .is_negative = 0, .array = NULL};
@@ -228,6 +227,26 @@ Test(simple_divisions, test_1_over_1,
 	output = free_u4b_array(output);
 }
 
+Test(simple_divisions, test_9723746_over_2938487,
+	 .description = "9723746 / 2938487 = 3", .timeout = 0)
+{
+	uint32_t in1[] = {9723746}, in2[] = {2938487}, out[] = {3};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+
+	u4b_array *output = infiX_division(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
 Test(simple_divisions, test_1000000000_over_50000,
 	 .description = "1,000,000,000 / 50,000 = 20,000",
 	 .timeout = 2.0)
@@ -290,6 +309,30 @@ Test(simple_divisions, test_longnum1_over_longnum2,
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+Test(simple_divisions, test_equal_over_equal,
+	 .description = "99992175,712000569,0,0,6086,232509426,238542068 "
+					"/ 99992175,712000569,0,0,6086,232509426,238542068 = 1",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+	uint32_t in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+	uint32_t out[] = {1};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+
+	u4b_array *output = infiX_division(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
 	output = free_u4b_array(output);
 }
