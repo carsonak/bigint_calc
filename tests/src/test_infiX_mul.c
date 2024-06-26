@@ -171,7 +171,292 @@ Test(zero_len_arrays, test_null_times_largenum,
 
 TestSuite(simple_multiplications, .init = setup, .fini = teardown);
 
+Test(simple_multiplications, test_0_times_0, .description = "0 * 0 = 0",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {0}, in2[] = {0}, out[] = {0};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+Test(simple_multiplications, test_1_times_0, .description = "1 * 0 = 0",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {1}, in2[] = {0}, out[] = {0};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+Test(simple_multiplications, test_0_times_1, .description = "0 * 1 = 0",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {0}, in2[] = {1}, out[] = {0};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+Test(simple_multiplications, test_1_times_1, .description = "1 * 1 = 1",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {1}, in2[] = {1}, out[] = {1};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+Test(simple_multiplications, test_u100c_times_u100d,
+	 .description = "106998112,639854667,188839999,908562372,840000000,948,320000000"
+					"* 1230,998777777,777777774,376573322,300000000"
+					"= 131,714545884,190091042,282664403,335339231,394484502,817519667,878072308,554218996,792013003,536000000,0",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
+	uint32_t in2[] = {300000000, 376573322, 777777774, 998777777, 1230};
+	uint32_t out[] = {0, 536000000, 792013003, 554218996, 878072308, 817519667, 394484502, 335339231, 282664403, 190091042, 714545884, 131};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+/*INVERSE*/
+
+Test(simple_multiplications, test_u100d_times_u100c,
+	 .description = "1230,998777777,777777774,376573322,300000000 "
+					"* 106998112,639854667,188839999,908562372,840000000,948,320000000 "
+					"= 131,714545884,190091042,282664403,335339231,394484502,817519667,878072308,554218996,792013003,536000000,0",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {300000000, 376573322, 777777774, 998777777, 1230};
+	uint32_t in2[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
+	uint32_t out[] = {0, 536000000, 792013003, 554218996, 878072308, 817519667, 394484502, 335339231, 282664403, 190091042, 714545884, 131};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
 TestSuite(negative_multiplications, .init = setup, .fini = teardown);
+
+Test(negative_multiplications, test_minus_u100a_times_minus_u100c,
+	 .description = "-1000,0,0,0,0,0,0,0,1 "
+					"* -106998112,639854667,188839999,908562372,840000000,948,320000000 "
+					"= 106,998112639,854667188,839999908,562372840,0,948320,0,0,106998112,639854667,188839999,908562372,840000000,948,320000000",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {1, 0, 0, 0, 0, 0, 0, 0, 1000};
+	uint32_t in2[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
+	uint32_t out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.is_negative = 1;
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.is_negative = 1;
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+/*INVERSE*/
+Test(negative_multiplications, test_minus_u100c_times_minus_u100a,
+	 .description = "-106998112,639854667,188839999,908562372,840000000,948,320000000 "
+					"* -1000,0,0,0,0,0,0,0,1 "
+					"= 106,998112639,854667188,839999908,562372840,0,948320,0,0,106998112,639854667,188839999,908562372,840000000,948,320000000",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
+	uint32_t in2[] = {1, 0, 0, 0, 0, 0, 0, 0, 1000};
+	uint32_t out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.is_negative = 1;
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.is_negative = 1;
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+Test(negative_multiplications, test_u100a_times_minus_u100c,
+	 .description = "1000,0,0,0,0,0,0,0,1 "
+					"* -106998112,639854667,188839999,908562372,840000000,948,320000000 "
+					"= -106,998112639,854667188,839999908,562372840,0,948320,0,0,106998112,639854667,188839999,908562372,840000000,948,320000000",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {1, 0, 0, 0, 0, 0, 0, 0, 1000};
+	uint32_t in2[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
+	uint32_t out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.is_negative = 1;
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.is_negative = 1;
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+/*INVERSE*/
+Test(negative_multiplications, test_minus_u100c_times_u100a,
+	 .description = "-106998112,639854667,188839999,908562372,840000000,948,320000000 "
+					"* 1000,0,0,0,0,0,0,0,1 "
+					"= -106,998112639,854667188,839999908,562372840,0,948320,0,0,106998112,639854667,188839999,908562372,840000000,948,320000000",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
+	uint32_t in2[] = {1, 0, 0, 0, 0, 0, 0, 0, 1000};
+	uint32_t out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.is_negative = 1;
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.is_negative = 1;
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+Test(negative_multiplications, test_minus_u100a_times_u100c,
+	 .description = "-1000,0,0,0,0,0,0,0,1 "
+					"* 106998112,639854667,188839999,908562372,840000000,948,320000000 "
+					"= -106,998112639,854667188,839999908,562372840,0,948320,0,0,106998112,639854667,188839999,908562372,840000000,948,320000000",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {1, 0, 0, 0, 0, 0, 0, 0, 1000};
+	uint32_t in2[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
+	uint32_t out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.is_negative = 1;
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.is_negative = 1;
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
+
+/*INVERSE*/
+Test(negative_multiplications, test_u100c_times_minus_u100a,
+	 .description = "106998112,639854667,188839999,908562372,840000000,948,320000000 "
+					"* -1000,0,0,0,0,0,0,0,1 "
+					"= -106,998112639,854667188,839999908,562372840,0,948320,0,0,106998112,639854667,188839999,908562372,840000000,948,320000000",
+	 .timeout = 2.0)
+{
+	uint32_t in1[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
+	uint32_t in2[] = {1, 0, 0, 0, 0, 0, 0, 0, 1000};
+	uint32_t out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.is_negative = 1;
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.is_negative = 1;
+	expected.array = out;
+	u4b_array *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_u4b_array(output);
+}
 
 TestSuite(large_multiplications, .init = setup, .fini = teardown);
 

@@ -16,9 +16,9 @@ OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 DEP_FILES = $(OBJ:.o=.d)
 
 # https://clang.llvm.org/docs/AddressSanitizer.html
-ADDRESS_SANITISER := -fsanitize=address
+ADDRESS_SANITISER := -fsanitize=address -fno-common
 ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=1
-LSAN_OPTIONS := LSAN_OPTIONS=suppressions="$(TESTS_DIR)/lsan.supp"
+LSAN_OPTIONS := LSAN_OPTIONS=suppressions="$(TESTS_DIR)/lsan.supp:print_suppressions=0"
 # https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 UNDEFINED_SANITISER := -fsanitize=undefined
 # https://www.gnu.org/software/libc/manual/html_node/Source-Fortification.html

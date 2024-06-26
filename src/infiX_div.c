@@ -247,14 +247,15 @@ u4b_array *divide(u4b_array *n1, u4b_array *n2)
 
 		quotient->array[q_i] = tmp;
 
-		slice_offset = len_slice - remains->len;
 		/*Copy the remainder into slice starting from most significant digits.*/
-		memmove(&slice[slice_offset], remains->array, sizeof(*remains->array) * remains->len);
+		memmove(&slice[len_slice - remains->len], remains->array,
+				sizeof(*remains->array) * remains->len);
 		slice_offset = 1;
 		tmp = n2->len - remains->len;
+		/*If remainder is shorter than denominator then; drop in more digits*/
 		if ((size_t)tmp > 0)
 		{
-			/*Reduce n1_i by the difference in lengths and check for overflow.*/
+			/*Checking for overflow.*/
 			if (n1_i + 1 > (size_t)tmp)
 				n1_i -= tmp;
 			else
@@ -264,8 +265,6 @@ u4b_array *divide(u4b_array *n1, u4b_array *n2)
 				n1_i = 0;
 			}
 
-			/*Ensure slice has atleast n1->len digits by */
-			/*dropping more digits from numerator.*/
 			memmove(&slice[slice_offset], &n1->array[n1_i], sizeof(*n1->array) * tmp);
 			q_i -= tmp - 1;
 		}
@@ -284,7 +283,8 @@ u4b_array *divide(u4b_array *n1, u4b_array *n2)
 	remains = free_u4b_array(remains);
 	remains = alloc_u4b_array(len_slice - slice_offset);
 	if (remains)
-		memmove(remains->array, slice + slice_offset, sizeof(*slice) * (len_slice - slice_offset));
+		memmove(remains->array, slice + slice_offset,
+				sizeof(*slice) * (len_slice - slice_offset));
 	else
 		quotient = free_u4b_array(quotient);
 

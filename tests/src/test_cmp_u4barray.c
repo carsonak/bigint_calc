@@ -133,7 +133,7 @@ Test(null_arrays, test_nullarray_cmp_1,
 TestSuite(trailing_zeros, .init = setup, .fini = teardown);
 
 Test(trailing_zeros, test_long0_cmp_short0,
-	 .description = "compare(long_array, short_array) > 0", .timeout = 2.0)
+	 .description = "compare(long_array0, short_array0) > 0", .timeout = 2.0)
 {
 	uint32_t in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476, 0, 0, 0, 0, 0, 0};
 	uint32_t in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 99990, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -147,7 +147,7 @@ Test(trailing_zeros, test_long0_cmp_short0,
 }
 
 Test(trailing_zeros, test_long_cmp_short0,
-	 .description = "compare(long_array, short_array) > 0", .timeout = 2.0)
+	 .description = "compare(long_array, short_array0) > 0", .timeout = 2.0)
 {
 	uint32_t in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476};
 	uint32_t in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 9999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -161,7 +161,7 @@ Test(trailing_zeros, test_long_cmp_short0,
 }
 
 Test(trailing_zeros, test_long0_cmp_short,
-	 .description = "compare(long_array, short_array) > 0", .timeout = 2.0)
+	 .description = "compare(long_array0, short_array) > 0", .timeout = 2.0)
 {
 	uint32_t in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476, 0, 0, 0, 0, 0, 0};
 	uint32_t in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 9999};
