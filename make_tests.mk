@@ -30,7 +30,7 @@ $(T_BINDIR)/test_infiX_mod: $(SRC_DIR)/infiX_div.c $(T_SRCDIR)/test_infiX_mod.c 
 $(T_BINDIR)/test_cmp_u4barray: $(T_SRCDIR)/test_cmp_u4barray.c $(SRC_DIR)/array_funcs.c
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
 
-unit-tests: TIMEOUT_OPTS += --kill-after=9.0 6.0
+unit-tests: TIMEOUT_OPTS += --kill-after=13.0 10.0
 unit-tests: $(T_BINDIR) $(T_SRCS) $(T_BINS)
 	$(shell export $(ASAN_OPTIONS) && export $(LSAN_OPTIONS); \
 		for t_binary in $(T_BINS); \

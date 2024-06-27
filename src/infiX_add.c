@@ -2,20 +2,19 @@
 
 static u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
 	ATTR_NONNULL;
+static u4b_array *add(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
 
 /**
- * infiX_addition - adds integers stored in arrays
- * @n1: the first integer array (base 10)
- * @n2: the second integer array (base 10)
+ * infiX_addition - add two arbitrary long numbers.
+ * @n1: the first number
+ * @n2: the second number
+ *
+ * This function does preliminary checks on the parameters.
  *
  * Return: pointer to result, NULL on failure
  */
 u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
 {
-	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
-	int64_t byt_sum = 0;
-	u4b_array *sum = NULL;
-
 	if (!n1 || !n2)
 		return (NULL);
 
@@ -23,6 +22,54 @@ u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
 	trim_u4b_array(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (add_negatives(n1, n2));
+
+	return (add(n1, n2));
+}
+
+/**
+ * add_negatives - handle addition of signed numbers.
+ * @n1: first number
+ * @n2: second number
+ *
+ * Return: return results of operation
+ */
+u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
+{
+	char neg1 = n1->is_negative, neg2 = n2->is_negative;
+	u4b_array *result = NULL;
+
+	n1->is_negative = 0;
+	n2->is_negative = 0;
+	if (neg1 && neg2)
+	{
+		/*-8 + -7 = -(8+7)*/
+		result = add(n1, n2);
+		if (result)
+			result->is_negative = 1;
+	}
+	else if (neg1) /*-8 + 7 = 7-8*/
+		result = infiX_subtraction(n2, n1);
+	else if (neg2) /*8 + -7 = 8-7*/
+		result = infiX_subtraction(n1, n2);
+
+	n1->is_negative = neg1;
+	n2->is_negative = neg2;
+	trim_u4b_array(result);
+	return (result);
+}
+
+/**
+ * add - add two numbers stored in arrays.
+ * @n1: the first number
+ * @n2: the second number
+ *
+ * Return: pointer to result, NULL on failure
+ */
+u4b_array *add(u4b_array *n1, u4b_array *n2)
+{
+	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
+	int64_t byt_sum = 0;
+	u4b_array *sum = NULL;
 
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
@@ -51,44 +98,4 @@ u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
 
 	trim_u4b_array(sum);
 	return (sum);
-}
-
-/**
- * add_negatives - handle addition of signed/negative numbers
- * @n1: first number
- * @n2: second number
- *
- * Return: return results of operation
- */
-u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
-{
-	u4b_array *result = NULL;
-
-	if (n1->is_negative && n2->is_negative)
-	{
-		/*-8 + -7 = -(8+7)*/
-		n1->is_negative = 0;
-		n2->is_negative = 0;
-		result = infiX_addition(n1, n2);
-		n1->is_negative = 1;
-		n2->is_negative = 1;
-		if (result)
-			result->is_negative = 1;
-	}
-	else if (n1->is_negative)
-	{
-		/*-8 + 7 = 7-8*/
-		n1->is_negative = 0;
-		result = infiX_subtraction(n2, n1);
-		n1->is_negative = 1;
-	}
-	else if (n2->is_negative)
-	{
-		/*8 + -7 = 8-7*/
-		n2->is_negative = 0;
-		result = infiX_subtraction(n1, n2);
-		n2->is_negative = 1;
-	}
-
-	return (result);
 }

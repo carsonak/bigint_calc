@@ -4,7 +4,7 @@ u4b_array *remains = NULL;
 
 static u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
 	ATTR_NONNULL;
-static int check_0_result(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
+static char check_0_result(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
 static int check_division_by_0(u4b_array *n2) ATTR_NONNULL;
 static u4b_array *divide(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
 static ssize_t ATTR_NONNULL_IDX(1, 3)
@@ -21,8 +21,8 @@ static ssize_t ATTR_NONNULL_IDX(1, 3)
  */
 u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 {
-	int is_zero = 0;
-	u4b_array *results = NULL;
+	char is_zero = 0;
+	u4b_array *result = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
@@ -30,23 +30,25 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
 	remains = free_u4b_array(remains);
 	trim_u4b_array(n1);
 	trim_u4b_array(n2);
-
-	if (n1->is_negative || n2->is_negative)
-		return (divide_negatives(n1, n2));
-
 	if (check_division_by_0(n2))
 		return (NULL);
 
-	is_zero = check_0_result(n1, n2);
-	if (is_zero < 0)
-		return (NULL);
-	else if (is_zero > 0)
-		results = alloc_u4b_array(1);
+	if (n1->is_negative || n2->is_negative)
+		result = divide_negatives(n1, n2);
 	else
-		results = divide(n1, n2);
+	{
+		is_zero = check_0_result(n1, n2);
+		if (is_zero < 0)
+			return (NULL);
+		else if (is_zero > 0)
+			result = alloc_u4b_array(1);
+		else
+			result = divide(n1, n2);
+	}
 
 	remains = free_u4b_array(remains);
-	return (results);
+	trim_u4b_array(result);
+	return (result);
 }
 
 /**
@@ -58,8 +60,8 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
  */
 u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2)
 {
-	int is_zero = 0;
-	u4b_array *results = NULL;
+	char is_zero = 0, is_negative = 0;
+	u4b_array *result = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
@@ -67,25 +69,45 @@ u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2)
 	remains = free_u4b_array(remains);
 	trim_u4b_array(n1);
 	trim_u4b_array(n2);
-
-	if (n1->is_negative || n2->is_negative)
-	{
-		results = divide_negatives(n1, n2);
-		free_u4b_array(remains);
-		remains = infiX_subtraction(n1, results);
-		free_u4b_array(results);
-		return (remains);
-	}
-
 	if (check_division_by_0(n2))
 		return (NULL);
 
-	is_zero = check_0_result(n1, n2);
-	if (is_zero < 0)
-		return (NULL);
-	else if (!is_zero)
-		free_u4b_array(divide(n1, n2));
+	if (n1->is_negative || n2->is_negative)
+		result = divide_negatives(n1, n2);
+	else
+	{
+		is_zero = check_0_result(n1, n2);
+		if (is_zero < 0)
+			return (NULL);
+		else if (is_zero > 0)
+			result = alloc_u4b_array(1);
+		else
+			result = divide(n1, n2);
+	}
 
+	if (!result)
+		return (free_u4b_array(remains));
+
+	if (result->is_negative)
+	{
+		/*for case: -7 // 4 == -2 or 7 // -4 == -2 then;*/
+		/*-7 % 4 = 1 and 7 % -4 = -1*/
+		is_negative = n2->is_negative;
+		n2->is_negative = 0;
+		result = free_u4b_array(result);
+
+		result = infiX_subtraction(n2, remains);
+		n2->is_negative = is_negative;
+		remains = free_u4b_array(remains);
+		remains = result;
+		result = NULL;
+	}
+
+	if (remains)
+		remains->is_negative = n2->is_negative;
+
+	free_u4b_array(result);
+	trim_u4b_array(remains);
 	return (remains);
 }
 
@@ -94,46 +116,40 @@ u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2)
  * @n1: numerator.
  * @n2: denominator.
  *
- * Return: pointer to the results, NULL on failure.
+ * Return: pointer to the result, NULL on failure.
  */
 u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
 {
+	char is_zero = 0, neg1 = n1->is_negative, neg2 = n2->is_negative;
 	uint32_t a[] = {1};
 	u4b_array *tmp = NULL, *result = NULL;
 	u4b_array one = {.len = 1, .is_negative = 0, .array = a};
 
-	if (n1->is_negative && n2->is_negative)
-	{
-		/* -8 // -5 = 8//5*/
-		n1->is_negative = 0;
-		n2->is_negative = 0;
-		result = infiX_division(n1, n2);
-		n1->is_negative = 1;
-		n2->is_negative = 1;
-	}
-	else if (n1->is_negative)
+	n1->is_negative = 0;
+	n2->is_negative = 0;
+	is_zero = check_0_result(n1, n2);
+	if (is_zero < 0)
+		return (NULL);
+	else if (is_zero > 0)
+		return (alloc_u4b_array(1));
+
+	if (neg1 && neg2) /* -8 // -5 = 8//5*/
+		result = divide(n1, n2);
+	else if (neg1 || neg2)
 	{
 		/* -8 // 5 = -((8 // 5) + 1)*/
-		n1->is_negative = 0;
-		tmp = infiX_division(n1, n2);
-		result = infiX_addition(tmp, &one);
-		tmp = free_u4b_array(tmp);
-		n1->is_negative = 1;
-		if (result)
-			result->is_negative = 1;
-	}
-	else if (n2->is_negative)
-	{
 		/* 8 // -5 = -((8 // 5) + 1) */
-		n2->is_negative = 0;
-		tmp = infiX_division(n1, n2);
+		tmp = divide(n1, n2);
 		result = infiX_addition(tmp, &one);
-		tmp = free_u4b_array(tmp);
-		n2->is_negative = 1;
 		if (result)
 			result->is_negative = 1;
 	}
 
+	n1->is_negative = neg1;
+	n2->is_negative = neg2;
+	free_u4b_array(tmp);
+	trim_u4b_array(result);
+	trim_u4b_array(remains);
 	return (result);
 }
 
@@ -164,11 +180,12 @@ int check_division_by_0(u4b_array *n2)
  *
  * Return: 1 if result will be 0, 0 if not, -1 on error.
  */
-int check_0_result(u4b_array *n1, u4b_array *n2)
+char check_0_result(u4b_array *n1, u4b_array *n2)
 {
 	if (cmp_u4barray(n1, n2) >= 0)
 		return (0);
 
+	remains = free_u4b_array(remains);
 	/*If n1 == 0; then remains == 0*/
 	if (n1->len < 2 && (!n1->array || !n1->array[0]))
 		remains = alloc_u4b_array(1);
@@ -240,9 +257,9 @@ u4b_array *divide(u4b_array *n1, u4b_array *n2)
 								   len_slice - slice_offset, n2);
 		if (tmp < 0)
 		{
-			quotient = free_u4b_array(quotient);
-			working_slice = free_n_null(working_slice);
-			return (NULL);
+			remains = free_u4b_array(remains);
+			free_n_null(working_slice);
+			return (free_u4b_array(quotient));
 		}
 
 		quotient->array[q_i] = tmp;
@@ -289,6 +306,7 @@ u4b_array *divide(u4b_array *n1, u4b_array *n2)
 
 	free_n_null(working_slice);
 	trim_u4b_array(quotient);
+	trim_u4b_array(remains);
 	return (quotient);
 }
 
@@ -338,7 +356,8 @@ ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_arra
 			/*Test: for possible overflow.*/
 			/*Test: overshoot might be longer than denominator*/
 			q_estimate.array[0] -= remains->array[remains->len - 1] / n2->array[n2->len - 1];
-			if (remains->array[remains->len - 1] % n2->array[n2->len - 1])
+			if (q_estimate.array[0] &&
+				(remains->array[remains->len - 1] % n2->array[n2->len - 1]))
 				q_estimate.array[0]--;
 		}
 		else

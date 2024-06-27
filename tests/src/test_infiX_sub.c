@@ -13,9 +13,14 @@ u4b_array expected = {.len = 0, .is_negative = 0, .array = NULL};
  */
 u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
 {
+	u4b_array *res = alloc_u4b_array(1);
+
 	(void)n1;
 	(void)n2;
-	return (alloc_u4b_array(0));
+	if (res)
+		res->array[0] = 1;
+
+	return (res);
 }
 
 /**

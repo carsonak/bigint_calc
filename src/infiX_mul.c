@@ -2,20 +2,19 @@
 
 static u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 	ATTR_NONNULL;
+static u4b_array *multiply(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
 
 /**
- * infiX_multiplication - multiplies numbers stored in arrays.
- * @n1: the first integer array (base 10)
- * @n2: the second integer array (base 10)
+ * infiX_multiplication - multiply arbitrary long numbers.
+ * @n1: the first number.
+ * @n2: the second number.
+ *
+ * This function does preliminary checks on the parameters.
  *
  * Return: pointer to result, NULL on failure
  */
 u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 {
-	int64_t byt_mul = 0;
-	size_t n1_i = 0, n2_i = 0;
-	u4b_array *product = NULL, *current_mul = NULL, *increment = NULL;
-
 	if (!n1 || !n2)
 		return (NULL);
 
@@ -23,6 +22,22 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
 	trim_u4b_array(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (multiply_negatives(n1, n2));
+
+	return (multiply(n1, n2));
+}
+
+/**
+ * multiply - multiply arbitrary long numbers.
+ * @n1: the first number.
+ * @n2: the second number.
+ *
+ * Return: pointer to result, NULL on failure
+ */
+u4b_array *multiply(u4b_array *n1, u4b_array *n2)
+{
+	int64_t byt_mul = 0;
+	size_t n1_i = 0, n2_i = 0;
+	u4b_array *product = NULL, *current_mul = NULL, *increment = NULL;
 
 	/*Multiplication by zero.*/
 	if (!n1->len || !n2->len)
@@ -78,35 +93,24 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
  */
 u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 {
+	char neg1 = n1->is_negative, neg2 = n2->is_negative;
 	u4b_array *result = NULL;
 
-	if (n1->is_negative && n2->is_negative)
-	{
-		/* -8 * -7 = 8*7 */
-		n1->is_negative = 0;
-		n2->is_negative = 0;
-		result = infiX_multiplication(n1, n2);
-		n1->is_negative = 1;
-		n2->is_negative = 1;
-	}
-	else if (n1->is_negative)
+	n1->is_negative = 0;
+	n2->is_negative = 0;
+	if (neg1 && neg2) /* -8 * -7 = 8*7 */
+		result = multiply(n1, n2);
+	else if (neg1 || neg2)
 	{
 		/* -8 * 7 = -(8*7) */
-		n1->is_negative = 0;
-		result = infiX_multiplication(n1, n2);
-		n1->is_negative = 1;
-		if (result)
-			result->is_negative = 1;
-	}
-	else if (n2->is_negative)
-	{
 		/* 8 * -7 = -(8*7) */
-		n2->is_negative = 0;
-		result = infiX_multiplication(n1, n2);
-		n2->is_negative = 1;
+		result = multiply(n1, n2);
 		if (result)
 			result->is_negative = 1;
 	}
 
+	n1->is_negative = neg1;
+	n2->is_negative = neg2;
+	trim_u4b_array(result);
 	return (result);
 }

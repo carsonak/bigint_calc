@@ -228,7 +228,7 @@ Test(simple_divisions, test_1_over_1,
 }
 
 Test(simple_divisions, test_9723746_over_2938487,
-	 .description = "9723746 / 2938487 = 3", .timeout = 0)
+	 .description = "9723746 / 2938487 = 3", .timeout = 2.0)
 {
 	uint32_t in1[] = {9723746}, in2[] = {2938487}, out[] = {3};
 
