@@ -5,4 +5,8 @@
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
 
+#ifndef MAX_VAL_u4b
+#define MAX_VAL_u4b (1000000000)
+#endif
+
 #endif /*TESTS_H*/
