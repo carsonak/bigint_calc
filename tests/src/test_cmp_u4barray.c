@@ -1,7 +1,7 @@
 #include "tests.h"
 
-u4b_array num1 = {.len = 0, .is_negative = 0, .array = NULL};
-u4b_array num2 = {.len = 0, .is_negative = 0, .array = NULL};
+u4b_array num1 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_array num2 = {.len = 0, .is_negative = false, .array = NULL};
 
 /**
  * setup - s
@@ -14,11 +14,11 @@ void setup(void) {}
 void teardown(void)
 {
 	num1.len = 0;
-	num1.is_negative = 0;
+	num1.is_negative = false;
 	num1.array = NULL;
 
 	num2.len = 0;
-	num2.is_negative = 0;
+	num2.is_negative = false;
 	num2.array = NULL;
 }
 
@@ -346,10 +346,10 @@ Test(negative_numbers, test_minus1_cmp_minus1,
 	uint32_t in2[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = 1;
+	num1.is_negative = true;
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = 1;
+	num2.is_negative = true;
 	num2.array = in2;
 
 	cr_assert(zero(long, cmp_u4barray(&num1, &num2)));
@@ -364,7 +364,7 @@ Test(negative_numbers, test_1_cmp_minus1,
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = 1;
+	num2.is_negative = true;
 	num2.array = in2;
 
 	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
@@ -377,7 +377,7 @@ Test(negative_numbers, test_minus1_cmp_1,
 	uint32_t in2[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = 1;
+	num1.is_negative = true;
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;

@@ -38,8 +38,8 @@ u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
 	char neg1 = n1->is_negative, neg2 = n2->is_negative;
 	u4b_array *result = NULL;
 
-	n1->is_negative = 0;
-	n2->is_negative = 0;
+	n1->is_negative = false;
+	n2->is_negative = false;
 	if (neg1 && neg2) /*-8 - -5 = -8 + 5 = 5-8*/
 		result = subtract(n2, n1);
 	else if (neg2) /*8 - -5 = 8+5*/
@@ -49,7 +49,7 @@ u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
 		/*-8 - 5 = -(8+5)*/
 		result = infiX_addition(n1, n2);
 		if (result)
-			result->is_negative = 1;
+			result->is_negative = true;
 	}
 
 	n1->is_negative = neg1;
@@ -87,7 +87,7 @@ u4b_array *subtract(u4b_array *n1, u4b_array *n2)
 
 	n1_is_bigger = cmp_u4barray(n1, n2);
 	if (n1_is_bigger <= 0)
-		diff->is_negative = 1;
+		diff->is_negative = true;
 
 	while ((n1_i < n1->len || n2_i < n2->len) && diff_i < diff->len)
 	{

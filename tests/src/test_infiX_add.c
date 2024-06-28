@@ -1,8 +1,8 @@
 #include "tests.h"
 
-u4b_array num1 = {.len = 0, .is_negative = 0, .array = NULL};
-u4b_array num2 = {.len = 0, .is_negative = 0, .array = NULL};
-u4b_array expected = {.len = 0, .is_negative = 0, .array = NULL};
+u4b_array num1 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_array num2 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_array expected = {.len = 0, .is_negative = false, .array = NULL};
 
 /**
  * infiX_subtraction - dummy
@@ -34,15 +34,15 @@ void setup(void) {}
 void teardown(void)
 {
 	num1.len = 0;
-	num1.is_negative = 0;
+	num1.is_negative = false;
 	num1.array = NULL;
 
 	num2.len = 0;
-	num2.is_negative = 0;
+	num2.is_negative = false;
 	num2.array = NULL;
 
 	expected.len = 0;
-	expected.is_negative = 0;
+	expected.is_negative = false;
 	expected.array = NULL;
 }
 
@@ -111,7 +111,7 @@ Test(null_inputs, test_minus1_plus_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num1.is_negative = 1;
+	num1.is_negative = true;
 	u4b_array *output = infiX_addition(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
@@ -124,7 +124,7 @@ Test(null_inputs, test_null_plus_minus1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	num2.is_negative = 1;
+	num2.is_negative = true;
 	u4b_array *output = infiX_addition(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
@@ -436,13 +436,13 @@ Test(negative_additions, test_minus1_plus_minus1,
 	uint32_t out[] = {2};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = 1;
+	num1.is_negative = true;
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = 1;
+	num2.is_negative = true;
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 	u4b_array *output = infiX_addition(&num1, &num2);
 
@@ -460,7 +460,7 @@ Test(negative_additions, test_1_plus_minus1,
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = 1;
+	num2.is_negative = true;
 	num2.array = in2;
 	u4b_array *output = infiX_addition(&num1, &num2);
 
@@ -474,7 +474,7 @@ Test(negative_additions, test_minus1_plus_1,
 	uint32_t in1[] = {1}, in2[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = 1;
+	num1.is_negative = true;
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;

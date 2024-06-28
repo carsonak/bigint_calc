@@ -11,7 +11,7 @@ void *xmalloc(size_t size)
 	void *ptr = malloc(size);
 
 	if (!ptr && size)
-		perror("Memory allocation failed.");
+		perror("Memory allocation error");
 
 	return (ptr);
 }
@@ -27,17 +27,34 @@ void *xcalloc(size_t items, size_t sizeof_item)
 {
 	void *ptr = calloc(items, sizeof_item);
 
-	if (!ptr && items * sizeof_item != 0)
-		perror("Memory allocation failed.");
+	if (!ptr && (items * sizeof_item) > 0)
+		perror("Memory allocation error");
 
 	return (ptr);
 }
 
 /**
- * alloc_u4b_array - allocates memory for a u4b_array of a given length
+ * xrealloc - resize memory with realloc and check for error
+ * @nullable_ptr: pointer to an allocated block
+ * @size: size in bytes to resize to.
+ *
+ * Return: pointer to the resized memory area, NULL on failure.
+ */
+void *xrealloc(void *nullable_ptr, size_t size)
+{
+	void *ptr = realloc(nullable_ptr, size);
+
+	if (!ptr && size)
+		perror("Memory resizing error");
+
+	return (ptr);
+}
+
+/**
+ * alloc_u4b_array - allocate memory for a u4b_array of given length
  * @len: length of the array, length 0 returns the struct with a NULL array
  *
- * Return: a pointer to the u4b_array struct, NULL on failure
+ * Return: a pointer to a u4b_array struct, NULL on failure
  */
 u4b_array *alloc_u4b_array(size_t len)
 {
@@ -58,27 +75,65 @@ u4b_array *alloc_u4b_array(size_t len)
 }
 
 /**
+ * alloc_numstr_array - allocate memory for a numstr_array of given length
+ * @len: length of the array, length 0 returns the struct with a NULL array
+ *
+ * Return: a pointer to a numstr_array struct, NULL on failure.
+ */
+numstr_array *alloc_numstr_array(size_t len)
+{
+	numstr_array *arr = xcalloc(1, sizeof(*arr));
+
+	if (!arr)
+		return (NULL);
+
+	arr->len = len;
+	if (len > 0)
+	{
+		arr->str = xcalloc(len, sizeof(*arr->str));
+		if (!arr->str)
+			arr = free_n_null(arr);
+	}
+
+	return (arr);
+}
+
+/**
  * free_n_null - free a pointer, return NULL.
- * @ptr: a freeable pointer.
+ * @freeable_ptr: a freeable pointer.
  *
  * Return: NULL always.
  */
-void *free_n_null(void *ptr)
+void *free_n_null(void *freeable_ptr)
 {
-	free(ptr);
+	free(freeable_ptr);
 	return (NULL);
 }
 
 /**
  * free_u4b_array - free a u4b_array, return NULL.
- * @arr: a pointer to a u4b_array.
+ * @freeable_arr: a pointer to a u4b_array.
  *
  * Return: NULL always.
  */
-void *free_u4b_array(u4b_array *arr)
+void *free_u4b_array(u4b_array *freeable_arr)
 {
-	if (arr)
-		free_n_null(arr->array);
+	if (freeable_arr)
+		free_n_null(freeable_arr->array);
 
-	return (free_n_null(arr));
+	return (free_n_null(freeable_arr));
+}
+
+/**
+ * free_numstr_array - free a numstr_array, return NULL.
+ * @freeable_arr: a pointer to a freeable
+ *
+ * Return: NULL always.
+ */
+void *free_numstr_array(numstr_array *freeable_arr)
+{
+	if (freeable_arr)
+		free_n_null(freeable_arr->str);
+
+	return (free_n_null(freeable_arr));
 }

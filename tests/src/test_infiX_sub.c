@@ -1,8 +1,8 @@
 #include "tests.h"
 
-u4b_array num1 = {.len = 0, .is_negative = 0, .array = NULL};
-u4b_array num2 = {.len = 0, .is_negative = 0, .array = NULL};
-u4b_array expected = {.len = 0, .is_negative = 0, .array = NULL};
+u4b_array num1 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_array num2 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_array expected = {.len = 0, .is_negative = false, .array = NULL};
 
 /**
  * infiX_addition - Dummy
@@ -34,15 +34,15 @@ void setup(void) {}
 void teardown(void)
 {
 	num1.len = 0;
-	num1.is_negative = 0;
+	num1.is_negative = false;
 	num1.array = NULL;
 
 	num2.len = 0;
-	num2.is_negative = 0;
+	num2.is_negative = false;
 	num2.array = NULL;
 
 	expected.len = 0;
-	expected.is_negative = 0;
+	expected.is_negative = false;
 	expected.array = NULL;
 }
 
@@ -111,7 +111,7 @@ Test(null_inputs, test_minus1_minus_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	num1.is_negative = 1;
+	num1.is_negative = true;
 	u4b_array *output = infiX_subtraction(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
@@ -124,7 +124,7 @@ Test(null_inputs, test_null_minus_minus1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	num2.is_negative = 1;
+	num2.is_negative = true;
 	u4b_array *output = infiX_subtraction(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
@@ -170,7 +170,7 @@ Test(zero_len_arrays, test_null_minus_largenum,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 	u4b_array *output = infiX_subtraction(&num1, &num2);
 
@@ -232,7 +232,7 @@ Test(simple_subtractions, test_0_minus_1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 
 	u4b_array *output = infiX_subtraction(&num1, &num2);
@@ -295,7 +295,7 @@ Test(simple_subtractions, test_50000_minus_100000000,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 
 	u4b_array *output = infiX_subtraction(&num1, &num2);
@@ -345,7 +345,7 @@ Test(long_subtractions, test_1_minus_long9s,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 	u4b_array *output = infiX_subtraction(&num1, &num2);
 
@@ -370,7 +370,7 @@ Test(long_subtractions, test_long_sparse_num1_minus_long_sparse_num2,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 	u4b_array *output = infiX_subtraction(&num1, &num2);
 
@@ -436,7 +436,7 @@ Test(long_subtractions, test_999999000_minus_4000000000678,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 
 	u4b_array *output = infiX_subtraction(&num1, &num2);
@@ -455,10 +455,10 @@ Test(negative_subtractions, test_minus1_minus_minus1,
 	uint32_t in1[] = {1}, in2[] = {1}, out[] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = 1;
+	num1.is_negative = true;
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = 1;
+	num2.is_negative = true;
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
@@ -479,7 +479,7 @@ Test(negative_subtractions, test_1_minus_minus1,
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = 1;
+	num2.is_negative = true;
 	num2.array = in2;
 
 	u4b_array *output = infiX_subtraction(&num1, &num2);
@@ -494,11 +494,11 @@ Test(negative_subtractions, test_minus1_minus_1,
 	uint32_t in1[] = {1}, in2[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = 1;
+	num1.is_negative = true;
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	expected.is_negative = 1;
+	expected.is_negative = true;
 
 	u4b_array *output = infiX_subtraction(&num1, &num2);
 
@@ -541,7 +541,7 @@ Test(large_subtractions, test_o1kb_minus_o1ka,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 	u4b_array *output = infiX_subtraction(&num1, &num2);
 
@@ -586,7 +586,7 @@ Test(large_subtractions, test_o500d_minus_o500c,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = 1;
+	expected.is_negative = true;
 	expected.array = out;
 	u4b_array *output = infiX_subtraction(&num1, &num2);
 

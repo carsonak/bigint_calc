@@ -5,14 +5,12 @@
 #define _GNU_SOURCE /*program_invocation_name*/
 #endif
 
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <ctype.h>
-#include <errno.h>
-#include <math.h> /*pow(), Need to link with -lm*/
+#include <stdbool.h> /* bool */
+#include <stdio.h>	 /* *printf, perror */
+#include <string.h>	 /* strlen, strcpy */
+#include <stdlib.h>	 /* *alloc */
+#include <stdint.h>	 /* specific width types */
+#include <ctype.h>	 /* isdigit */
 
 #define ATTR_MALLOC
 #define ATTR_MALLOC_FREE(...)
@@ -27,7 +25,7 @@
 #undef ATTR_MALLOC
 #define ATTR_MALLOC __attribute__((malloc))
 #undef ATTR_MALLOC_FREE
-#define ATTR_MALLOC_FREE(...) __attribute__((malloc))
+#define ATTR_MALLOC_FREE(...) __attribute__((malloc(__VA_ARGS__)))
 #endif /*__has_attribute(malloc)*/
 
 /*https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-alloc_005fsize-variable-attribute*/
@@ -46,44 +44,38 @@
 
 #endif /*defined __has_attribute*/
 
-/*Max number of digits uint32_t should hold.*/
-#define MAX_DIGITS_u4b (9)
 /*Max size for uint32_t: 10^9.*/
 #define MAX_VAL_u4b (1000000000)
-/*Max number of digits for uint64_t.*/
-#define MAX_DIGITS_u8b (MAX_DIGITS_u4b * MAX_DIGITS_u4b)
 /*Max size for uint64_t calculations: 10^18.*/
 #define MAX_VAL_u8b (MAX_VAL_u4b * MAX_VAL_u4b)
-/*Negative bit toggle for uint32_t types.*/
-#define NEGBIT_u4b (1 << 30)
 
 /**
  * struct uint32_t_array_attributes - an array of unsigned 4 byte ints
  * @len: number of items in the array
- * @is_negative: flag for signedness of number
- * @array: pointer to an array of 4 byte ints
+ * @is_negative: a bool for signedness of the number
+ * @array: pointer to an array of unsigned 4 byte ints
  */
 typedef struct uint32_t_array_attributes
 {
 	size_t len;
-	char is_negative;
+	bool is_negative;
 	uint32_t *array;
 } u4b_array;
 
 /**
- * struct string_attributes - holds details about a string of characters
- * @str: the number string
+ * struct numstring_array_attributes - a string of numbers
  * @len: length of the string
  * @digits: number of digits in the string
  * @is_negative: atleast one bit should be set if negative
+ * @decimal_point_pos: position of decimal point, 0 if not present
+ * @str: the number string
  */
-typedef struct string_attributes
+typedef struct numstring_array_attributes
 {
-	uint8_t *str;
 	size_t len;
-	size_t digits;
-	uint8_t is_negative;
-} str_array;
+	bool is_negative;
+	char *str;
+} numstr_array;
 
 /**
  * math_function - generic prototype for basic arithmetic functions.
@@ -106,35 +98,49 @@ void panic(const char *err_type);
 void help_me(const char *which_help);
 
 /*mem_funcs*/
-void *free_n_null(void *ptr);
-void *free_u4b_array(u4b_array *arr);
-u4b_array *alloc_u4b_array(size_t len);
 
+void *free_n_null(void *freeable_ptr);
+void *free_u4b_array(u4b_array *freeable_arr);
+void *free_numstr_array(numstr_array *freeable_arr);
+ATTR_MALLOC
+ATTR_MALLOC_FREE(free_u4b_array)
+u4b_array *alloc_u4b_array(size_t len);
+ATTR_MALLOC
+ATTR_MALLOC_FREE(free_numstr_array)
+numstr_array *alloc_numstr_array(size_t len);
+ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1, 2)
 void *xcalloc(size_t items, size_t sizeof_item);
-
+ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1)
 void *xmalloc(size_t size);
+ATTR_MALLOC
+ATTR_MALLOC_FREE(free_n_null)
+ATTR_ALLOC_SIZE(2)
+void *xrealloc(void *nullable_ptr, size_t size);
 
-/*string_funcs*/
-str_array *parse_numstr(const char *numstr);
-uint32_t *str_to_intarray(const char *num_str);
-char *intarr_to_str(uint32_t *u32array);
+/*parsing_funcs*/
+
 size_t padding_chars_len(char *str, char *ch);
+unsigned int count_digits(ssize_t num);
+ssize_t print_u4b_array(u4b_array *arr);
+char *uint_array_to_str(const uint32_t *arr, size_t len);
+numstr_array *parse_numstr(const char *numstr);
 
 /*array_funcs*/
+
 void trim_u4b_array(u4b_array *arr);
-void print_u4b_array(u4b_array *arr);
 ssize_t cmp_u4barray(u4b_array *arr1, u4b_array *arr2);
 ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len);
 
 /*math_funcs*/
+
 u4b_array *infiX_division(u4b_array *n1, u4b_array *n2);
 u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2);
 u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2);
 u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2);
 u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2);
 
-#endif /* !INFIX_H */
+#endif /*INFIX_H*/

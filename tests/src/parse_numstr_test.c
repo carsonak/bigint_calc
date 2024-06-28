@@ -8,16 +8,16 @@ void tearDown(void)
 {
 }
 
-void str_array_assert(str_array *expected, str_array *actual, int ln_num, char *msg);
+void numstr_array_assert(numstr_array *expected, numstr_array *actual, int ln_num, char *msg);
 
 /**
- * tr_attr_assert - runs checks for str_array a.k.a struct numstring_attributes
+ * tr_attr_assert - runs checks for numstr_array a.k.a struct numstring_attributes
  * @expected: pointer to expected struct
  * @actual: pointer to actual struct
  * @ln_num: line number
  * @msg: message
  */
-void str_array_assert(str_array *expected, str_array *actual, int ln_num, char *msg)
+void numstr_array_assert(numstr_array *expected, numstr_array *actual, int ln_num, char *msg)
 {
 	char t_msg[100] = {0};
 
@@ -61,28 +61,28 @@ void test_invalidInputs(void)
  */
 void test_onlySpacesCommasAndZeros(void)
 {
-	str_array expected = {(uint8_t *)"0", 1, 1, 0};
+	numstr_array expected = {(uint8_t *)"0", 1, 1, 0};
 
-	str_array_assert(&expected, parse_numstr("0"), __LINE__, "0");
-	str_array_assert(&expected, parse_numstr("0000"), __LINE__, "0000");
-	str_array_assert(&expected, parse_numstr("00,000"), __LINE__, "00,000");
-	str_array_assert(&expected, parse_numstr("0 0 0 0"), __LINE__, "0 0 0 0");
-	str_array_assert(&expected, parse_numstr("000, 000, 000,000"), __LINE__, "000, 000, 000,000");
+	numstr_array_assert(&expected, parse_numstr("0"), __LINE__, "0");
+	numstr_array_assert(&expected, parse_numstr("0000"), __LINE__, "0000");
+	numstr_array_assert(&expected, parse_numstr("00,000"), __LINE__, "00,000");
+	numstr_array_assert(&expected, parse_numstr("0 0 0 0"), __LINE__, "0 0 0 0");
+	numstr_array_assert(&expected, parse_numstr("000, 000, 000,000"), __LINE__, "000, 000, 000,000");
 	expected.str = (uint8_t *)" ";
 	expected.digits = 0;
-	str_array_assert(&expected, parse_numstr(" "), __LINE__, "' '");
-	str_array_assert(&expected, parse_numstr("    "), __LINE__, "'    '");
-	str_array_assert(&expected, parse_numstr("000    000   00 "), __LINE__, "'000    000   00 '");
-	str_array_assert(&expected, parse_numstr(", "), __LINE__, "', '");
-	str_array_assert(&expected, parse_numstr("    ,    ,   "), __LINE__, "'    ,    ,   '");
-	str_array_assert(&expected, parse_numstr("000, "), __LINE__, "'000, '");
+	numstr_array_assert(&expected, parse_numstr(" "), __LINE__, "' '");
+	numstr_array_assert(&expected, parse_numstr("    "), __LINE__, "'    '");
+	numstr_array_assert(&expected, parse_numstr("000    000   00 "), __LINE__, "'000    000   00 '");
+	numstr_array_assert(&expected, parse_numstr(", "), __LINE__, "', '");
+	numstr_array_assert(&expected, parse_numstr("    ,    ,   "), __LINE__, "'    ,    ,   '");
+	numstr_array_assert(&expected, parse_numstr("000, "), __LINE__, "'000, '");
 	expected.str = (uint8_t *)",";
-	str_array_assert(&expected, parse_numstr(","), __LINE__, ",");
-	str_array_assert(&expected, parse_numstr(",,,,,,,,,,,,,,,,"), __LINE__, ",,,,,,,,,,,,,,,,");
-	str_array_assert(&expected, parse_numstr("000,,000,0,,,,000,"), __LINE__, "000,,000,0,,,,000,");
-	str_array_assert(&expected, parse_numstr(" ,"), __LINE__, "' ,");
-	str_array_assert(&expected, parse_numstr(", , , ,   , ,  ,,, ,"), __LINE__, ", , , ,   , ,  ,,, ,");
-	str_array_assert(&expected, parse_numstr("0, 0, 0, 0,"), __LINE__, "0, 0, 0, 0,");
+	numstr_array_assert(&expected, parse_numstr(","), __LINE__, ",");
+	numstr_array_assert(&expected, parse_numstr(",,,,,,,,,,,,,,,,"), __LINE__, ",,,,,,,,,,,,,,,,");
+	numstr_array_assert(&expected, parse_numstr("000,,000,0,,,,000,"), __LINE__, "000,,000,0,,,,000,");
+	numstr_array_assert(&expected, parse_numstr(" ,"), __LINE__, "' ,");
+	numstr_array_assert(&expected, parse_numstr(", , , ,   , ,  ,,, ,"), __LINE__, ", , , ,   , ,  ,,, ,");
+	numstr_array_assert(&expected, parse_numstr("0, 0, 0, 0,"), __LINE__, "0, 0, 0, 0,");
 }
 
 /**
@@ -90,27 +90,27 @@ void test_onlySpacesCommasAndZeros(void)
  */
 void test_onlyNegatives(void)
 {
-	str_array expected = {(uint8_t *)"0", 1, 1, 1};
+	numstr_array expected = {(uint8_t *)"0", 1, 1, 1};
 
-	str_array_assert(&expected, parse_numstr("-0"), __LINE__, "-0");
-	str_array_assert(&expected, parse_numstr("-00000"), __LINE__, "-00000");
-	str_array_assert(&expected, parse_numstr("-000, 000"), __LINE__, "-000, 000");
-	str_array_assert(&expected, parse_numstr("-     0"), __LINE__, "-     0");
+	numstr_array_assert(&expected, parse_numstr("-0"), __LINE__, "-0");
+	numstr_array_assert(&expected, parse_numstr("-00000"), __LINE__, "-00000");
+	numstr_array_assert(&expected, parse_numstr("-000, 000"), __LINE__, "-000, 000");
+	numstr_array_assert(&expected, parse_numstr("-     0"), __LINE__, "-     0");
 	expected.str = (uint8_t *)"1234567";
 	expected.len = 7;
 	expected.digits = 7;
-	str_array_assert(&expected, parse_numstr("-1234567"), __LINE__, "-1234567");
+	numstr_array_assert(&expected, parse_numstr("-1234567"), __LINE__, "-1234567");
 	expected.str = (uint8_t *)"1,234,567";
 	expected.len = 9;
-	str_array_assert(&expected, parse_numstr("-1,234,567"), __LINE__, "-,1,234,567");
+	numstr_array_assert(&expected, parse_numstr("-1,234,567"), __LINE__, "-,1,234,567");
 	expected.str = (uint8_t *)"1 234 567";
-	str_array_assert(&expected, parse_numstr("- 1 234 567"), __LINE__, "- 1 234 567");
+	numstr_array_assert(&expected, parse_numstr("- 1 234 567"), __LINE__, "- 1 234 567");
 	expected.str = (uint8_t *)"1234567";
 	expected.len = 7;
-	str_array_assert(&expected, parse_numstr("-0001234567"), __LINE__, "-0001234567");
+	numstr_array_assert(&expected, parse_numstr("-0001234567"), __LINE__, "-0001234567");
 	expected.str = (uint8_t *)"1, 234, 567";
 	expected.len = 11;
-	str_array_assert(&expected, parse_numstr("-,  1, 234, 567"), __LINE__, "-,  1, 234, 567");
+	numstr_array_assert(&expected, parse_numstr("-,  1, 234, 567"), __LINE__, "-,  1, 234, 567");
 }
 
 /**
@@ -118,30 +118,30 @@ void test_onlyNegatives(void)
  */
 void test_validInputs(void)
 {
-	str_array expected = {(uint8_t *)"0", 1, 1, 0};
+	numstr_array expected = {(uint8_t *)"0", 1, 1, 0};
 
-	str_array_assert(&expected, parse_numstr("0"), __LINE__, "0");
-	str_array_assert(&expected, parse_numstr("00000"), __LINE__, "00000");
-	str_array_assert(&expected, parse_numstr("000, 000"), __LINE__, "000, 000");
-	str_array_assert(&expected, parse_numstr("     0"), __LINE__, "     0");
+	numstr_array_assert(&expected, parse_numstr("0"), __LINE__, "0");
+	numstr_array_assert(&expected, parse_numstr("00000"), __LINE__, "00000");
+	numstr_array_assert(&expected, parse_numstr("000, 000"), __LINE__, "000, 000");
+	numstr_array_assert(&expected, parse_numstr("     0"), __LINE__, "     0");
 	expected.str = (uint8_t *)"1234567";
 	expected.len = 7;
 	expected.digits = 7;
-	str_array_assert(&expected, parse_numstr("1234567"), __LINE__, "1234567");
+	numstr_array_assert(&expected, parse_numstr("1234567"), __LINE__, "1234567");
 	expected.str = (uint8_t *)"1,234,567";
 	expected.len = 9;
-	str_array_assert(&expected, parse_numstr("1,234,567"), __LINE__, ",1,234,567");
+	numstr_array_assert(&expected, parse_numstr("1,234,567"), __LINE__, ",1,234,567");
 	expected.str = (uint8_t *)"1 234 567";
-	str_array_assert(&expected, parse_numstr(" 1 234 567"), __LINE__, " 1 234 567");
+	numstr_array_assert(&expected, parse_numstr(" 1 234 567"), __LINE__, " 1 234 567");
 	expected.str = (uint8_t *)"1234567";
 	expected.len = 7;
-	str_array_assert(&expected, parse_numstr("0001234567"), __LINE__, "0001234567");
+	numstr_array_assert(&expected, parse_numstr("0001234567"), __LINE__, "0001234567");
 	expected.str = (uint8_t *)"1, 234, 56700";
 	expected.len = 13;
 	expected.digits = 9;
-	str_array_assert(&expected, parse_numstr(",  1, 234, 56700"), __LINE__, "',  1, 234, 56700'");
-	str_array_assert(&expected, parse_numstr(",  1, 234, 56700,"), __LINE__, "',  1, 234, 56700'");
-	str_array_assert(&expected, parse_numstr("1, 234, 56700 "), __LINE__, "1, 234, 56700");
-	str_array_assert(&expected, parse_numstr("1, 234, 56700                                  "), __LINE__, "'1, 234, 56700                                  '");
-	str_array_assert(&expected, parse_numstr("1, 234, 56700,   ,   ,  ,, ,"), __LINE__, "'1, 234, 56700,   ,   ,  ,, ,'");
+	numstr_array_assert(&expected, parse_numstr(",  1, 234, 56700"), __LINE__, "',  1, 234, 56700'");
+	numstr_array_assert(&expected, parse_numstr(",  1, 234, 56700,"), __LINE__, "',  1, 234, 56700'");
+	numstr_array_assert(&expected, parse_numstr("1, 234, 56700 "), __LINE__, "1, 234, 56700");
+	numstr_array_assert(&expected, parse_numstr("1, 234, 56700                                  "), __LINE__, "'1, 234, 56700                                  '");
+	numstr_array_assert(&expected, parse_numstr("1, 234, 56700,   ,   ,  ,, ,"), __LINE__, "'1, 234, 56700,   ,   ,  ,, ,'");
 }

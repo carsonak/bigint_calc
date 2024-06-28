@@ -20,7 +20,7 @@ void trim_u4b_array(u4b_array *arr)
 	if (arr->len <= 1)
 	{
 		if (!arr->array || !arr->array[0])
-			arr->is_negative = 0;
+			arr->is_negative = false;
 	}
 }
 

@@ -1,17 +1,14 @@
 SHELL := bash
 TIMEOUT := timeout
-T_BINDIR := $(TESTS_DIR)/bin
-T_SRCDIR := $(TESTS_DIR)/src
-
 TIMEOUT_OPTS := --preserve-status
 
-UTILITY_FUNCS := $(SRC_DIR)/mem_funcs.c $(SRC_DIR)/string_funcs.c $(SRC_DIR)/array_funcs.c
-T_SRCS = $(shell find "$(T_SRCDIR)" -mount -name 'test_*.c' -type f | sort)
-T_BINS = $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
-T_DEPS = $(T_BINS:%=%.d)
-
-LDLIBS += -lcriterion
-CFLAGS += $(LDFLAGS) $(LDLIBS)
+UTILITY_FUNCS := $(SRC_DIR)/mem_funcs.c $(SRC_DIR)/parsing.c $(SRC_DIR)/array_funcs.c
+T_BINDIR := $(TESTS_DIR)/bin
+T_SRCDIR := $(TESTS_DIR)/src
+T_SRCS := $(shell find "$(T_SRCDIR)" -mount -name 'test_*.c' -type f | sort)
+T_BINS := $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
+T_UTILITY_OBJS := $(filter-out $(T_BINDIR)/test_infiX_%,$(T_BINS))
+T_DEPS := $(T_BINS:%=%.d)
 
 tests: unit-tests
 
@@ -20,18 +17,20 @@ $(T_BINDIR):
 
 $(T_BINDIR)/test_infiX_mul: $(SRC_DIR)/infiX_add.c
 $(T_BINDIR)/test_infiX_div: $(SRC_DIR)/infiX_add.c $(SRC_DIR)/infiX_sub.c $(SRC_DIR)/infiX_mul.c
-
-$(T_BINDIR)/test_%: $(T_SRCDIR)/test_%.c $(SRC_DIR)/%.c $(UTILITY_FUNCS)
+$(T_BINDIR)/test_infiX_mod: $(T_SRCDIR)/test_infiX_mod.c $(SRC_DIR)/infiX_*.c $(filter-out %parsing.c,$(UTILITY_FUNCS))
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
 
-$(T_BINDIR)/test_infiX_mod: $(SRC_DIR)/infiX_div.c $(T_SRCDIR)/test_infiX_mod.c $(SRC_DIR)/infiX_add.c $(SRC_DIR)/infiX_sub.c $(SRC_DIR)/infiX_mul.c $(UTILITY_FUNCS)
+$(T_BINDIR)/test_infiX_%: $(T_SRCDIR)/test_infiX_%.c $(SRC_DIR)/infiX_%.c $(filter-out %parsing.c,$(UTILITY_FUNCS))
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
 
-$(T_BINDIR)/test_cmp_u4barray: $(T_SRCDIR)/test_cmp_u4barray.c $(SRC_DIR)/array_funcs.c
+# https://www.gnu.org/software/make/manual/html_node/Static-Pattern.html
+$(T_UTILITY_OBJS):$(T_BINDIR)/test_%: $(T_SRCDIR)/test_%.c $(UTILITY_FUNCS)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
 
-unit-tests: TIMEOUT_OPTS += --kill-after=13.0 10.0
-unit-tests: $(T_BINDIR) $(T_SRCS) $(T_BINS)
+unit-tests: LDLIBS += -lcriterion
+unit-tests: CFLAGS += $(LDFLAGS) $(LDLIBS)
+unit-tests: TIMEOUT_OPTS += --kill-after=9.0 6.0
+unit-tests: $(T_BINDIR) $(T_BINS)
 	$(shell export $(ASAN_OPTIONS) && export $(LSAN_OPTIONS); \
 		for t_binary in $(T_BINS); \
 		do if [[ -f $$t_binary && -x $$t_binary ]]; \

@@ -93,7 +93,7 @@ u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2)
 		/*for case: -7 // 4 == -2 or 7 // -4 == -2 then;*/
 		/*-7 % 4 = 1 and 7 % -4 = -1*/
 		is_negative = n2->is_negative;
-		n2->is_negative = 0;
+		n2->is_negative = false;
 		result = free_u4b_array(result);
 
 		result = infiX_subtraction(n2, remains);
@@ -123,10 +123,10 @@ u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
 	char is_zero = 0, neg1 = n1->is_negative, neg2 = n2->is_negative;
 	uint32_t a[] = {1};
 	u4b_array *tmp = NULL, *result = NULL;
-	u4b_array one = {.len = 1, .is_negative = 0, .array = a};
+	u4b_array one = {.len = 1, .is_negative = false, .array = a};
 
-	n1->is_negative = 0;
-	n2->is_negative = 0;
+	n1->is_negative = false;
+	n2->is_negative = false;
 	is_zero = check_0_result(n1, n2);
 	if (is_zero < 0)
 		return (NULL);
@@ -142,7 +142,7 @@ u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
 		tmp = divide(n1, n2);
 		result = infiX_addition(tmp, &one);
 		if (result)
-			result->is_negative = 1;
+			result->is_negative = true;
 	}
 
 	n1->is_negative = neg1;
@@ -321,8 +321,8 @@ u4b_array *divide(u4b_array *n1, u4b_array *n2)
 ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_array *n2)
 {
 	uint32_t temp_array[1] = {0};
-	u4b_array q_estimate = {.len = 1, .is_negative = 0, .array = temp_array};
-	u4b_array slice_array = {.len = len_slice, .is_negative = 0, .array = NULL};
+	u4b_array q_estimate = {.len = 1, .is_negative = false, .array = temp_array};
+	u4b_array slice_array = {.len = len_slice, .is_negative = false, .array = NULL};
 	u4b_array *estimate_check = NULL;
 	ssize_t msd_slice = 0, is_larger = 0;
 
@@ -396,8 +396,8 @@ ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_arra
 // 	uint32_t in1[] = {65000, 000000005, 45000, 0, 550005550, 2100};
 // 	uint32_t in2[] = {0, 75006};
 // 	// uint32_t out[] = {164342, 0, 0, 0, 0, 999775000, 22499999};
-// 	u4b_array num1 = {.len = 0, .is_negative = 0, .array = NULL};
-// 	u4b_array num2 = {.len = 0, .is_negative = 0, .array = NULL};
+// 	u4b_array num1 = {.len = 0, .is_negative = false, .array = NULL};
+// 	u4b_array num2 = {.len = 0, .is_negative = false, .array = NULL};
 
 // 	num1.len = sizeof(in1) / sizeof(*in1);
 // 	num1.array = in1;

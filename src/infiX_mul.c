@@ -96,8 +96,8 @@ u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 	char neg1 = n1->is_negative, neg2 = n2->is_negative;
 	u4b_array *result = NULL;
 
-	n1->is_negative = 0;
-	n2->is_negative = 0;
+	n1->is_negative = false;
+	n2->is_negative = false;
 	if (neg1 && neg2) /* -8 * -7 = 8*7 */
 		result = multiply(n1, n2);
 	else if (neg1 || neg2)
@@ -106,7 +106,7 @@ u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
 		/* 8 * -7 = -(8*7) */
 		result = multiply(n1, n2);
 		if (result)
-			result->is_negative = 1;
+			result->is_negative = true;
 	}
 
 	n1->is_negative = neg1;

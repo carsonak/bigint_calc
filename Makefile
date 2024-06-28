@@ -6,14 +6,14 @@ SRC_DIR := src
 OBJ_DIR := obj
 TESTS_DIR := tests
 # All the sub-directories with .h files
-INCLUDE_DIRS = $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
+INCLUDE_DIRS := $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
 
 # All .c files
-SRC = $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
+SRC := $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
 # OBJ_DIR will have the same file tree as in the SRC_DIR
-OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track include files (i.e .h files)
-DEP_FILES = $(OBJ:.o=.d)
+DEP_FILES := $(OBJ:.o=.d)
 
 # https://clang.llvm.org/docs/AddressSanitizer.html
 ADDRESS_SANITISER := -fsanitize=address -fno-common
@@ -29,9 +29,9 @@ STACK_CHECKS := -fstack-protector-strong -fstack-clash-protection
 CONTROL_TRANSFER_CHECKS := -fcf-protection=full
 
 # Include flags
-INCL_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
+INCL_FLAGS := $(addprefix -I,$(INCLUDE_DIRS))
 # Linker flags
-LDLIBS := -lm
+LDLIBS :=
 LDFLAGS := -Wl,-z,relro
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 CPPFLAGS := -MMD
