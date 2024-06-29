@@ -5,20 +5,27 @@
 #define _GNU_SOURCE /*program_invocation_name*/
 #endif
 
-#include <stdbool.h> /* bool */
-#include <stdio.h>	 /* *printf, perror */
-#include <string.h>	 /* strlen, strcpy */
-#include <stdlib.h>	 /* *alloc */
-#include <stdint.h>	 /* specific width types */
 #include <ctype.h>	 /* isdigit */
+#include <limits.h>	 /* type_max */
+#include <stdbool.h> /* bool */
+#include <stdint.h>	 /* specific width types */
+#include <stdio.h>	 /* *printf, perror */
+#include <stdlib.h>	 /* *alloc */
+#include <string.h>	 /* strlen, strcpy */
 
+#define ATTR_ALLOC_SIZE(...)
 #define ATTR_MALLOC
 #define ATTR_MALLOC_FREE(...)
-#define ATTR_ALLOC_SIZE(...)
 #define ATTR_NONNULL
 #define ATTR_NONNULL_IDX(...)
 
 #if defined __has_attribute
+
+/*https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-alloc_005fsize-variable-attribute*/
+#if __has_attribute(alloc_size)
+#undef ATTR_ALLOC_SIZE
+#define ATTR_ALLOC_SIZE(...) __attribute__((alloc_size(__VA_ARGS__)))
+#endif /*__has_attribute(alloc_size)*/
 
 /*https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute*/
 #if __has_attribute(malloc)
@@ -27,12 +34,6 @@
 #undef ATTR_MALLOC_FREE
 #define ATTR_MALLOC_FREE(...) __attribute__((malloc(__VA_ARGS__)))
 #endif /*__has_attribute(malloc)*/
-
-/*https://gcc.gnu.org/onlinedocs/gcc/Common-Variable-Attributes.html#index-alloc_005fsize-variable-attribute*/
-#if __has_attribute(alloc_size)
-#undef ATTR_ALLOC_SIZE
-#define ATTR_ALLOC_SIZE(...) __attribute__((alloc_size(__VA_ARGS__)))
-#endif /*__has_attribute(alloc_size)*/
 
 /*https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html#index-malloc-function-attribute*/
 #if __has_attribute(nonnull)
@@ -50,6 +51,19 @@
 #define MAX_VAL_u8b (MAX_VAL_u4b * MAX_VAL_u4b)
 
 /**
+ * struct numstring_array_attributes - a string of numbers
+ * @len: length of the string
+ * @is_negative: a bool for signedness of the number
+ * @str: the number string
+ */
+typedef struct numstring_array_attributes
+{
+	size_t len;
+	bool is_negative;
+	char *str;
+} numstr_array;
+
+/**
  * struct uint32_t_array_attributes - an array of unsigned 4 byte ints
  * @len: number of items in the array
  * @is_negative: a bool for signedness of the number
@@ -61,21 +75,6 @@ typedef struct uint32_t_array_attributes
 	bool is_negative;
 	uint32_t *array;
 } u4b_array;
-
-/**
- * struct numstring_array_attributes - a string of numbers
- * @len: length of the string
- * @digits: number of digits in the string
- * @is_negative: atleast one bit should be set if negative
- * @decimal_point_pos: position of decimal point, 0 if not present
- * @str: the number string
- */
-typedef struct numstring_array_attributes
-{
-	size_t len;
-	bool is_negative;
-	char *str;
-} numstr_array;
 
 /**
  * math_function - generic prototype for basic arithmetic functions.
@@ -123,7 +122,7 @@ void *xrealloc(void *nullable_ptr, size_t size);
 
 /*parsing_funcs*/
 
-size_t padding_chars_len(char *str, char *ch);
+size_t leading_chars_len(const char *str, char *ch);
 unsigned int count_digits(ssize_t num);
 ssize_t print_u4b_array(u4b_array *arr);
 char *uint_array_to_str(const uint32_t *arr, size_t len);

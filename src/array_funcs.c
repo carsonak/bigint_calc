@@ -1,30 +1,6 @@
 #include "infiX.h"
 
 /**
- * trim_u4b_array - truncate length of a u4b_array to ignore trailing zeros.
- * @arr: pointer to a u4b_array struct
- *
- * Also sets the is_negative flag to 0 for 0s and NULL arrays.
- */
-void trim_u4b_array(u4b_array *arr)
-{
-	if (!arr)
-		return;
-
-	if (!arr->array)
-		arr->len = 0;
-
-	while (arr->len > 1 && !arr->array[arr->len - 1])
-		--arr->len;
-
-	if (arr->len <= 1)
-	{
-		if (!arr->array || !arr->array[0])
-			arr->is_negative = false;
-	}
-}
-
-/**
  * cmp_u4barray - compare 2 u4b_arrays.
  * @a1: the first array
  * @a2: the second array
@@ -78,4 +54,28 @@ ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len)
 	}
 
 	return ((ssize_t)arr1[i] - arr2[i]);
+}
+
+/**
+ * trim_u4b_array - truncate length of a u4b_array to ignore trailing zeros.
+ * @arr: pointer to a u4b_array struct
+ *
+ * Also sets the is_negative flag to 0 for 0s and NULL arrays.
+ */
+void trim_u4b_array(u4b_array *arr)
+{
+	if (!arr)
+		return;
+
+	if (!arr->array)
+		arr->len = 0;
+
+	while (arr->len > 1 && !arr->array[arr->len - 1])
+		--arr->len;
+
+	if (arr->len <= 1)
+	{
+		if (!arr->array || !arr->array[0])
+			arr->is_negative = false;
+	}
 }
