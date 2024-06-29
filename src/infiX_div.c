@@ -1,14 +1,14 @@
 #include "infiX.h"
 
-u4b_array *remains = NULL;
+u4b_bignum *remains = NULL;
 
-static u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
+static u4b_bignum *divide_negatives(u4b_bignum *n1, u4b_bignum *n2)
 	ATTR_NONNULL;
-static char check_0_result(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
-static int check_division_by_0(u4b_array *n2) ATTR_NONNULL;
-static u4b_array *divide(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
+static char check_0_result(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
+static int check_division_by_0(u4b_bignum *n2) ATTR_NONNULL;
+static u4b_bignum *divide(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
 static ssize_t ATTR_NONNULL_IDX(1, 3)
-	get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_array *n2);
+	get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_bignum *n2);
 
 /**
  * infiX_division - divides a numbers stored in an array
@@ -19,10 +19,10 @@ static ssize_t ATTR_NONNULL_IDX(1, 3)
  *
  * Return: array with the result, NULL on failure
  */
-u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
+u4b_bignum *infiX_division(u4b_bignum *n1, u4b_bignum *n2)
 {
 	char is_zero = 0;
-	u4b_array *result = NULL;
+	u4b_bignum *result = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
@@ -58,10 +58,10 @@ u4b_array *infiX_division(u4b_array *n1, u4b_array *n2)
  *
  * Return: array with the result, NULL on failure
  */
-u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2)
+u4b_bignum *infiX_modulus(u4b_bignum *n1, u4b_bignum *n2)
 {
 	char is_zero = 0, is_negative = 0;
-	u4b_array *result = NULL;
+	u4b_bignum *result = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
@@ -118,12 +118,12 @@ u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
+u4b_bignum *divide_negatives(u4b_bignum *n1, u4b_bignum *n2)
 {
 	char is_zero = 0, neg1 = n1->is_negative, neg2 = n2->is_negative;
 	uint32_t a[] = {1};
-	u4b_array *tmp = NULL, *result = NULL;
-	u4b_array one = {.len = 1, .is_negative = false, .array = a};
+	u4b_bignum *tmp = NULL, *result = NULL;
+	u4b_bignum one = {.len = 1, .is_negative = false, .array = a};
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -159,7 +159,7 @@ u4b_array *divide_negatives(u4b_array *n1, u4b_array *n2)
  *
  * Return: 1 if n2 is zero, else 0
  */
-int check_division_by_0(u4b_array *n2)
+int check_division_by_0(u4b_bignum *n2)
 {
 	if (!n2->len || (n2->len == 1 && !n2->array[0]))
 	{
@@ -180,7 +180,7 @@ int check_division_by_0(u4b_array *n2)
  *
  * Return: 1 if result will be 0, 0 if not, -1 on error.
  */
-char check_0_result(u4b_array *n1, u4b_array *n2)
+char check_0_result(u4b_bignum *n1, u4b_bignum *n2)
 {
 	if (cmp_u4barray(n1, n2) >= 0)
 		return (0);
@@ -208,12 +208,12 @@ char check_0_result(u4b_array *n1, u4b_array *n2)
  *
  * Return: array with the result, NULL on failure
  */
-u4b_array *divide(u4b_array *n1, u4b_array *n2)
+u4b_bignum *divide(u4b_bignum *n1, u4b_bignum *n2)
 {
 	uint32_t *working_slice = NULL;
 	size_t slice_offset = 1, q_i = 0, n1_i = 0, len_slice = 0;
 	ssize_t tmp = 0;
-	u4b_array *quotient = NULL;
+	u4b_bignum *quotient = NULL;
 
 	/*Since division is reverse of multiplication then;*/
 	/*quotient digits = numerator digits - denominator digits + (0 or 1).*/
@@ -318,12 +318,12 @@ u4b_array *divide(u4b_array *n1, u4b_array *n2)
  *
  * Return: an int representing current quotient, -1 on error.
  */
-ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_array *n2)
+ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_bignum *n2)
 {
 	uint32_t temp_array[1] = {0};
-	u4b_array q_estimate = {.len = 1, .is_negative = false, .array = temp_array};
-	u4b_array slice_array = {.len = len_slice, .is_negative = false, .array = NULL};
-	u4b_array *estimate_check = NULL;
+	u4b_bignum q_estimate = {.len = 1, .is_negative = false, .array = temp_array};
+	u4b_bignum slice_array = {.len = len_slice, .is_negative = false, .array = NULL};
+	u4b_bignum *estimate_check = NULL;
 	ssize_t msd_slice = 0, is_larger = 0;
 
 	remains = free_u4b_array(remains);
@@ -385,27 +385,3 @@ ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_arra
 	free_u4b_array(estimate_check);
 	return (q_estimate.array[0]);
 }
-
-/**
- * main - test
- *
- * Return: 0
- */
-// int main(void)
-// {
-// 	uint32_t in1[] = {65000, 000000005, 45000, 0, 550005550, 2100};
-// 	uint32_t in2[] = {0, 75006};
-// 	// uint32_t out[] = {164342, 0, 0, 0, 0, 999775000, 22499999};
-// 	u4b_array num1 = {.len = 0, .is_negative = false, .array = NULL};
-// 	u4b_array num2 = {.len = 0, .is_negative = false, .array = NULL};
-
-// 	num1.len = sizeof(in1) / sizeof(*in1);
-// 	num1.array = in1;
-// 	num2.len = sizeof(in2) / sizeof(*in2);
-// 	num2.array = in2;
-// 	u4b_array *output = infiX_division(&num1, &num2);
-
-// 	output = free_u4b_array(output);
-
-// 	return (0);
-// }

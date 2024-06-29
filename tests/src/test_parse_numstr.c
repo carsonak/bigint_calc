@@ -1,6 +1,6 @@
 #include "tests.h"
 
-numstr_array *output = NULL;
+intstr *output = NULL;
 
 /**
  * setup - setup some variables
@@ -202,7 +202,7 @@ Test(valid_inputs, test_minus0000000000000,
 }
 
 Test(valid_inputs, test_00000000000001,
-	 .description = "00000000000001 == 1", .timeout = 0)
+	 .description = "00000000000001 == 1", .timeout = 3.0)
 {
 	output = parse_numstr("00000000000001");
 
@@ -212,7 +212,7 @@ Test(valid_inputs, test_00000000000001,
 }
 
 Test(valid_inputs, test_minus00000000000001,
-	 .description = "-00000000000001 == 1", .timeout = 0)
+	 .description = "-00000000000001 == 1", .timeout = 3.0)
 {
 	output = parse_numstr("-00000000000001");
 

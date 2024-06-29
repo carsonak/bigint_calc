@@ -1,24 +1,30 @@
 #include "infiX.h"
 
 /**
- * numstr_to_u4b - convert a numstr_array to a u4b_array.
- * @number: the numstr_array
+ * numstr_to_u4b - convert a intstr to a u4b_bignum.
+ * @num_str: the intstr
  *
- * Return: a pointer to a u4b_array struct, NULL on failure.
+ * Return: a pointer to a u4b_bignum struct, NULL on failure.
  */
-u4b_array *numstr_to_u4b(numstr_array *number)
+u4b_bignum *numstr_to_u4b(intstr *num_str)
 {
-	(void)number;
-	return (NULL);
+	u4b_bignum *arr = NULL;
+
+	if (!num_str || !num_str)
+	{
+		/* code */
+	}
+
+	return (arr);
 }
 
 /**
- * u4b_to_numstr - convert a u4b_array to a numstr_array.
- * @arr: the u4b_array
+ * u4b_to_numstr - convert a u4b_bignum to a intstr.
+ * @arr: the u4b_bignum
  *
- * Return: a pointer to a numstr_array, NULL on failure.
+ * Return: a pointer to a intstr, NULL on failure.
  */
-numstr_array *u4b_to_numstr(u4b_array *arr)
+intstr *u4b_to_numstr(u4b_bignum *arr)
 {
 	(void)arr;
 	return (NULL);
@@ -28,11 +34,11 @@ numstr_array *u4b_to_numstr(u4b_array *arr)
  * parse_numstr - parse a string of numbers
  * @numstr: a string with numbers.
  *
- * Return: pointer to a numstr_array struct.
+ * Return: pointer to a intstr struct.
  */
-numstr_array *parse_numstr(const char *numstr)
+intstr *parse_numstr(const char *numstr)
 {
-	numstr_array *arr = NULL;
+	intstr *arr = NULL;
 	size_t s_i = 0, b_i = 0;
 	const unsigned int buf_size = 1024;
 	char buf[buf_size];
@@ -42,10 +48,8 @@ numstr_array *parse_numstr(const char *numstr)
 
 	arr = alloc_numstr_array(0);
 	for (s_i = 0; numstr[s_i] == '-' || numstr[s_i] == '+'; s_i++)
-	{
 		if (numstr[s_i] == '-')
 			arr->is_negative = !arr->is_negative;
-	}
 
 	s_i += leading_chars_len(&numstr[s_i], "0");
 	while (numstr[s_i])
@@ -169,12 +173,12 @@ unsigned int count_digits(ssize_t num)
 }
 
 /**
- * print_u4b_array - print a u4b_array
+ * print_u4b_array - print a u4b_bignum
  * @arr: pointer to the array struct
  *
  * Return: number of bytes printed, -1 on error.
  */
-ssize_t print_u4b_array(u4b_array *arr)
+ssize_t print_u4b_array(u4b_bignum *arr)
 {
 	char *str_arr = NULL;
 	ssize_t bytes_printed = 0;

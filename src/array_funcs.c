@@ -7,7 +7,7 @@
  *
  * Return: +ve number if a1 > a2, -ve number if a1 < a2 else 0.
  */
-ssize_t cmp_u4barray(u4b_array *a1, u4b_array *a2)
+ssize_t cmp_u4barray(u4b_bignum *a1, u4b_bignum *a2)
 {
 	if (!a1 || !a2)
 		return (0);
@@ -57,12 +57,12 @@ ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len)
 }
 
 /**
- * trim_u4b_array - truncate length of a u4b_array to ignore trailing zeros.
- * @arr: pointer to a u4b_array struct
+ * trim_u4b_array - truncate length of a u4b_bignum to ignore trailing zeros.
+ * @arr: pointer to a u4b_bignum struct
  *
  * Also sets the is_negative flag to 0 for 0s and NULL arrays.
  */
-void trim_u4b_array(u4b_array *arr)
+void trim_u4b_array(u4b_bignum *arr)
 {
 	if (!arr)
 		return;

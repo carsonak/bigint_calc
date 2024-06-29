@@ -1,8 +1,8 @@
 #include "infiX.h"
 
-static u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
+static u4b_bignum *multiply_negatives(u4b_bignum *n1, u4b_bignum *n2)
 	ATTR_NONNULL;
-static u4b_array *multiply(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
+static u4b_bignum *multiply(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
 
 /**
  * infiX_multiplication - multiply arbitrary long numbers.
@@ -13,7 +13,7 @@ static u4b_array *multiply(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
  *
  * Return: pointer to result, NULL on failure
  */
-u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
+u4b_bignum *infiX_multiplication(u4b_bignum *n1, u4b_bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -33,11 +33,11 @@ u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2)
  *
  * Return: pointer to result, NULL on failure
  */
-u4b_array *multiply(u4b_array *n1, u4b_array *n2)
+u4b_bignum *multiply(u4b_bignum *n1, u4b_bignum *n2)
 {
 	int64_t byt_mul = 0;
 	size_t n1_i = 0, n2_i = 0;
-	u4b_array *product = NULL, *current_mul = NULL, *increment = NULL;
+	u4b_bignum *product = NULL, *current_mul = NULL, *increment = NULL;
 
 	/*Multiplication by zero.*/
 	if (!n1->len || !n2->len)
@@ -91,10 +91,10 @@ u4b_array *multiply(u4b_array *n1, u4b_array *n2)
  *
  * Return: pointer to the result, NULL on failure
  */
-u4b_array *multiply_negatives(u4b_array *n1, u4b_array *n2)
+u4b_bignum *multiply_negatives(u4b_bignum *n1, u4b_bignum *n2)
 {
 	char neg1 = n1->is_negative, neg2 = n2->is_negative;
-	u4b_array *result = NULL;
+	u4b_bignum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;

@@ -1,8 +1,8 @@
 #include "tests.h"
 
-u4b_array num1 = {.len = 0, .is_negative = false, .array = NULL};
-u4b_array num2 = {.len = 0, .is_negative = false, .array = NULL};
-u4b_array expected = {.len = 0, .is_negative = false, .array = NULL};
+u4b_bignum num1 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_bignum num2 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_bignum expected = {.len = 0, .is_negative = false, .array = NULL};
 
 /**
  * setup - initialises variables for tests.
@@ -32,7 +32,7 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_null_modulo_null,
 	 .description = "NULL % NULL = NULL", .timeout = 3.0)
 {
-	u4b_array *output = infiX_modulus(NULL, NULL);
+	u4b_bignum *output = infiX_modulus(NULL, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -44,7 +44,7 @@ Test(null_inputs, test_1_modulo_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	u4b_array *output = infiX_modulus(&num1, NULL);
+	u4b_bignum *output = infiX_modulus(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -56,7 +56,7 @@ Test(null_inputs, test_null_modulo_1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	u4b_array *output = infiX_modulus(NULL, &num2);
+	u4b_bignum *output = infiX_modulus(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -68,7 +68,7 @@ Test(null_inputs, test_0_modulo_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	u4b_array *output = infiX_modulus(&num1, NULL);
+	u4b_bignum *output = infiX_modulus(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -80,7 +80,7 @@ Test(null_inputs, test_null_modulo_0,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	u4b_array *output = infiX_modulus(NULL, &num2);
+	u4b_bignum *output = infiX_modulus(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -93,7 +93,7 @@ Test(null_inputs, test_minus1_modulo_null,
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
 	num1.is_negative = true;
-	u4b_array *output = infiX_modulus(&num1, NULL);
+	u4b_bignum *output = infiX_modulus(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -106,7 +106,7 @@ Test(null_inputs, test_null_modulo_minus1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	num2.is_negative = true;
-	u4b_array *output = infiX_modulus(NULL, &num2);
+	u4b_bignum *output = infiX_modulus(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -127,7 +127,7 @@ Test(zero_len_arrays, test_null_modulo_largenum,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -153,7 +153,7 @@ Test(negative_modulus, test_minus9107428777003_modulo_minus809754437,
 	expected.is_negative = true;
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -175,7 +175,7 @@ Test(negative_modulus, test_minus9107428777003_modulo_809754437,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -198,7 +198,7 @@ Test(negative_modulus, test_9107428777003_modulo_809754437,
 	expected.is_negative = true;
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -220,7 +220,7 @@ Test(simple_modulus, test_0_modulo_1,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	output = free_u4b_array(output);
 }
@@ -237,7 +237,7 @@ Test(simple_modulus, test_1_modulo_1,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -258,7 +258,7 @@ Test(simple_modulus, test_1000000000_modulo_50000,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -279,7 +279,7 @@ Test(simple_modulus, test_50000_modulo_100000000,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -303,7 +303,7 @@ Test(simple_modulus, test_longnum1_modulo_longnum2,
 	num2.array = in2;
 	expected.len = sizeof(rem) / sizeof(*rem);
 	expected.array = rem;
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -325,7 +325,7 @@ Test(large_modulus, test_o1ka_modulo_o1kb,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -348,7 +348,7 @@ Test(large_modulus, test_o500c_modulo_o500d,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
 
-	u4b_array *output = infiX_modulus(&num1, &num2);
+	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));

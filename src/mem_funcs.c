@@ -51,14 +51,14 @@ void *xrealloc(void *nullable_ptr, size_t size)
 }
 
 /**
- * alloc_u4b_array - allocate memory for a u4b_array of given length
+ * alloc_u4b_array - allocate memory for a u4b_bignum of given length
  * @len: length of the array, length 0 returns the struct with a NULL array
  *
- * Return: a pointer to a u4b_array struct, NULL on failure
+ * Return: a pointer to a u4b_bignum struct, NULL on failure
  */
-u4b_array *alloc_u4b_array(size_t len)
+u4b_bignum *alloc_u4b_array(size_t len)
 {
-	u4b_array *arr = xcalloc(1, sizeof(*arr));
+	u4b_bignum *arr = xcalloc(1, sizeof(*arr));
 
 	if (!arr)
 		return (NULL);
@@ -75,14 +75,14 @@ u4b_array *alloc_u4b_array(size_t len)
 }
 
 /**
- * alloc_numstr_array - allocate memory for a numstr_array of given length
+ * alloc_numstr_array - allocate memory for a intstr of given length
  * @len: length of the array, length 0 returns the struct with a NULL array
  *
- * Return: a pointer to a numstr_array struct, NULL on failure.
+ * Return: a pointer to a intstr struct, NULL on failure.
  */
-numstr_array *alloc_numstr_array(size_t len)
+intstr *alloc_numstr_array(size_t len)
 {
-	numstr_array *arr = xcalloc(1, sizeof(*arr));
+	intstr *arr = xcalloc(1, sizeof(*arr));
 
 	if (!arr)
 		return (NULL);
@@ -111,12 +111,12 @@ void *free_n_null(void *freeable_ptr)
 }
 
 /**
- * free_u4b_array - free a u4b_array, return NULL.
- * @freeable_arr: a pointer to a u4b_array.
+ * free_u4b_array - free a u4b_bignum, return NULL.
+ * @freeable_arr: a pointer to a u4b_bignum.
  *
  * Return: NULL always.
  */
-void *free_u4b_array(u4b_array *freeable_arr)
+void *free_u4b_array(u4b_bignum *freeable_arr)
 {
 	if (freeable_arr)
 		free_n_null(freeable_arr->array);
@@ -125,12 +125,12 @@ void *free_u4b_array(u4b_array *freeable_arr)
 }
 
 /**
- * free_numstr_array - free a numstr_array, return NULL.
+ * free_numstr_array - free a intstr, return NULL.
  * @freeable_arr: a pointer to a freeable
  *
  * Return: NULL always.
  */
-void *free_numstr_array(numstr_array *freeable_arr)
+void *free_numstr_array(intstr *freeable_arr)
 {
 	if (freeable_arr)
 		free_n_null(freeable_arr->str);

@@ -1,7 +1,7 @@
 #include "tests.h"
 
-u4b_array num1 = {.len = 0, .is_negative = false, .array = NULL};
-u4b_array num2 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_bignum num1 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_bignum num2 = {.len = 0, .is_negative = false, .array = NULL};
 
 /**
  * setup - s

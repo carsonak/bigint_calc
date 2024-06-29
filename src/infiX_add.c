@@ -1,8 +1,8 @@
 #include "infiX.h"
 
-static u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
+static u4b_bignum *add_negatives(u4b_bignum *n1, u4b_bignum *n2)
 	ATTR_NONNULL;
-static u4b_array *add(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
+static u4b_bignum *add(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
 
 /**
  * infiX_addition - add two arbitrary long numbers.
@@ -13,7 +13,7 @@ static u4b_array *add(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
  *
  * Return: pointer to result, NULL on failure
  */
-u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
+u4b_bignum *infiX_addition(u4b_bignum *n1, u4b_bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -33,10 +33,10 @@ u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2)
  *
  * Return: return results of operation
  */
-u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
+u4b_bignum *add_negatives(u4b_bignum *n1, u4b_bignum *n2)
 {
 	char neg1 = n1->is_negative, neg2 = n2->is_negative;
-	u4b_array *result = NULL;
+	u4b_bignum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -65,11 +65,11 @@ u4b_array *add_negatives(u4b_array *n1, u4b_array *n2)
  *
  * Return: pointer to result, NULL on failure
  */
-u4b_array *add(u4b_array *n1, u4b_array *n2)
+u4b_bignum *add(u4b_bignum *n1, u4b_bignum *n2)
 {
 	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
 	int64_t byt_sum = 0;
-	u4b_array *sum = NULL;
+	u4b_bignum *sum = NULL;
 
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;

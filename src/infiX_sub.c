@@ -1,8 +1,8 @@
 #include "infiX.h"
 
-static u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
+static u4b_bignum *subtract_negatives(u4b_bignum *n1, u4b_bignum *n2)
 	ATTR_NONNULL;
-static u4b_array *subtract(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
+static u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
 
 /**
  * infiX_subtraction - subtract two arbitrary long numbers.
@@ -13,7 +13,7 @@ static u4b_array *subtract(u4b_array *n1, u4b_array *n2) ATTR_NONNULL;
  *
  * Return: pointer to the diff, NULL on failure
  */
-u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2)
+u4b_bignum *infiX_subtraction(u4b_bignum *n1, u4b_bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -33,10 +33,10 @@ u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2)
  *
  * Return: 1 if action taken (error or processed results), 0 if no action taken
  */
-u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
+u4b_bignum *subtract_negatives(u4b_bignum *n1, u4b_bignum *n2)
 {
 	char neg1 = n1->is_negative, neg2 = n2->is_negative;
-	u4b_array *result = NULL;
+	u4b_bignum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -65,12 +65,12 @@ u4b_array *subtract_negatives(u4b_array *n1, u4b_array *n2)
  *
  * Return: pointer to the diff, NULL on failure
  */
-u4b_array *subtract(u4b_array *n1, u4b_array *n2)
+u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2)
 {
 	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
 	ssize_t n1_is_bigger = 0;
 	int64_t byt_diff = 0;
-	u4b_array *diff = NULL;
+	u4b_bignum *diff = NULL;
 
 	/*result_len = max(n1->len, n2->len)*/
 	result_len = (n1->len > n2->len) ? n1->len : n2->len;

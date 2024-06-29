@@ -1,8 +1,8 @@
 #include "tests.h"
 
-u4b_array num1 = {.len = 0, .is_negative = false, .array = NULL};
-u4b_array num2 = {.len = 0, .is_negative = false, .array = NULL};
-u4b_array expected = {.len = 0, .is_negative = false, .array = NULL};
+u4b_bignum num1 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_bignum num2 = {.len = 0, .is_negative = false, .array = NULL};
+u4b_bignum expected = {.len = 0, .is_negative = false, .array = NULL};
 
 /**
  * infiX_subtraction - dummy
@@ -11,9 +11,9 @@ u4b_array expected = {.len = 0, .is_negative = false, .array = NULL};
  *
  * Return: a 0 length array, NULL on failure.
  */
-u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2)
+u4b_bignum *infiX_subtraction(u4b_bignum *n1, u4b_bignum *n2)
 {
-	u4b_array *res = alloc_u4b_array(1);
+	u4b_bignum *res = alloc_u4b_array(1);
 
 	(void)n1;
 	(void)n2;
@@ -51,7 +51,7 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_null_plus_null,
 	 .description = "NULL + NULL = NULL", .timeout = 3.0)
 {
-	u4b_array *output = infiX_addition(NULL, NULL);
+	u4b_bignum *output = infiX_addition(NULL, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -63,7 +63,7 @@ Test(null_inputs, test_1_plus_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	u4b_array *output = infiX_addition(&num1, NULL);
+	u4b_bignum *output = infiX_addition(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -75,7 +75,7 @@ Test(null_inputs, test_null_plus_1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	u4b_array *output = infiX_addition(NULL, &num2);
+	u4b_bignum *output = infiX_addition(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -87,7 +87,7 @@ Test(null_inputs, test_0_plus_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	u4b_array *output = infiX_addition(&num1, NULL);
+	u4b_bignum *output = infiX_addition(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -99,7 +99,7 @@ Test(null_inputs, test_null_plus_0,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	u4b_array *output = infiX_addition(NULL, &num2);
+	u4b_bignum *output = infiX_addition(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -112,7 +112,7 @@ Test(null_inputs, test_minus1_plus_null,
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
 	num1.is_negative = true;
-	u4b_array *output = infiX_addition(&num1, NULL);
+	u4b_bignum *output = infiX_addition(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -125,7 +125,7 @@ Test(null_inputs, test_null_plus_minus1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 	num2.is_negative = true;
-	u4b_array *output = infiX_addition(NULL, &num2);
+	u4b_bignum *output = infiX_addition(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -135,7 +135,7 @@ TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
 Test(zero_len_arrays, test_nullarray_plus_nullarray,
 	 .description = "null_array + null_array = null_array", .timeout = 3.0)
 {
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(zero(sz, output->len));
 	cr_expect(zero(chr, output->is_negative));
@@ -152,7 +152,7 @@ Test(zero_len_arrays, test_4490998_plus_nullarray,
 	num1.array = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -171,7 +171,7 @@ Test(zero_len_arrays, test_nullarray_plus_largenum,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -190,7 +190,7 @@ Test(simple_additions, test_0_plus_0,
 	num1.array = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num1);
+	u4b_bignum *output = infiX_addition(&num1, &num1);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -209,7 +209,7 @@ Test(simple_additions, test_1_plus_0,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -228,7 +228,7 @@ Test(simple_additions, test_0_plus_1,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -245,7 +245,7 @@ Test(simple_additions, test_1_plus_1,
 	num1.array = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num1);
+	u4b_bignum *output = infiX_addition(&num1, &num1);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -264,7 +264,7 @@ Test(simple_additions, test_12345_plus_54321,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -283,7 +283,7 @@ Test(simple_additions, test_54321_plus_12345,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -304,7 +304,7 @@ Test(long_additions, test_999999999_plus_1,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -325,7 +325,7 @@ Test(long_additions, test_999999999999999999_plus_999999999,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -348,7 +348,7 @@ Test(long_additions, test_long9s_plus_1,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -371,7 +371,7 @@ Test(long_additions, test_1_plus_long9s,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -395,7 +395,7 @@ Test(long_additions, test_long_sparse_num1_plus_long_sparse_num2,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -419,7 +419,7 @@ Test(long_additions, test_long_sparse_num2_plus_long_sparse_num1,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -444,7 +444,7 @@ Test(negative_additions, test_minus1_plus_minus1,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.is_negative = true;
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -462,7 +462,7 @@ Test(negative_additions, test_1_plus_minus1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.is_negative = true;
 	num2.array = in2;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(zero(chr, output->is_negative));
 	free_u4b_array(output);
@@ -478,7 +478,7 @@ Test(negative_additions, test_minus1_plus_1,
 	num1.array = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(zero(chr, output->is_negative));
 	free_u4b_array(output);
@@ -499,7 +499,7 @@ Test(large_additions, test_o1ka_plus_o1kb,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -520,7 +520,7 @@ Test(large_additions, test_o1kb_plus_o1ka,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -542,7 +542,7 @@ Test(large_additions, test_o500c_plus_o500d,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -564,7 +564,7 @@ Test(large_additions, test_o500d_plus_o500c,
 	num2.array = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.array = out;
-	u4b_array *output = infiX_addition(&num1, &num2);
+	u4b_bignum *output = infiX_addition(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));

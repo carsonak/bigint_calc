@@ -51,35 +51,35 @@
 #define MAX_VAL_u8b (MAX_VAL_u4b * MAX_VAL_u4b)
 
 /**
- * struct numstring_array_attributes - a string of numbers
+ * struct intstr - a string of numbers
  * @len: length of the string
  * @is_negative: a bool for signedness of the number
  * @str: the number string
  */
-typedef struct numstring_array_attributes
+typedef struct intstr
 {
 	size_t len;
 	bool is_negative;
 	char *str;
-} numstr_array;
+} intstr;
 
 /**
- * struct uint32_t_array_attributes - an array of unsigned 4 byte ints
+ * struct u4b_bignum - an array of unsigned 4 byte ints
  * @len: number of items in the array
  * @is_negative: a bool for signedness of the number
  * @array: pointer to an array of unsigned 4 byte ints
  */
-typedef struct uint32_t_array_attributes
+typedef struct u4b_bignum
 {
 	size_t len;
 	bool is_negative;
 	uint32_t *array;
-} u4b_array;
+} u4b_bignum;
 
 /**
  * math_function - generic prototype for basic arithmetic functions.
  */
-typedef u4b_array *math_function(u4b_array *, u4b_array *);
+typedef u4b_bignum *math_function(u4b_bignum *, u4b_bignum *);
 
 /**
  * struct operator_function - holds an operator symbol and it's function
@@ -99,14 +99,14 @@ void help_me(const char *which_help);
 /*mem_funcs*/
 
 void *free_n_null(void *freeable_ptr);
-void *free_u4b_array(u4b_array *freeable_arr);
-void *free_numstr_array(numstr_array *freeable_arr);
+void *free_u4b_array(u4b_bignum *freeable_arr);
+void *free_numstr_array(intstr *freeable_arr);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_u4b_array)
-u4b_array *alloc_u4b_array(size_t len);
+u4b_bignum *alloc_u4b_array(size_t len);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_numstr_array)
-numstr_array *alloc_numstr_array(size_t len);
+intstr *alloc_numstr_array(size_t len);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1, 2)
@@ -124,22 +124,22 @@ void *xrealloc(void *nullable_ptr, size_t size);
 
 size_t leading_chars_len(const char *str, char *ch);
 unsigned int count_digits(ssize_t num);
-ssize_t print_u4b_array(u4b_array *arr);
+ssize_t print_u4b_array(u4b_bignum *arr);
 char *uint_array_to_str(const uint32_t *arr, size_t len);
-numstr_array *parse_numstr(const char *numstr);
+intstr *parse_numstr(const char *numstr);
 
 /*array_funcs*/
 
-void trim_u4b_array(u4b_array *arr);
-ssize_t cmp_u4barray(u4b_array *arr1, u4b_array *arr2);
+void trim_u4b_array(u4b_bignum *arr);
+ssize_t cmp_u4barray(u4b_bignum *arr1, u4b_bignum *arr2);
 ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len);
 
 /*math_funcs*/
 
-u4b_array *infiX_division(u4b_array *n1, u4b_array *n2);
-u4b_array *infiX_modulus(u4b_array *n1, u4b_array *n2);
-u4b_array *infiX_subtraction(u4b_array *n1, u4b_array *n2);
-u4b_array *infiX_multiplication(u4b_array *n1, u4b_array *n2);
-u4b_array *infiX_addition(u4b_array *n1, u4b_array *n2);
+u4b_bignum *infiX_division(u4b_bignum *n1, u4b_bignum *n2);
+u4b_bignum *infiX_modulus(u4b_bignum *n1, u4b_bignum *n2);
+u4b_bignum *infiX_subtraction(u4b_bignum *n1, u4b_bignum *n2);
+u4b_bignum *infiX_multiplication(u4b_bignum *n1, u4b_bignum *n2);
+u4b_bignum *infiX_addition(u4b_bignum *n1, u4b_bignum *n2);
 
 #endif /*INFIX_H*/
