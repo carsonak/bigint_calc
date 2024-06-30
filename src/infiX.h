@@ -45,23 +45,23 @@
 
 #endif /*defined __has_attribute*/
 
-/*Max size for uint32_t: 10^9.*/
+/*Maximum value a uint_32 should hold.*/
 #define MAX_VAL_u4b (1000000000)
-/*Max size for uint64_t calculations: 10^18.*/
+/*Max value for uint64_t calculations*/
 #define MAX_VAL_u8b (MAX_VAL_u4b * MAX_VAL_u4b)
 
 /**
- * struct intstr - a string of numbers
+ * struct numstr - a string of numbers
  * @len: length of the string
  * @is_negative: a bool for signedness of the number
  * @str: the number string
  */
-typedef struct intstr
+typedef struct numstr
 {
 	size_t len;
 	bool is_negative;
 	char *str;
-} intstr;
+} numstr;
 
 /**
  * struct u4b_bignum - an array of unsigned 4 byte ints
@@ -99,14 +99,14 @@ void help_me(const char *which_help);
 /*mem_funcs*/
 
 void *free_n_null(void *freeable_ptr);
-void *free_u4b_array(u4b_bignum *freeable_arr);
-void *free_numstr_array(intstr *freeable_arr);
+void *free_bignum(u4b_bignum *freeable_arr);
+void *free_numstr(numstr *freeable_arr);
 ATTR_MALLOC
-ATTR_MALLOC_FREE(free_u4b_array)
-u4b_bignum *alloc_u4b_array(size_t len);
+ATTR_MALLOC_FREE(free_bignum)
+u4b_bignum *alloc_bignum(size_t len);
 ATTR_MALLOC
-ATTR_MALLOC_FREE(free_numstr_array)
-intstr *alloc_numstr_array(size_t len);
+ATTR_MALLOC_FREE(free_numstr)
+numstr *alloc_numstr(size_t len);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1, 2)
@@ -119,19 +119,28 @@ ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(2)
 void *xrealloc(void *nullable_ptr, size_t size);
+ATTR_MALLOC
+ATTR_MALLOC_FREE(free_n_null)
+char *xstrdup(const char *str);
 
 /*parsing_funcs*/
 
-size_t leading_chars_len(const char *str, char *ch);
-unsigned int count_digits(ssize_t num);
-ssize_t print_u4b_array(u4b_bignum *arr);
+numstr *parse_str(const char *str);
+u4b_bignum *numstr_to_u4b(numstr *num);
+numstr *u4b_to_numstr(u4b_bignum *arr);
+ssize_t print_bignum(u4b_bignum *arr);
 char *uint_array_to_str(const uint32_t *arr, size_t len);
-intstr *parse_numstr(const char *numstr);
+size_t leading_chars_len(const char *str, char *ch);
+unsigned int count_digits(size_t num, unsigned int base);
+char to_base36(unsigned int num);
+int from_base36(char c);
+unsigned int get_base(void);
+unsigned int set_base(unsigned int base);
 
 /*array_funcs*/
 
-void trim_u4b_array(u4b_bignum *arr);
-ssize_t cmp_u4barray(u4b_bignum *arr1, u4b_bignum *arr2);
+void trim_bignum(u4b_bignum *arr);
+ssize_t cmp_bignum(u4b_bignum *arr1, u4b_bignum *arr2);
 ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len);
 
 /*math_funcs*/

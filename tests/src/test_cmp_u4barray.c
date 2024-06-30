@@ -27,7 +27,7 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_NULL_cmp_NULL,
 	 .description = "compare(NULL, NULL) == 0", .timeout = 3.0)
 {
-	cr_assert(zero(long, cmp_u4barray(NULL, NULL)));
+	cr_assert(zero(long, cmp_bignum(NULL, NULL)));
 }
 
 Test(null_inputs, test_0_cmp_NULL,
@@ -37,7 +37,7 @@ Test(null_inputs, test_0_cmp_NULL,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	cr_assert(zero(long, cmp_u4barray(&num1, NULL)));
+	cr_assert(zero(long, cmp_bignum(&num1, NULL)));
 }
 
 Test(null_inputs, test_NULL_cmp_0,
@@ -47,7 +47,7 @@ Test(null_inputs, test_NULL_cmp_0,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	cr_assert(zero(long, cmp_u4barray(NULL, &num1)));
+	cr_assert(zero(long, cmp_bignum(NULL, &num1)));
 }
 
 Test(null_inputs, test_1_cmp_NULL,
@@ -57,7 +57,7 @@ Test(null_inputs, test_1_cmp_NULL,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	cr_assert(zero(long, cmp_u4barray(&num1, NULL)));
+	cr_assert(zero(long, cmp_bignum(&num1, NULL)));
 }
 
 Test(null_inputs, test_NULL_cmp_1,
@@ -67,19 +67,19 @@ Test(null_inputs, test_NULL_cmp_1,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	cr_assert(zero(long, cmp_u4barray(NULL, &num1)));
+	cr_assert(zero(long, cmp_bignum(NULL, &num1)));
 }
 
 Test(null_arrays, test_NULL_cmp_nullarray,
 	 .description = "compare(NULL, null_array) == 0", .timeout = 3.0)
 {
-	cr_assert(zero(long, cmp_u4barray(NULL, &num2)));
+	cr_assert(zero(long, cmp_bignum(NULL, &num2)));
 }
 
 Test(null_arrays, test_nullarray_cmp_NULL,
 	 .description = "compare(null_array, NULL) == 0", .timeout = 3.0)
 {
-	cr_assert(zero(long, cmp_u4barray(&num1, NULL)));
+	cr_assert(zero(long, cmp_bignum(&num1, NULL)));
 }
 
 TestSuite(null_arrays, .init = setup, .fini = teardown);
@@ -87,7 +87,7 @@ TestSuite(null_arrays, .init = setup, .fini = teardown);
 Test(null_arrays, test_nullarray_cmp_nullarray,
 	 .description = "compare(null_array, null_array) == 0", .timeout = 3.0)
 {
-	cr_assert(zero(long, cmp_u4barray(&num1, &num2)));
+	cr_assert(zero(long, cmp_bignum(&num1, &num2)));
 }
 
 Test(null_arrays, test_0_cmp_nullarray,
@@ -97,7 +97,7 @@ Test(null_arrays, test_0_cmp_nullarray,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	cr_assert(eq(long, cmp_u4barray(&num1, &num2), 1));
+	cr_assert(eq(long, cmp_bignum(&num1, &num2), 1));
 }
 
 Test(null_arrays, test_nullarray_cmp_0,
@@ -107,7 +107,7 @@ Test(null_arrays, test_nullarray_cmp_0,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	cr_assert(eq(long, cmp_u4barray(&num1, &num2), -1));
+	cr_assert(eq(long, cmp_bignum(&num1, &num2), -1));
 }
 
 Test(null_arrays, test_1_cmp_nullarray,
@@ -117,7 +117,7 @@ Test(null_arrays, test_1_cmp_nullarray,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
-	cr_assert(eq(long, cmp_u4barray(&num1, &num2), 1));
+	cr_assert(eq(long, cmp_bignum(&num1, &num2), 1));
 }
 
 Test(null_arrays, test_nullarray_cmp_1,
@@ -127,7 +127,7 @@ Test(null_arrays, test_nullarray_cmp_1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
-	cr_assert(eq(long, cmp_u4barray(&num1, &num2), -1));
+	cr_assert(eq(long, cmp_bignum(&num1, &num2), -1));
 }
 
 TestSuite(trailing_zeros, .init = setup, .fini = teardown);
@@ -143,7 +143,7 @@ Test(trailing_zeros, test_long0_cmp_short0,
 	num2.len = (sizeof(in2) / sizeof(*in2));
 	num2.array = in2;
 
-	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(gt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 Test(trailing_zeros, test_long_cmp_short0,
@@ -157,7 +157,7 @@ Test(trailing_zeros, test_long_cmp_short0,
 	num2.len = (sizeof(in2) / sizeof(*in2));
 	num2.array = in2;
 
-	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(gt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 Test(trailing_zeros, test_long0_cmp_short,
@@ -171,7 +171,7 @@ Test(trailing_zeros, test_long0_cmp_short,
 	num2.len = (sizeof(in2) / sizeof(*in2));
 	num2.array = in2;
 
-	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(gt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 TestSuite(compare_arrays, .init = setup, .fini = teardown);
@@ -187,7 +187,7 @@ Test(compare_arrays, test_0_cmp_0,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(zero(long, cmp_u4barray(&num1, &num2)));
+	cr_assert(zero(long, cmp_bignum(&num1, &num2)));
 }
 
 Test(compare_arrays, test_1_cmp_1,
@@ -201,7 +201,7 @@ Test(compare_arrays, test_1_cmp_1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(zero(long, cmp_u4barray(&num1, &num2)));
+	cr_assert(zero(long, cmp_bignum(&num1, &num2)));
 }
 
 Test(compare_arrays, test_1_cmp_0,
@@ -215,7 +215,7 @@ Test(compare_arrays, test_1_cmp_0,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(gt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 Test(compare_arrays, test_0_cmp_1,
@@ -229,7 +229,7 @@ Test(compare_arrays, test_0_cmp_1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(lt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(lt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 Test(compare_arrays, test_2000000001_cmp_1000000002,
@@ -244,7 +244,7 @@ Test(compare_arrays, test_2000000001_cmp_1000000002,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(gt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 Test(compare_arrays, test_1000000002_cmp_2000000001,
@@ -259,7 +259,7 @@ Test(compare_arrays, test_1000000002_cmp_2000000001,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(lt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(lt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 TestSuite(compare_long_arrays, .init = setup, .fini = teardown);
@@ -276,7 +276,7 @@ Test(compare_long_arrays, test_eqlong_cmp_eqlong,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(zero(long, cmp_u4barray(&num1, &num2)));
+	cr_assert(zero(long, cmp_bignum(&num1, &num2)));
 }
 
 Test(compare_long_arrays, test_biglong_cmp_smalllong,
@@ -290,7 +290,7 @@ Test(compare_long_arrays, test_biglong_cmp_smalllong,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(gt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 Test(compare_long_arrays, test_smalllong_cmp_biglong,
@@ -304,7 +304,7 @@ Test(compare_long_arrays, test_smalllong_cmp_biglong,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(lt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(lt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 TestSuite(compare_different_len_arrays, .init = setup, .fini = teardown);
@@ -320,7 +320,7 @@ Test(compare_different_len_arrays, test_long_cmp_short,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(gt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 Test(compare_different_len_arrays, test_short_cmp_long,
@@ -334,7 +334,7 @@ Test(compare_different_len_arrays, test_short_cmp_long,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(lt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(lt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 TestSuite(negative_numbers, .init = setup, .fini = teardown);
@@ -352,7 +352,7 @@ Test(negative_numbers, test_minus1_cmp_minus1,
 	num2.is_negative = true;
 	num2.array = in2;
 
-	cr_assert(zero(long, cmp_u4barray(&num1, &num2)));
+	cr_assert(zero(long, cmp_bignum(&num1, &num2)));
 }
 
 Test(negative_numbers, test_1_cmp_minus1,
@@ -367,7 +367,7 @@ Test(negative_numbers, test_1_cmp_minus1,
 	num2.is_negative = true;
 	num2.array = in2;
 
-	cr_assert(gt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(gt(long, cmp_bignum(&num1, &num2), 0));
 }
 
 Test(negative_numbers, test_minus1_cmp_1,
@@ -382,5 +382,5 @@ Test(negative_numbers, test_minus1_cmp_1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
 
-	cr_assert(lt(long, cmp_u4barray(&num1, &num2), 0));
+	cr_assert(lt(long, cmp_bignum(&num1, &num2), 0));
 }

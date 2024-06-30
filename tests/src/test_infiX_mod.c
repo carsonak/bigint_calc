@@ -132,7 +132,7 @@ Test(zero_len_arrays, test_null_modulo_largenum,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 TestSuite(negative_modulus, .init = setup, .fini = teardown);
@@ -158,7 +158,7 @@ Test(negative_modulus, test_minus9107428777003_modulo_minus809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 Test(negative_modulus, test_minus9107428777003_modulo_809754437,
@@ -180,7 +180,7 @@ Test(negative_modulus, test_minus9107428777003_modulo_809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 Test(negative_modulus, test_9107428777003_modulo_809754437,
@@ -203,7 +203,7 @@ Test(negative_modulus, test_9107428777003_modulo_809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 TestSuite(simple_modulus, .init = setup, .fini = teardown);
@@ -222,7 +222,7 @@ Test(simple_modulus, test_0_modulo_1,
 
 	u4b_bignum *output = infiX_modulus(&num1, &num2);
 
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 Test(simple_modulus, test_1_modulo_1,
@@ -242,7 +242,7 @@ Test(simple_modulus, test_1_modulo_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 Test(simple_modulus, test_1000000000_modulo_50000,
@@ -263,7 +263,7 @@ Test(simple_modulus, test_1000000000_modulo_50000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 Test(simple_modulus, test_50000_modulo_100000000,
@@ -284,7 +284,7 @@ Test(simple_modulus, test_50000_modulo_100000000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 Test(simple_modulus, test_longnum1_modulo_longnum2,
@@ -308,7 +308,7 @@ Test(simple_modulus, test_longnum1_modulo_longnum2,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 Test(large_modulus, test_o1ka_modulo_o1kb,
@@ -330,7 +330,7 @@ Test(large_modulus, test_o1ka_modulo_o1kb,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }
 
 Test(large_modulus, test_o500c_modulo_o500d,
@@ -353,5 +353,5 @@ Test(large_modulus, test_o500c_modulo_o500d,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->array, expected.array));
-	output = free_u4b_array(output);
+	output = free_bignum(output);
 }

@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 """Operate on numbers from json document."""
 
 from argparse import ArgumentParser
@@ -78,7 +78,7 @@ def main(argv: list[str]) -> None:
 
     num1_keys, operator, num2_keys = parse_argv(argv)
     json_file: str = path.sep.join(
-        [path.dirname(path.realpath(__file__)), "large_numbers_as_str.json"])
+        [path.dirname(path.realpath(__file__)), "nums_as_str.json"])
     with open(json_file, encoding="utf-8") as f:
         numstr_dict: dict[str, dict[str, str]] = json.load(f)
 

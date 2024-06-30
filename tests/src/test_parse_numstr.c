@@ -1,6 +1,6 @@
 #include "tests.h"
 
-intstr *output = NULL;
+numstr *output = NULL;
 
 /**
  * setup - setup some variables
@@ -12,19 +12,19 @@ void setup(void) {}
  */
 void teardown(void)
 {
-	output = free_numstr_array(output);
+	output = free_numstr(output);
 }
 
 TestSuite(null_inputs, .init = setup, .fini = teardown);
 
 Test(null_inputs, test_NULL, .description = "NULL", .timeout = 3.0)
 {
-	cr_assert(zero(ptr, parse_numstr(NULL)));
+	cr_assert(zero(ptr, parse_str(NULL)));
 }
 
 Test(null_inputs, test_null, .description = "\0", .timeout = 3.0)
 {
-	cr_assert(zero(ptr, parse_numstr("\0")));
+	cr_assert(zero(ptr, parse_str("\0")));
 }
 
 TestSuite(invalid_inputs, .init = setup, .fini = teardown);
@@ -38,7 +38,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits,
 	for (; c[0] < SCHAR_MAX; c[0]++)
 	{
 		if (!(c[0] >= '0' && c[0] <= '9'))
-			cr_assert(zero(ptr, parse_numstr(c)));
+			cr_assert(zero(ptr, parse_str(c)));
 	}
 }
 
@@ -51,7 +51,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits2,
 	for (; c[0] < SCHAR_MAX; c[0]++, c[1]++)
 	{
 		if (!(c[0] >= '0' && c[0] <= '9'))
-			cr_assert(zero(ptr, parse_numstr(c)));
+			cr_assert(zero(ptr, parse_str(c)));
 	}
 }
 
@@ -64,7 +64,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits2alt,
 	for (; c[0] < SCHAR_MAX && c[1] > SCHAR_MIN; c[0]++, c[1]--)
 	{
 		if (!(c[0] >= '0' && c[0] <= '9') && !(c[1] >= '0' && c[1] <= '9'))
-			cr_assert(zero(ptr, parse_numstr(c)));
+			cr_assert(zero(ptr, parse_str(c)));
 	}
 }
 
@@ -81,7 +81,7 @@ Test(invalid_inputs, test_all_invalid_charbits3,
 		{
 			if (!(c[2] >= '0' && c[2] <= '9') && c[2] != '\0' && c[2] != ',' &&
 				c[2] != '_' && c[2] != '.')
-				cr_assert(zero(ptr, parse_numstr(c)));
+				cr_assert(zero(ptr, parse_str(c)));
 		}
 	}
 
@@ -92,7 +92,7 @@ Test(invalid_inputs, test_all_invalid_charbits3,
 		{
 			if (!(c[2] >= '0' && c[2] <= '9') && c[2] != '\0' && c[2] != ',' &&
 				c[2] != '_' && c[2] != '.')
-				cr_assert(zero(ptr, parse_numstr(c)));
+				cr_assert(zero(ptr, parse_str(c)));
 		}
 	}
 }
@@ -101,31 +101,31 @@ Test(invalid_inputs, test_leading_separators_signs,
 	 .description = "Assortment of '.-_,+'", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_numstr("---___")));
-	cr_assert(zero(ptr, parse_numstr("---,,,")));
-	cr_assert(zero(ptr, parse_numstr("+++___,,,")));
-	cr_assert(zero(ptr, parse_numstr("+++_,_,_,")));
-	cr_assert(zero(ptr, parse_numstr("-+-+-+-.")));
-	cr_assert(zero(ptr, parse_numstr("+-+-+-+.")));
-	cr_assert(zero(ptr, parse_numstr("---___.")));
-	cr_assert(zero(ptr, parse_numstr("---,,,.")));
-	cr_assert(zero(ptr, parse_numstr("+++___,,,.")));
-	cr_assert(zero(ptr, parse_numstr("+++_,_,_,.")));
+	cr_assert(zero(ptr, parse_str("---___")));
+	cr_assert(zero(ptr, parse_str("---,,,")));
+	cr_assert(zero(ptr, parse_str("+++___,,,")));
+	cr_assert(zero(ptr, parse_str("+++_,_,_,")));
+	cr_assert(zero(ptr, parse_str("-+-+-+-.")));
+	cr_assert(zero(ptr, parse_str("+-+-+-+.")));
+	cr_assert(zero(ptr, parse_str("---___.")));
+	cr_assert(zero(ptr, parse_str("---,,,.")));
+	cr_assert(zero(ptr, parse_str("+++___,,,.")));
+	cr_assert(zero(ptr, parse_str("+++_,_,_,.")));
 }
 
 Test(invalid_inputs, test_invalid_chars_mixed_with_valid_chars,
 	 .description = "Assortment of valid and invalid chars", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_numstr("123-567")));
-	cr_assert(zero(ptr, parse_numstr("123 567")));
-	cr_assert(zero(ptr, parse_numstr("123\"567\"")));
-	cr_assert(zero(ptr, parse_numstr("123+567")));
-	cr_assert(zero(ptr, parse_numstr("123/567")));
-	cr_assert(zero(ptr, parse_numstr("123*567")));
-	cr_assert(zero(ptr, parse_numstr("123^567")));
-	cr_assert(zero(ptr, parse_numstr("123(567)")));
-	cr_assert(zero(ptr, parse_numstr("123>567")));
+	cr_assert(zero(ptr, parse_str("123-567")));
+	cr_assert(zero(ptr, parse_str("123 567")));
+	cr_assert(zero(ptr, parse_str("123\"567\"")));
+	cr_assert(zero(ptr, parse_str("123+567")));
+	cr_assert(zero(ptr, parse_str("123/567")));
+	cr_assert(zero(ptr, parse_str("123*567")));
+	cr_assert(zero(ptr, parse_str("123^567")));
+	cr_assert(zero(ptr, parse_str("123(567)")));
+	cr_assert(zero(ptr, parse_str("123>567")));
 }
 
 TestSuite(valid_inputs, .init = setup, .fini = teardown);
@@ -137,11 +137,11 @@ Test(valid_inputs, test_all_valid_charbits,
 
 	for (; c[0] <= '9'; c[0]++)
 	{
-		output = parse_numstr(c);
+		output = parse_str(c);
 		cr_assert(eq(sz, output->len, 1));
 		cr_assert(eq(chr, output->is_negative, '\0'));
 		cr_assert(eq(str, output->str, c));
-		output = free_numstr_array(output);
+		output = free_numstr(output);
 	}
 }
 
@@ -152,11 +152,11 @@ Test(valid_inputs, test_all_valid_charbits2,
 
 	for (; c[0] <= '9'; c[0]++, c[1]++)
 	{
-		output = parse_numstr(c);
+		output = parse_str(c);
 		cr_assert(eq(sz, output->len, 2));
 		cr_assert(eq(chr, output->is_negative, '\0'));
 		cr_assert(eq(str, output->str, c));
-		output = free_numstr_array(output);
+		output = free_numstr(output);
 	}
 }
 
@@ -167,11 +167,11 @@ Test(valid_inputs, test_all_valid_charbits2alt,
 
 	while (c[0] <= '9' && c[1] >= '0')
 	{
-		output = parse_numstr(c);
+		output = parse_str(c);
 		cr_assert(eq(sz, output->len, 2));
 		cr_assert(eq(chr, output->is_negative, '\0'));
 		cr_assert(eq(str, output->str, c));
-		output = free_numstr_array(output);
+		output = free_numstr(output);
 
 		if (c[0] < '9')
 			c[0]++;
@@ -184,7 +184,7 @@ Test(valid_inputs, test_all_valid_charbits2alt,
 Test(valid_inputs, test_0000000000000,
 	 .description = "0000000000000 == 0", .timeout = 3.0)
 {
-	output = parse_numstr("0000000000000");
+	output = parse_str("0000000000000");
 
 	cr_assert(eq(sz, output->len, 1));
 	cr_assert(eq(chr, output->is_negative, '\0'));
@@ -194,7 +194,7 @@ Test(valid_inputs, test_0000000000000,
 Test(valid_inputs, test_minus0000000000000,
 	 .description = "-0000000000000 == 0", .timeout = 3.0)
 {
-	output = parse_numstr("-0000000000000");
+	output = parse_str("-0000000000000");
 
 	cr_assert(eq(sz, output->len, 1));
 	cr_assert(eq(chr, output->is_negative, (char)1));
@@ -204,7 +204,7 @@ Test(valid_inputs, test_minus0000000000000,
 Test(valid_inputs, test_00000000000001,
 	 .description = "00000000000001 == 1", .timeout = 3.0)
 {
-	output = parse_numstr("00000000000001");
+	output = parse_str("00000000000001");
 
 	cr_assert(eq(sz, output->len, 1));
 	cr_assert(eq(chr, output->is_negative, '\0'));
@@ -214,7 +214,7 @@ Test(valid_inputs, test_00000000000001,
 Test(valid_inputs, test_minus00000000000001,
 	 .description = "-00000000000001 == 1", .timeout = 3.0)
 {
-	output = parse_numstr("-00000000000001");
+	output = parse_str("-00000000000001");
 
 	cr_assert(eq(sz, output->len, 1));
 	cr_assert(eq(chr, output->is_negative, (char)1));

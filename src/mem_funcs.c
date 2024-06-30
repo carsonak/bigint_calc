@@ -51,12 +51,28 @@ void *xrealloc(void *nullable_ptr, size_t size)
 }
 
 /**
- * alloc_u4b_array - allocate memory for a u4b_bignum of given length
+ * xstrdup - duplicate a string and check for error
+ * @str: the string to duplicate
+ *
+ * Return: pointer to the duplicated string, NULL on failure.
+ */
+char *xstrdup(const char *str)
+{
+	char *s = strdup(str);
+
+	if (!str)
+		perror("Memory allocation error");
+
+	return (s);
+}
+
+/**
+ * alloc_bignum - allocate memory for a u4b_bignum of given length
  * @len: length of the array, length 0 returns the struct with a NULL array
  *
  * Return: a pointer to a u4b_bignum struct, NULL on failure
  */
-u4b_bignum *alloc_u4b_array(size_t len)
+u4b_bignum *alloc_bignum(size_t len)
 {
 	u4b_bignum *arr = xcalloc(1, sizeof(*arr));
 
@@ -75,14 +91,14 @@ u4b_bignum *alloc_u4b_array(size_t len)
 }
 
 /**
- * alloc_numstr_array - allocate memory for a intstr of given length
+ * alloc_numstr - allocate memory for a numstr of given length
  * @len: length of the array, length 0 returns the struct with a NULL array
  *
- * Return: a pointer to a intstr struct, NULL on failure.
+ * Return: a pointer to a numstr struct, NULL on failure.
  */
-intstr *alloc_numstr_array(size_t len)
+numstr *alloc_numstr(size_t len)
 {
-	intstr *arr = xcalloc(1, sizeof(*arr));
+	numstr *arr = xcalloc(1, sizeof(*arr));
 
 	if (!arr)
 		return (NULL);
@@ -111,12 +127,12 @@ void *free_n_null(void *freeable_ptr)
 }
 
 /**
- * free_u4b_array - free a u4b_bignum, return NULL.
+ * free_bignum - free a u4b_bignum, return NULL.
  * @freeable_arr: a pointer to a u4b_bignum.
  *
  * Return: NULL always.
  */
-void *free_u4b_array(u4b_bignum *freeable_arr)
+void *free_bignum(u4b_bignum *freeable_arr)
 {
 	if (freeable_arr)
 		free_n_null(freeable_arr->array);
@@ -125,12 +141,12 @@ void *free_u4b_array(u4b_bignum *freeable_arr)
 }
 
 /**
- * free_numstr_array - free a intstr, return NULL.
+ * free_numstr - free a numstr, return NULL.
  * @freeable_arr: a pointer to a freeable
  *
  * Return: NULL always.
  */
-void *free_numstr_array(intstr *freeable_arr)
+void *free_numstr(numstr *freeable_arr)
 {
 	if (freeable_arr)
 		free_n_null(freeable_arr->str);

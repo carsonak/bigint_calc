@@ -11,13 +11,13 @@ static ssize_t ATTR_NONNULL_IDX(1, 3)
 	get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_bignum *n2);
 
 /**
- * infiX_division - divides a numbers stored in an array
+ * infiX_division - handle division of two bignums.
  * @n1: numerator
  * @n2: denominator
  *
- * @description
+ * This function does preliminary checks on the parameters.
  *
- * Return: array with the result, NULL on failure
+ * Return: pointer to the result, NULL on failure.
  */
 u4b_bignum *infiX_division(u4b_bignum *n1, u4b_bignum *n2)
 {
@@ -27,9 +27,9 @@ u4b_bignum *infiX_division(u4b_bignum *n1, u4b_bignum *n2)
 	if (!n1 || !n2)
 		return (NULL);
 
-	remains = free_u4b_array(remains);
-	trim_u4b_array(n1);
-	trim_u4b_array(n2);
+	remains = free_bignum(remains);
+	trim_bignum(n1);
+	trim_bignum(n2);
 	if (check_division_by_0(n2))
 		return (NULL);
 
@@ -41,22 +41,24 @@ u4b_bignum *infiX_division(u4b_bignum *n1, u4b_bignum *n2)
 		if (is_zero < 0)
 			return (NULL);
 		else if (is_zero > 0)
-			result = alloc_u4b_array(1);
+			result = alloc_bignum(1);
 		else
 			result = divide(n1, n2);
 	}
 
-	remains = free_u4b_array(remains);
-	trim_u4b_array(result);
+	remains = free_bignum(remains);
+	trim_bignum(result);
 	return (result);
 }
 
 /**
- * infiX_modulus - does preliminary checks before getting remainder
+ * infiX_modulus - handle modulo of two bignums.
  * @n1: numerator
  * @n2: denominator
  *
- * Return: array with the result, NULL on failure
+ * This function does preliminary checks on the parameters.
+ *
+ * Return: pointer to the result, NULL on failure.
  */
 u4b_bignum *infiX_modulus(u4b_bignum *n1, u4b_bignum *n2)
 {
@@ -66,9 +68,9 @@ u4b_bignum *infiX_modulus(u4b_bignum *n1, u4b_bignum *n2)
 	if (!n1 || !n2)
 		return (NULL);
 
-	remains = free_u4b_array(remains);
-	trim_u4b_array(n1);
-	trim_u4b_array(n2);
+	remains = free_bignum(remains);
+	trim_bignum(n1);
+	trim_bignum(n2);
 	if (check_division_by_0(n2))
 		return (NULL);
 
@@ -80,13 +82,13 @@ u4b_bignum *infiX_modulus(u4b_bignum *n1, u4b_bignum *n2)
 		if (is_zero < 0)
 			return (NULL);
 		else if (is_zero > 0)
-			result = alloc_u4b_array(1);
+			result = alloc_bignum(1);
 		else
 			result = divide(n1, n2);
 	}
 
 	if (!result)
-		return (free_u4b_array(remains));
+		return (free_bignum(remains));
 
 	if (result->is_negative)
 	{
@@ -94,11 +96,11 @@ u4b_bignum *infiX_modulus(u4b_bignum *n1, u4b_bignum *n2)
 		/*-7 % 4 = 1 and 7 % -4 = -1*/
 		is_negative = n2->is_negative;
 		n2->is_negative = false;
-		result = free_u4b_array(result);
+		result = free_bignum(result);
 
 		result = infiX_subtraction(n2, remains);
 		n2->is_negative = is_negative;
-		remains = free_u4b_array(remains);
+		remains = free_bignum(remains);
 		remains = result;
 		result = NULL;
 	}
@@ -106,13 +108,13 @@ u4b_bignum *infiX_modulus(u4b_bignum *n1, u4b_bignum *n2)
 	if (remains)
 		remains->is_negative = n2->is_negative;
 
-	free_u4b_array(result);
-	trim_u4b_array(remains);
+	free_bignum(result);
+	trim_bignum(remains);
 	return (remains);
 }
 
 /**
- * divide_negatives - division of signed numbers (negative numbers).
+ * divide_negatives - handle division of two signed bignums.
  * @n1: numerator.
  * @n2: denominator.
  *
@@ -131,7 +133,7 @@ u4b_bignum *divide_negatives(u4b_bignum *n1, u4b_bignum *n2)
 	if (is_zero < 0)
 		return (NULL);
 	else if (is_zero > 0)
-		return (alloc_u4b_array(1));
+		return (alloc_bignum(1));
 
 	if (neg1 && neg2) /* -8 // -5 = 8//5*/
 		result = divide(n1, n2);
@@ -147,9 +149,9 @@ u4b_bignum *divide_negatives(u4b_bignum *n1, u4b_bignum *n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	free_u4b_array(tmp);
-	trim_u4b_array(result);
-	trim_u4b_array(remains);
+	free_bignum(tmp);
+	trim_bignum(result);
+	trim_bignum(remains);
 	return (result);
 }
 
@@ -178,19 +180,19 @@ int check_division_by_0(u4b_bignum *n2)
  * Description: If numerator is less than denominator then;
  * quotient will be 0 and remainder will be equal to numerator.
  *
- * Return: 1 if result will be 0, 0 if not, -1 on error.
+ * Return: 1 if numerator < denominator, 0 if not, -1 on error.
  */
 char check_0_result(u4b_bignum *n1, u4b_bignum *n2)
 {
-	if (cmp_u4barray(n1, n2) >= 0)
+	if (cmp_bignum(n1, n2) >= 0)
 		return (0);
 
-	remains = free_u4b_array(remains);
+	remains = free_bignum(remains);
 	/*If n1 == 0; then remains == 0*/
 	if (n1->len < 2 && (!n1->array || !n1->array[0]))
-		remains = alloc_u4b_array(1);
+		remains = alloc_bignum(1);
 	else
-		remains = alloc_u4b_array(n1->len);
+		remains = alloc_bignum(n1->len);
 
 	if (!remains)
 		return (-1);
@@ -202,11 +204,11 @@ char check_0_result(u4b_bignum *n1, u4b_bignum *n2)
 }
 
 /**
- * divide - divides a numbers stored in an array
+ * divide - divides two bignums.
  * @n1: numerator
  * @n2: denominator
  *
- * Return: array with the result, NULL on failure
+ * Return: pointer ro the result, NULL on failure.
  */
 u4b_bignum *divide(u4b_bignum *n1, u4b_bignum *n2)
 {
@@ -219,16 +221,16 @@ u4b_bignum *divide(u4b_bignum *n1, u4b_bignum *n2)
 	/*quotient digits = numerator digits - denominator digits + (0 or 1).*/
 	if (n1->array[n1->len - 1] < n2->array[n2->len - 1])
 		/*If msd of numerator < msd denominator.*/
-		quotient = alloc_u4b_array((n1->len - n2->len ? n1->len - n2->len : 1));
+		quotient = alloc_bignum((n1->len - n2->len ? n1->len - n2->len : 1));
 	else
-		quotient = alloc_u4b_array(n1->len - n2->len + 1);
+		quotient = alloc_bignum(n1->len - n2->len + 1);
 
 	/*len_slice = len of n2, +1 for a dropdown*/
 	len_slice = n2->len + 1;
 	working_slice = xcalloc(len_slice, sizeof(*working_slice));
 	if (!working_slice || !quotient)
 	{
-		quotient = free_u4b_array(quotient);
+		quotient = free_bignum(quotient);
 		working_slice = free_n_null(working_slice);
 		return (NULL);
 	}
@@ -257,9 +259,9 @@ u4b_bignum *divide(u4b_bignum *n1, u4b_bignum *n2)
 								   len_slice - slice_offset, n2);
 		if (tmp < 0)
 		{
-			remains = free_u4b_array(remains);
+			remains = free_bignum(remains);
 			free_n_null(working_slice);
-			return (free_u4b_array(quotient));
+			return (free_bignum(quotient));
 		}
 
 		quotient->array[q_i] = tmp;
@@ -296,17 +298,17 @@ u4b_bignum *divide(u4b_bignum *n1, u4b_bignum *n2)
 		}
 	}
 
-	remains = free_u4b_array(remains);
-	remains = alloc_u4b_array(len_slice - slice_offset);
+	remains = free_bignum(remains);
+	remains = alloc_bignum(len_slice - slice_offset);
 	if (remains)
 		memmove(remains->array, working_slice + slice_offset,
 				sizeof(*working_slice) * (len_slice - slice_offset));
 	else
-		quotient = free_u4b_array(quotient);
+		quotient = free_bignum(quotient);
 
 	free_n_null(working_slice);
-	trim_u4b_array(quotient);
-	trim_u4b_array(remains);
+	trim_bignum(quotient);
+	trim_bignum(remains);
 	return (quotient);
 }
 
@@ -322,30 +324,29 @@ ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_bign
 {
 	uint32_t temp_array[1] = {0};
 	u4b_bignum q_estimate = {.len = 1, .is_negative = false, .array = temp_array};
-	u4b_bignum slice_array = {.len = len_slice, .is_negative = false, .array = NULL};
+	u4b_bignum slice_bignum = {.len = len_slice, .is_negative = false, .array = working_slice};
 	u4b_bignum *estimate_check = NULL;
 	ssize_t msd_slice = 0, is_larger = 0;
 
-	remains = free_u4b_array(remains);
-	slice_array.array = working_slice;
-	msd_slice = slice_array.array[len_slice - 1];
+	remains = free_bignum(remains);
+	msd_slice = slice_bignum.array[len_slice - 1];
 	if (len_slice > n2->len)
-		msd_slice = (msd_slice * MAX_VAL_u4b) + slice_array.array[len_slice - 2];
+		msd_slice = (msd_slice * MAX_VAL_u4b) + slice_bignum.array[len_slice - 2];
 
 	/*quotient approximation ≈ most significant digit of current working_slice / */
 	/*msd of denominator.*/
 	q_estimate.array[0] = (int64_t)msd_slice / n2->array[n2->len - 1];
 	estimate_check = infiX_multiplication(n2, &q_estimate);
-	remains = infiX_subtraction(&slice_array, estimate_check);
+	remains = infiX_subtraction(&slice_bignum, estimate_check);
 	if (!remains || !estimate_check)
 	{
-		remains = free_u4b_array(remains);
-		free_u4b_array(estimate_check);
+		remains = free_bignum(remains);
+		free_bignum(estimate_check);
 		return (-1);
 	}
 
 	/*0 <= (current working_slice - (q_estimate * denominator)) < denominator*/
-	is_larger = cmp_u4barray(remains, n2);
+	is_larger = cmp_bignum(remains, n2);
 	while (remains->is_negative || is_larger >= 0)
 	{
 		if (remains->is_negative)
@@ -367,21 +368,21 @@ ssize_t get_current_quotient(uint32_t *working_slice, size_t len_slice, u4b_bign
 			q_estimate.array[0] += remains->array[remains->len - 1] / n2->array[n2->len - 1];
 		}
 
-		estimate_check = free_u4b_array(estimate_check);
-		remains = free_u4b_array(remains);
+		estimate_check = free_bignum(estimate_check);
+		remains = free_bignum(remains);
 
 		estimate_check = infiX_multiplication(n2, &q_estimate);
-		remains = infiX_subtraction(&slice_array, estimate_check);
+		remains = infiX_subtraction(&slice_bignum, estimate_check);
 		if (!remains || !estimate_check)
 		{
-			remains = free_u4b_array(remains);
-			free_u4b_array(estimate_check);
+			remains = free_bignum(remains);
+			free_bignum(estimate_check);
 			return (-1);
 		}
 
-		is_larger = cmp_u4barray(remains, n2);
+		is_larger = cmp_bignum(remains, n2);
 	}
 
-	free_u4b_array(estimate_check);
+	free_bignum(estimate_check);
 	return (q_estimate.array[0]);
 }

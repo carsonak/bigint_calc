@@ -5,7 +5,7 @@ static u4b_bignum *add_negatives(u4b_bignum *n1, u4b_bignum *n2)
 static u4b_bignum *add(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
 
 /**
- * infiX_addition - add two arbitrary long numbers.
+ * infiX_addition - handle addition of two bignums.
  * @n1: the first number
  * @n2: the second number
  *
@@ -18,8 +18,8 @@ u4b_bignum *infiX_addition(u4b_bignum *n1, u4b_bignum *n2)
 	if (!n1 || !n2)
 		return (NULL);
 
-	trim_u4b_array(n1);
-	trim_u4b_array(n2);
+	trim_bignum(n1);
+	trim_bignum(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (add_negatives(n1, n2));
 
@@ -27,11 +27,11 @@ u4b_bignum *infiX_addition(u4b_bignum *n1, u4b_bignum *n2)
 }
 
 /**
- * add_negatives - handle addition of signed numbers.
+ * add_negatives - handle addition of signed bignums.
  * @n1: first number
  * @n2: second number
  *
- * Return: return results of operation
+ * Return: pointer to the result, NULL on failure.
  */
 u4b_bignum *add_negatives(u4b_bignum *n1, u4b_bignum *n2)
 {
@@ -54,12 +54,12 @@ u4b_bignum *add_negatives(u4b_bignum *n1, u4b_bignum *n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	trim_u4b_array(result);
+	trim_bignum(result);
 	return (result);
 }
 
 /**
- * add - add two numbers stored in arrays.
+ * add - add two bignums.
  * @n1: the first number
  * @n2: the second number
  *
@@ -74,9 +74,9 @@ u4b_bignum *add(u4b_bignum *n1, u4b_bignum *n2)
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	if (result_len <= 1)
-		return (alloc_u4b_array(0));
+		return (alloc_bignum(0));
 
-	sum = alloc_u4b_array(result_len);
+	sum = alloc_bignum(result_len);
 	while (sum && (n1_i < n1->len || n2_i < n2->len || byt_sum > 0))
 	{
 		if (n1_i < n1->len)
@@ -96,6 +96,6 @@ u4b_bignum *add(u4b_bignum *n1, u4b_bignum *n2)
 		++sum_i;
 	}
 
-	trim_u4b_array(sum);
+	trim_bignum(sum);
 	return (sum);
 }

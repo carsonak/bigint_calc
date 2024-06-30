@@ -5,21 +5,21 @@ static u4b_bignum *subtract_negatives(u4b_bignum *n1, u4b_bignum *n2)
 static u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
 
 /**
- * infiX_subtraction - subtract two arbitrary long numbers.
+ * infiX_subtraction - handle subtraction of two bignums.
  * @n1: first number
  * @n2: second number
  *
  * This function does preliminary checks on the parameters.
  *
- * Return: pointer to the diff, NULL on failure
+ * Return: pointer to the result, NULL on failure.
  */
 u4b_bignum *infiX_subtraction(u4b_bignum *n1, u4b_bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
 
-	trim_u4b_array(n1);
-	trim_u4b_array(n2);
+	trim_bignum(n1);
+	trim_bignum(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (subtract_negatives(n1, n2));
 
@@ -27,11 +27,11 @@ u4b_bignum *infiX_subtraction(u4b_bignum *n1, u4b_bignum *n2)
 }
 
 /**
- * subtract_negatives - handle subtraction of signed numbers.
+ * subtract_negatives - handle subtraction of two signed bignums.
  * @n1: first number
  * @n2: second number
  *
- * Return: 1 if action taken (error or processed results), 0 if no action taken
+ * Return: pointer to the result, NULL on failure.
  */
 u4b_bignum *subtract_negatives(u4b_bignum *n1, u4b_bignum *n2)
 {
@@ -54,16 +54,16 @@ u4b_bignum *subtract_negatives(u4b_bignum *n1, u4b_bignum *n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	trim_u4b_array(result);
+	trim_bignum(result);
 	return (result);
 }
 
 /**
- * subtract - subtract large numbers stored in arrays
- * @n1: number to be subtracted
- * @n2: number to subtract
+ * subtract - subtract two bignums.
+ * @n1: first number
+ * @n2: second numbers
  *
- * Return: pointer to the diff, NULL on failure
+ * Return: pointer to the result, NULL on failure.
  */
 u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2)
 {
@@ -81,11 +81,11 @@ u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2)
 		while (result_len > 2 && n1->array[result_len - 1] == n2->array[result_len - 1])
 			result_len--;
 
-	diff = alloc_u4b_array(result_len);
+	diff = alloc_bignum(result_len);
 	if (!diff)
 		return (NULL);
 
-	n1_is_bigger = cmp_u4barray(n1, n2);
+	n1_is_bigger = cmp_bignum(n1, n2);
 	if (n1_is_bigger <= 0)
 		diff->is_negative = true;
 
@@ -123,6 +123,6 @@ u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2)
 		++diff_i;
 	}
 
-	trim_u4b_array(diff);
+	trim_bignum(diff);
 	return (diff);
 }
