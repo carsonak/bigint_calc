@@ -174,7 +174,7 @@ TestSuite(simple_multiplications, .init = setup, .fini = teardown);
 Test(simple_multiplications, test_0_times_0, .description = "0 * 0 = 0",
 	 .timeout = 3.0)
 {
-	uint32_t in1[] = {0}, in2[] = {0}, out[] = {0};
+	uint32_t in1[] = {0}, in2[] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
@@ -193,7 +193,7 @@ Test(simple_multiplications, test_0_times_0, .description = "0 * 0 = 0",
 Test(simple_multiplications, test_1_times_0, .description = "1 * 0 = 0",
 	 .timeout = 3.0)
 {
-	uint32_t in1[] = {1}, in2[] = {0}, out[] = {0};
+	uint32_t in1[] = {1}, in2[] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
@@ -212,7 +212,7 @@ Test(simple_multiplications, test_1_times_0, .description = "1 * 0 = 0",
 Test(simple_multiplications, test_0_times_1, .description = "0 * 1 = 0",
 	 .timeout = 3.0)
 {
-	uint32_t in1[] = {0}, in2[] = {1}, out[] = {0};
+	uint32_t in1[] = {0}, in2[] = {1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
@@ -232,6 +232,50 @@ Test(simple_multiplications, test_1_times_1, .description = "1 * 1 = 1",
 	 .timeout = 3.0)
 {
 	uint32_t in1[] = {1}, in2[] = {1}, out[] = {1};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_bignum *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_bignum(output);
+}
+
+Test(simple_multiplications, test_long_times_0,
+	 .description = "938736,0,3,197812382,472346283,691273964 * 0 = 0",
+	 .timeout = 3.0)
+{
+	uint32_t in1[] = {691273964, 472346283, 197812382, 3, 0, 938736};
+	uint32_t in2[] = {0}, out[1] = {0};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.array = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.array = in2;
+	expected.len = sizeof(out) / sizeof(*out);
+	expected.array = out;
+	u4b_bignum *output = infiX_multiplication(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(zero(chr, output->is_negative));
+	cr_expect(eq(u32[expected.len], output->array, expected.array));
+	output = free_bignum(output);
+}
+
+/*INVERSE*/
+
+Test(simple_multiplications, test_0_times_long,
+	 .description = "0 * 938736,0,3,197812382,472346283,691273964 = 0",
+	 .timeout = 3.0)
+{
+	uint32_t in2[] = {691273964, 472346283, 197812382, 3, 0, 938736};
+	uint32_t in1[] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;

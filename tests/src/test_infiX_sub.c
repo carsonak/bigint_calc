@@ -185,7 +185,7 @@ TestSuite(simple_subtractions, .init = setup, .fini = teardown);
 Test(simple_subtractions, test_0_minus_0,
 	 .description = "0 - 0 = 0", .timeout = 3.0)
 {
-	uint32_t in1[] = {0}, in2[] = {0}, out[] = {0};
+	uint32_t in1[] = {0}, in2[] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
@@ -246,7 +246,7 @@ Test(simple_subtractions, test_0_minus_1,
 Test(simple_subtractions, test_1_minus_1,
 	 .description = "1 - 1 = 0", .timeout = 3.0)
 {
-	uint32_t in1[] = {1}, in2[] = {1}, out[] = {0};
+	uint32_t in1[] = {1}, in2[] = {1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
@@ -452,7 +452,7 @@ TestSuite(negative_subtractions, .init = setup, .fini = teardown);
 Test(negative_subtractions, test_minus1_minus_minus1,
 	 .description = "-1 - -1 = 0", .timeout = 3.0)
 {
-	uint32_t in1[] = {1}, in2[] = {1}, out[] = {0};
+	uint32_t in1[] = {1}, in2[] = {1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.is_negative = true;

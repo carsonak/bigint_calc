@@ -184,7 +184,7 @@ TestSuite(simple_additions, .init = setup, .fini = teardown);
 Test(simple_additions, test_0_plus_0,
 	 .description = "0 + 0 = 0", .timeout = 3.0)
 {
-	uint32_t in1[] = {0}, out[] = {0};
+	uint32_t in1[] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;

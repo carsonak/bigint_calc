@@ -79,7 +79,7 @@ typedef struct u4b_bignum
 /**
  * math_function - generic prototype for basic arithmetic functions.
  */
-typedef u4b_bignum *math_function(u4b_bignum *, u4b_bignum *);
+typedef u4b_bignum * math_function(u4b_bignum *, u4b_bignum *);
 
 /**
  * struct operator_function - holds an operator symbol and it's function
@@ -98,9 +98,9 @@ void help_me(const char *which_help);
 
 /*mem_funcs*/
 
+void *free_bignum(u4b_bignum *freeable_ptr);
+void *free_numstr(numstr *freeable_ptr);
 void *free_n_null(void *freeable_ptr);
-void *free_bignum(u4b_bignum *freeable_arr);
-void *free_numstr(numstr *freeable_arr);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_bignum)
 u4b_bignum *alloc_bignum(size_t len);
@@ -126,22 +126,21 @@ char *xstrdup(const char *str);
 /*parsing_funcs*/
 
 numstr *parse_str(const char *str);
-u4b_bignum *numstr_to_u4b(numstr *num);
-numstr *u4b_to_numstr(u4b_bignum *arr);
+size_t leading_chars_len(const char *str, char *ch);
+u4b_bignum *numstr_to_bignum(numstr *num);
+numstr *bignum_to_numstr(u4b_bignum *arr);
 ssize_t print_bignum(u4b_bignum *arr);
 char *uint_array_to_str(const uint32_t *arr, size_t len);
-size_t leading_chars_len(const char *str, char *ch);
 unsigned int count_digits(size_t num, unsigned int base);
-char to_base36(unsigned int num);
-int from_base36(char c);
 unsigned int get_base(void);
 unsigned int set_base(unsigned int base);
 
 /*array_funcs*/
 
-void trim_bignum(u4b_bignum *arr);
-ssize_t cmp_bignum(u4b_bignum *arr1, u4b_bignum *arr2);
-ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len);
+void trim_bignum(u4b_bignum * const arr);
+ssize_t cmp_bignum(u4b_bignum * const a1, u4b_bignum * const a2);
+ssize_t cmp_rev_uint32array(
+	unsigned int const * const arr1, unsigned int const * const arr2, size_t len);
 
 /*math_funcs*/
 

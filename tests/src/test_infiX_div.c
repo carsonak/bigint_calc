@@ -140,7 +140,7 @@ Test(zero_len_arrays, test_null_over_largenum,
 	 .timeout = 3.0)
 {
 	uint32_t in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	uint32_t out[] = {0};
+	uint32_t out[1] = {0};
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
@@ -190,7 +190,7 @@ Test(simple_divisions, test_1_over_0,
 Test(simple_divisions, test_0_over_1,
 	 .description = "0 / 1 = 0", .timeout = 3.0)
 {
-	uint32_t in1[] = {0}, in2[] = {1}, out[] = {0};
+	uint32_t in1[] = {0}, in2[] = {1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
@@ -272,7 +272,7 @@ Test(simple_divisions, test_50000_over_100000000,
 	 .description = "50,000 / 1,000,000,000 = 0",
 	 .timeout = 3.0)
 {
-	uint32_t in1[] = {50000}, in2[] = {0, 1}, out[] = {0};
+	uint32_t in1[] = {50000}, in2[] = {0, 1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;

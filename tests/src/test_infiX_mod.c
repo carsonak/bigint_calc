@@ -120,7 +120,7 @@ Test(zero_len_arrays, test_null_modulo_largenum,
 	 .timeout = 3.0)
 {
 	uint32_t in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	uint32_t out[] = {0};
+	uint32_t out[1] = {0};
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.array = in2;
@@ -211,7 +211,7 @@ TestSuite(simple_modulus, .init = setup, .fini = teardown);
 Test(simple_modulus, test_0_modulo_1,
 	 .description = "0 % 1 = 0", .timeout = 3.0)
 {
-	uint32_t in1[] = {0}, in2[] = {1}, out[] = {0};
+	uint32_t in1[] = {0}, in2[] = {1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
@@ -228,7 +228,7 @@ Test(simple_modulus, test_0_modulo_1,
 Test(simple_modulus, test_1_modulo_1,
 	 .description = "1 % 1 = 0", .timeout = 3.0)
 {
-	uint32_t in1[] = {1}, in2[] = {1}, out[] = {0};
+	uint32_t in1[] = {1}, in2[] = {1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;
@@ -249,7 +249,7 @@ Test(simple_modulus, test_1000000000_modulo_50000,
 	 .description = "1,000,000,000 % 50,000 = 0",
 	 .timeout = 3.0)
 {
-	uint32_t in1[] = {0, 1}, in2[] = {50000}, out[] = {0};
+	uint32_t in1[] = {0, 1}, in2[] = {50000}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.array = in1;

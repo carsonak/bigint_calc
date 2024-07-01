@@ -128,28 +128,28 @@ void *free_n_null(void *freeable_ptr)
 
 /**
  * free_bignum - free a u4b_bignum, return NULL.
- * @freeable_arr: a pointer to a u4b_bignum.
+ * @freeable_ptr: a pointer to a u4b_bignum.
  *
  * Return: NULL always.
  */
-void *free_bignum(u4b_bignum *freeable_arr)
+void *free_bignum(u4b_bignum *freeable_ptr)
 {
-	if (freeable_arr)
-		free_n_null(freeable_arr->array);
+	if (freeable_ptr)
+		free_n_null(freeable_ptr->array);
 
-	return (free_n_null(freeable_arr));
+	return (free_n_null(freeable_ptr));
 }
 
 /**
  * free_numstr - free a numstr, return NULL.
- * @freeable_arr: a pointer to a freeable
+ * @freeable_ptr: a pointer to a freeable
  *
  * Return: NULL always.
  */
-void *free_numstr(numstr *freeable_arr)
+void *free_numstr(numstr *freeable_ptr)
 {
-	if (freeable_arr)
-		free_n_null(freeable_arr->str);
+	if (freeable_ptr)
+		free_n_null(freeable_ptr->str);
 
-	return (free_n_null(freeable_arr));
+	return (free_n_null(freeable_ptr));
 }

@@ -7,7 +7,7 @@
  *
  * Return: +ve number if a1 > a2, -ve number if a1 < a2 else 0.
  */
-ssize_t cmp_bignum(u4b_bignum *a1, u4b_bignum *a2)
+ssize_t cmp_bignum(u4b_bignum * const a1, u4b_bignum * const a2)
 {
 	if (!a1 || !a2)
 		return (0);
@@ -40,7 +40,8 @@ ssize_t cmp_bignum(u4b_bignum *a1, u4b_bignum *a2)
  *
  * Return: +ve number if arr1 > arr2, -ve number if arr1 < arr2 else 0.
  */
-ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len)
+ssize_t cmp_rev_uint32array(
+	unsigned int const * const arr1, unsigned int const * const arr2, size_t len)
 {
 	size_t i = len ? len - 1 : 0;
 
@@ -62,7 +63,7 @@ ssize_t cmp_rev_uint32array(uint32_t *arr1, uint32_t *arr2, size_t len)
  *
  * Also sets the is_negative flag to 0 for 0s and NULL arrays.
  */
-void trim_bignum(u4b_bignum *arr)
+void trim_bignum(u4b_bignum * const arr)
 {
 	if (!arr)
 		return;

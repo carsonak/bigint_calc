@@ -1,5 +1,8 @@
 #include "infiX.h"
 
+static char to_base36(unsigned int num);
+static int from_base36(char c);
+
 /*Number base to be used for conversions.*/
 unsigned int NUMBASE = 10;
 
@@ -75,12 +78,67 @@ numstr *parse_str(const char *str)
 }
 
 /**
- * numstr_to_u4b - convert a numstr to a u4b_bignum.
+ * leading_chars_len - finds the number of leading characters in a string
+ * @str: the string to check
+ * @ch: the character
+ *
+ * Return: number of leading characters
+ */
+size_t leading_chars_len(const char *str, char *ch)
+{
+	size_t count = 0;
+
+	if (str && ch && *ch)
+	{
+		count = strspn(str, ch);
+		if (count && !str[count])
+			count--;
+	}
+
+	return (count);
+}
+
+/**
+ * from_base36 - map a base36 ascii symbol to a decimal.
+ * @c: an alphanumeric symbol
+ *
+ * Return: decimal value of the symbol, -1 if invalid symbols
+ */
+int from_base36(char c)
+{
+	if (!isalnum(c))
+		return (-1);
+
+	if (isdigit(c))
+		return (c - '0');
+
+	return (toupper(c) - 'A' + 10);
+}
+
+/**
+ * in_base36 - map a decimal between 0-35 to a base36 ascii symbol.
+ * @num: the number to convert
+ *
+ * Return: the ascii symbol of the number.
+ */
+char to_base36(unsigned int num)
+{
+	if (num > 35)
+		return ('\0');
+
+	if (num < 10)
+		return ('0' + num);
+	else
+		return ('A' + (num - 10));
+}
+
+/**
+ * numstr_to_bignum - convert a numstr to a u4b_bignum.
  * @num: the numstr
  *
  * Return: a pointer to a u4b_bignum struct, NULL on failure.
  */
-u4b_bignum *numstr_to_u4b(numstr *num)
+u4b_bignum *numstr_to_bignum(numstr *num)
 {
 	size_t a_i = 0, n_i = 0, tmp = 0;
 	unsigned int max_digits = 0;
@@ -132,12 +190,12 @@ u4b_bignum *numstr_to_u4b(numstr *num)
 }
 
 /**
- * u4b_to_numstr - convert a u4b_bignum to a numstr.
+ * bignum_to_numstr - convert a u4b_bignum to a numstr.
  * @arr: the u4b_bignum
  *
  * Return: a pointer to a numstr, NULL on failure.
  */
-numstr *u4b_to_numstr(u4b_bignum *arr)
+numstr *bignum_to_numstr(u4b_bignum *arr)
 {
 	(void)arr;
 	return (NULL);
@@ -187,11 +245,11 @@ char *uint_array_to_str(const uint32_t *arr, size_t len)
 		return (xstrdup("{NULL}"));
 
 	len_sep = strlen(sep);
-	/*sizeof(str) == total sizeof(arr) + total sizeof(separators) + */
-	/*sizeof("{}") + 1*/
-	len_str = (count_digits(MAX_VAL_u4b, 10) * len) +
+	/*sizeof(str) == (max digits in 4 bytes * len) + */
+	/*total sizeof(separators) + sizeof("{}") + 1*/
+	len_str = (count_digits(UINT32_MAX, 10) * len) +
 			  (len_sep * (len - 1)) + 2 + 1;
-	str = xcalloc(len_str, sizeof(*str));
+	str = xmalloc(len_str * sizeof(*str));
 	if (!str)
 		return (NULL);
 
@@ -214,27 +272,6 @@ char *uint_array_to_str(const uint32_t *arr, size_t len)
 }
 
 /**
- * leading_chars_len - finds the number of leading characters in a string
- * @str: the string to check
- * @ch: the character
- *
- * Return: number of leading characters
- */
-size_t leading_chars_len(const char *str, char *ch)
-{
-	size_t count = 0;
-
-	if (str && ch && *ch)
-	{
-		count = strspn(str, ch);
-		if (count && !str[count])
-			count--;
-	}
-
-	return (count);
-}
-
-/**
  * count_digits - calculate how many digits in the given base can represent the given number.
  * @num: the number
  * @base: the base
@@ -252,40 +289,6 @@ unsigned int count_digits(size_t num, unsigned int base)
 	}
 
 	return (d);
-}
-
-/**
- * in_base36 - map a decimal between 0-35 to a base36 ascii symbol.
- * @num: the number to convert
- *
- * Return: the ascii symbol of the number.
- */
-char to_base36(unsigned int num)
-{
-	if (num > 35)
-		return ('\0');
-
-	if (num < 10)
-		return ('0' + num);
-	else
-		return ('A' + (num - 10));
-}
-
-/**
- * from_base36 - map a base36 ascii symbol to a decimal.
- * @c: an alphanumeric symbol
- *
- * Return: decimal value of the symbol, -1 if invalid symbols
- */
-int from_base36(char c)
-{
-	if (!isalnum(c))
-		return (-1);
-
-	if (isdigit(c))
-		return (c - '0');
-
-	return (toupper(c) - 'A' + 10);
 }
 
 /**
