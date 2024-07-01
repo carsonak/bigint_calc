@@ -313,9 +313,9 @@ Test(long_subtractions, test_long9s_minus_1,
 					"999999999,999999999,999999999,999999999,999999998",
 	 .timeout = 3.0)
 {
-	unsigned int in1[] = {MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1};
+	unsigned int in1[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
 	unsigned int in2[] = {1};
-	unsigned int out[] = {MAX_VAL_u4b - 2, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1};
+	unsigned int out[] = {BIGNUM_UINT_MAX - 2, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -337,8 +337,8 @@ Test(long_subtractions, test_1_minus_long9s,
 	 .timeout = 3.0)
 {
 	unsigned int in1[] = {1};
-	unsigned int in2[] = {MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1};
-	unsigned int out[] = {MAX_VAL_u4b - 2, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1};
+	unsigned int in2[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
+	unsigned int out[] = {BIGNUM_UINT_MAX - 2, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;

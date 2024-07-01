@@ -335,7 +335,7 @@ long int get_current_quotient(
 	remains = free_bignum(remains);
 	msd_slice = slice_bignum.num[len_slice - 1];
 	if (len_slice > n2->len)
-		msd_slice = (msd_slice * MAX_VAL_u4b) + slice_bignum.num[len_slice - 2];
+		msd_slice = (msd_slice * BIGNUM_UINT_MAX) + slice_bignum.num[len_slice - 2];
 
 	/*quotient ≈ most significant digit of slice / msd of denominator.*/
 	q_estimate.num[0] = (long int)msd_slice / n2->num[n2->len - 1];

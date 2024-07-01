@@ -296,7 +296,7 @@ TestSuite(long_additions, .init = setup, .fini = teardown);
 Test(long_additions, test_999999999_plus_1,
 	 .description = "999,999,999 + 1 = 1,000,000,000", .timeout = 3.0)
 {
-	unsigned int in1[] = {MAX_VAL_u4b - 1}, in2[] = {1}, out[] = {0, 1};
+	unsigned int in1[] = {BIGNUM_UINT_MAX - 1}, in2[] = {1}, out[] = {0, 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -316,7 +316,7 @@ Test(long_additions, test_999999999999999999_plus_999999999,
 	 .description = "999,999,999,999,999,999 + 999,999,999 = 1,000,000,000,999,999,998",
 	 .timeout = 3.0)
 {
-	unsigned int in1[] = {MAX_VAL_u4b - 1, MAX_VAL_u4b - 1}, in2[] = {MAX_VAL_u4b - 1};
+	unsigned int in1[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1}, in2[] = {BIGNUM_UINT_MAX - 1};
 	unsigned int out[] = {999999998, 0, 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
@@ -338,7 +338,7 @@ Test(long_additions, test_long9s_plus_1,
 					"1,0,0,0,0,0",
 	 .timeout = 3.0)
 {
-	unsigned int in1[] = {MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1};
+	unsigned int in1[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
 	unsigned int in2[] = {1};
 	unsigned int out[] = {0, 0, 0, 0, 0, 1};
 
@@ -362,7 +362,7 @@ Test(long_additions, test_1_plus_long9s,
 	 .timeout = 3.0)
 {
 	unsigned int in1[] = {1};
-	unsigned int in2[] = {MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1, MAX_VAL_u4b - 1};
+	unsigned int in2[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
 	unsigned int out[] = {0, 0, 0, 0, 0, 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);

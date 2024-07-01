@@ -108,13 +108,13 @@ BigNum *subtract(BigNum *n1, BigNum *n2)
 
 		if (byt_diff < 0) /*borrow 1 from next.*/
 		{
-			byt_diff += MAX_VAL_u4b;
-			diff->num[diff_i] = byt_diff % MAX_VAL_u4b;
+			byt_diff += BIGNUM_UINT_MAX;
+			diff->num[diff_i] = byt_diff % BIGNUM_UINT_MAX;
 			byt_diff = -1;
 		}
 		else
 		{
-			diff->num[diff_i] = byt_diff % MAX_VAL_u4b;
+			diff->num[diff_i] = byt_diff % BIGNUM_UINT_MAX;
 			byt_diff = 0;
 		}
 

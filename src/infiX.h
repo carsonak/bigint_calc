@@ -44,10 +44,8 @@
 
 #endif /*defined __has_attribute*/
 
-/*Maximum value a uint_32 should hold.*/
-#define MAX_VAL_u4b (1000000000)
-/*Max value for unsigned long int calculations*/
-#define MAX_VAL_u8b (MAX_VAL_u4b * MAX_VAL_u4b)
+/*Maximum value of an unsigned int in BigNum.*/
+#define BIGNUM_UINT_MAX (1000000000)
 
 /**
  * struct numstr - a string of numbers.

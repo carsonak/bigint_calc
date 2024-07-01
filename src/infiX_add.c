@@ -90,8 +90,8 @@ BigNum *add(BigNum *n1, BigNum *n2)
 			++n2_i;
 		}
 
-		sum->num[sum_i] = byt_sum % (MAX_VAL_u4b);
-		byt_sum /= (MAX_VAL_u4b);
+		sum->num[sum_i] = byt_sum % (BIGNUM_UINT_MAX);
+		byt_sum /= (BIGNUM_UINT_MAX);
 		++sum_i;
 	}
 

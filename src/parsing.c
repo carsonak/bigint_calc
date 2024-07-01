@@ -148,8 +148,8 @@ BigNum *numstr_to_bignum(numstr *num)
 	if (!num || !num->len || !num->str || !isalnum(num->str[0]))
 		return (NULL);
 
-	/*sizeof(bignum) == ceil(numstr.len / max_digits of base in MAX_VAL_u4b)*/
-	max_digits = count_digits(MAX_VAL_u4b, NUMBASE);
+	/*sizeof(bignum) == ceil(numstr.len / max_digits of base in BIGNUM_UINT_MAX)*/
+	max_digits = count_digits(BIGNUM_UINT_MAX, NUMBASE);
 	a_i = (num->len / max_digits);
 	if (num->len % max_digits)
 		a_i++;
@@ -158,7 +158,7 @@ BigNum *numstr_to_bignum(numstr *num)
 	if (!arr)
 		return (NULL);
 
-	/*Ensure atleast MAX_VAL_u4b is captured on each iteration.*/
+	/*Ensure atleast BIGNUM_UINT_MAX is captured on each iteration.*/
 	max_digits++;
 	for (a_i = 0, n_i = 0; a_i < arr->len && n_i < num->len; a_i++)
 	{
@@ -173,15 +173,15 @@ BigNum *numstr_to_bignum(numstr *num)
 			return (free_bignum(arr));
 		}
 
-		arr->num[a_i] = tmp % MAX_VAL_u4b;
-		tmp /= MAX_VAL_u4b;
+		arr->num[a_i] = tmp % BIGNUM_UINT_MAX;
+		tmp /= BIGNUM_UINT_MAX;
 		n_i += max_digits;
 	}
 
 	while (a_i < arr->len && tmp)
 	{
-		arr->num[a_i] = tmp % MAX_VAL_u4b;
-		tmp /= MAX_VAL_u4b;
+		arr->num[a_i] = tmp % BIGNUM_UINT_MAX;
+		tmp /= BIGNUM_UINT_MAX;
 		a_i++;
 	}
 

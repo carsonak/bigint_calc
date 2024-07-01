@@ -97,8 +97,8 @@ BigNum *multiply(BigNum *n1, BigNum *n2)
 		for (n1_i = 0; n1_i < n1->len; n1_i++)
 		{
 			byt_mul += (long int)n2->num[n2_i] * n1->num[n1_i];
-			current_mul->num[n2_i + n1_i] = byt_mul % MAX_VAL_u4b;
-			byt_mul /= MAX_VAL_u4b;
+			current_mul->num[n2_i + n1_i] = byt_mul % BIGNUM_UINT_MAX;
+			byt_mul /= BIGNUM_UINT_MAX;
 		}
 
 		current_mul->num[n2_i + n1_i] = byt_mul;
