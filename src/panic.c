@@ -7,8 +7,8 @@
 /*"unrecognised characters" - ...*/
 
 /**
- * panic - app misuse error handler
- * @err_type: a string with the error type
+ * panic - app misuse error handler.
+ * @err_type: a string with the error type.
  */
 void panic(const char *err_type)
 {
@@ -34,8 +34,8 @@ void panic(const char *err_type)
 }
 
 /**
- * help_me - print help text
- * @which_help: a string specifying which text to print
+ * help_me - print help text.
+ * @which_help: a string specifying which text to print.
  */
 void help_me(const char *which_help)
 {

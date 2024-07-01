@@ -3,12 +3,12 @@
 numstr *output = NULL;
 
 /**
- * setup - setup some variables
+ * setup - setup some variables.
  */
 void setup(void) {}
 
 /**
- * teardown - cleanup after tests
+ * teardown - cleanup after tests.
  */
 void teardown(void)
 {

@@ -9,11 +9,11 @@ void tearDown(void)
 }
 
 /**
- * test_nullInputs - null inputs
+ * test_nullInputs - null inputs.
  */
 void test_nullInputs(void)
 {
-	uint32_t expected[3] = {1, 0, 0};
+	unsigned int expected[3] = {1, 0, 0};
 	char c = '\0';
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray(NULL), 2, "NULL => [1, 0]");
@@ -24,7 +24,7 @@ void test_nullInputs(void)
 }
 
 /**
- * test_invalidInputs - strings with unaccepted charaters
+ * test_invalidInputs - strings with unaccepted charaters.
  */
 void test_invalidInputs(void)
 {
@@ -42,11 +42,11 @@ void test_invalidInputs(void)
 }
 
 /**
- * test_under10Digits - strings with less than 10 digits
+ * test_under10Digits - strings with less than 10 digits.
  */
 void test_under10Digits(void)
 {
-	uint32_t expected[3] = {1, 123456789, 0};
+	unsigned int expected[3] = {1, 123456789, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456789"), 2, "=> [1, 123456789]");
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123 456 789"), 2, "'123 456 789' => [1, 123456789]");
@@ -72,11 +72,11 @@ void test_under10Digits(void)
 }
 
 /**
- * test_leading0 - input has leading zeros
+ * test_leading0 - input has leading zeros.
  */
 void test_leading0(void)
 {
-	uint32_t expected[3] = {1, 12345, 0};
+	unsigned int expected[3] = {1, 12345, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("000, 123, 45"), 2, "'000, 123, 45' => [1, 12345]");
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("00000123, 45"), 2, "'00000123, 45' => [1, 12345]");
@@ -86,21 +86,21 @@ void test_leading0(void)
 }
 
 /**
- * test_input1Billion - input has alot of trailing zeros
+ * test_input1Billion - input has alot of trailing zeros.
  */
 void test_input1Billion(void)
 {
-	uint32_t expected[5] = {2, 0, 1, 0};
+	unsigned int expected[5] = {2, 0, 1, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1 000000000"), 3, "'1 000000000' => [1, 0, 1]");
 }
 
 /**
- * test_0sandwich - input has a embedded zeros
+ * test_0sandwich - input has a embedded zeros.
  */
 void test_0sandwich(void)
 {
-	uint32_t expected[7] = {3, 78234587, 0, 909897004, 0, 0, 0};
+	unsigned int expected[7] = {3, 78234587, 0, 909897004, 0, 0, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("909897004 000000000 078234587"), 4, "'909897004 000000000 078234587' => [3, 78234587, 0, 909897004]");
 
@@ -116,11 +116,11 @@ void test_0sandwich(void)
 }
 
 /**
- * test_increaseTo27Digits - gradual increase from 0 digits to 27 digits
+ * test_increaseTo27Digits - gradual increase from 0 digits to 27 digits.
  */
 void test_increaseTo27Digits(void)
 {
-	uint32_t expected[5] = {1, 0, 0, 0};
+	unsigned int expected[5] = {1, 0, 0, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("0"), 2, "'0' => [1, 0]");
 	expected[1] = 1;
@@ -184,11 +184,11 @@ void test_increaseTo27Digits(void)
 }
 
 /**
- * test_increaseTo27DigitsNegatives - gradual increase from 0 digits to 27 digits (negative values)
+ * test_increaseTo27DigitsNegatives - gradual increase from 0 digits to 27 digits (negative values).
  */
 void test_increaseTo27DigitsNegatives(void)
 {
-	uint32_t expected[5] = {1, 0, 0, 0};
+	unsigned int expected[5] = {1, 0, 0, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-0"), 2, "'0' => [1, 0]");
 	expected[1] = (NEGBIT_u4b) + 1;

@@ -1,11 +1,11 @@
 #include "infiX.h"
 
 /**
- * main - entry point
- * @argc: number of arguments
- * @argv: pointer to an array of strings
+ * main - entry point.
+ * @argc: number of arguments.
+ * @argv: pointer to an array of strings.
  *
- * Return: 0 on success, 1 on error
+ * Return: 0 on success, 1 on error.
  */
 int main(int argc, char *argv[])
 {

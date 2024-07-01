@@ -8,7 +8,6 @@
 #include <ctype.h>	 /* isdigit */
 #include <limits.h>	 /* type_max */
 #include <stdbool.h> /* bool */
-#include <stdint.h>	 /* specific width types */
 #include <stdio.h>	 /* *printf, perror */
 #include <stdlib.h>	 /* *alloc */
 #include <string.h>	 /* strlen, strcpy */
@@ -47,44 +46,44 @@
 
 /*Maximum value a uint_32 should hold.*/
 #define MAX_VAL_u4b (1000000000)
-/*Max value for uint64_t calculations*/
+/*Max value for unsigned long int calculations*/
 #define MAX_VAL_u8b (MAX_VAL_u4b * MAX_VAL_u4b)
 
 /**
- * struct numstr - a string of numbers
- * @len: length of the string
- * @is_negative: a bool for signedness of the number
- * @str: the number string
+ * struct numstr - a string of numbers.
+ * @len: length of the string.
+ * @is_negative: a bool for signedness of the number.
+ * @str: the number string.
  */
 typedef struct numstr
 {
-	size_t len;
+	unsigned long int len;
 	bool is_negative;
 	char *str;
 } numstr;
 
 /**
- * struct u4b_bignum - an array of unsigned 4 byte ints
- * @len: number of items in the array
- * @is_negative: a bool for signedness of the number
- * @array: pointer to an array of unsigned 4 byte ints
+ * struct BigNum - an array of unsigned 4 byte ints.
+ * @len: number of items in the array.
+ * @is_negative: a bool for signedness of the number.
+ * @num: pointer to an array of unsigned 4 byte ints.
  */
-typedef struct u4b_bignum
+typedef struct BigNum
 {
-	size_t len;
+	unsigned long int len;
 	bool is_negative;
-	uint32_t *array;
-} u4b_bignum;
+	unsigned int *num;
+} BigNum;
 
 /**
  * math_function - generic prototype for basic arithmetic functions.
  */
-typedef u4b_bignum * math_function(u4b_bignum *, u4b_bignum *);
+typedef BigNum * math_function(BigNum *, BigNum *);
 
 /**
- * struct operator_function - holds an operator symbol and it's function
- * @symbol: the operator symbol
- * @f: a corresponding function pointer
+ * struct operator_function - holds an operator symbol and it's function.
+ * @symbol: the operator symbol.
+ * @f: a corresponding function pointer.
  */
 typedef struct operator_function
 {
@@ -98,27 +97,27 @@ void help_me(const char *which_help);
 
 /*mem_funcs*/
 
-void *free_bignum(u4b_bignum *freeable_ptr);
+void *free_bignum(BigNum *freeable_ptr);
 void *free_numstr(numstr *freeable_ptr);
 void *free_n_null(void *freeable_ptr);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_bignum)
-u4b_bignum *alloc_bignum(size_t len);
+BigNum *alloc_bignum(unsigned long int len);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_numstr)
-numstr *alloc_numstr(size_t len);
+numstr *alloc_numstr(unsigned long int len);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1, 2)
-void *xcalloc(size_t items, size_t sizeof_item);
+void *xcalloc(unsigned long int items, unsigned long int sizeof_item);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1)
-void *xmalloc(size_t size);
+void *xmalloc(unsigned long int size);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(2)
-void *xrealloc(void *nullable_ptr, size_t size);
+void *xrealloc(void *nullable_ptr, unsigned long int size);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 char *xstrdup(const char *str);
@@ -126,28 +125,30 @@ char *xstrdup(const char *str);
 /*parsing_funcs*/
 
 numstr *parse_str(const char *str);
-size_t leading_chars_len(const char *str, char *ch);
-u4b_bignum *numstr_to_bignum(numstr *num);
-numstr *bignum_to_numstr(u4b_bignum *arr);
-ssize_t print_bignum(u4b_bignum *arr);
-char *uint_array_to_str(const uint32_t *arr, size_t len);
-unsigned int count_digits(size_t num, unsigned int base);
+unsigned long int leading_chars_len(const char *str, char *ch);
+BigNum *numstr_to_bignum(numstr *num);
+numstr *bignum_to_numstr(BigNum *arr);
+long int print_bignum(BigNum *arr);
+char *uint_array_to_str(const unsigned int *arr, unsigned long int len);
+unsigned int count_digits(unsigned long int num, unsigned int base);
 unsigned int get_base(void);
 unsigned int set_base(unsigned int base);
 
 /*array_funcs*/
 
-void trim_bignum(u4b_bignum * const arr);
-ssize_t cmp_bignum(u4b_bignum * const a1, u4b_bignum * const a2);
-ssize_t cmp_rev_uint32array(
-	unsigned int const * const arr1, unsigned int const * const arr2, size_t len);
+void trim_bignum(BigNum *const arr);
+long int cmp_bignum(BigNum *const a1, BigNum *const a2);
+long int cmp_rev_uint32array(
+	unsigned int const *const arr1,
+	unsigned int const *const arr2,
+	unsigned long int len);
 
 /*math_funcs*/
 
-u4b_bignum *infiX_division(u4b_bignum *n1, u4b_bignum *n2);
-u4b_bignum *infiX_modulus(u4b_bignum *n1, u4b_bignum *n2);
-u4b_bignum *infiX_subtraction(u4b_bignum *n1, u4b_bignum *n2);
-u4b_bignum *infiX_multiplication(u4b_bignum *n1, u4b_bignum *n2);
-u4b_bignum *infiX_addition(u4b_bignum *n1, u4b_bignum *n2);
+BigNum *infiX_division(BigNum *n1, BigNum *n2);
+BigNum *infiX_modulus(BigNum *n1, BigNum *n2);
+BigNum *infiX_subtraction(BigNum *n1, BigNum *n2);
+BigNum *infiX_multiplication(BigNum *n1, BigNum *n2);
+BigNum *infiX_addition(BigNum *n1, BigNum *n2);
 
 #endif /*INFIX_H*/

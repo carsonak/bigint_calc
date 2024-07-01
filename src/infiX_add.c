@@ -1,19 +1,18 @@
 #include "infiX.h"
 
-static u4b_bignum *add_negatives(u4b_bignum *n1, u4b_bignum *n2)
-	ATTR_NONNULL;
-static u4b_bignum *add(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
+static BigNum *add_negatives(BigNum *n1, BigNum *n2) ATTR_NONNULL;
+static BigNum *add(BigNum *n1, BigNum *n2) ATTR_NONNULL;
 
 /**
  * infiX_addition - handle addition of two bignums.
- * @n1: the first number
- * @n2: the second number
+ * @n1: the first number.
+ * @n2: the second number.
  *
  * This function does preliminary checks on the parameters.
  *
- * Return: pointer to result, NULL on failure
+ * Return: pointer to result, NULL on failure.
  */
-u4b_bignum *infiX_addition(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *infiX_addition(BigNum *n1, BigNum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -28,15 +27,15 @@ u4b_bignum *infiX_addition(u4b_bignum *n1, u4b_bignum *n2)
 
 /**
  * add_negatives - handle addition of signed bignums.
- * @n1: first number
- * @n2: second number
+ * @n1: first number.
+ * @n2: second number.
  *
  * Return: pointer to the result, NULL on failure.
  */
-u4b_bignum *add_negatives(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *add_negatives(BigNum *n1, BigNum *n2)
 {
 	char neg1 = n1->is_negative, neg2 = n2->is_negative;
-	u4b_bignum *result = NULL;
+	BigNum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -60,16 +59,16 @@ u4b_bignum *add_negatives(u4b_bignum *n1, u4b_bignum *n2)
 
 /**
  * add - add two bignums.
- * @n1: the first number
- * @n2: the second number
+ * @n1: the first number.
+ * @n2: the second number.
  *
- * Return: pointer to result, NULL on failure
+ * Return: pointer to result, NULL on failure.
  */
-u4b_bignum *add(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *add(BigNum *n1, BigNum *n2)
 {
-	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
-	int64_t byt_sum = 0;
-	u4b_bignum *sum = NULL;
+	unsigned long int n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
+	long int byt_sum = 0;
+	BigNum *sum = NULL;
 
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
@@ -81,17 +80,17 @@ u4b_bignum *add(u4b_bignum *n1, u4b_bignum *n2)
 	{
 		if (n1_i < n1->len)
 		{
-			byt_sum += n1->array[n1_i];
+			byt_sum += n1->num[n1_i];
 			++n1_i;
 		}
 
 		if (n2_i < n2->len)
 		{
-			byt_sum += n2->array[n2_i];
+			byt_sum += n2->num[n2_i];
 			++n2_i;
 		}
 
-		sum->array[sum_i] = byt_sum % (MAX_VAL_u4b);
+		sum->num[sum_i] = byt_sum % (MAX_VAL_u4b);
 		byt_sum /= (MAX_VAL_u4b);
 		++sum_i;
 	}

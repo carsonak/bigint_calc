@@ -6,7 +6,7 @@
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xmalloc(size_t size)
+void *xmalloc(unsigned long int size)
 {
 	void *ptr = malloc(size);
 
@@ -23,7 +23,7 @@ void *xmalloc(size_t size)
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xcalloc(size_t items, size_t sizeof_item)
+void *xcalloc(unsigned long int items, unsigned long int sizeof_item)
 {
 	void *ptr = calloc(items, sizeof_item);
 
@@ -34,13 +34,13 @@ void *xcalloc(size_t items, size_t sizeof_item)
 }
 
 /**
- * xrealloc - resize memory with realloc and check for error
- * @nullable_ptr: pointer to an allocated block
+ * xrealloc - resize memory with realloc and check for error.
+ * @nullable_ptr: pointer to an allocated block.
  * @size: size in bytes to resize to.
  *
  * Return: pointer to the resized memory area, NULL on failure.
  */
-void *xrealloc(void *nullable_ptr, size_t size)
+void *xrealloc(void *nullable_ptr, unsigned long int size)
 {
 	void *ptr = realloc(nullable_ptr, size);
 
@@ -51,8 +51,8 @@ void *xrealloc(void *nullable_ptr, size_t size)
 }
 
 /**
- * xstrdup - duplicate a string and check for error
- * @str: the string to duplicate
+ * xstrdup - duplicate a string and check for error.
+ * @str: the string to duplicate.
  *
  * Return: pointer to the duplicated string, NULL on failure.
  */
@@ -67,14 +67,14 @@ char *xstrdup(const char *str)
 }
 
 /**
- * alloc_bignum - allocate memory for a u4b_bignum of given length
- * @len: length of the array, length 0 returns the struct with a NULL array
+ * alloc_bignum - allocate memory for a BigNum of given length.
+ * @len: length of the array, length 0 returns the struct with a NULL array.
  *
- * Return: a pointer to a u4b_bignum struct, NULL on failure
+ * Return: a pointer to a BigNum struct, NULL on failure.
  */
-u4b_bignum *alloc_bignum(size_t len)
+BigNum *alloc_bignum(unsigned long int len)
 {
-	u4b_bignum *arr = xcalloc(1, sizeof(*arr));
+	BigNum *arr = xcalloc(1, sizeof(*arr));
 
 	if (!arr)
 		return (NULL);
@@ -82,8 +82,8 @@ u4b_bignum *alloc_bignum(size_t len)
 	arr->len = len;
 	if (len > 0)
 	{
-		arr->array = xcalloc(len, sizeof(*arr->array));
-		if (!arr->array)
+		arr->num = xcalloc(len, sizeof(*arr->num));
+		if (!arr->num)
 			arr = free_n_null(arr);
 	}
 
@@ -91,12 +91,12 @@ u4b_bignum *alloc_bignum(size_t len)
 }
 
 /**
- * alloc_numstr - allocate memory for a numstr of given length
- * @len: length of the array, length 0 returns the struct with a NULL array
+ * alloc_numstr - allocate memory for a numstr of given length.
+ * @len: length of the array, length 0 returns the struct with a NULL array.
  *
  * Return: a pointer to a numstr struct, NULL on failure.
  */
-numstr *alloc_numstr(size_t len)
+numstr *alloc_numstr(unsigned long int len)
 {
 	numstr *arr = xcalloc(1, sizeof(*arr));
 
@@ -127,22 +127,22 @@ void *free_n_null(void *freeable_ptr)
 }
 
 /**
- * free_bignum - free a u4b_bignum, return NULL.
- * @freeable_ptr: a pointer to a u4b_bignum.
+ * free_bignum - free a BigNum, return NULL.
+ * @freeable_ptr: a pointer to a BigNum.
  *
  * Return: NULL always.
  */
-void *free_bignum(u4b_bignum *freeable_ptr)
+void *free_bignum(BigNum *freeable_ptr)
 {
 	if (freeable_ptr)
-		free_n_null(freeable_ptr->array);
+		free_n_null(freeable_ptr->num);
 
 	return (free_n_null(freeable_ptr));
 }
 
 /**
  * free_numstr - free a numstr, return NULL.
- * @freeable_ptr: a pointer to a freeable
+ * @freeable_ptr: a pointer to a freeable.
  *
  * Return: NULL always.
  */

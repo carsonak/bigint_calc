@@ -7,15 +7,15 @@ static int from_base36(char c);
 unsigned int NUMBASE = 10;
 
 /**
- * parse_str - parse a string of numbers
+ * parse_str - parse a string of numbers.
  * @str: a string with numbers.
  *
- * Return: pointer to a numstr struct, NULL of failure
+ * Return: pointer to a numstr struct, NULL of failure.
  */
 numstr *parse_str(const char *str)
 {
 	numstr *arr = NULL;
-	size_t s_i = 0, b_i = 0;
+	unsigned long int s_i = 0, b_i = 0;
 	const unsigned int buf_size = 2048;
 	char *buf = NULL;
 
@@ -25,7 +25,7 @@ numstr *parse_str(const char *str)
 	arr = alloc_numstr(0);
 	buf = xmalloc(buf_size);
 	if (!buf || !arr)
-		goto cleanup_intstr;
+		goto cleanup_numstr;
 
 	for (s_i = 0; str[s_i] == '-' || str[s_i] == '+'; s_i++)
 		if (str[s_i] == '-')
@@ -48,7 +48,7 @@ numstr *parse_str(const char *str)
 				fprintf(stderr,
 						"ParsingError: Invalid character '%c' for base%d\n",
 						str[s_i], NUMBASE);
-				goto cleanup_intstr;
+				goto cleanup_numstr;
 			}
 
 			buf[b_i] = to_base36(buf[b_i]);
@@ -58,7 +58,7 @@ numstr *parse_str(const char *str)
 		buf[b_i] = '\0';
 		arr->str = xrealloc(arr->str, arr->len + b_i + 1);
 		if (!arr->str)
-			goto cleanup_intstr;
+			goto cleanup_numstr;
 
 		strcpy(&arr->str[arr->len], buf);
 		arr->len += b_i;
@@ -69,7 +69,7 @@ numstr *parse_str(const char *str)
 	if (!arr->str || !arr->str[0])
 	{
 		fprintf(stderr, "ParsingError: 0 decimal characters found\n");
-	cleanup_intstr:
+cleanup_numstr:
 		arr = free_numstr(arr);
 	}
 
@@ -78,15 +78,15 @@ numstr *parse_str(const char *str)
 }
 
 /**
- * leading_chars_len - finds the number of leading characters in a string
- * @str: the string to check
- * @ch: the character
+ * leading_chars_len - finds the number of leading characters in a string.
+ * @str: the string to check.
+ * @ch: the character.
  *
- * Return: number of leading characters
+ * Return: number of leading characters.
  */
-size_t leading_chars_len(const char *str, char *ch)
+unsigned long int leading_chars_len(const char *str, char *ch)
 {
-	size_t count = 0;
+	unsigned long int count = 0;
 
 	if (str && ch && *ch)
 	{
@@ -100,9 +100,9 @@ size_t leading_chars_len(const char *str, char *ch)
 
 /**
  * from_base36 - map a base36 ascii symbol to a decimal.
- * @c: an alphanumeric symbol
+ * @c: an alphanumeric symbol.
  *
- * Return: decimal value of the symbol, -1 if invalid symbols
+ * Return: decimal value of the symbol, -1 if invalid symbols.
  */
 int from_base36(char c)
 {
@@ -116,10 +116,10 @@ int from_base36(char c)
 }
 
 /**
- * in_base36 - map a decimal between 0-35 to a base36 ascii symbol.
- * @num: the number to convert
+ * to_base36 - map a decimal between 0-35 to a base36 ascii symbol.
+ * @num: the number to convert.
  *
- * Return: the ascii symbol of the number.
+ * Return: the ascii symbol, '\0' on error.
  */
 char to_base36(unsigned int num)
 {
@@ -128,21 +128,21 @@ char to_base36(unsigned int num)
 
 	if (num < 10)
 		return ('0' + num);
-	else
-		return ('A' + (num - 10));
+
+	return ('A' + (num - 10));
 }
 
 /**
- * numstr_to_bignum - convert a numstr to a u4b_bignum.
- * @num: the numstr
+ * numstr_to_bignum - convert a numstr to a BigNum.
+ * @num: the numstr.
  *
- * Return: a pointer to a u4b_bignum struct, NULL on failure.
+ * Return: a pointer to a BigNum struct, NULL on failure.
  */
-u4b_bignum *numstr_to_bignum(numstr *num)
+BigNum *numstr_to_bignum(numstr *num)
 {
-	size_t a_i = 0, n_i = 0, tmp = 0;
+	unsigned long int a_i = 0, n_i = 0, tmp = 0;
 	unsigned int max_digits = 0;
-	u4b_bignum *arr = NULL;
+	BigNum *arr = NULL;
 	char num_buf[36] = {0}, *end = NULL;
 
 	if (!num || !num->len || !num->str || !isalnum(num->str[0]))
@@ -173,14 +173,14 @@ u4b_bignum *numstr_to_bignum(numstr *num)
 			return (free_bignum(arr));
 		}
 
-		arr->array[a_i] = tmp % MAX_VAL_u4b;
+		arr->num[a_i] = tmp % MAX_VAL_u4b;
 		tmp /= MAX_VAL_u4b;
 		n_i += max_digits;
 	}
 
 	while (a_i < arr->len && tmp)
 	{
-		arr->array[a_i] = tmp % MAX_VAL_u4b;
+		arr->num[a_i] = tmp % MAX_VAL_u4b;
 		tmp /= MAX_VAL_u4b;
 		a_i++;
 	}
@@ -190,32 +190,32 @@ u4b_bignum *numstr_to_bignum(numstr *num)
 }
 
 /**
- * bignum_to_numstr - convert a u4b_bignum to a numstr.
- * @arr: the u4b_bignum
+ * bignum_to_numstr - convert a BigNum to a numstr.
+ * @arr: the BigNum.
  *
  * Return: a pointer to a numstr, NULL on failure.
  */
-numstr *bignum_to_numstr(u4b_bignum *arr)
+numstr *bignum_to_numstr(BigNum *arr)
 {
 	(void)arr;
 	return (NULL);
 }
 
 /**
- * print_bignum - print a u4b_bignum
- * @arr: pointer to the array struct
+ * print_bignum - print a BigNum.
+ * @arr: pointer to the array struct.
  *
  * Return: number of bytes printed, -1 on error.
  */
-ssize_t print_bignum(u4b_bignum *arr)
+long int print_bignum(BigNum *arr)
 {
 	char *str_arr = NULL;
-	ssize_t bytes_printed = 0;
+	long int bytes_printed = 0;
 
 	if (!arr)
 		return (-1);
 
-	str_arr = uint_array_to_str(arr->array, arr->len);
+	str_arr = uint_array_to_str(arr->num, arr->len);
 	if (!str_arr)
 		return (-1);
 
@@ -229,15 +229,15 @@ ssize_t print_bignum(u4b_bignum *arr)
 }
 
 /**
- * uint_array_to_str - represent an unsigned int array as a string
- * @arr: the unsigned int array
- * @len: number of items in the unsigned int
+ * uint_array_to_str - represent an unsigned int array as a string.
+ * @arr: the unsigned int array.
+ * @len: number of items in the unsigned int.
  *
- * Return: pointer to a string, NULL on error
+ * Return: pointer to a string, NULL on error.
  */
-char *uint_array_to_str(const uint32_t *arr, size_t len)
+char *uint_array_to_str(const unsigned int *arr, unsigned long int len)
 {
-	size_t s_i = 0, n = 0, len_sep = 0, len_str = 0;
+	unsigned long int s_i = 0, n = 0, len_sep = 0, len_str = 0;
 	int bytes_written = 0;
 	char *str = NULL, *sep = ", ";
 
@@ -247,7 +247,7 @@ char *uint_array_to_str(const uint32_t *arr, size_t len)
 	len_sep = strlen(sep);
 	/*sizeof(str) == (max digits in 4 bytes * len) + */
 	/*total sizeof(separators) + sizeof("{}") + 1*/
-	len_str = (count_digits(UINT32_MAX, 10) * len) +
+	len_str = (count_digits(UINT_MAX, 10) * len) +
 			  (len_sep * (len - 1)) + 2 + 1;
 	str = xmalloc(len_str * sizeof(*str));
 	if (!str)
@@ -272,13 +272,13 @@ char *uint_array_to_str(const uint32_t *arr, size_t len)
 }
 
 /**
- * count_digits - calculate how many digits in the given base can represent the given number.
- * @num: the number
- * @base: the base
+ * count_digits - calculate how many digits of the given base can represent the given decimal.
+ * @num: the decimal number.
+ * @base: the number base.
  *
- * Return: digits counted
+ * Return: digits calculated.
  */
-unsigned int count_digits(size_t num, unsigned int base)
+unsigned int count_digits(unsigned long int num, unsigned int base)
 {
 	int d = 0;
 
@@ -292,15 +292,17 @@ unsigned int count_digits(size_t num, unsigned int base)
 }
 
 /**
- * get_base - return the current number base
+ * get_base - return the current number base.
+ *
+ * Return: the current base.
  */
 unsigned int get_base(void) { return (NUMBASE); }
 
 /**
- * set_base - update the number base
- * @base: a value between 2-36
+ * set_base - update the number base.
+ * @base: a value between 2-36.
  *
- * Return: the updated base on success, 0 on failure
+ * Return: the updated base on success, 0 on failure.
  */
 unsigned int set_base(unsigned int base)
 {

@@ -3,16 +3,16 @@
 static math_function *get_math_function(char *op_symbol);
 
 /**
- * infiX_manager - determine what operation to carry out based on given symbol
- * @num1: first number
- * @op_symbol: operand
- * @num2: second number
+ * infiX_manager - determine what operation to carry out based on given symbol.
+ * @num1: first number.
+ * @op_symbol: operand.
+ * @num2: second number.
  *
- * Return: Pointer to answer string on sucess, NULL on failure
+ * Return: Pointer to answer string on sucess, NULL on failure.
  */
 char *infiX_manager(char *num1, char *op_symbol, char *num2)
 {
-	uint32_t *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
+	unsigned int *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
 	char *answer = NULL;
 	math_function *func_ptr = NULL;
 
@@ -26,7 +26,7 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 	if (func_ptr)
 	{
 		errno = 0;
-		/*Convert num1 and num2 to uint32_t arrays first*/
+		/*Convert num1 and num2 to unsigned int arrays first*/
 		num1_arr = str_to_intarray(num1);
 		if (num1_arr)
 			num2_arr = str_to_intarray(num2);
@@ -54,10 +54,10 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 }
 
 /**
- * get_math_function - return the function associated with the give operator
- * @op_symbol: the operator symbol
+ * get_math_function - return the function associated with the give operator.
+ * @op_symbol: the operator symbol.
  *
- * Return: pointer to a function on success, NULL on failure
+ * Return: pointer to a function on success, NULL on failure.
  */
 math_function *get_math_function(char *op_symbol)
 {

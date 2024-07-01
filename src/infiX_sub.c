@@ -1,19 +1,19 @@
 #include "infiX.h"
 
-static u4b_bignum *subtract_negatives(u4b_bignum *n1, u4b_bignum *n2)
-	ATTR_NONNULL;
-static u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
+ATTR_NONNULL
+static BigNum *subtract_negatives(BigNum *n1, BigNum *n2);
+static BigNum *subtract(BigNum *n1, BigNum *n2) ATTR_NONNULL;
 
 /**
  * infiX_subtraction - handle subtraction of two bignums.
- * @n1: first number
- * @n2: second number
+ * @n1: first number.
+ * @n2: second number.
  *
  * This function does preliminary checks on the parameters.
  *
  * Return: pointer to the result, NULL on failure.
  */
-u4b_bignum *infiX_subtraction(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *infiX_subtraction(BigNum *n1, BigNum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -28,15 +28,15 @@ u4b_bignum *infiX_subtraction(u4b_bignum *n1, u4b_bignum *n2)
 
 /**
  * subtract_negatives - handle subtraction of two signed bignums.
- * @n1: first number
- * @n2: second number
+ * @n1: first number.
+ * @n2: second number.
  *
  * Return: pointer to the result, NULL on failure.
  */
-u4b_bignum *subtract_negatives(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *subtract_negatives(BigNum *n1, BigNum *n2)
 {
 	char neg1 = n1->is_negative, neg2 = n2->is_negative;
-	u4b_bignum *result = NULL;
+	BigNum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -60,17 +60,17 @@ u4b_bignum *subtract_negatives(u4b_bignum *n1, u4b_bignum *n2)
 
 /**
  * subtract - subtract two bignums.
- * @n1: first number
- * @n2: second numbers
+ * @n1: first number.
+ * @n2: second numbers.
  *
  * Return: pointer to the result, NULL on failure.
  */
-u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *subtract(BigNum *n1, BigNum *n2)
 {
-	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
-	ssize_t n1_is_bigger = 0;
-	int64_t byt_diff = 0;
-	u4b_bignum *diff = NULL;
+	unsigned long int n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
+	long int n1_is_bigger = 0;
+	long int byt_diff = 0;
+	BigNum *diff = NULL;
 
 	/*result_len = max(n1->len, n2->len)*/
 	result_len = (n1->len > n2->len) ? n1->len : n2->len;
@@ -78,7 +78,7 @@ u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2)
 	/*result_len = n1->len - */
 	/*(length of continuous matches in n1 and n2 from msd down to lsd).*/
 	if (n1->len == n2->len)
-		while (result_len > 2 && n1->array[result_len - 1] == n2->array[result_len - 1])
+		while (result_len > 2 && n1->num[result_len - 1] == n2->num[result_len - 1])
 			result_len--;
 
 	diff = alloc_bignum(result_len);
@@ -94,27 +94,27 @@ u4b_bignum *subtract(u4b_bignum *n1, u4b_bignum *n2)
 		if (n1_is_bigger > 0) /*then; n1 - n2*/
 		{
 			if (n2_i < n2->len)
-				byt_diff += (int64_t)n1->array[n1_i] - n2->array[n2_i];
+				byt_diff += (long int)n1->num[n1_i] - n2->num[n2_i];
 			else
-				byt_diff += n1->array[n1_i];
+				byt_diff += n1->num[n1_i];
 		}
 		else /*n2 - n1*/
 		{
 			if (n1_i < n1->len)
-				byt_diff += (int64_t)n2->array[n2_i] - n1->array[n1_i];
+				byt_diff += (long int)n2->num[n2_i] - n1->num[n1_i];
 			else
-				byt_diff += n2->array[n2_i];
+				byt_diff += n2->num[n2_i];
 		}
 
 		if (byt_diff < 0) /*borrow 1 from next.*/
 		{
 			byt_diff += MAX_VAL_u4b;
-			diff->array[diff_i] = byt_diff % MAX_VAL_u4b;
+			diff->num[diff_i] = byt_diff % MAX_VAL_u4b;
 			byt_diff = -1;
 		}
 		else
 		{
-			diff->array[diff_i] = byt_diff % MAX_VAL_u4b;
+			diff->num[diff_i] = byt_diff % MAX_VAL_u4b;
 			byt_diff = 0;
 		}
 

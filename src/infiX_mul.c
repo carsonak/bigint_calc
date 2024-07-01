@@ -1,8 +1,8 @@
 #include "infiX.h"
 
-static u4b_bignum *multiply_negatives(u4b_bignum *n1, u4b_bignum *n2)
-	ATTR_NONNULL;
-static u4b_bignum *multiply(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
+ATTR_NONNULL
+static BigNum *multiply_negatives(BigNum *n1, BigNum *n2);
+static BigNum *multiply(BigNum *n1, BigNum *n2) ATTR_NONNULL;
 
 /**
  * infiX_multiplication - handle multiplication of two bignums.
@@ -13,7 +13,7 @@ static u4b_bignum *multiply(u4b_bignum *n1, u4b_bignum *n2) ATTR_NONNULL;
  *
  * Return: pointer to result, NULL on failure.
  */
-u4b_bignum *infiX_multiplication(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *infiX_multiplication(BigNum *n1, BigNum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -28,15 +28,15 @@ u4b_bignum *infiX_multiplication(u4b_bignum *n1, u4b_bignum *n2)
 
 /**
  * multiply_negatives - handle multiplication of signed bignums.
- * @n1: first number
- * @n2: second number
+ * @n1: first number.
+ * @n2: second number.
  *
  * Return: pointer to the result, NULL on failure.
  */
-u4b_bignum *multiply_negatives(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *multiply_negatives(BigNum *n1, BigNum *n2)
 {
 	char neg1 = n1->is_negative, neg2 = n2->is_negative;
-	u4b_bignum *result = NULL;
+	BigNum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -64,16 +64,16 @@ u4b_bignum *multiply_negatives(u4b_bignum *n1, u4b_bignum *n2)
  *
  * Return: pointer to result, NULL on failure.
  */
-u4b_bignum *multiply(u4b_bignum *n1, u4b_bignum *n2)
+BigNum *multiply(BigNum *n1, BigNum *n2)
 {
-	int64_t byt_mul = 0;
-	size_t n1_i = 0, n2_i = 0;
-	u4b_bignum *product = NULL, *current_mul = NULL, *increment = NULL;
+	long int byt_mul = 0;
+	unsigned long int n1_i = 0, n2_i = 0;
+	BigNum *product = NULL, *current_mul = NULL, *increment = NULL;
 
 	/*Multiplication by zero.*/
 	if (!n1->len || !n2->len)
 		return (alloc_bignum(0));
-	else if ((n1->len == 1 && !n1->array[0]) || (n2->len == 1 && !n2->array[0]))
+	else if ((n1->len == 1 && !n1->num[0]) || (n2->len == 1 && !n2->num[0]))
 		return (alloc_bignum(1));
 
 	increment = alloc_bignum(0);
@@ -84,7 +84,7 @@ u4b_bignum *multiply(u4b_bignum *n1, u4b_bignum *n2)
 	for (n2_i = 0; n2_i < n2->len; n2_i++)
 	{
 		/*Skip multiplication by zero*/
-		if (n2->array[n2_i] == 0)
+		if (n2->num[n2_i] == 0)
 			continue;
 
 		/*Length of current_mul = */
@@ -96,12 +96,12 @@ u4b_bignum *multiply(u4b_bignum *n1, u4b_bignum *n2)
 		byt_mul = 0;
 		for (n1_i = 0; n1_i < n1->len; n1_i++)
 		{
-			byt_mul += (int64_t)n2->array[n2_i] * n1->array[n1_i];
-			current_mul->array[n2_i + n1_i] = byt_mul % MAX_VAL_u4b;
+			byt_mul += (long int)n2->num[n2_i] * n1->num[n1_i];
+			current_mul->num[n2_i + n1_i] = byt_mul % MAX_VAL_u4b;
 			byt_mul /= MAX_VAL_u4b;
 		}
 
-		current_mul->array[n2_i + n1_i] = byt_mul;
+		current_mul->num[n2_i + n1_i] = byt_mul;
 		product = infiX_addition(increment, current_mul);
 		current_mul = free_bignum(current_mul);
 		increment = free_bignum(increment);
