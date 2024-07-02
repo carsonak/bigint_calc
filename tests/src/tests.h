@@ -2,6 +2,7 @@
 #define TESTS_H
 
 #include "infiX.h"
+#include <ctype.h>
 #include <criterion/criterion.h>
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>

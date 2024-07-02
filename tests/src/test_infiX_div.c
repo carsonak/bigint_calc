@@ -116,6 +116,7 @@ TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
 Test(zero_len_arrays, test_nullarray_over_nullarray,
 	 .description = "null_array / null_array = NULL", .timeout = 3.0)
 {
+	cr_redirect_stderr();
 	bignum *output = infiX_division(&num1, &num2);
 
 	cr_expect(zero(ptr, output));
@@ -126,6 +127,7 @@ Test(zero_len_arrays, test_4490998_over_nullarray,
 {
 	uint in1[] = {4490998};
 
+	cr_redirect_stderr();
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
 	bignum *output = infiX_division(&num1, &num2);
@@ -155,9 +157,9 @@ Test(zero_len_arrays, test_null_over_largenum,
 	output = free_bignum(output);
 }
 
-TestSuite(simple_divisions, .init = setup, .fini = teardown);
+TestSuite(division_by_zero, .init = setup, .fini = teardown);
 
-Test(simple_divisions, test_0_over_0,
+Test(division_by_zero, test_0_over_0,
 	 .description = "0 / 0 = NULL", .timeout = 3.0)
 {
 	uint in1[] = {0}, in2[] = {0};
@@ -172,7 +174,7 @@ Test(simple_divisions, test_0_over_0,
 	cr_expect(zero(ptr, output));
 }
 
-Test(simple_divisions, test_1_over_0,
+Test(division_by_zero, test_1_over_0,
 	 .description = "1 / 0 = NULL", .timeout = 3.0)
 {
 	uint in1[] = {1}, in2[] = {0};
@@ -186,6 +188,8 @@ Test(simple_divisions, test_1_over_0,
 
 	cr_expect(zero(ptr, output));
 }
+
+TestSuite(simple_divisions, .init = setup, .fini = teardown);
 
 Test(simple_divisions, test_0_over_1,
 	 .description = "0 / 1 = 0", .timeout = 3.0)

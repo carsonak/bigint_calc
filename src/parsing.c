@@ -4,7 +4,7 @@ static char to_base36(uint num);
 static int from_base36(char c);
 
 /*Number base to be used for conversions.*/
-uint NUMBASE = 10;
+unsigned int NUMBASE = 10;
 
 /**
  * parse_str - parse a string of numbers.
@@ -16,10 +16,10 @@ numstr *parse_str(const char *str)
 {
 	numstr *arr = NULL;
 	size_t s_i = 0, b_i = 0;
-	const uint buf_size = 2048;
+	const int buf_size = 2048;
 	char *buf = NULL;
 
-	if (!str || (!isdigit(str[0]) && str[0] != '-' && str[0] != '+'))
+	if (!str)
 		return (NULL);
 
 	arr = alloc_numstr(0);
@@ -30,6 +30,12 @@ numstr *parse_str(const char *str)
 	for (s_i = 0; str[s_i] == '-' || str[s_i] == '+'; s_i++)
 		if (str[s_i] == '-')
 			arr->is_negative = !arr->is_negative;
+
+	if (str[s_i] == '_' || str[s_i] == ',')
+	{
+		fprintf(stderr, "ParsingError: Leading separators not allowed.\n");
+		goto cleanup_numstr;
+	}
 
 	s_i += leading_chars_len(&str[s_i], "0");
 	while (str[s_i])
@@ -43,10 +49,10 @@ numstr *parse_str(const char *str)
 				break;
 
 			buf[b_i] = from_base36(str[s_i]);
-			if (buf[b_i] < 0 || (uint)buf[b_i] >= NUMBASE)
+			if (buf[b_i] < 0 || (unsigned int)buf[b_i] >= NUMBASE)
 			{
 				fprintf(stderr,
-						"ParsingError: Invalid character '%c' for base%d\n",
+						"ParsingError: Invalid character '%c' for base%d.\n",
 						str[s_i], NUMBASE);
 				goto cleanup_numstr;
 			}
@@ -56,7 +62,7 @@ numstr *parse_str(const char *str)
 		}
 
 		buf[b_i] = '\0';
-		arr->str = xrealloc(arr->str, arr->len + b_i + 1);
+		arr->str = xrealloc(arr->str, arr->len + b_i + sizeof(*arr->str));
 		if (!arr->str)
 			goto cleanup_numstr;
 
@@ -68,7 +74,13 @@ numstr *parse_str(const char *str)
 
 	if (!arr->str || !arr->str[0])
 	{
-		fprintf(stderr, "ParsingError: 0 decimal characters found\n");
+		fprintf(stderr, "ParsingError: 0 digits found.\n");
+		goto cleanup_numstr;
+	}
+
+	if (str[s_i - 1] == '_' || str[s_i - 1] == ',')
+	{
+		fprintf(stderr, "ParsingError: Trailing separators not allowed.\n");
 cleanup_numstr:
 		arr = free_numstr(arr);
 	}
@@ -121,7 +133,7 @@ int from_base36(char c)
  *
  * Return: the ascii symbol, '\0' on error.
  */
-char to_base36(uint num)
+char to_base36(unsigned int num)
 {
 	if (num > 35)
 		return ('\0');

@@ -135,6 +135,38 @@ Test(zero_len_arrays, test_null_modulo_largenum,
 	output = free_bignum(output);
 }
 
+TestSuite(division_by_zero, .init = setup, .fini = teardown);
+
+Test(division_by_zero, test_0_mod_0,
+	 .description = "0 / 0 = NULL", .timeout = 3.0)
+{
+	uint in1[] = {0}, in2[] = {0};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.num = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.num = in2;
+
+	bignum *output = infiX_modulus(&num1, &num2);
+
+	cr_expect(zero(ptr, output));
+}
+
+Test(division_by_zero, test_1_mod_0,
+	 .description = "1 / 0 = NULL", .timeout = 3.0)
+{
+	uint in1[] = {1}, in2[] = {0};
+
+	num1.len = sizeof(in1) / sizeof(*in1);
+	num1.num = in1;
+	num2.len = sizeof(in2) / sizeof(*in2);
+	num2.num = in2;
+
+	bignum *output = infiX_modulus(&num1, &num2);
+
+	cr_expect(zero(ptr, output));
+}
+
 TestSuite(negative_modulus, .init = setup, .fini = teardown);
 
 Test(negative_modulus, test_minus9107428777003_modulo_minus809754437,

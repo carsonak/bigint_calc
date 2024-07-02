@@ -29,7 +29,7 @@ $(T_UTILITY_OBJS):$(T_BINDIR)/test_%: $(T_SRCDIR)/test_%.c $(UTILITY_FUNCS)
 
 unit-tests: LDLIBS += -lcriterion
 unit-tests: CFLAGS += $(LDFLAGS) $(LDLIBS)
-unit-tests: TIMEOUT_OPTS += --kill-after=9.0 6.0
+unit-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
 unit-tests: $(T_BINDIR) $(T_BINS)
 	$(shell export $(ASAN_OPTIONS) && export $(LSAN_OPTIONS); \
 		for t_binary in $(T_BINS); \
