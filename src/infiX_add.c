@@ -1,7 +1,7 @@
 #include "infiX.h"
 
-static BigNum *add_negatives(BigNum *n1, BigNum *n2) ATTR_NONNULL;
-static BigNum *add(BigNum *n1, BigNum *n2) ATTR_NONNULL;
+static bignum *add_negatives(bignum *n1, bignum *n2) ATTR_NONNULL;
+static bignum *add(bignum *n1, bignum *n2) ATTR_NONNULL;
 
 /**
  * infiX_addition - handle addition of two bignums.
@@ -12,7 +12,7 @@ static BigNum *add(BigNum *n1, BigNum *n2) ATTR_NONNULL;
  *
  * Return: pointer to result, NULL on failure.
  */
-BigNum *infiX_addition(BigNum *n1, BigNum *n2)
+bignum *infiX_addition(bignum *n1, bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -32,10 +32,10 @@ BigNum *infiX_addition(BigNum *n1, BigNum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-BigNum *add_negatives(BigNum *n1, BigNum *n2)
+bignum *add_negatives(bignum *n1, bignum *n2)
 {
-	char neg1 = n1->is_negative, neg2 = n2->is_negative;
-	BigNum *result = NULL;
+	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
+	bignum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -64,11 +64,11 @@ BigNum *add_negatives(BigNum *n1, BigNum *n2)
  *
  * Return: pointer to result, NULL on failure.
  */
-BigNum *add(BigNum *n1, BigNum *n2)
+bignum *add(bignum *n1, bignum *n2)
 {
-	unsigned long int n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
-	long int byt_sum = 0;
-	BigNum *sum = NULL;
+	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
+	lint byt_sum = 0;
+	bignum *sum = NULL;
 
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;

@@ -13,7 +13,7 @@ void tearDown(void)
  */
 void test_nullInputs(void)
 {
-	unsigned int expected[3] = {1, 0, 0};
+	uint expected[3] = {1, 0, 0};
 	char c = '\0';
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray(NULL), 2, "NULL => [1, 0]");
@@ -46,7 +46,7 @@ void test_invalidInputs(void)
  */
 void test_under10Digits(void)
 {
-	unsigned int expected[3] = {1, 123456789, 0};
+	uint expected[3] = {1, 123456789, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123456789"), 2, "=> [1, 123456789]");
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("123 456 789"), 2, "'123 456 789' => [1, 123456789]");
@@ -76,7 +76,7 @@ void test_under10Digits(void)
  */
 void test_leading0(void)
 {
-	unsigned int expected[3] = {1, 12345, 0};
+	uint expected[3] = {1, 12345, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("000, 123, 45"), 2, "'000, 123, 45' => [1, 12345]");
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("00000123, 45"), 2, "'00000123, 45' => [1, 12345]");
@@ -90,7 +90,7 @@ void test_leading0(void)
  */
 void test_input1Billion(void)
 {
-	unsigned int expected[5] = {2, 0, 1, 0};
+	uint expected[5] = {2, 0, 1, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("1 000000000"), 3, "'1 000000000' => [1, 0, 1]");
 }
@@ -100,7 +100,7 @@ void test_input1Billion(void)
  */
 void test_0sandwich(void)
 {
-	unsigned int expected[7] = {3, 78234587, 0, 909897004, 0, 0, 0};
+	uint expected[7] = {3, 78234587, 0, 909897004, 0, 0, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("909897004 000000000 078234587"), 4, "'909897004 000000000 078234587' => [3, 78234587, 0, 909897004]");
 
@@ -120,7 +120,7 @@ void test_0sandwich(void)
  */
 void test_increaseTo27Digits(void)
 {
-	unsigned int expected[5] = {1, 0, 0, 0};
+	uint expected[5] = {1, 0, 0, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("0"), 2, "'0' => [1, 0]");
 	expected[1] = 1;
@@ -188,7 +188,7 @@ void test_increaseTo27Digits(void)
  */
 void test_increaseTo27DigitsNegatives(void)
 {
-	unsigned int expected[5] = {1, 0, 0, 0};
+	uint expected[5] = {1, 0, 0, 0};
 
 	TEST_ASSERT_EQUAL_UINT32_ARRAY_MESSAGE(expected, str_to_intarray("-0"), 2, "'0' => [1, 0]");
 	expected[1] = (NEGBIT_u4b) + 1;

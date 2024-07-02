@@ -1,8 +1,8 @@
 #include "infiX.h"
 
 ATTR_NONNULL
-static BigNum *multiply_negatives(BigNum *n1, BigNum *n2);
-static BigNum *multiply(BigNum *n1, BigNum *n2) ATTR_NONNULL;
+static bignum *multiply_negatives(bignum *n1, bignum *n2);
+static bignum *multiply(bignum *n1, bignum *n2) ATTR_NONNULL;
 
 /**
  * infiX_multiplication - handle multiplication of two bignums.
@@ -13,7 +13,7 @@ static BigNum *multiply(BigNum *n1, BigNum *n2) ATTR_NONNULL;
  *
  * Return: pointer to result, NULL on failure.
  */
-BigNum *infiX_multiplication(BigNum *n1, BigNum *n2)
+bignum *infiX_multiplication(bignum *n1, bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -33,10 +33,10 @@ BigNum *infiX_multiplication(BigNum *n1, BigNum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-BigNum *multiply_negatives(BigNum *n1, BigNum *n2)
+bignum *multiply_negatives(bignum *n1, bignum *n2)
 {
-	char neg1 = n1->is_negative, neg2 = n2->is_negative;
-	BigNum *result = NULL;
+	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
+	bignum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -64,11 +64,11 @@ BigNum *multiply_negatives(BigNum *n1, BigNum *n2)
  *
  * Return: pointer to result, NULL on failure.
  */
-BigNum *multiply(BigNum *n1, BigNum *n2)
+bignum *multiply(bignum *n1, bignum *n2)
 {
-	long int byt_mul = 0;
-	unsigned long int n1_i = 0, n2_i = 0;
-	BigNum *product = NULL, *current_mul = NULL, *increment = NULL;
+	lint byt_mul = 0;
+	size_t n1_i = 0, n2_i = 0;
+	bignum *product = NULL, *current_mul = NULL, *increment = NULL;
 
 	/*Multiplication by zero.*/
 	if (!n1->len || !n2->len)
@@ -96,7 +96,7 @@ BigNum *multiply(BigNum *n1, BigNum *n2)
 		byt_mul = 0;
 		for (n1_i = 0; n1_i < n1->len; n1_i++)
 		{
-			byt_mul += (long int)n2->num[n2_i] * n1->num[n1_i];
+			byt_mul += (lint)n2->num[n2_i] * n1->num[n1_i];
 			current_mul->num[n2_i + n1_i] = byt_mul % BIGNUM_UINT_MAX;
 			byt_mul /= BIGNUM_UINT_MAX;
 		}

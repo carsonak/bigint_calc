@@ -1,15 +1,14 @@
 #include "infiX.h"
 
-BigNum *remains = NULL;
+/* Stores the remainder of division. */
+bignum *remains = NULL;
 
-static BigNum *divide_negatives(BigNum *n1, BigNum *n2)
-	ATTR_NONNULL;
-static char check_0_result(BigNum *n1, BigNum *n2) ATTR_NONNULL;
-static int check_division_by_0(BigNum *n2) ATTR_NONNULL;
-static BigNum *divide(BigNum *n1, BigNum *n2) ATTR_NONNULL;
+static bignum *divide_negatives(bignum *n1, bignum *n2) ATTR_NONNULL;
+static int check_0_result(bignum *n1, bignum *n2) ATTR_NONNULL;
+static bool check_division_by_0(bignum *n2) ATTR_NONNULL;
+static bignum *divide(bignum *n1, bignum *n2) ATTR_NONNULL;
 ATTR_NONNULL_IDX(1, 3)
-static long int get_current_quotient(
-	unsigned int *slice, unsigned long int len_slice, BigNum *n2);
+static lint get_current_quotient(uint *slice, size_t len_slice, bignum *n2);
 
 /**
  * infiX_division - handle division of two bignums.
@@ -20,10 +19,10 @@ static long int get_current_quotient(
  *
  * Return: pointer to the result, NULL on failure.
  */
-BigNum *infiX_division(BigNum *n1, BigNum *n2)
+bignum *infiX_division(bignum *n1, bignum *n2)
 {
-	char is_zero = 0;
-	BigNum *result = NULL;
+	int is_zero = 0;
+	bignum *result = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
@@ -61,10 +60,11 @@ BigNum *infiX_division(BigNum *n1, BigNum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-BigNum *infiX_modulus(BigNum *n1, BigNum *n2)
+bignum *infiX_modulus(bignum *n1, bignum *n2)
 {
-	char is_zero = 0, is_negative = 0;
-	BigNum *result = NULL;
+	int is_zero = 0;
+	bool is_negative = 0;
+	bignum *result = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
@@ -121,12 +121,13 @@ BigNum *infiX_modulus(BigNum *n1, BigNum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-BigNum *divide_negatives(BigNum *n1, BigNum *n2)
+bignum *divide_negatives(bignum *n1, bignum *n2)
 {
-	char is_zero = 0, neg1 = n1->is_negative, neg2 = n2->is_negative;
-	unsigned int a[] = {1};
-	BigNum *tmp = NULL, *result = NULL;
-	BigNum one = {.len = 1, .is_negative = false, .num = a};
+	int is_zero = 0;
+	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
+	bignum *tmp = NULL, *result = NULL;
+	uint a[1] = {1};
+	bignum one = {.len = 1, .is_negative = false, .num = a};
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -162,15 +163,15 @@ BigNum *divide_negatives(BigNum *n1, BigNum *n2)
  *
  * Return: 1 if n2 is zero, else 0.
  */
-int check_division_by_0(BigNum *n2)
+bool check_division_by_0(bignum *n2)
 {
 	if (!n2->len || (n2->len == 1 && !n2->num[0]))
 	{
 		fprintf(stderr, "Division by zero error.\n");
-		return (1);
+		return (true);
 	}
 
-	return (0);
+	return (false);
 }
 
 /**
@@ -183,7 +184,7 @@ int check_division_by_0(BigNum *n2)
  *
  * Return: 1 if numerator < denominator, 0 if not, -1 on error.
  */
-char check_0_result(BigNum *n1, BigNum *n2)
+int check_0_result(bignum *n1, bignum *n2)
 {
 	if (cmp_bignum(n1, n2) >= 0)
 		return (0);
@@ -211,12 +212,12 @@ char check_0_result(BigNum *n1, BigNum *n2)
  *
  * Return: pointer ro the result, NULL on failure.
  */
-BigNum *divide(BigNum *n1, BigNum *n2)
+bignum *divide(bignum *n1, bignum *n2)
 {
-	unsigned int *slice = NULL;
-	unsigned long int slice_offset = 1, q_i = 0, n1_i = 0, len_slice = 0;
-	long int tmp = 0;
-	BigNum *quotient = NULL;
+	uint *slice = NULL;
+	size_t slice_offset = 1, q_i = 0, n1_i = 0, len_slice = 0;
+	lint tmp = 0;
+	bignum *quotient = NULL;
 
 	/*Since division is reverse of multiplication then;*/
 	/*quotient digits = numerator digits - denominator digits + (0 or 1).*/
@@ -272,14 +273,14 @@ BigNum *divide(BigNum *n1, BigNum *n2)
 		slice_offset = 1;
 		tmp = n2->len - remains->len;
 		/*If remainder is shorter than denominator then; drop in more digits*/
-		if (q_i && (unsigned long int)tmp > 0)
+		if (q_i && (ulint)tmp > 0)
 		{
 			/*Checking for overflow.*/
-			if (n1_i + 1 > (unsigned long int)tmp)
+			if (n1_i + 1 > (ulint)tmp)
 				n1_i -= tmp;
 			else
 			{
-				slice_offset += (unsigned long int)tmp - (n1_i + 1);
+				slice_offset += (ulint)tmp - (n1_i + 1);
 				tmp = (n1_i + 1);
 				n1_i = 0;
 			}
@@ -321,16 +322,16 @@ BigNum *divide(BigNum *n1, BigNum *n2)
  *
  * Return: an int representing current quotient, -1 on error.
  */
-long int get_current_quotient(
-	unsigned int *slice, unsigned long int len_slice, BigNum *n2)
+lint get_current_quotient(
+	uint *slice, size_t len_slice, bignum *n2)
 {
-	unsigned int temp_array[1] = {0};
-	BigNum q_estimate = {
+	uint temp_array[1] = {0};
+	bignum q_estimate = {
 		.len = 1, .is_negative = false, .num = temp_array};
-	BigNum slice_bignum = {
+	bignum slice_bignum = {
 		.len = len_slice, .is_negative = false, .num = slice};
-	BigNum *estimate_check = NULL;
-	long int msd_slice = 0, is_larger = 0;
+	bignum *estimate_check = NULL;
+	lint msd_slice = 0, is_larger = 0;
 
 	remains = free_bignum(remains);
 	msd_slice = slice_bignum.num[len_slice - 1];
@@ -338,7 +339,7 @@ long int get_current_quotient(
 		msd_slice = (msd_slice * BIGNUM_UINT_MAX) + slice_bignum.num[len_slice - 2];
 
 	/*quotient ≈ most significant digit of slice / msd of denominator.*/
-	q_estimate.num[0] = (long int)msd_slice / n2->num[n2->len - 1];
+	q_estimate.num[0] = msd_slice / n2->num[n2->len - 1];
 	estimate_check = infiX_multiplication(n2, &q_estimate);
 	remains = infiX_subtraction(&slice_bignum, estimate_check);
 	if (!remains || !estimate_check)

@@ -1,10 +1,10 @@
 #include "infiX.h"
 
-static char to_base36(unsigned int num);
+static char to_base36(uint num);
 static int from_base36(char c);
 
 /*Number base to be used for conversions.*/
-unsigned int NUMBASE = 10;
+uint NUMBASE = 10;
 
 /**
  * parse_str - parse a string of numbers.
@@ -15,8 +15,8 @@ unsigned int NUMBASE = 10;
 numstr *parse_str(const char *str)
 {
 	numstr *arr = NULL;
-	unsigned long int s_i = 0, b_i = 0;
-	const unsigned int buf_size = 2048;
+	size_t s_i = 0, b_i = 0;
+	const uint buf_size = 2048;
 	char *buf = NULL;
 
 	if (!str || (!isdigit(str[0]) && str[0] != '-' && str[0] != '+'))
@@ -43,7 +43,7 @@ numstr *parse_str(const char *str)
 				break;
 
 			buf[b_i] = from_base36(str[s_i]);
-			if (buf[b_i] < 0 || (unsigned int)buf[b_i] >= NUMBASE)
+			if (buf[b_i] < 0 || (uint)buf[b_i] >= NUMBASE)
 			{
 				fprintf(stderr,
 						"ParsingError: Invalid character '%c' for base%d\n",
@@ -84,9 +84,9 @@ cleanup_numstr:
  *
  * Return: number of leading characters.
  */
-unsigned long int leading_chars_len(const char *str, char *ch)
+size_t leading_chars_len(const char *str, char *ch)
 {
-	unsigned long int count = 0;
+	size_t count = 0;
 
 	if (str && ch && *ch)
 	{
@@ -121,7 +121,7 @@ int from_base36(char c)
  *
  * Return: the ascii symbol, '\0' on error.
  */
-char to_base36(unsigned int num)
+char to_base36(uint num)
 {
 	if (num > 35)
 		return ('\0');
@@ -133,16 +133,16 @@ char to_base36(unsigned int num)
 }
 
 /**
- * numstr_to_bignum - convert a numstr to a BigNum.
+ * numstr_to_bignum - convert a numstr to a bignum.
  * @num: the numstr.
  *
- * Return: a pointer to a BigNum struct, NULL on failure.
+ * Return: a pointer to a bignum struct, NULL on failure.
  */
-BigNum *numstr_to_bignum(numstr *num)
+bignum *numstr_to_bignum(numstr *num)
 {
-	unsigned long int a_i = 0, n_i = 0, tmp = 0;
-	unsigned int max_digits = 0;
-	BigNum *arr = NULL;
+	size_t a_i = 0, n_i = 0, tmp = 0;
+	uint max_digits = 0;
+	bignum *arr = NULL;
 	char num_buf[36] = {0}, *end = NULL;
 
 	if (!num || !num->len || !num->str || !isalnum(num->str[0]))
@@ -190,27 +190,27 @@ BigNum *numstr_to_bignum(numstr *num)
 }
 
 /**
- * bignum_to_numstr - convert a BigNum to a numstr.
- * @arr: the BigNum.
+ * bignum_to_numstr - convert a bignum to a numstr.
+ * @arr: the bignum.
  *
  * Return: a pointer to a numstr, NULL on failure.
  */
-numstr *bignum_to_numstr(BigNum *arr)
+numstr *bignum_to_numstr(bignum *arr)
 {
 	(void)arr;
 	return (NULL);
 }
 
 /**
- * print_bignum - print a BigNum.
+ * print_bignum - print a bignum.
  * @arr: pointer to the array struct.
  *
  * Return: number of bytes printed, -1 on error.
  */
-long int print_bignum(BigNum *arr)
+size_t print_bignum(bignum *arr)
 {
 	char *str_arr = NULL;
-	long int bytes_printed = 0;
+	size_t bytes_printed = 0;
 
 	if (!arr)
 		return (-1);
@@ -229,15 +229,15 @@ long int print_bignum(BigNum *arr)
 }
 
 /**
- * uint_array_to_str - represent an unsigned int array as a string.
- * @arr: the unsigned int array.
- * @len: number of items in the unsigned int.
+ * uint_array_to_str - represent an uint array as a string.
+ * @arr: the uint array.
+ * @len: number of items in the uint.
  *
  * Return: pointer to a string, NULL on error.
  */
-char *uint_array_to_str(const unsigned int *arr, unsigned long int len)
+char *uint_array_to_str(const uint *arr, size_t len)
 {
-	unsigned long int s_i = 0, n = 0, len_sep = 0, len_str = 0;
+	size_t s_i = 0, n = 0, len_sep = 0, len_str = 0;
 	int bytes_written = 0;
 	char *str = NULL, *sep = ", ";
 
@@ -278,7 +278,7 @@ char *uint_array_to_str(const unsigned int *arr, unsigned long int len)
  *
  * Return: digits calculated.
  */
-unsigned int count_digits(unsigned long int num, unsigned int base)
+uint count_digits(size_t num, uint base)
 {
 	int d = 0;
 
@@ -296,7 +296,7 @@ unsigned int count_digits(unsigned long int num, unsigned int base)
  *
  * Return: the current base.
  */
-unsigned int get_base(void) { return (NUMBASE); }
+uint get_base(void) { return (NUMBASE); }
 
 /**
  * set_base - update the number base.
@@ -304,7 +304,7 @@ unsigned int get_base(void) { return (NUMBASE); }
  *
  * Return: the updated base on success, 0 on failure.
  */
-unsigned int set_base(unsigned int base)
+uint set_base(uint base)
 {
 	if (!(base >= 2 && base <= 36))
 		return (0);

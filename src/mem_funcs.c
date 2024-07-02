@@ -6,7 +6,7 @@
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xmalloc(unsigned long int size)
+void *xmalloc(size_t size)
 {
 	void *ptr = malloc(size);
 
@@ -23,7 +23,7 @@ void *xmalloc(unsigned long int size)
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xcalloc(unsigned long int items, unsigned long int sizeof_item)
+void *xcalloc(size_t items, size_t sizeof_item)
 {
 	void *ptr = calloc(items, sizeof_item);
 
@@ -40,7 +40,7 @@ void *xcalloc(unsigned long int items, unsigned long int sizeof_item)
  *
  * Return: pointer to the resized memory area, NULL on failure.
  */
-void *xrealloc(void *nullable_ptr, unsigned long int size)
+void *xrealloc(void *nullable_ptr, size_t size)
 {
 	void *ptr = realloc(nullable_ptr, size);
 
@@ -67,14 +67,14 @@ char *xstrdup(const char *str)
 }
 
 /**
- * alloc_bignum - allocate memory for a BigNum of given length.
+ * alloc_bignum - allocate memory for a bignum of given length.
  * @len: length of the array, length 0 returns the struct with a NULL array.
  *
- * Return: a pointer to a BigNum struct, NULL on failure.
+ * Return: a pointer to a bignum struct, NULL on failure.
  */
-BigNum *alloc_bignum(unsigned long int len)
+bignum *alloc_bignum(size_t len)
 {
-	BigNum *arr = xcalloc(1, sizeof(*arr));
+	bignum *arr = xcalloc(1, sizeof(*arr));
 
 	if (!arr)
 		return (NULL);
@@ -96,7 +96,7 @@ BigNum *alloc_bignum(unsigned long int len)
  *
  * Return: a pointer to a numstr struct, NULL on failure.
  */
-numstr *alloc_numstr(unsigned long int len)
+numstr *alloc_numstr(size_t len)
 {
 	numstr *arr = xcalloc(1, sizeof(*arr));
 
@@ -127,12 +127,12 @@ void *free_n_null(void *freeable_ptr)
 }
 
 /**
- * free_bignum - free a BigNum, return NULL.
- * @freeable_ptr: a pointer to a BigNum.
+ * free_bignum - free a bignum, return NULL.
+ * @freeable_ptr: a pointer to a bignum.
  *
  * Return: NULL always.
  */
-void *free_bignum(BigNum *freeable_ptr)
+void *free_bignum(bignum *freeable_ptr)
 {
 	if (freeable_ptr)
 		free_n_null(freeable_ptr->num);

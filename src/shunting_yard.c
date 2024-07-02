@@ -12,7 +12,7 @@ static math_function *get_math_function(char *op_symbol);
  */
 char *infiX_manager(char *num1, char *op_symbol, char *num2)
 {
-	unsigned int *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
+	uint *num1_arr = NULL, *num2_arr = NULL, *ans_arr = NULL;
 	char *answer = NULL;
 	math_function *func_ptr = NULL;
 
@@ -26,7 +26,7 @@ char *infiX_manager(char *num1, char *op_symbol, char *num2)
 	if (func_ptr)
 	{
 		errno = 0;
-		/*Convert num1 and num2 to unsigned int arrays first*/
+		/*Convert num1 and num2 to uint arrays first*/
 		num1_arr = str_to_intarray(num1);
 		if (num1_arr)
 			num2_arr = str_to_intarray(num2);
