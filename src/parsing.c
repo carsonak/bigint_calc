@@ -1,25 +1,25 @@
 #include "infiX.h"
 
-static char to_base36(uint num);
+static char to_base36(unsigned int num);
 static int from_base36(char c);
 
 /*Number base to be used for conversions.*/
 unsigned int NUMBASE = 10;
 
 /**
- * parse_str - parse a string of numbers.
- * @str: a string with numbers.
+ * parse_number - parse a string of numbers.
+ * @number_str: a string with a number.
  *
  * Return: pointer to a numstr struct, NULL of failure.
  */
-numstr *parse_str(const char *str)
+numstr *parse_number(const char *number_str)
 {
 	numstr *arr = NULL;
 	size_t s_i = 0, b_i = 0;
-	const int buf_size = 2048;
+	const int buf_size = 1024;
 	char *buf = NULL;
 
-	if (!str)
+	if (!number_str)
 		return (NULL);
 
 	arr = alloc_numstr(0);
@@ -27,33 +27,33 @@ numstr *parse_str(const char *str)
 	if (!buf || !arr)
 		goto cleanup_numstr;
 
-	for (s_i = 0; str[s_i] == '-' || str[s_i] == '+'; s_i++)
-		if (str[s_i] == '-')
+	for (s_i = 0; number_str[s_i] == '-' || number_str[s_i] == '+'; s_i++)
+		if (number_str[s_i] == '-')
 			arr->is_negative = !arr->is_negative;
 
-	if (str[s_i] == '_' || str[s_i] == ',')
+	if (number_str[s_i] == '_' || number_str[s_i] == ',')
 	{
 		fprintf(stderr, "ParsingError: Leading separators not allowed.\n");
 		goto cleanup_numstr;
 	}
 
-	s_i += leading_chars_len(&str[s_i], "0");
-	while (str[s_i])
+	s_i += leading_chars_len(&number_str[s_i], "0");
+	while (number_str[s_i])
 	{
-		for (b_i = 0; b_i < buf_size - 2 && str[s_i]; s_i++)
+		for (b_i = 0; b_i < buf_size - 2 && number_str[s_i]; s_i++)
 		{
-			if (str[s_i] == '_' || str[s_i] == ',')
+			if (number_str[s_i] == '_' || number_str[s_i] == ',')
 				continue;
 
-			if (str[s_i] == '.')
+			if (number_str[s_i] == '.')
 				break;
 
-			buf[b_i] = from_base36(str[s_i]);
+			buf[b_i] = from_base36(number_str[s_i]);
 			if (buf[b_i] < 0 || (unsigned int)buf[b_i] >= NUMBASE)
 			{
 				fprintf(stderr,
 						"ParsingError: Invalid character '%c' for base%d.\n",
-						str[s_i], NUMBASE);
+						number_str[s_i], NUMBASE);
 				goto cleanup_numstr;
 			}
 
@@ -68,7 +68,7 @@ numstr *parse_str(const char *str)
 
 		strcpy(&arr->str[arr->len], buf);
 		arr->len += b_i;
-		if (str[s_i] == '.')
+		if (number_str[s_i] == '.')
 			break;
 	}
 
@@ -78,7 +78,7 @@ numstr *parse_str(const char *str)
 		goto cleanup_numstr;
 	}
 
-	if (str[s_i - 1] == '_' || str[s_i - 1] == ',')
+	if (number_str[s_i - 1] == '_' || number_str[s_i - 1] == ',')
 	{
 		fprintf(stderr, "ParsingError: Trailing separators not allowed.\n");
 cleanup_numstr:
@@ -160,7 +160,8 @@ bignum *numstr_to_bignum(numstr *num)
 	if (!num || !num->len || !num->str || !isalnum(num->str[0]))
 		return (NULL);
 
-	/*sizeof(bignum) == ceil(numstr.len / max_digits of base in BIGNUM_UINT_MAX)*/
+	/*sizeof(bignum) == */
+	/*ceil(numstr.len / digits of base that can represent BIGNUM_UINT_MAX)*/
 	max_digits = count_digits(BIGNUM_UINT_MAX, NUMBASE);
 	a_i = (num->len / max_digits);
 	if (num->len % max_digits)

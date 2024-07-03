@@ -28,16 +28,16 @@ def numstr_to_numarray(input_strings: Iterable[str]) -> str:
         prev: int = str_i
         num_list: list[int] = []
         while str_i > 0:
-            str_i = 0 if str_i - 10 < 0 else str_i - 10
+            str_i = 0 if str_i - 9 < 0 else str_i - 9
             section: str = numstr[str_i:prev]
             carry += int(section)
-            num_list.append(carry % (4294967295 - 1))
-            carry //= (4294967295 - 1)
+            num_list.append(carry % 1000000000)
+            carry //= 1000000000
             prev = str_i
 
         while carry:
-            num_list.append(carry % (4294967295 - 1))
-            carry //= (4294967295 - 1)
+            num_list.append(carry % 1000000000)
+            carry //= 1000000000
 
         if is_negative:
             num_list[-1] *= -1

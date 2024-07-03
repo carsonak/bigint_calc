@@ -15,7 +15,7 @@ void teardown(void)
 	output = free_n_null(output);
 }
 
-TestSuite(null_inputs, .init = setup, .fini = teardown);
+TestSuite(null_inputs);
 
 Test(null_inputs, test_NULL_len0, .description = "(NULL, 0)", .timeout = 3.0)
 {

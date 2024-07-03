@@ -137,7 +137,7 @@ char *xstrdup(const char *str);
 
 /*parsing_funcs*/
 
-numstr *parse_str(const char *str);
+numstr *parse_number(const char *str);
 size_t leading_chars_len(const char *str, char *ch);
 bignum *numstr_to_bignum(numstr *num);
 numstr *bignum_to_numstr(bignum *arr);
