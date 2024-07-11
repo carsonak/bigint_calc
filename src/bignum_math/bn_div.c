@@ -11,7 +11,7 @@ ATTR_NONNULL_IDX(1, 3)
 static lint get_current_quotient(uint *slice, size_t len_slice, bignum *n2);
 
 /**
- * infiX_division - handle division of two bignums.
+ * bn_division - handle division of two bignums.
  * @n1: numerator.
  * @n2: denominator.
  *
@@ -19,7 +19,7 @@ static lint get_current_quotient(uint *slice, size_t len_slice, bignum *n2);
  *
  * Return: pointer to the result, NULL on failure.
  */
-bignum *infiX_division(bignum *n1, bignum *n2)
+bignum *bn_division(bignum *n1, bignum *n2)
 {
 	int is_zero = 0;
 	bignum *result = NULL;
@@ -52,7 +52,7 @@ bignum *infiX_division(bignum *n1, bignum *n2)
 }
 
 /**
- * infiX_modulus - handle modulo of two bignums.
+ * bn_modulus - handle modulo of two bignums.
  * @n1: numerator.
  * @n2: denominator.
  *
@@ -60,7 +60,7 @@ bignum *infiX_division(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-bignum *infiX_modulus(bignum *n1, bignum *n2)
+bignum *bn_modulus(bignum *n1, bignum *n2)
 {
 	int is_zero = 0;
 	bool is_negative = 0;
@@ -99,7 +99,7 @@ bignum *infiX_modulus(bignum *n1, bignum *n2)
 		n2->is_negative = false;
 		result = free_bignum(result);
 
-		result = infiX_subtraction(n2, remains);
+		result = bn_subtraction(n2, remains);
 		n2->is_negative = is_negative;
 		remains = free_bignum(remains);
 		remains = result;
@@ -144,7 +144,7 @@ bignum *divide_negatives(bignum *n1, bignum *n2)
 		/* -8 // 5 = -((8 // 5) + 1)*/
 		/* 8 // -5 = -((8 // 5) + 1) */
 		tmp = divide(n1, n2);
-		result = infiX_addition(tmp, &one);
+		result = bn_addition(tmp, &one);
 		if (result)
 			result->is_negative = true;
 	}
@@ -340,8 +340,8 @@ lint get_current_quotient(
 
 	/*quotient ≈ most significant digit of slice / msd of denominator.*/
 	q_estimate.num[0] = msd_slice / n2->num[n2->len - 1];
-	estimate_check = infiX_multiplication(n2, &q_estimate);
-	remains = infiX_subtraction(&slice_bignum, estimate_check);
+	estimate_check = bn_multiplication(n2, &q_estimate);
+	remains = bn_subtraction(&slice_bignum, estimate_check);
 	if (!remains || !estimate_check)
 	{
 		remains = free_bignum(remains);
@@ -375,8 +375,8 @@ lint get_current_quotient(
 		estimate_check = free_bignum(estimate_check);
 		remains = free_bignum(remains);
 
-		estimate_check = infiX_multiplication(n2, &q_estimate);
-		remains = infiX_subtraction(&slice_bignum, estimate_check);
+		estimate_check = bn_multiplication(n2, &q_estimate);
+		remains = bn_subtraction(&slice_bignum, estimate_check);
 		if (!remains || !estimate_check)
 		{
 			remains = free_bignum(remains);

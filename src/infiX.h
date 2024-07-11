@@ -137,15 +137,13 @@ char *xstrdup(const char *str);
 
 /*parsing_funcs*/
 
-numstr *parse_number(const char *str);
+numstr *parse_number(const char *str, unsigned int base);
 size_t leading_chars_len(const char *str, char *ch);
-bignum *numstr_to_bignum(numstr *num);
+bignum *numstr_to_bignum(numstr *num, unsigned int base);
 numstr *bignum_to_numstr(bignum *arr);
 size_t print_bignum(bignum *arr);
 char *uint_array_to_str(const uint *arr, size_t len);
 unsigned int count_digits(size_t num, unsigned int base);
-unsigned int get_base(void);
-unsigned int set_base(unsigned int base);
 
 /*array_funcs*/
 
@@ -156,10 +154,10 @@ lint cmp_rev_uint32array(
 
 /*math_funcs*/
 
-bignum *infiX_division(bignum *n1, bignum *n2);
-bignum *infiX_modulus(bignum *n1, bignum *n2);
-bignum *infiX_subtraction(bignum *n1, bignum *n2);
-bignum *infiX_multiplication(bignum *n1, bignum *n2);
-bignum *infiX_addition(bignum *n1, bignum *n2);
+bignum *bn_division(bignum *n1, bignum *n2);
+bignum *bn_modulus(bignum *n1, bignum *n2);
+bignum *bn_subtraction(bignum *n1, bignum *n2);
+bignum *bn_multiplication(bignum *n1, bignum *n2);
+bignum *bn_addition(bignum *n1, bignum *n2);
 
 #endif /*INFIX_H*/

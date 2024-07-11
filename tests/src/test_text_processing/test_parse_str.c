@@ -5,10 +5,7 @@ numstr *output = NULL;
 /**
  * setup - setup some variables.
  */
-void setup(void)
-{
-	set_base(10);
-}
+void setup(void) {}
 
 /**
  * teardown - cleanup after tests.
@@ -22,12 +19,12 @@ TestSuite(null_inputs);
 
 Test(null_inputs, test_NULL, .description = "NULL", .timeout = 3.0)
 {
-	cr_assert(zero(ptr, parse_number(NULL)));
+	cr_assert(zero(ptr, parse_number(NULL, 10)));
 }
 
 Test(null_inputs, test_null, .description = "\0001", .timeout = 3.0)
 {
-	cr_assert(zero(ptr, parse_number("\0001")));
+	cr_assert(zero(ptr, parse_number("\0001", 10)));
 }
 
 TestSuite(invalid_inputs);
@@ -36,13 +33,11 @@ Test(invalid_inputs, test_all_nonvalid_charbits,
 	 .description = "invalid chars", .timeout = 3.0)
 {
 	char c[2] = {SCHAR_MIN, '\0'};
-
-	set_base(36);
 	cr_redirect_stderr();
 	for (; c[0] < SCHAR_MAX; c[0]++)
 	{
 		if (!isalnum(c[0]))
-			cr_assert(zero(ptr, parse_number(c)));
+			cr_assert(zero(ptr, parse_number(c, 36)));
 	}
 }
 
@@ -51,12 +46,11 @@ Test(invalid_inputs, test_all_nonvalid_charbits2,
 {
 	char c[3] = {SCHAR_MIN, SCHAR_MIN, '\0'};
 
-	set_base(36);
 	cr_redirect_stderr();
 	for (; c[0] < SCHAR_MAX; c[0]++, c[1]++)
 	{
 		if (!isalnum(c[0]))
-			cr_assert(zero(ptr, parse_number(c)));
+			cr_assert(zero(ptr, parse_number(c, 36)));
 	}
 }
 
@@ -65,12 +59,11 @@ Test(invalid_inputs, test_all_nonvalid_charbits2alt,
 {
 	char c[3] = {SCHAR_MIN, SCHAR_MAX, '\0'};
 
-	set_base(36);
 	cr_redirect_stderr();
 	for (; c[0] < SCHAR_MAX && c[1] > SCHAR_MIN; c[0]++, c[1]--)
 	{
 		if (!isalnum(c[0]) || !isalnum(c[1]))
-			cr_assert(zero(ptr, parse_number(c)));
+			cr_assert(zero(ptr, parse_number(c, 36)));
 	}
 }
 
@@ -79,7 +72,6 @@ Test(invalid_inputs, test_all_invalid_charbits3,
 {
 	char c[] = {'\0', '\0', '\0', '\0'};
 
-	set_base(36);
 	cr_redirect_stderr();
 	c[0] = '+';
 	for (c[1] = '0'; c[1] <= '9'; c[1]++)
@@ -87,7 +79,7 @@ Test(invalid_inputs, test_all_invalid_charbits3,
 		for (c[2] = SCHAR_MIN; c[2] < SCHAR_MAX; c[2]++)
 		{
 			if (!isalnum(c[2]) && c[2] != '\0' && c[2] != '.')
-				cr_assert(zero(ptr, parse_number(c)));
+				cr_assert(zero(ptr, parse_number(c, 36)));
 		}
 	}
 
@@ -97,7 +89,7 @@ Test(invalid_inputs, test_all_invalid_charbits3,
 		for (c[2] = SCHAR_MIN; c[2] < SCHAR_MAX; c[2]++)
 		{
 			if (!isalnum(c[2]) && c[2] != '\0' && c[2] != '.')
-				cr_assert(zero(ptr, parse_number(c)));
+				cr_assert(zero(ptr, parse_number(c, 36)));
 		}
 	}
 }
@@ -106,91 +98,90 @@ Test(invalid_inputs, test_leading_separators_signs,
 	 .description = "Assortment of '.-_,+'", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_number("---___")));
-	cr_assert(zero(ptr, parse_number("---,,,")));
-	cr_assert(zero(ptr, parse_number("+++___,,,")));
-	cr_assert(zero(ptr, parse_number("+++_,_,_,")));
-	cr_assert(zero(ptr, parse_number("-+-+-+-.")));
-	cr_assert(zero(ptr, parse_number("+-+-+-+.")));
-	cr_assert(zero(ptr, parse_number("---___.")));
-	cr_assert(zero(ptr, parse_number("---,,,.")));
-	cr_assert(zero(ptr, parse_number("+++___,,,.")));
-	cr_assert(zero(ptr, parse_number("+++_,_,_,.")));
+	cr_assert(zero(ptr, parse_number("---___", 10)));
+	cr_assert(zero(ptr, parse_number("---,,,", 10)));
+	cr_assert(zero(ptr, parse_number("+++___,,,", 10)));
+	cr_assert(zero(ptr, parse_number("+++_,_,_,", 10)));
+	cr_assert(zero(ptr, parse_number("-+-+-+-.", 10)));
+	cr_assert(zero(ptr, parse_number("+-+-+-+.", 10)));
+	cr_assert(zero(ptr, parse_number("---___.", 10)));
+	cr_assert(zero(ptr, parse_number("---,,,.", 10)));
+	cr_assert(zero(ptr, parse_number("+++___,,,.", 10)));
+	cr_assert(zero(ptr, parse_number("+++_,_,_,.", 10)));
 }
 
 Test(invalid_inputs, test_invalid_chars_mixed_with_valid_chars,
 	 .description = "Assortment of valid and invalid chars", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_number("123-567")));
-	cr_assert(zero(ptr, parse_number("123 567")));
-	cr_assert(zero(ptr, parse_number("123\"567\"")));
-	cr_assert(zero(ptr, parse_number("123+567")));
-	cr_assert(zero(ptr, parse_number("123/567")));
-	cr_assert(zero(ptr, parse_number("123*567")));
-	cr_assert(zero(ptr, parse_number("123^567")));
-	cr_assert(zero(ptr, parse_number("123(567)")));
-	cr_assert(zero(ptr, parse_number("123>567")));
+	cr_assert(zero(ptr, parse_number("123-567", 10)));
+	cr_assert(zero(ptr, parse_number("123 567", 10)));
+	cr_assert(zero(ptr, parse_number("123\"567\"", 10)));
+	cr_assert(zero(ptr, parse_number("123+567", 10)));
+	cr_assert(zero(ptr, parse_number("123/567", 10)));
+	cr_assert(zero(ptr, parse_number("123*567", 10)));
+	cr_assert(zero(ptr, parse_number("123^567", 10)));
+	cr_assert(zero(ptr, parse_number("123(567)", 10)));
+	cr_assert(zero(ptr, parse_number("123>567", 10)));
 }
 
 Test(invalid_inputs, test_34base2, .description = "+34", .timeout = 3.0)
 {
-	set_base(2);
-	cr_assert(zero(ptr, parse_number("+34")));
+	cr_assert(zero(ptr, parse_number("+34", 2)));
 }
 
 Test(invalid_inputs, test_leading_underscore,
 	 .description = "_20", .timeout = 3.0)
 {
-	cr_assert(zero(ptr, parse_number("_20")));
+	cr_assert(zero(ptr, parse_number("_20", 10)));
 }
 
 Test(invalid_inputs, test_trailing_underscore,
 	 .description = "20_", .timeout = 3.0)
 {
-	cr_assert(zero(ptr, parse_number("20_")));
+	cr_assert(zero(ptr, parse_number("20_", 10)));
 }
 
 Test(invalid_inputs, test_leading_comma,
 	 .description = ",20", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_number(",20")));
+	cr_assert(zero(ptr, parse_number(",20", 10)));
 }
 
 Test(invalid_inputs, test_trailing_comma,
 	 .description = "20,", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_number("20,")));
+	cr_assert(zero(ptr, parse_number("20,", 10)));
 }
 
 Test(invalid_inputs, test_neg_leading_underscore,
 	 .description = "-_20", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_number("-_20")));
+	cr_assert(zero(ptr, parse_number("-_20", 10)));
 }
 
 Test(invalid_inputs, test_neg_leading_comma,
 	 .description = "-,20", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_number("-,20")));
+	cr_assert(zero(ptr, parse_number("-,20", 10)));
 }
 
 Test(invalid_inputs, test_pos_leading_underscore,
 	 .description = "+_20", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_number("+_20")));
+	cr_assert(zero(ptr, parse_number("+_20", 10)));
 }
 
 Test(invalid_inputs, test_pos_leading_comma,
 	 .description = "+,20", .timeout = 3.0)
 {
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, parse_number("+,20")));
+	cr_assert(zero(ptr, parse_number("+,20", 10)));
 }
 
 TestSuite(valid_inputs, .init = setup, .fini = teardown);
@@ -201,7 +192,7 @@ Test(valid_inputs, test_decimals1, .description = "0-9", .timeout = 3.0)
 
 	for (; c[0] <= '9'; c[0]++)
 	{
-		output = parse_number(c);
+		output = parse_number(c, 10);
 		cr_assert(eq(sz, output->len, 1));
 		cr_assert(eq(chr, output->is_negative, false));
 		cr_assert(eq(str, output->str, c));
@@ -214,10 +205,9 @@ Test(valid_inputs, test_uppercase_letters1,
 {
 	char c[2] = {'A', '\0'};
 
-	set_base(36);
 	for (; c[0] <= 'Z'; c[0]++)
 	{
-		output = parse_number(c);
+		output = parse_number(c, 36);
 		cr_assert(eq(sz, output->len, 1));
 		cr_assert(eq(chr, output->is_negative, false));
 		cr_assert(eq(str, output->str, c));
@@ -230,10 +220,9 @@ Test(valid_inputs, test_lowercase_letters1,
 {
 	char c[2] = {'a', '\0'}, out[2] = {'A', '\0'};
 
-	set_base(36);
 	for (; c[0] <= 'z' && out[0] <= 'Z'; c[0]++, out[0]++)
 	{
-		output = parse_number(c);
+		output = parse_number(c, 36);
 		cr_assert(eq(sz, output->len, 1));
 		cr_assert(eq(chr, output->is_negative, false));
 		cr_assert(eq(str, output->str, out));
@@ -246,12 +235,11 @@ Test(valid_inputs, test_decimals2,
 {
 	char c[3] = {'1', '0', '\0'};
 
-	set_base(36);
 	for (; c[0] <= '9'; c[0]++)
 	{
 		for (c[1] = '0'; c[1] <= '9'; c[1]++)
 		{
-			output = parse_number(c);
+			output = parse_number(c, 36);
 			cr_assert(eq(sz, output->len, 2));
 			cr_assert(eq(chr, output->is_negative, false));
 			cr_assert(eq(str, output->str, c));
@@ -265,12 +253,11 @@ Test(valid_inputs, test_uppercase_letters2,
 {
 	char c[3] = {'A', 'A', '\0'};
 
-	set_base(36);
 	for (; c[0] <= 'Z'; c[0]++)
 	{
 		for (c[1] = 'A'; c[1] <= 'Z'; c[1]++)
 		{
-			output = parse_number(c);
+			output = parse_number(c, 36);
 			cr_assert(eq(sz, output->len, 2));
 			cr_assert(eq(chr, output->is_negative, false));
 			cr_assert(eq(str, output->str, c));
@@ -284,14 +271,13 @@ Test(valid_inputs, test_lowercase_letters2,
 {
 	char c[3] = {'a', 'a', '\0'}, out[3] = {'A', 'A', '\0'};
 
-	set_base(36);
 	for (; c[0] <= 'z' && out[0] <= 'Z'; c[0]++, out[0]++)
 	{
 		for (c[1] = 'a', out[1] = 'A';
 			 c[1] <= 'z' && out[1] <= 'Z';
 			 c[1]++, out[1]++)
 		{
-			output = parse_number(c);
+			output = parse_number(c, 36);
 			cr_assert(eq(sz, output->len, 2));
 			cr_assert(eq(chr, output->is_negative, false));
 			cr_assert(eq(str, output->str, out));
@@ -303,7 +289,7 @@ Test(valid_inputs, test_lowercase_letters2,
 Test(valid_inputs, test_0000000000000,
 	 .description = "0000000000000", .timeout = 3.0)
 {
-	output = parse_number("0000000000000");
+	output = parse_number("0000000000000", 10);
 
 	cr_assert(eq(sz, output->len, 1));
 	cr_assert(eq(chr, output->is_negative, false));
@@ -313,7 +299,7 @@ Test(valid_inputs, test_0000000000000,
 Test(valid_inputs, test_neg0000000000000,
 	 .description = "-0000000000000", .timeout = 3.0)
 {
-	output = parse_number("-0000000000000");
+	output = parse_number("-0000000000000", 10);
 
 	cr_assert(eq(sz, output->len, 1));
 	cr_assert(eq(chr, output->is_negative, true));
@@ -323,7 +309,7 @@ Test(valid_inputs, test_neg0000000000000,
 Test(valid_inputs, test_00000000000001,
 	 .description = "00000000000001", .timeout = 3.0)
 {
-	output = parse_number("00000000000001");
+	output = parse_number("00000000000001", 10);
 
 	cr_assert(eq(sz, output->len, 1));
 	cr_assert(eq(chr, output->is_negative, false));
@@ -333,7 +319,7 @@ Test(valid_inputs, test_00000000000001,
 Test(valid_inputs, test_neg00000000000001,
 	 .description = "-00000000000001", .timeout = 3.0)
 {
-	output = parse_number("-00000000000001");
+	output = parse_number("-00000000000001", 10);
 
 	cr_assert(eq(sz, output->len, 1));
 	cr_assert(eq(chr, output->is_negative, true));
@@ -343,7 +329,7 @@ Test(valid_inputs, test_neg00000000000001,
 Test(valid_inputs, test_mmneg10_000_000_000,
 	 .description = "-10_000_000_000", .timeout = 3.0)
 {
-	output = parse_number("---10_000_000_000");
+	output = parse_number("---10_000_000_000", 10);
 
 	cr_assert(eq(sz, output->len, 11));
 	cr_assert(eq(chr, output->is_negative, true));
@@ -352,8 +338,7 @@ Test(valid_inputs, test_mmneg10_000_000_000,
 
 Test(valid_inputs, test_neg1, .description = "--ZZZ,4Ar,YU8,012,qa9", .timeout = 3.0)
 {
-	set_base(36);
-	output = parse_number("--ZZZ,4Ar,YU8,012,qa9");
+	output = parse_number("--ZZZ,4Ar,YU8,012,qa9", 36);
 
 	cr_assert(eq(sz, output->len, 15));
 	cr_assert(eq(chr, output->is_negative, false));
@@ -362,7 +347,7 @@ Test(valid_inputs, test_neg1, .description = "--ZZZ,4Ar,YU8,012,qa9", .timeout =
 
 Test(valid_inputs, test_2000, .description = "2,0__0,,,0", .timeout = 3.0)
 {
-	output = parse_number("2,0__0,,,0");
+	output = parse_number("2,0__0,,,0", 10);
 
 	cr_assert(eq(sz, output->len, 4));
 	cr_assert(eq(chr, output->is_negative, false));

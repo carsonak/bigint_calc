@@ -5,7 +5,7 @@ static bignum *subtract_negatives(bignum *n1, bignum *n2);
 static bignum *subtract(bignum *n1, bignum *n2) ATTR_NONNULL;
 
 /**
- * infiX_subtraction - handle subtraction of two bignums.
+ * bn_subtraction - handle subtraction of two bignums.
  * @n1: first number.
  * @n2: second number.
  *
@@ -13,7 +13,7 @@ static bignum *subtract(bignum *n1, bignum *n2) ATTR_NONNULL;
  *
  * Return: pointer to the result, NULL on failure.
  */
-bignum *infiX_subtraction(bignum *n1, bignum *n2)
+bignum *bn_subtraction(bignum *n1, bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -43,11 +43,11 @@ bignum *subtract_negatives(bignum *n1, bignum *n2)
 	if (neg1 && neg2) /*-8 - -5 = -8 + 5 = 5-8*/
 		result = subtract(n2, n1);
 	else if (neg2) /*8 - -5 = 8+5*/
-		result = infiX_addition(n1, n2);
+		result = bn_addition(n1, n2);
 	else if (neg1)
 	{
 		/*-8 - 5 = -(8+5)*/
-		result = infiX_addition(n1, n2);
+		result = bn_addition(n1, n2);
 		if (result)
 			result->is_negative = true;
 	}

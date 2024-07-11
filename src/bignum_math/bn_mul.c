@@ -5,7 +5,7 @@ static bignum *multiply_negatives(bignum *n1, bignum *n2);
 static bignum *multiply(bignum *n1, bignum *n2) ATTR_NONNULL;
 
 /**
- * infiX_multiplication - handle multiplication of two bignums.
+ * bn_multiplication - handle multiplication of two bignums.
  * @n1: the first number.
  * @n2: the second number.
  *
@@ -13,7 +13,7 @@ static bignum *multiply(bignum *n1, bignum *n2) ATTR_NONNULL;
  *
  * Return: pointer to result, NULL on failure.
  */
-bignum *infiX_multiplication(bignum *n1, bignum *n2)
+bignum *bn_multiplication(bignum *n1, bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -102,7 +102,7 @@ bignum *multiply(bignum *n1, bignum *n2)
 		}
 
 		current_mul->num[n2_i + n1_i] = byt_mul;
-		product = infiX_addition(increment, current_mul);
+		product = bn_addition(increment, current_mul);
 		current_mul = free_bignum(current_mul);
 		increment = free_bignum(increment);
 		if (!product)

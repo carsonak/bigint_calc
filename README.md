@@ -1,4 +1,4 @@
-# infiX_math
+# bn_math
 
 This project aims to provide basic calculator functionality for numbers of
 arbitrary length. This is a personal project meant to challenge myself and

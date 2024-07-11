@@ -10,6 +10,8 @@ INCLUDE_DIRS := $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \+
 
 # All .c files
 SRC := $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
+MATH_SRC := $(filter $(SRC_DIR)/bignum_math/%,$(SRC))
+PARSING_SRC := $(filter $(SRC_DIR)/text_processing/%,$(SRC))
 # OBJ_DIR will have the same file tree as in the SRC_DIR
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track include files (i.e .h files)
@@ -29,7 +31,7 @@ STACK_CHECKS := -fstack-protector-strong -fstack-clash-protection
 CONTROL_TRANSFER_CHECKS := -fcf-protection=full
 
 # Include flags
-INCL_FLAGS := $(addprefix -I,$(INCLUDE_DIRS))
+INCL_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
 # Linker flags
 LDLIBS :=
 LDFLAGS := -Wl,-z,relro

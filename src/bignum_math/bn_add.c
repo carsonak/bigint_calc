@@ -4,7 +4,7 @@ static bignum *add_negatives(bignum *n1, bignum *n2) ATTR_NONNULL;
 static bignum *add(bignum *n1, bignum *n2) ATTR_NONNULL;
 
 /**
- * infiX_addition - handle addition of two bignums.
+ * bn_addition - handle addition of two bignums.
  * @n1: the first number.
  * @n2: the second number.
  *
@@ -12,7 +12,7 @@ static bignum *add(bignum *n1, bignum *n2) ATTR_NONNULL;
  *
  * Return: pointer to result, NULL on failure.
  */
-bignum *infiX_addition(bignum *n1, bignum *n2)
+bignum *bn_addition(bignum *n1, bignum *n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
@@ -47,9 +47,9 @@ bignum *add_negatives(bignum *n1, bignum *n2)
 			result->is_negative = true;
 	}
 	else if (neg1) /*-8 + 7 = 7-8*/
-		result = infiX_subtraction(n2, n1);
+		result = bn_subtraction(n2, n1);
 	else if (neg2) /*8 + -7 = 8-7*/
-		result = infiX_subtraction(n1, n2);
+		result = bn_subtraction(n1, n2);
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;

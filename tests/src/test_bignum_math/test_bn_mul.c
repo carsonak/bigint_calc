@@ -5,13 +5,13 @@ bignum num2 = {.len = 0, .is_negative = false, .num = NULL};
 bignum expected = {.len = 0, .is_negative = false, .num = NULL};
 
 /**
- * infiX_subtraction - dummy.
+ * bn_subtraction - dummy.
  * @n1: unused.
  * @n2: unused.
  *
  * Return: a 0 length array, NULL on failure.
  */
-bignum *infiX_subtraction(bignum *n1, bignum *n2)
+bignum *bn_subtraction(bignum *n1, bignum *n2)
 {
 	(void)n1;
 	(void)n2;
@@ -46,7 +46,7 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_null_times_null,
 	 .description = "NULL * NULL = NULL", .timeout = 3.0)
 {
-	bignum *output = infiX_multiplication(NULL, NULL);
+	bignum *output = bn_multiplication(NULL, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -58,7 +58,7 @@ Test(null_inputs, test_1_times_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	bignum *output = infiX_multiplication(&num1, NULL);
+	bignum *output = bn_multiplication(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -70,7 +70,7 @@ Test(null_inputs, test_null_times_1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = infiX_multiplication(NULL, &num2);
+	bignum *output = bn_multiplication(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -82,7 +82,7 @@ Test(null_inputs, test_0_times_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	bignum *output = infiX_multiplication(&num1, NULL);
+	bignum *output = bn_multiplication(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -94,7 +94,7 @@ Test(null_inputs, test_null_times_0,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = infiX_multiplication(NULL, &num2);
+	bignum *output = bn_multiplication(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -107,7 +107,7 @@ Test(null_inputs, test_minus1_times_null,
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
 	num1.is_negative = true;
-	bignum *output = infiX_multiplication(&num1, NULL);
+	bignum *output = bn_multiplication(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -120,7 +120,7 @@ Test(null_inputs, test_null_times_minus1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 	num2.is_negative = true;
-	bignum *output = infiX_multiplication(NULL, &num2);
+	bignum *output = bn_multiplication(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -130,7 +130,7 @@ TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
 Test(zero_len_arrays, test_null_times_null,
 	 .description = "null_array * null_array = null_array", .timeout = 3.0)
 {
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(zero(sz, output->len));
 	cr_expect(zero(chr, output->is_negative));
@@ -145,7 +145,7 @@ Test(zero_len_arrays, test_4490998_times_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(zero(sz, output->len));
 	cr_expect(zero(chr, output->is_negative));
@@ -161,7 +161,7 @@ Test(zero_len_arrays, test_null_times_largenum,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(zero(sz, output->len));
 	cr_expect(zero(chr, output->is_negative));
@@ -182,7 +182,7 @@ Test(simple_multiplications, test_0_times_0, .description = "0 * 0 = 0",
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -201,7 +201,7 @@ Test(simple_multiplications, test_1_times_0, .description = "1 * 0 = 0",
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -220,7 +220,7 @@ Test(simple_multiplications, test_0_times_1, .description = "0 * 1 = 0",
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -239,7 +239,7 @@ Test(simple_multiplications, test_1_times_1, .description = "1 * 1 = 1",
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -260,7 +260,7 @@ Test(simple_multiplications, test_long_times_0,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -283,7 +283,7 @@ Test(simple_multiplications, test_0_times_long,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -307,7 +307,7 @@ Test(simple_multiplications, test_u100c_times_u100d,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -333,7 +333,7 @@ Test(simple_multiplications, test_u100d_times_u100c,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -361,7 +361,7 @@ Test(negative_multiplications, test_minus_u100a_times_minus_u100c,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -388,7 +388,7 @@ Test(negative_multiplications, test_minus_u100c_times_minus_u100a,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -414,7 +414,7 @@ Test(negative_multiplications, test_u100a_times_minus_u100c,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.is_negative = true;
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -441,7 +441,7 @@ Test(negative_multiplications, test_minus_u100c_times_u100a,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.is_negative = true;
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -467,7 +467,7 @@ Test(negative_multiplications, test_minus_u100a_times_u100c,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.is_negative = true;
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -494,7 +494,7 @@ Test(negative_multiplications, test_u100c_times_minus_u100a,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.is_negative = true;
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -517,7 +517,7 @@ Test(large_multiplications, test_o1ka_times_o1kb,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -539,7 +539,7 @@ Test(large_multiplications, test_o500c_times_o500d,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = infiX_multiplication(&num1, &num2);
+	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));

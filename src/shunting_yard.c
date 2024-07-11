@@ -63,11 +63,11 @@ math_function *get_math_function(char *op_symbol)
 {
 	int i = 0;
 	op_func operators[] = {
-		{"+", infiX_addition},
-		{"-", infiX_subtraction},
-		{"x", infiX_multiplication},
-		{"/", infiX_division},
-		{"%", infiX_division},
+		{"+", bn_addition},
+		{"-", bn_subtraction},
+		{"x", bn_multiplication},
+		{"/", bn_division},
+		{"%", bn_division},
 		{NULL, NULL},
 	};
 
