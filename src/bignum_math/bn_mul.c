@@ -1,7 +1,6 @@
 #include "infiX.h"
 
-ATTR_NONNULL
-static bignum *multiply_negatives(bignum *n1, bignum *n2);
+static bignum *multiply_negatives(bignum *n1, bignum *n2) ATTR_NONNULL;
 static bignum *multiply(bignum *n1, bignum *n2) ATTR_NONNULL;
 
 /**

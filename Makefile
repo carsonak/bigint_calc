@@ -10,8 +10,6 @@ INCLUDE_DIRS := $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \+
 
 # All .c files
 SRC := $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
-MATH_SRC := $(filter $(SRC_DIR)/bignum_math/%,$(SRC))
-PARSING_SRC := $(filter $(SRC_DIR)/text_processing/%,$(SRC))
 # OBJ_DIR will have the same file tree as in the SRC_DIR
 OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track include files (i.e .h files)
@@ -20,7 +18,7 @@ DEP_FILES := $(OBJ:.o=.d)
 # https://clang.llvm.org/docs/AddressSanitizer.html
 ADDRESS_SANITISER := -fsanitize=address -fno-common
 ASAN_OPTIONS := ASAN_OPTIONS=detect_leaks=1
-LSAN_OPTIONS := LSAN_OPTIONS=suppressions="$(TESTS_DIR)/lsan.supp":print_suppressions=0
+LSAN_OPTIONS := LSAN_OPTIONS=suppressions="lsan.supp":print_suppressions=0
 # https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html
 UNDEFINED_SANITISER := -fsanitize=undefined
 # https://www.gnu.org/software/libc/manual/html_node/Source-Fortification.html
@@ -53,10 +51,8 @@ $(BINARY): $(OBJ)
 
 # @< - name of only the first prequisite
 # @D - the directory of the target
-# Static rule for object files compiled to obj directory
-# https://www.gnu.org/software/make/manual/html_node/Static-versus-Implicit.html
-$(OBJ):$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
-	@mkdir -p $(@D)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # Redefining CFLAGS for release build

@@ -9,6 +9,7 @@
 #include <limits.h>	 /* type_max */
 #include <stdbool.h> /* bool */
 #include <stdint.h>	 /* fixed width types */
+#include <stddef.h>	 /* size_t, ptr_diff */
 #include <stdio.h>	 /* *printf, perror */
 #include <stdlib.h>	 /* *alloc */
 #include <string.h>	 /* strlen, strcpy */
@@ -117,6 +118,9 @@ ATTR_MALLOC
 ATTR_MALLOC_FREE(free_bignum)
 bignum *alloc_bignum(size_t len);
 ATTR_MALLOC
+ATTR_MALLOC_FREE(free_bignum)
+bignum *bignum_dup(bignum *bn);
+ATTR_MALLOC
 ATTR_MALLOC_FREE(free_numstr)
 numstr *alloc_numstr(size_t len);
 ATTR_MALLOC
@@ -127,7 +131,6 @@ ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1)
 void *xmalloc(size_t size);
-ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(2)
 void *xrealloc(void *nullable_ptr, size_t size);
@@ -140,7 +143,7 @@ char *xstrdup(const char *str);
 numstr *parse_number(const char *str, unsigned int base);
 size_t leading_chars_len(const char *str, char *ch);
 bignum *numstr_to_bignum(numstr *num, unsigned int base);
-numstr *bignum_to_numstr(bignum *arr);
+numstr *bignum_to_numstr(bignum *arr, unsigned int base);
 size_t print_bignum(bignum *arr);
 char *uint_array_to_str(const uint *arr, size_t len);
 unsigned int count_digits(size_t num, unsigned int base);
@@ -154,10 +157,11 @@ lint cmp_rev_uint32array(
 
 /*math_funcs*/
 
+bignum *bn_addition(bignum *n1, bignum *n2);
 bignum *bn_division(bignum *n1, bignum *n2);
 bignum *bn_modulus(bignum *n1, bignum *n2);
-bignum *bn_subtraction(bignum *n1, bignum *n2);
 bignum *bn_multiplication(bignum *n1, bignum *n2);
-bignum *bn_addition(bignum *n1, bignum *n2);
+bignum *bn_power(bignum *base, bignum *exponent);
+bignum *bn_subtraction(bignum *n1, bignum *n2);
 
 #endif /*INFIX_H*/

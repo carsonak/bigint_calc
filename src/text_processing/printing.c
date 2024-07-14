@@ -69,3 +69,27 @@ char *uint_array_to_str(const uint *arr, size_t len)
 
 	return (xrealloc(str, strlen(str) + 1));
 }
+
+/**
+ * print_numstr - print a numstr.
+ * @num: the numstr.
+ *
+ * Return: number of bytes printed.
+ */
+size_t print_numstr(numstr *num)
+{
+	size_t bytes_printed = 0;
+
+	if (!num || !num->str)
+	{
+		fprintf(stderr, "NULL\n");
+		return (0);
+	}
+
+	if (num->is_negative)
+		bytes_printed += printf("-");
+
+	bytes_printed += printf("%s\n", num->str);
+
+	return (bytes_printed);
+}

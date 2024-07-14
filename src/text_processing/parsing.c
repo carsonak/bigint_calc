@@ -168,7 +168,7 @@ bignum *numstr_to_bignum(numstr *num, unsigned int base)
 
 	/*sizeof(bignum) == */
 	/*ceil(numstr.len / no. of digits that can represent BIGNUM_UINT_MAX)*/
-	digits = count_digits(BIGNUM_UINT_MAX, base) - 1;
+	digits = count_digits(BIGNUM_UINT_MAX - 1, base);
 	a_i = (num->len / digits);
 	if (num->len % digits)
 		a_i++;
@@ -280,11 +280,26 @@ unsigned int count_digits(size_t num, unsigned int base)
 /**
  * bignum_to_numstr - convert a bignum to a numstr.
  * @arr: the bignum.
+ * @base: an int between 2-36 indicating the base of the number.
  *
  * Return: a pointer to a numstr, NULL on failure.
  */
-numstr *bignum_to_numstr(bignum *arr)
+numstr *bignum_to_numstr(bignum *arr, unsigned int base)
 {
-	(void)arr;
-	return (NULL);
+	size_t g = 0, h = 0;
+	int bytes_written = 0;
+	numstr *num = NULL;
+
+	if (!arr || base < 2 || base > 36)
+		return (NULL);
+
+	num = alloc_numstr(arr->len * count_digits(BIGNUM_UINT_MAX - 1, 10) + 1);
+	for (g = arr->len, h = 0; num && g > 0 && h < num->len;)
+	{
+		--g;
+		bytes_written = sprintf(&num->str[h], "%u", arr->num[g]);
+		h += bytes_written - 1;
+	}
+
+	return (num);
 }

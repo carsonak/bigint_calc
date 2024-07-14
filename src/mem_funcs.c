@@ -91,6 +91,34 @@ bignum *alloc_bignum(size_t len)
 }
 
 /**
+ * bignum_dup - duplicate a bignum.
+ * @bn: a pointer to a bignum.
+ *
+ * Return: a pointer to a copy of bn.
+ */
+bignum *bignum_dup(bignum *bn)
+{
+	bignum *dup = NULL;
+
+	if (!bn)
+		return (NULL);
+
+	trim_bignum(bn);
+	dup = alloc_bignum(0);
+	if (!bn->len || !dup)
+		return (dup);
+
+	dup->num = xmalloc(bn->len * sizeof(*dup->num));
+	if (!dup->num)
+		return (free_bignum(dup));
+
+	dup->is_negative = bn->is_negative;
+	dup->len = bn->len;
+	memcpy(dup->num, bn->num, sizeof(*bn->num) * bn->len);
+	return (dup);
+}
+
+/**
  * alloc_numstr - allocate memory for a numstr of given length.
  * @len: length of the array, length 0 returns the struct with a NULL array.
  *
@@ -106,7 +134,7 @@ numstr *alloc_numstr(size_t len)
 	arr->len = len;
 	if (len > 0)
 	{
-		arr->str = xcalloc(len, sizeof(*arr->str));
+		arr->str = xmalloc(len * sizeof(*arr->str));
 		if (!arr->str)
 			arr = free_n_null(arr);
 	}
@@ -142,7 +170,7 @@ void *free_bignum(bignum *freeable_ptr)
 
 /**
  * free_numstr - free a numstr, return NULL.
- * @freeable_ptr: a pointer to a freeable.
+ * @freeable_ptr: a pointer to a numstr.
  *
  * Return: NULL always.
  */
