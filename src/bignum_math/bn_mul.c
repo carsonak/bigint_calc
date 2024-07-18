@@ -65,7 +65,7 @@ bignum *multiply_negatives(bignum *n1, bignum *n2)
  */
 bignum *multiply(bignum *n1, bignum *n2)
 {
-	lint byt_mul = 0;
+	lint byt_prod = 0;
 	size_t n1_i = 0, n2_i = 0;
 	bignum *product = NULL, *current_mul = NULL, *increment = NULL;
 
@@ -92,15 +92,16 @@ bignum *multiply(bignum *n1, bignum *n2)
 		if (!current_mul)
 			return (free_bignum(product));
 
-		byt_mul = 0;
+		memset(current_mul->num, 0, sizeof(*current_mul->num) * (n2_i + 1));
+		byt_prod = 0;
 		for (n1_i = 0; n1_i < n1->len; n1_i++)
 		{
-			byt_mul += (lint)n2->num[n2_i] * n1->num[n1_i];
-			current_mul->num[n2_i + n1_i] = byt_mul % BIGNUM_UINT_MAX;
-			byt_mul /= BIGNUM_UINT_MAX;
+			byt_prod += (lint)n2->num[n2_i] * n1->num[n1_i];
+			current_mul->num[n2_i + n1_i] = byt_prod % BIGNUM_UINT_MAX;
+			byt_prod /= BIGNUM_UINT_MAX;
 		}
 
-		current_mul->num[n2_i + n1_i] = byt_mul;
+		current_mul->num[n2_i + n1_i] = byt_prod;
 		product = bn_addition(increment, current_mul);
 		current_mul = free_bignum(current_mul);
 		increment = free_bignum(increment);

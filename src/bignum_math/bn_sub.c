@@ -122,6 +122,9 @@ bignum *subtract(bignum *n1, bignum *n2)
 		++diff_i;
 	}
 
+	if (diff_i < diff->len)
+		memset(&diff->num[diff_i], 0, sizeof(*diff->num) * (diff->len - diff_i));
+
 	trim_bignum(diff);
 	return (diff);
 }

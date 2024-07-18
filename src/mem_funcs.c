@@ -82,9 +82,12 @@ bignum *alloc_bignum(size_t len)
 	arr->len = len;
 	if (len > 0)
 	{
-		arr->num = xcalloc(len, sizeof(*arr->num));
+		arr->num = xmalloc(len * sizeof(*arr->num));
 		if (!arr->num)
 			arr = free_n_null(arr);
+
+		arr->num[0] = 0;
+		arr->num[len - 1] = 0;
 	}
 
 	return (arr);

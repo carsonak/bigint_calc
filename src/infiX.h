@@ -150,10 +150,11 @@ unsigned int count_digits(size_t num, unsigned int base);
 
 /*array_funcs*/
 
-void trim_bignum(bignum *const arr);
 lint cmp_bignum(bignum *const a1, bignum *const a2);
 lint cmp_rev_uint32array(
 	uint const *const arr1, uint const *const arr2, size_t len);
+bool is_zero(bignum *const x);
+void trim_bignum(bignum *const arr);
 
 /*math_funcs*/
 

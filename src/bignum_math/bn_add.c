@@ -95,6 +95,9 @@ bignum *add(bignum *n1, bignum *n2)
 		++sum_i;
 	}
 
+	if (sum_i < sum->len)
+		memset(&sum->num[sum_i], 0, sizeof(*sum->num) * (sum->len - sum_i));
+
 	trim_bignum(sum);
 	return (sum);
 }

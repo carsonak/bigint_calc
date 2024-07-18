@@ -60,6 +60,21 @@ lint cmp_rev_uint32array(
 }
 
 /**
+ * is_zero - check if a bignum is equal to 0.
+ * @arr: the bignum to check.
+ *
+ * Return: true if bignum is NULL or equal to zero, else false.
+ */
+bool is_zero(bignum * const arr)
+{
+	trim_bignum(arr);
+	if (!arr || !arr->len || (arr->len == 1 && !arr->num[0]))
+		return (true);
+
+	return (false);
+}
+
+/**
  * trim_bignum - truncate length of a bignum to ignore trailing zeros.
  * @arr: pointer to a bignum struct.
  *

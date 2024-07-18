@@ -191,7 +191,7 @@ int check_0_result(bignum *n1, bignum *n2)
 
 	remains = free_bignum(remains);
 	/*If n1 == 0; then remains == 0*/
-	if (n1->len < 2 && (!n1->num || !n1->num[0]))
+	if (is_zero(n1))
 		remains = alloc_bignum(1);
 	else
 		remains = alloc_bignum(n1->len);
@@ -199,7 +199,7 @@ int check_0_result(bignum *n1, bignum *n2)
 	if (!remains)
 		return (-1);
 
-	if (n1->len > 1 || (n1->len == 1 && n1->num[0]))
+	if (!is_zero(n1))
 		memmove(remains->num, n1->num, sizeof(*n1->num) * n1->len);
 
 	return (1);
@@ -232,9 +232,8 @@ bignum *divide(bignum *n1, bignum *n2)
 	slice = xcalloc(len_slice, sizeof(*slice));
 	if (!slice || !quotient)
 	{
-		quotient = free_bignum(quotient);
-		slice = free_n_null(slice);
-		return (NULL);
+		free_n_null(slice);
+		return (free_bignum(quotient));
 	}
 
 	n1_i = n1->len - n2->len;
@@ -288,6 +287,8 @@ bignum *divide(bignum *n1, bignum *n2)
 			memmove(&slice[slice_offset], &n1->num[n1_i],
 					sizeof(*n1->num) * tmp);
 			q_i -= tmp - 1;
+			/*For every dropped digit set quotient to 0.*/
+			memset(&quotient->num[q_i], 0, sizeof(*quotient->num) * ((ulint)tmp - 1));
 		}
 
 		if (q_i &&

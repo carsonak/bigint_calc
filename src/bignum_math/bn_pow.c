@@ -9,59 +9,75 @@
  */
 bignum *bn_power(bignum *base, bignum *exponent)
 {
-    uint a[1] = {0};
-    bignum tmp = {.len = 1, .is_negative = 0, .num = a};
-    bignum *res = NULL, *res_cp = NULL, *exp = NULL, *exp_cp = NULL;
+    uint one[1] = {1}, two[1] = {2};
+    bignum tmp = {.len = 1, .is_negative = false, .num = two};
+    bignum *x = NULL, *y = NULL, *exp = NULL, *cpy = NULL;
 
     if (!base || !exponent)
         return (NULL);
 
     trim_bignum(base);
     trim_bignum(exponent);
-    if (!cmp_bignum(base, &tmp) || !cmp_bignum(exponent, &tmp))
+    if (is_zero(base) || is_zero(exponent))
     {
-        res = alloc_bignum(1);
-        if (res && cmp_bignum(base, &tmp))
-            res->num[0] = 1;
+        x = alloc_bignum(1);
+        if (x)
+            x->num[0] = 1;
 
-        return (res);
+        return (x);
     }
 
     exp = bignum_dup(exponent);
-    res = bignum_dup(base);
-    if (res)
-        res->is_negative = false;
-
-    if (res && exp && exp->num[0] % 2)
+    x = bignum_dup(base);
+    y = alloc_bignum(1);
+    if (!exp || !x || !y)
     {
-        exp_cp = exp;
-        res_cp = res;
-        res = bn_multiplication(res, res);
-        a[0] = 1;
-        exp = bn_division(exp, &tmp);
-        free_bignum(exp_cp);
-        free_bignum(res_cp);
+        free_bignum(exp);
+        free_bignum(y);
+        return (free_bignum(x));
     }
 
-    a[0] = 2;
-    while (res && exp && (exp->len > 1 || exp->num[0] > 1))
+    exp->is_negative = false;
+    x->is_negative = false;
+    y->num[0] = 1;
+    tmp.num = two;
+    while (x && y && exp && (exp->len > 1 || exp->num[0] > 1))
     {
-        exp_cp = exp;
-        res_cp = res;
-        res = bn_multiplication(res, res);
+        if (exp->num[0] % 2)
+        {
+            cpy = y;
+            y = bn_multiplication(y, x);
+            free_bignum(cpy);
+            tmp.num = one;
+            cpy = exp;
+            exp = bn_subtraction(exp, &tmp);
+            free_bignum(cpy);
+            tmp.num = two;
+        }
+
+        cpy = x;
+        x = bn_multiplication(x, x);
+        free_bignum(cpy);
+        cpy = exp;
         exp = bn_division(exp, &tmp);
-        free_bignum(exp_cp);
-        free_bignum(res_cp);
+        free_bignum(cpy);
     }
 
+    cpy = x;
+    x = bn_multiplication(x, y);
+    free_bignum(cpy);
     if (exponent->is_negative)
     {
-        res_cp = res;
-        a[0] = 1;
-        res = bn_division(&tmp, res);
-        free_bignum(res_cp);
+        tmp.num = one;
+        cpy = x;
+        x = bn_division(&tmp, x);
+        free_bignum(cpy);
     }
 
+    if (x && base->is_negative && exponent->num[0] % 2)
+        x->is_negative = true;
+
     free_bignum(exp);
-    return (res);
+    free_bignum(y);
+    return (x);
 }
