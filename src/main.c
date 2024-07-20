@@ -18,7 +18,7 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 	}
 
-	answer = infiX_manager(argv[1], argv[2], argv[3]);
+	answer = parse_expression(argv[1], argv[2], argv[3]);
 	if (!answer)
 		return (EXIT_FAILURE);
 

@@ -105,7 +105,6 @@ typedef struct operator_function
 	math_function *f;
 } op_func;
 
-char *infiX_manager(char *num1, char *op_symbol, char *num2);
 void panic(const char *err_type);
 void help_me(const char *which_help);
 

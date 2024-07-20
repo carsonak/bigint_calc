@@ -41,6 +41,13 @@ bignum *bn_power(bignum *base, bignum *exponent)
     x->is_negative = false;
     y->num[0] = 1;
     tmp.num = two;
+    /*https://en.wikipedia.org/wiki/Exponentiation_by_squaring*/
+    /*x^n can be written as: (x^2) ^ n/2 if n is even, x(x^2) ^ (n-1)/2 if n is odd.*/
+    /*With the special case x^0==1 and base case as x^1==x, */
+    /*this can be computed recursively.*/
+    /*It can also be: yx^n = y(x^2) ^ n/2 if n is even, (yx)(x^2) ^ (n-1)/2 if n is odd.*/
+    /*With y starting at 0 and growing every time it is multiplied with the*/
+    /*current value of x when n is odd.*/
     while (x && y && exp && (exp->len > 1 || exp->num[0] > 1))
     {
         if (exp->num[0] % 2)

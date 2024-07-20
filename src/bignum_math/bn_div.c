@@ -1,14 +1,11 @@
 #include "infiX.h"
 
-/* Stores the remainder of division. */
-bignum *remains = NULL;
-
-static bignum *divide_negatives(bignum *n1, bignum *n2) ATTR_NONNULL;
-static int check_0_result(bignum *n1, bignum *n2) ATTR_NONNULL;
+static bignum *divide_negatives(bignum *n1, bignum *n2, bignum **remains) ATTR_NONNULL;
+static int check_0_result(bignum *n1, bignum *n2, bignum **remains) ATTR_NONNULL;
 static bool check_division_by_0(bignum *n2) ATTR_NONNULL;
-static bignum *divide(bignum *n1, bignum *n2) ATTR_NONNULL;
+static bignum *divide(bignum *n1, bignum *n2, bignum **remains) ATTR_NONNULL;
 ATTR_NONNULL_IDX(1, 3)
-static lint get_current_quotient(uint *slice, size_t len_slice, bignum *n2);
+static lint get_current_quotient(uint *slice, size_t len_slice, bignum *n2, bignum **remains);
 
 /**
  * bn_division - handle division of two bignums.
@@ -22,31 +19,30 @@ static lint get_current_quotient(uint *slice, size_t len_slice, bignum *n2);
 bignum *bn_division(bignum *n1, bignum *n2)
 {
 	int is_zero = 0;
-	bignum *result = NULL;
+	bignum *result = NULL, *remains = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
 
-	remains = free_bignum(remains);
 	trim_bignum(n1);
 	trim_bignum(n2);
 	if (check_division_by_0(n2))
 		return (NULL);
 
 	if (n1->is_negative || n2->is_negative)
-		result = divide_negatives(n1, n2);
+		result = divide_negatives(n1, n2, &remains);
 	else
 	{
-		is_zero = check_0_result(n1, n2);
+		is_zero = check_0_result(n1, n2, &remains);
 		if (is_zero < 0)
 			return (NULL);
 		else if (is_zero > 0)
 			result = alloc_bignum(1);
 		else
-			result = divide(n1, n2);
+			result = divide(n1, n2, &remains);
 	}
 
-	remains = free_bignum(remains);
+	free_bignum(remains);
 	trim_bignum(result);
 	return (result);
 }
@@ -64,28 +60,27 @@ bignum *bn_modulus(bignum *n1, bignum *n2)
 {
 	int is_zero = 0;
 	bool is_negative = 0;
-	bignum *result = NULL;
+	bignum *result = NULL, *remains = NULL;
 
 	if (!n1 || !n2)
 		return (NULL);
 
-	remains = free_bignum(remains);
 	trim_bignum(n1);
 	trim_bignum(n2);
 	if (check_division_by_0(n2))
 		return (NULL);
 
 	if (n1->is_negative || n2->is_negative)
-		result = divide_negatives(n1, n2);
+		result = divide_negatives(n1, n2, &remains);
 	else
 	{
-		is_zero = check_0_result(n1, n2);
+		is_zero = check_0_result(n1, n2, &remains);
 		if (is_zero < 0)
 			return (NULL);
 		else if (is_zero > 0)
 			result = alloc_bignum(1);
 		else
-			result = divide(n1, n2);
+			result = divide(n1, n2, &remains);
 	}
 
 	if (!result)
@@ -97,11 +92,11 @@ bignum *bn_modulus(bignum *n1, bignum *n2)
 		/*-7 % 4 = 1 and 7 % -4 = -1*/
 		is_negative = n2->is_negative;
 		n2->is_negative = false;
-		result = free_bignum(result);
+		free_bignum(result);
 
 		result = bn_subtraction(n2, remains);
 		n2->is_negative = is_negative;
-		remains = free_bignum(remains);
+		free_bignum(remains);
 		remains = result;
 		result = NULL;
 	}
@@ -121,7 +116,7 @@ bignum *bn_modulus(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-bignum *divide_negatives(bignum *n1, bignum *n2)
+bignum *divide_negatives(bignum *n1, bignum *n2, bignum **remains)
 {
 	int is_zero = 0;
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
@@ -131,19 +126,19 @@ bignum *divide_negatives(bignum *n1, bignum *n2)
 
 	n1->is_negative = false;
 	n2->is_negative = false;
-	is_zero = check_0_result(n1, n2);
+	is_zero = check_0_result(n1, n2, remains);
 	if (is_zero < 0)
 		return (NULL);
 	else if (is_zero > 0)
 		return (alloc_bignum(1));
 
 	if (neg1 && neg2) /* -8 // -5 = 8//5*/
-		result = divide(n1, n2);
+		result = divide(n1, n2, remains);
 	else if (neg1 || neg2)
 	{
 		/* -8 // 5 = -((8 // 5) + 1)*/
 		/* 8 // -5 = -((8 // 5) + 1) */
-		tmp = divide(n1, n2);
+		tmp = divide(n1, n2, remains);
 		result = bn_addition(tmp, &one);
 		if (result)
 			result->is_negative = true;
@@ -153,7 +148,7 @@ bignum *divide_negatives(bignum *n1, bignum *n2)
 	n2->is_negative = neg2;
 	free_bignum(tmp);
 	trim_bignum(result);
-	trim_bignum(remains);
+	trim_bignum(*remains);
 	return (result);
 }
 
@@ -184,23 +179,22 @@ bool check_division_by_0(bignum *n2)
  *
  * Return: 1 if numerator < denominator, 0 if not, -1 on error.
  */
-int check_0_result(bignum *n1, bignum *n2)
+int check_0_result(bignum *n1, bignum *n2, bignum **remains)
 {
 	if (cmp_bignum(n1, n2) >= 0)
 		return (0);
 
-	remains = free_bignum(remains);
-	/*If n1 == 0; then remains == 0*/
+	/*If n1 == 0; then *remains == 0*/
 	if (is_zero(n1))
-		remains = alloc_bignum(1);
+		*remains = alloc_bignum(1);
 	else
-		remains = alloc_bignum(n1->len);
+		*remains = alloc_bignum(n1->len);
 
-	if (!remains)
+	if (!(*remains))
 		return (-1);
 
 	if (!is_zero(n1))
-		memmove(remains->num, n1->num, sizeof(*n1->num) * n1->len);
+		memmove((*remains)->num, n1->num, sizeof(*n1->num) * n1->len);
 
 	return (1);
 }
@@ -212,7 +206,7 @@ int check_0_result(bignum *n1, bignum *n2)
  *
  * Return: pointer ro the result, NULL on failure.
  */
-bignum *divide(bignum *n1, bignum *n2)
+bignum *divide(bignum *n1, bignum *n2, bignum **remains)
 {
 	uint *slice = NULL;
 	size_t slice_offset = 1, q_i = 0, n1_i = 0, len_slice = 0;
@@ -256,21 +250,21 @@ bignum *divide(bignum *n1, bignum *n2)
 	while (q_i > 0)
 	{
 		q_i--;
-		tmp = get_current_quotient(slice + slice_offset,
-								   len_slice - slice_offset, n2);
+		tmp = get_current_quotient(
+			slice + slice_offset, len_slice - slice_offset, n2, remains);
 		if (tmp < 0)
 		{
-			remains = free_bignum(remains);
+			*remains = free_bignum(*remains);
 			free_n_null(slice);
 			return (free_bignum(quotient));
 		}
 
 		quotient->num[q_i] = tmp;
 		/*Copy remainder into slice starting from most significant digits.*/
-		memmove(&slice[len_slice - remains->len], remains->num,
-				sizeof(*remains->num) * remains->len);
+		memmove(&slice[len_slice - (*remains)->len], (*remains)->num,
+				sizeof(*(*remains)->num) * (*remains)->len);
 		slice_offset = 1;
-		tmp = n2->len - remains->len;
+		tmp = n2->len - (*remains)->len;
 		/*If remainder is shorter than denominator then; drop in more digits*/
 		if (q_i && (ulint)tmp > 0)
 		{
@@ -301,17 +295,17 @@ bignum *divide(bignum *n1, bignum *n2)
 		}
 	}
 
-	remains = free_bignum(remains);
-	remains = alloc_bignum(len_slice - slice_offset);
-	if (remains)
-		memmove(remains->num, slice + slice_offset,
+	free_bignum(*remains);
+	*remains = alloc_bignum(len_slice - slice_offset);
+	if (*remains)
+		memmove((*remains)->num, slice + slice_offset,
 				sizeof(*slice) * (len_slice - slice_offset));
 	else
 		quotient = free_bignum(quotient);
 
 	free_n_null(slice);
 	trim_bignum(quotient);
-	trim_bignum(remains);
+	trim_bignum(*remains);
 	return (quotient);
 }
 
@@ -323,8 +317,7 @@ bignum *divide(bignum *n1, bignum *n2)
  *
  * Return: an int representing current quotient, -1 on error.
  */
-lint get_current_quotient(
-	uint *slice, size_t len_slice, bignum *n2)
+lint get_current_quotient(uint *slice, size_t len_slice, bignum *n2, bignum **remains)
 {
 	uint temp_array[1] = {0};
 	bignum q_estimate = {
@@ -334,7 +327,7 @@ lint get_current_quotient(
 	bignum *estimate_check = NULL;
 	lint msd_slice = 0, is_larger = 0;
 
-	remains = free_bignum(remains);
+	*remains = free_bignum(*remains);
 	msd_slice = slice_bignum.num[len_slice - 1];
 	if (len_slice > n2->len)
 		msd_slice = (msd_slice * BIGNUM_UINT_MAX) + slice_bignum.num[len_slice - 2];
@@ -342,50 +335,50 @@ lint get_current_quotient(
 	/*quotient ≈ most significant digit of slice / msd of denominator.*/
 	q_estimate.num[0] = msd_slice / n2->num[n2->len - 1];
 	estimate_check = bn_multiplication(n2, &q_estimate);
-	remains = bn_subtraction(&slice_bignum, estimate_check);
-	if (!remains || !estimate_check)
+	*remains = bn_subtraction(&slice_bignum, estimate_check);
+	if (!(*remains) || !estimate_check)
 	{
-		remains = free_bignum(remains);
+		*remains = free_bignum(*remains);
 		free_bignum(estimate_check);
 		return (-1);
 	}
 
 	/*0 <= (slice - (q_estimate * denominator)) < denominator*/
-	is_larger = cmp_bignum(remains, n2);
-	while (remains->is_negative || is_larger >= 0)
+	is_larger = cmp_bignum(*remains, n2);
+	while ((*remains)->is_negative || is_larger >= 0)
 	{
-		if (remains->is_negative)
+		if ((*remains)->is_negative)
 		{
 			/*q_estimate was too big.*/
 			/*over_shoot = ceil(msd remains / msd denominator)*/
 
 			/*Test: for possible overflow.*/
 			/*Test: overshoot might be longer than denominator*/
-			q_estimate.num[0] -= remains->num[remains->len - 1] / n2->num[n2->len - 1];
+			q_estimate.num[0] -= (*remains)->num[(*remains)->len - 1] / n2->num[n2->len - 1];
 			if (q_estimate.num[0] &&
-				(remains->num[remains->len - 1] % n2->num[n2->len - 1]))
+				((*remains)->num[(*remains)->len - 1] % n2->num[n2->len - 1]))
 				q_estimate.num[0]--;
 		}
 		else
 		{
 			/*q_estimate was too small.*/
 			/*under_shoot = floor(msd remains / msd denominator)*/
-			q_estimate.num[0] += remains->num[remains->len - 1] / n2->num[n2->len - 1];
+			q_estimate.num[0] += (*remains)->num[(*remains)->len - 1] / n2->num[n2->len - 1];
 		}
 
 		estimate_check = free_bignum(estimate_check);
-		remains = free_bignum(remains);
+		free_bignum(*remains);
 
 		estimate_check = bn_multiplication(n2, &q_estimate);
-		remains = bn_subtraction(&slice_bignum, estimate_check);
-		if (!remains || !estimate_check)
+		*remains = bn_subtraction(&slice_bignum, estimate_check);
+		if (!(*remains) || !estimate_check)
 		{
-			remains = free_bignum(remains);
+			*remains = free_bignum(*remains);
 			free_bignum(estimate_check);
 			return (-1);
 		}
 
-		is_larger = cmp_bignum(remains, n2);
+		is_larger = cmp_bignum(*remains, n2);
 	}
 
 	free_bignum(estimate_check);
