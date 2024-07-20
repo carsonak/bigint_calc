@@ -1,41 +1,43 @@
-# bn_math
+# infiX_math
 
-This project aims to provide basic calculator functionality for numbers of
-arbitrary length. This is a personal project meant to challenge myself and
-just to practice C.
-
-The [math](./math) executable was compiled with [gcc version 13.2.0](https://gcc.gnu.org/gcc-13/).
-
-## Building from source
-
-You can build the program by cloning the project into your own machine and running:
-
-`make release`
+This is a command line program that behaves as a calculator, evaluating simple
+mathematical expresions on numbers of arbitrary precision while relying solely
+on C standard libraries.
 
 ## Usage
 
-The executable can be run as a command line tool as follows:
+Run the [**math**](./math) executable on a terminal as follows:
 
 `./math <number> '<operator>' <number>`
-
-`<number>` is a decimal number not containing any spaces.
 
 | **Operator** | **Description** |
 | ------ | ------- |
 | `+` | Addition |
 | `-` | Subtraction |
 | `*` | Multiplication |
+| `^` | Exponentiation |
 | `//` | Division |
 | `%` | Modulus |
 
-Shell metacharacters such as `*` should be quoted.
+Metacharacters such as `*` should be quoted to avoid accidental interpretation by the shell.
+
+## Building from source
+
+### Pre-requisites
+
+- GNU Compiler Collection a.k.a [gcc](https://gcc.gnu.org/install/).
+- [GNU make](https://www.gnu.org/software/make/).
+
+Once the pre-requisites have been met run the following command in a terminal
+to build the executable.
+
+`make release`
 
 ## TODO
 
 - Support for Floating Point numbers.
-- Exponentiation.
 - Support for longer expressions.
 - Parenthesis.
-- Provide proper interfaces for use as library and a command line tool.
-- Allow underscores and commas as thousands separators.
-- Support for hexadecimal numbers.
+- Allow underscores and commas as digit separators.
+- Support for different bases.
+- Improve speed and memory consumption.
