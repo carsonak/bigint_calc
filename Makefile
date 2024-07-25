@@ -9,11 +9,11 @@ TESTS_DIR := tests
 INCLUDE_DIRS := $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
 
 # All .c files
-SRC := $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
+SRCS := $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
 # OBJ_DIR will have the same file tree as in the SRC_DIR
-OBJ := $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
+OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track include files (i.e .h files)
-DEP_FILES := $(OBJ:.o=.d)
+DEP_FILES := $(OBJS:.o=.d)
 
 # https://clang.llvm.org/docs/AddressSanitizer.html
 ADDRESS_SANITISER := -fsanitize=address -fno-common
@@ -46,7 +46,7 @@ all: $(BINARY)
 
 # @^ - names of all the prerequisites
 # $@ - the name of the target
-$(BINARY): $(OBJ)
+$(BINARY): $(OBJS)
 	$(CC) $(CFLAGS) $^ -o $@ $(LDLIBS) $(LDFLAGS)
 
 # @< - name of only the first prequisite
@@ -64,7 +64,7 @@ release: HARDENING := -D_FORTIFY_SOURCE=2
 release: fclean all
 
 clean:
-	@$(RM) -vrd --preserve-root -- $(OBJ) $(DEP_FILES)
+	@$(RM) -vrd --preserve-root -- $(OBJS) $(DEP_FILES)
 
 fclean:
 ifdef OBJ_DIR

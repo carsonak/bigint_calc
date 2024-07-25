@@ -1,4 +1,4 @@
-#include "infiX.h"
+#include "text_processing.h"
 
 static char int_to_char(unsigned int num);
 static int char_to_int(char c);

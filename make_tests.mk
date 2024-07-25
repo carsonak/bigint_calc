@@ -1,15 +1,17 @@
 SHELL := bash
 TIMEOUT := timeout
 TIMEOUT_OPTS := --preserve-status
-MATH_SRC := $(filter $(SRC_DIR)/bignum_math/%.c,$(SRC))
-TEXT_SRC := $(filter $(SRC_DIR)/text_processing/%.c,$(SRC))
 T_BINDIR := $(TESTS_DIR)/bin
 T_SRCDIR := $(TESTS_DIR)/src
-UTILITY_FUNCS := $(SRC_DIR)/mem_funcs.c $(SRC_DIR)/array_funcs.c
 
 T_SRCS := $(shell find "$(T_SRCDIR)" -mount -name 'test_*.c' -type f | sort)
-T_BINS := $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
-T_DEPS := $(T_BINS:%=%.d)
+T_INCLUDES := $(shell find "$(T_SRCDIR)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
+T_OBJS := $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%.o)
+MATH_OBJS := $(filter $(OBJ_DIR)/bignum_math/bn_%.o,$(OBJS))
+TEXT_OBJS := $(filter $(OBJ_DIR)/text_processing/%.o,$(OBJS))
+UTILITY_OBJS := $(filter %alloc.o %array_funcs.o,$(OBJS))
+T_BINS := $(T_OBJS:%.o=%)
+T_DEPS := $(T_OBJS:%.o=%.d)
 
 MATH_TESTS := $(filter $(T_SRCDIR)/test_bignum_math/%,$(T_SRCS))
 MATH_TBINS := $(MATH_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
@@ -19,21 +21,25 @@ TEXT_TBINS := $(PARSING_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 
 tests: math-tests parsing-tests
 
-$(T_BINDIR)/test_bignum_math/test_bn_mul: $(filter %bn_add.c,$(MATH_SRC))
-$(T_BINDIR)/test_bignum_math/test_bn_div: $(filter-out %bn_div.c %bn_pow.c,$(MATH_SRC))
-$(T_BINDIR)/test_bignum_math/test_bn_pow: $(filter-out %bn_pow.c,$(MATH_SRC))
-$(T_BINDIR)/test_bignum_math/test_bn_mod: $(T_SRCDIR)/test_bignum_math/test_bn_mod.c $(filter-out %bn_pow.c,$(MATH_SRC)) $(UTILITY_FUNCS)
+$(T_BINDIR)/%.o: $(T_SRCDIR)/%.c
 	@mkdir -vp $(@D)
-	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
-$(T_BINDIR)/test_bignum_math/test_bn_%: $(T_SRCDIR)/test_bignum_math/test_bn_%.c $(SRC_DIR)/bignum_math/bn_%.c $(UTILITY_FUNCS)
+$(T_BINDIR)/test_bignum_math/test_bn_mul: $(filter %bn_add.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_div: $(filter-out %bn_div.o %bn_pow.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_pow: $(filter-out %bn_pow.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_mod: $(T_BINDIR)/test_bignum_math/test_bn_mod.o $(filter-out %bn_pow.o,$(MATH_OBJS)) $(filter-out %numstr_alloc.o,$(UTILITY_OBJS))
 	@mkdir -vp $(@D)
-	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
+
+$(T_BINDIR)/test_bignum_math/test_bn_%: $(T_BINDIR)/test_bignum_math/test_bn_%.o $(OBJ_DIR)/bignum_math/bn_%.o $(filter-out %numstr_alloc.o,$(UTILITY_OBJS))
+	@mkdir -vp $(@D)
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 # https://www.gnu.org/software/make/manual/html_node/Static-Pattern.html
-$(TEXT_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(UTILITY_FUNCS) $(TEXT_SRC) $(MATH_SRC)
+$(TEXT_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(UTILITY_OBJS) $(TEXT_OBJS) $(MATH_OBJS)
 	@mkdir -vp $(@D)
-	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 run_tests = $(shell export $(ASAN_OPTIONS) && export $(LSAN_OPTIONS); \
 for tbin in $(1); \
@@ -43,21 +49,19 @@ do if [[ -f $$tbin && -x $$tbin ]]; \
 	fi; \
 done)
 
-math-tests: INCLUDE_DIRS += $(shell find "$(T_SRCDIR)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
+math-tests: INCLUDE_DIRS += $(T_INCLUDES)
 math-tests: LDLIBS += -lcriterion
-math-tests: CFLAGS += $(LDFLAGS) $(LDLIBS)
 math-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
 math-tests: $(MATH_TBINS)
 	$(call run_tests,$(MATH_TBINS))
 
-parsing-tests: INCLUDE_DIRS += $(shell find "$(T_SRCDIR)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
+parsing-tests: INCLUDE_DIRS += $(T_INCLUDES)
 parsing-tests: LDLIBS += -lcriterion
-parsing-tests: CFLAGS += $(LDFLAGS) $(LDLIBS)
 parsing-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
 parsing-tests: $(TEXT_TBINS)
 	$(call run_tests,$(TEXT_TBINS))
 
-tclean:
+tclean: clean
 	@$(RM) -vdr --preserve-root -- $(T_BINS) $(T_DEPS) $(T_BINDIR)
 
 retests: tclean tests

@@ -1,4 +1,4 @@
-#include "infiX.h"
+#include "text_processing.h"
 
 static math_function *get_math_function(const char *op_symbol);
 

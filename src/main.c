@@ -11,7 +11,6 @@ int main(int argc, char *argv[])
 {
 	char *answer = NULL;
 
-	errno = 0;
 	if (argc < 3)
 	{
 		panic((const char *)NULL);

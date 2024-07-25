@@ -1,61 +1,4 @@
-#include "infiX.h"
-
-static bignum *add_negatives(bignum *n1, bignum *n2) ATTR_NONNULL;
-static bignum *add(bignum *n1, bignum *n2) ATTR_NONNULL;
-
-/**
- * bn_addition - handle addition of two bignums.
- * @n1: the first number.
- * @n2: the second number.
- *
- * This function does preliminary checks on the parameters.
- *
- * Return: pointer to result, NULL on failure.
- */
-bignum *bn_addition(bignum *n1, bignum *n2)
-{
-	if (!n1 || !n2)
-		return (NULL);
-
-	trim_bignum(n1);
-	trim_bignum(n2);
-	if (n1->is_negative || n2->is_negative)
-		return (add_negatives(n1, n2));
-
-	return (add(n1, n2));
-}
-
-/**
- * add_negatives - handle addition of signed bignums.
- * @n1: first number.
- * @n2: second number.
- *
- * Return: pointer to the result, NULL on failure.
- */
-bignum *add_negatives(bignum *n1, bignum *n2)
-{
-	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
-	bignum *result = NULL;
-
-	n1->is_negative = false;
-	n2->is_negative = false;
-	if (neg1 && neg2)
-	{
-		/*-8 + -7 = -(8+7)*/
-		result = add(n1, n2);
-		if (result)
-			result->is_negative = true;
-	}
-	else if (neg1) /*-8 + 7 = 7-8*/
-		result = bn_subtraction(n2, n1);
-	else if (neg2) /*8 + -7 = 8-7*/
-		result = bn_subtraction(n1, n2);
-
-	n1->is_negative = neg1;
-	n2->is_negative = neg2;
-	trim_bignum(result);
-	return (result);
-}
+#include "bignum_math.h"
 
 /**
  * add - add two bignums.
@@ -64,7 +7,8 @@ bignum *add_negatives(bignum *n1, bignum *n2)
  *
  * Return: pointer to result, NULL on failure.
  */
-bignum *add(bignum *n1, bignum *n2)
+static inline ATTR_NONNULL bignum *
+add(bignum *n1, bignum *n2)
 {
 	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
 	lint byt_sum = 0;
@@ -100,4 +44,59 @@ bignum *add(bignum *n1, bignum *n2)
 
 	trim_bignum(sum);
 	return (sum);
+}
+
+/**
+ * add_negatives - handle addition of signed bignums.
+ * @n1: first number.
+ * @n2: second number.
+ *
+ * Return: pointer to the result, NULL on failure.
+ */
+static inline ATTR_NONNULL bignum *
+add_negatives(bignum *n1, bignum *n2)
+{
+	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
+	bignum *result = NULL;
+
+	n1->is_negative = false;
+	n2->is_negative = false;
+	if (neg1 && neg2)
+	{
+		/*-8 + -7 = -(8+7)*/
+		result = add(n1, n2);
+		if (result)
+			result->is_negative = true;
+	}
+	else if (neg1) /*-8 + 7 = 7-8*/
+		result = bn_subtraction(n2, n1);
+	else if (neg2) /*8 + -7 = 8-7*/
+		result = bn_subtraction(n1, n2);
+
+	n1->is_negative = neg1;
+	n2->is_negative = neg2;
+	trim_bignum(result);
+	return (result);
+}
+
+/**
+ * bn_addition - handle addition of two bignums.
+ * @n1: the first number.
+ * @n2: the second number.
+ *
+ * This function does preliminary checks on the parameters.
+ *
+ * Return: pointer to result, NULL on failure.
+ */
+bignum *bn_addition(bignum *n1, bignum *n2)
+{
+	if (!n1 || !n2)
+		return (NULL);
+
+	trim_bignum(n1);
+	trim_bignum(n2);
+	if (n1->is_negative || n2->is_negative)
+		return (add_negatives(n1, n2));
+
+	return (add(n1, n2));
 }

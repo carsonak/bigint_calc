@@ -1,4 +1,4 @@
-#include "infiX.h"
+#include "bignum_math.h"
 
 /**
  * bn_power - handle exponentiation of a bignum.

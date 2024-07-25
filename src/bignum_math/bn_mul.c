@@ -1,60 +1,4 @@
-#include "infiX.h"
-
-static bignum *multiply_negatives(bignum *n1, bignum *n2) ATTR_NONNULL;
-static bignum *multiply(bignum *n1, bignum *n2) ATTR_NONNULL;
-
-/**
- * bn_multiplication - handle multiplication of two bignums.
- * @n1: the first number.
- * @n2: the second number.
- *
- * This function does preliminary checks on the parameters.
- *
- * Return: pointer to result, NULL on failure.
- */
-bignum *bn_multiplication(bignum *n1, bignum *n2)
-{
-	if (!n1 || !n2)
-		return (NULL);
-
-	trim_bignum(n1);
-	trim_bignum(n2);
-	if (n1->is_negative || n2->is_negative)
-		return (multiply_negatives(n1, n2));
-
-	return (multiply(n1, n2));
-}
-
-/**
- * multiply_negatives - handle multiplication of signed bignums.
- * @n1: first number.
- * @n2: second number.
- *
- * Return: pointer to the result, NULL on failure.
- */
-bignum *multiply_negatives(bignum *n1, bignum *n2)
-{
-	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
-	bignum *result = NULL;
-
-	n1->is_negative = false;
-	n2->is_negative = false;
-	if (neg1 && neg2) /* -8 * -7 = 8*7 */
-		result = multiply(n1, n2);
-	else if (neg1 || neg2)
-	{
-		/* -8 * 7 = -(8*7) */
-		/* 8 * -7 = -(8*7) */
-		result = multiply(n1, n2);
-		if (result)
-			result->is_negative = true;
-	}
-
-	n1->is_negative = neg1;
-	n2->is_negative = neg2;
-	trim_bignum(result);
-	return (result);
-}
+#include "bignum_math.h"
 
 /**
  * multiply - multiply two bignums.
@@ -63,7 +7,8 @@ bignum *multiply_negatives(bignum *n1, bignum *n2)
  *
  * Return: pointer to result, NULL on failure.
  */
-bignum *multiply(bignum *n1, bignum *n2)
+static inline ATTR_NONNULL bignum *
+multiply(bignum *n1, bignum *n2)
 {
 	lint byt_prod = 0;
 	size_t n1_i = 0, n2_i = 0;
@@ -113,4 +58,58 @@ bignum *multiply(bignum *n1, bignum *n2)
 
 	trim_bignum(product);
 	return (product);
+}
+
+/**
+ * multiply_negatives - handle multiplication of signed bignums.
+ * @n1: first number.
+ * @n2: second number.
+ *
+ * Return: pointer to the result, NULL on failure.
+ */
+static inline ATTR_NONNULL bignum *
+multiply_negatives(bignum *n1, bignum *n2)
+{
+	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
+	bignum *result = NULL;
+
+	n1->is_negative = false;
+	n2->is_negative = false;
+	if (neg1 && neg2) /* -8 * -7 = 8*7 */
+		result = multiply(n1, n2);
+	else if (neg1 || neg2)
+	{
+		/* -8 * 7 = -(8*7) */
+		/* 8 * -7 = -(8*7) */
+		result = multiply(n1, n2);
+		if (result)
+			result->is_negative = true;
+	}
+
+	n1->is_negative = neg1;
+	n2->is_negative = neg2;
+	trim_bignum(result);
+	return (result);
+}
+
+/**
+ * bn_multiplication - handle multiplication of two bignums.
+ * @n1: the first number.
+ * @n2: the second number.
+ *
+ * This function does preliminary checks on the parameters.
+ *
+ * Return: pointer to result, NULL on failure.
+ */
+bignum *bn_multiplication(bignum *n1, bignum *n2)
+{
+	if (!n1 || !n2)
+		return (NULL);
+
+	trim_bignum(n1);
+	trim_bignum(n2);
+	if (n1->is_negative || n2->is_negative)
+		return (multiply_negatives(n1, n2));
+
+	return (multiply(n1, n2));
 }

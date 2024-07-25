@@ -1,4 +1,4 @@
-#include "infiX.h"
+#include "bignum_math.h"
 
 /**
  * cmp_bignum - compare 2 bignums.
