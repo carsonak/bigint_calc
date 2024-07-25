@@ -1,5 +1,48 @@
 #include "bignum_math.h"
 
+static inline void ATTR_NONNULL_IDX(1) imultiply(bignum **n1, bignum *n2);
+static inline void ATTR_NONNULL_IDX(1) idivide(bignum **n1, bignum *n2);
+static inline void ATTR_NONNULL_IDX(1) isubtract(bignum **n1, bignum *n2);
+
+/**
+ * imultiply - "inplace" bignum multiplication.
+ * @n1: address of the first bignum pointer.
+ * @n2: pointer to the second bignum.
+ */
+static inline void imultiply(bignum **n1, bignum *n2)
+{
+	bignum *cpy = *n1;
+
+	*n1 = bn_multiplication(cpy, n2);
+	free_bignum(cpy);
+}
+
+/**
+ * idivide - "inplace" bignum division.
+ * @n1: address of the first bignum pointer.
+ * @n2: pointer to the second bignum.
+ */
+static inline void idivide(bignum **n1, bignum *n2)
+{
+	bignum *cpy = *n1;
+
+	*n1 = bn_division(cpy, n2);
+	free_bignum(cpy);
+}
+
+/**
+ * isubtract - "inplace" bignum subtraction.
+ * @n1: address of the first bignum pointer.
+ * @n2: pointer to the second bignum.
+ */
+static inline void isubtract(bignum **n1, bignum *n2)
+{
+	bignum *cpy = *n1;
+
+	*n1 = bn_subtraction(cpy, n2);
+	free_bignum(cpy);
+}
+
 /**
  * bn_power - handle exponentiation of a bignum.
  * @base: the base.
@@ -11,7 +54,7 @@ bignum *bn_power(bignum *base, bignum *exponent)
 {
 	uint one[1] = {1}, two[1] = {2};
 	bignum tmp = {.len = 1, .is_negative = false, .num = two};
-	bignum *x = NULL, *y = NULL, *exp = NULL, *cpy = NULL;
+	bignum *x = NULL, *y = NULL, *exp = NULL;
 
 	if (!base || !exponent)
 		return (NULL);
@@ -42,43 +85,32 @@ bignum *bn_power(bignum *base, bignum *exponent)
 	y->num[0] = 1;
 	tmp.num = two;
 	/*https://en.wikipedia.org/wiki/Exponentiation_by_squaring*/
-	/*x^n can be written as: (x^2) ^ n/2 if n is even, x(x^2) ^ (n-1)/2 if n is odd.*/
-	/*With the special case x^0==1 and base case as x^1==x, */
-	/*this can be computed recursively.*/
-	/*It can also be: yx^n = y(x^2) ^ n/2 if n is even, (yx)(x^2) ^ (n-1)/2 if n is odd.*/
-	/*With y starting at 0 and growing every time it is multiplied with the*/
-	/*current value of x when n is odd.*/
+	/*x^n can be written as: */
+	/*(x^2) ^ n/2 if n is even, x(x^2) ^ (n-1)/2 if n is odd.*/
+	/*This can be computed recursively, keeping in mind the special case */
+	/*x^0==1 and base case as x^1==x.*/
+	/*Another form can be written as: */
+	/*yx^n = y(x^2) ^ n/2 if n is even, (yx)(x^2) ^ (n-1)/2 if n is odd.*/
+	/*With y starting at 0.*/
 	while (x && y && exp && (exp->len > 1 || exp->num[0] > 1))
 	{
 		if (exp->num[0] % 2)
 		{
-			cpy = y;
-			y = bn_multiplication(y, x);
-			free_bignum(cpy);
+			imultiply(&y, x);
 			tmp.num = one;
-			cpy = exp;
-			exp = bn_subtraction(exp, &tmp);
-			free_bignum(cpy);
+			isubtract(&exp, &tmp);
 			tmp.num = two;
 		}
 
-		cpy = x;
-		x = bn_multiplication(x, x);
-		free_bignum(cpy);
-		cpy = exp;
-		exp = bn_division(exp, &tmp);
-		free_bignum(cpy);
+		imultiply(&x, x);
+		idivide(&exp, &tmp);
 	}
 
-	cpy = x;
-	x = bn_multiplication(x, y);
-	free_bignum(cpy);
+	imultiply(&x, y);
 	if (exponent->is_negative)
 	{
 		tmp.num = one;
-		cpy = x;
-		x = bn_division(&tmp, x);
-		free_bignum(cpy);
+		idivide(&x, &tmp);
 	}
 
 	if (x && base->is_negative && exponent->num[0] % 2)

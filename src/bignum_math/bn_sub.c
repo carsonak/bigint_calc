@@ -1,5 +1,8 @@
 #include "bignum_math.h"
 
+static inline ATTR_NONNULL bignum *subtract(bignum *n1, bignum *n2);
+static inline ATTR_NONNULL bignum *subtract_negatives(bignum *n1, bignum *n2);
+
 /**
  * subtract - subtract two bignums.
  * @n1: first number.
@@ -7,8 +10,7 @@
  *
  * Return: pointer to the result, NULL on failure.
  */
-static inline ATTR_NONNULL bignum *
-subtract(bignum *n1, bignum *n2)
+static inline bignum *subtract(bignum *n1, bignum *n2)
 {
 	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
 	lint n1_is_bigger = 0, byt_diff = 0;
@@ -79,8 +81,7 @@ subtract(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static inline ATTR_NONNULL bignum *
-subtract_negatives(bignum *n1, bignum *n2)
+static inline bignum *subtract_negatives(bignum *n1, bignum *n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bignum *result = NULL;

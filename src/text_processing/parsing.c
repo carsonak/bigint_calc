@@ -258,7 +258,7 @@ bignum *anybase_to_bignum(numstr *num, unsigned int base)
 }
 
 /**
- * count_digits - calculate how many digits of the given base can represent the given decimal.
+ * count_digits - get how many digits of a given base can represent a number.
  * @num: the decimal number.
  * @base: the number base.
  *

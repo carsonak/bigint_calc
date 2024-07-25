@@ -1,5 +1,15 @@
 #include "bignum_math.h"
 
+static inline ATTR_NONNULL lint
+get_current_quotient(uint *slice, size_t len_slice, bignum *n2, bignum **rem);
+static inline ATTR_NONNULL bool check_division_by_0(bignum *n2);
+static inline ATTR_NONNULL int
+check_0_result(bignum *n1, bignum *n2, bignum **rem);
+static inline ATTR_NONNULL bignum *
+divide(bignum *n1, bignum *n2, bignum **rem);
+static inline ATTR_NONNULL bignum *
+divide_negatives(bignum *n1, bignum *n2, bignum **rem);
+
 /**
  * get_current_quotient - calculate the current quotient.
  * @slice: the current digits being divided in an array.
@@ -9,7 +19,7 @@
  *
  * Return: an int representing current quotient, -1 on error.
  */
-static inline ATTR_NONNULL lint
+static inline lint
 get_current_quotient(uint *slice, size_t len_slice, bignum *n2, bignum **rem)
 {
 	uint temp_array[1] = {0};
@@ -84,8 +94,7 @@ get_current_quotient(uint *slice, size_t len_slice, bignum *n2, bignum **rem)
  *
  * Return: 1 if n2 is zero, else 0.
  */
-static inline ATTR_NONNULL bool
-check_division_by_0(bignum *n2)
+static inline bool check_division_by_0(bignum *n2)
 {
 	if (!n2->len || (n2->len == 1 && !n2->num[0]))
 	{
@@ -107,8 +116,7 @@ check_division_by_0(bignum *n2)
  *
  * Return: 1 if numerator < denominator, 0 if not, -1 on error.
  */
-static inline ATTR_NONNULL int
-check_0_result(bignum *n1, bignum *n2, bignum **rem)
+static inline int check_0_result(bignum *n1, bignum *n2, bignum **rem)
 {
 	if (cmp_bignum(n1, n2) >= 0)
 		return (0);
@@ -136,8 +144,7 @@ check_0_result(bignum *n1, bignum *n2, bignum **rem)
  *
  * Return: pointer ro the result, NULL on failure.
  */
-static inline ATTR_NONNULL bignum *
-divide(bignum *n1, bignum *n2, bignum **rem)
+static inline bignum *divide(bignum *n1, bignum *n2, bignum **rem)
 {
 	uint *slice = NULL;
 	size_t slice_offset = 1, q_i = 0, n1_i = 0, len_slice = 0;
@@ -199,7 +206,7 @@ divide(bignum *n1, bignum *n2, bignum **rem)
 		/*If remainder is shorter than denominator then; drop in more digits*/
 		if (q_i && (ulint)tmp > 0)
 		{
-			/*Checking for overflow.*/
+			/*Have to be careful of unsigned int wrapping.*/
 			if (n1_i + 1 > (ulint)tmp)
 				n1_i -= tmp;
 			else
@@ -212,7 +219,7 @@ divide(bignum *n1, bignum *n2, bignum **rem)
 			memmove(&slice[slice_offset], &n1->num[n1_i],
 					sizeof(*n1->num) * tmp);
 			q_i -= tmp - 1;
-			/*For every dropped digit set quotient to 0.*/
+			/*For every index "i" dropped into slice set quotient[i] to 0.*/
 			memset(&quotient->num[q_i], 0, sizeof(*quotient->num) * ((ulint)tmp - 1));
 		}
 
@@ -228,7 +235,7 @@ divide(bignum *n1, bignum *n2, bignum **rem)
 
 	free_bignum(*rem);
 	*rem = alloc_bignum(len_slice - slice_offset);
-	if (*rem)
+	if (*rem) /* The number left over in slice is the remainder */
 		memmove((*rem)->num, slice + slice_offset,
 				sizeof(*slice) * (len_slice - slice_offset));
 	else
@@ -248,8 +255,7 @@ divide(bignum *n1, bignum *n2, bignum **rem)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static inline ATTR_NONNULL bignum *
-divide_negatives(bignum *n1, bignum *n2, bignum **rem)
+static inline bignum *divide_negatives(bignum *n1, bignum *n2, bignum **rem)
 {
 	int is_zero = 0;
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;

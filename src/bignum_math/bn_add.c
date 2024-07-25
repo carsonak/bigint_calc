@@ -1,5 +1,8 @@
 #include "bignum_math.h"
 
+static inline ATTR_NONNULL bignum *add(bignum *n1, bignum *n2);
+static inline ATTR_NONNULL bignum *add_negatives(bignum *n1, bignum *n2);
+
 /**
  * add - add two bignums.
  * @n1: the first number.
@@ -7,8 +10,7 @@
  *
  * Return: pointer to result, NULL on failure.
  */
-static inline ATTR_NONNULL bignum *
-add(bignum *n1, bignum *n2)
+static inline bignum *add(bignum *n1, bignum *n2)
 {
 	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
 	lint byt_sum = 0;
@@ -53,8 +55,7 @@ add(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static inline ATTR_NONNULL bignum *
-add_negatives(bignum *n1, bignum *n2)
+static inline bignum *add_negatives(bignum *n1, bignum *n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bignum *result = NULL;

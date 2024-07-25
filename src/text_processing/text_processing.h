@@ -26,7 +26,7 @@ typedef struct numstr
 } numstr;
 
 /* generic prototype for basic arithmetic functions. */
-typedef bignum *(math_function)(bignum *, bignum *);
+typedef bignum * (math_function)(bignum *, bignum *);
 
 /**
  * struct operator_function - holds an operator symbol and it's function.
