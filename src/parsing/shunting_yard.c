@@ -1,4 +1,4 @@
-#include "text_processing.h"
+#include "parsing.h"
 
 static math_function *get_math_function(const char *op_symbol);
 

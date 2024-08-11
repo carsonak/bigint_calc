@@ -5,7 +5,7 @@
 
 #include "xalloc.h"
 #include "bignum_math.h"
-#include "text_processing.h"
+#include "parsing.h"
 
 void panic(const char *err_type);
 void help_me(const char *which_help);

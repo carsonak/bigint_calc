@@ -79,7 +79,7 @@ re: fclean all
 
 # include will "paste" the rules it finds in the included files at this
 # location, therefore best to place it at end of file so as not to interfere
-# with other rules. The "-"/s suppresses missing file errors, as .d files are
+# with other rules. The "s"/"-" suppresses missing file errors, as .d files are
 # generated automatically by gcc.
 # https://www.gnu.org/software/make/manual/html_node/Automatic-Prerequisites.html
 sinclude $(DEP_FILES)

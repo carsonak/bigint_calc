@@ -1,13 +1,13 @@
-#ifndef TEXT_PROCESSING_H
-#define TEXT_PROCESSING_H
+#ifndef PARSING_H
+#define PARSING_H
 
 #include "macros.h"
 
-#include <ctype.h>   /* isdigit */
+#include <ctype.h>	 /* isdigit */
 #include <stdio.h>	 /* *printf */
 #include <stdbool.h> /* bool */
-#include <stddef.h>  /* size_t, ptr_diff */
-#include <string.h>  /* strlen, strcpy */
+#include <stddef.h>	 /* size_t, ptr_diff */
+#include <string.h>	 /* strlen, strcpy */
 
 #include "xalloc.h"
 #include "bignum_math.h"
@@ -26,7 +26,7 @@ typedef struct numstr
 } numstr;
 
 /* generic prototype for basic arithmetic functions. */
-typedef bignum * (math_function)(bignum *, bignum *);
+typedef bignum *(math_function)(bignum *, bignum *);
 
 /**
  * struct operator_function - holds an operator symbol and it's function.
@@ -42,17 +42,23 @@ typedef struct operator_function
 /* alloc_funcs */
 
 void *free_numstr(numstr *freeable_ptr);
-ATTR_MALLOC ATTR_MALLOC_FREE(free_numstr)
+ATTR_MALLOC
+ATTR_MALLOC_FREE(free_numstr)
 numstr *alloc_numstr(size_t len);
 
 /* text_funcs */
 
-numstr *parse_number(const char *str, unsigned int base);
+char int_to_char(unsigned int num);
+int char_to_int(char c);
 size_t leading_chars_len(const char *str, char *ch);
-bignum *numstr_to_bignum(numstr *num, unsigned int base);
-numstr *bignum_to_numstr(bignum *arr, unsigned int base);
-size_t print_bignum(bignum *arr);
-char *uint_array_to_str(const uint *arr, size_t len);
-unsigned int count_digits(size_t num, unsigned int base);
+unsigned int count_digits(size_t num);
 
-#endif /* TEXT_PROCESSING_H */
+numstr *str_to_numstr(const char *str, unsigned int base);
+bignum *numstr_to_bignum(numstr *num);
+numstr *bignum_to_numstr(bignum *arr, unsigned int base);
+bignum *anybase_to_bignum(numstr *num, unsigned int base);
+
+size_t print_bignum(bignum *arr);
+char *uintarray_to_str(const uint *arr, size_t len);
+
+#endif /* PARSING_H */

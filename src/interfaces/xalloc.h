@@ -20,8 +20,7 @@ void *xmalloc(size_t size);
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(2)
 void *xrealloc(void *nullable_ptr, size_t size);
-ATTR_MALLOC
-ATTR_MALLOC_FREE(free_n_null)
+ATTR_MALLOC ATTR_MALLOC_FREE(free_n_null)
 char *xstrdup(const char *str);
 
 #endif /* INFIX_PROJ_XALLOC_H */
