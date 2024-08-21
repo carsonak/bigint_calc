@@ -17,42 +17,42 @@ static token *get_token(const char *str, size_t *processed)
 	{
 	case '(':
 	{
-		*t = (token){.id = PAREN_L, .op = NULL};
+		*t = (token){.id = PAREN_L, .op = {NULL}};
 		break;
 	}
 	case ')':
 	{
-		*t = (token){.id = PAREN_R, .op = NULL};
+		*t = (token){.id = PAREN_R, .op = {NULL}};
 		break;
 	}
 	case '+':
 	{
-		*t = (token){.id = ADD_OP, .op = bn_addition};
+		*t = (token){.id = ADD_OP, .op = {bn_addition}};
 		break;
 	}
 	case '-':
 	{
-		*t = (token){.id = SUB_OP, .op = bn_subtraction};
+		*t = (token){.id = SUB_OP, .op = {bn_subtraction}};
 		break;
 	}
 	case '*':
 	{
-		*t = (token){.id = MUL_OP, .op = bn_multiplication};
+		*t = (token){.id = MUL_OP, .op = {bn_multiplication}};
 		break;
 	}
 	case '/':
 	{
-		*t = (token){.id = DIV_OP, .op = bn_division};
+		*t = (token){.id = DIV_OP, .op = {bn_division}};
 		break;
 	}
 	case '%':
 	{
-		*t = (token){.id = MOD_OP, .op = bn_modulus};
+		*t = (token){.id = MOD_OP, .op = {bn_modulus}};
 		break;
 	}
 	case '^':
 	{
-		*t = (token){.id = POW_OP, .op = bn_power};
+		*t = (token){.id = POW_OP, .op = {bn_power}};
 		break;
 	}
 	default:
@@ -156,16 +156,18 @@ static bool syntax_is_valid(token *left, token *right)
 
 /**
  * free_token - frees a token.
- * @freeable_ptr: pointer to a token struct.
+ * @freeable_token: pointer to a token struct.
  *
  * Return: NULL always.
  */
-void *free_token(token *freeable_ptr)
+void *free_token(void *freeable_token)
 {
-	if (freeable_ptr && freeable_ptr->id == NUMBER)
-		free_n_null(freeable_ptr->op.number.str);
+	token *p = (token *)freeable_token;
 
-	return (free_n_null(freeable_ptr));
+	if (p && p->id == NUMBER)
+		free_n_null(p->op.number.str);
+
+	return (free_n_null(p));
 }
 
 /**

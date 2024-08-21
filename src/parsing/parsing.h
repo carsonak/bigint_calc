@@ -105,6 +105,6 @@ char *uintarray_to_str(const uint *arr, size_t len);
 /* shunting_yard */
 deque *parser(const char *expression);
 void print_syntax_error(const char *expression, size_t idx, const char *msg);
-void *free_token(token *freeable_ptr);
+void *free_token(void *freeable_token);
 
 #endif /* PARSING_H */

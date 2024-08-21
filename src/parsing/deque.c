@@ -123,7 +123,7 @@ void *pop_tail(deque *dq)
  *
  * Return: NULL always.
  */
-void *clear_deque(deque *dq, void (*free_data)(void *))
+void *clear_deque(deque *dq, void *(*free_data)(void *))
 {
 	if (!dq || !dq->head)
 		return (NULL);

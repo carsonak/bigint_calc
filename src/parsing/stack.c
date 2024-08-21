@@ -56,7 +56,7 @@ void *pop(stack *s)
  *
  * Return: NULL always.
  */
-void *clear_stack(stack *s, void (*free_data)(void *))
+void *clear_stack(stack *s, void *(*free_data)(void *))
 {
 	single_link_nd *p = NULL;
 
