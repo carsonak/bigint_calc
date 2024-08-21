@@ -63,7 +63,7 @@ $(T_BINDIR)/test_bignum_math/test_bn_mod: $(T_BINDIR)/test_bignum_math/test_bn_m
 
 $(T_BINDIR)/test_parsing/test_base_conversion: $(filter %base_conversion.o,$(TEXT_OBJS)) $(MATH_OBJS)
 # https://www.gnu.org/software/make/manual/html_node/Static-Pattern.html
-$(TEXT_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(filter-out %shunting_yard.o %base_conversion.o,$(TEXT_OBJS)) $(filter %bignum_alloc.o %_funcs.o,$(MATH_OBJS))
+$(TEXT_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(filter-out %base_conversion.o %shunting_yard.o %deque.o %stack.o,$(TEXT_OBJS)) $(filter %bignum_alloc.o %_funcs.o,$(MATH_OBJS))
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 

@@ -33,17 +33,9 @@ void setup(void) {}
  */
 void teardown(void)
 {
-	num1.len = 0;
-	num1.is_negative = false;
-	num1.num = NULL;
-
-	num2.len = 0;
-	num2.is_negative = false;
-	num2.num = NULL;
-
-	expected.len = 0;
-	expected.is_negative = false;
-	expected.num = NULL;
+	num1 = (bignum){.len = 0, .is_negative = false, .num = NULL};
+	num2 = (bignum){.len = 0, .is_negative = false, .num = NULL};
+	expected = (bignum){.len = 0, .is_negative = false, .num = NULL};
 }
 
 TestSuite(null_inputs, .init = setup, .fini = teardown);
@@ -61,8 +53,10 @@ Test(null_inputs, test_1_plus_null,
 {
 	uint in1[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1),
+		.is_negative = false,
+		.num = in1};
 	bignum *output = bn_addition(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
@@ -109,9 +103,10 @@ Test(null_inputs, test_minus1_plus_null,
 {
 	uint in1[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num1.is_negative = true;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1),
+		.is_negative = true,
+		.num = in1};
 	bignum *output = bn_addition(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
@@ -122,9 +117,10 @@ Test(null_inputs, test_null_plus_minus1,
 {
 	uint in2[] = {1};
 
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	num2.is_negative = true;
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2),
+		.is_negative = true,
+		.num = in2};
 	bignum *output = bn_addition(NULL, &num2);
 
 	cr_expect(zero(ptr, output));

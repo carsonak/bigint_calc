@@ -23,14 +23,15 @@ unsigned int count_digits(size_t num)
  * str_to_numstr - parse a string of digits.
  * @number_str: a string with a number.
  * @base: an int between 2-36 indicating the base of the number.
+ * @processed: address to store number of characters processed.
  *
  * Return: pointer to a numstr struct, NULL of failure.
  */
-numstr *str_to_numstr(const char *number_str, unsigned int base)
+numstr *str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 {
 	numstr *arr = NULL;
-	size_t s_i = 0, b_i = 0;
-	const size_t buf_size = 1024;
+	size_t str_i = 0, buf_i = 0;
+	const unsigned int buf_size = 1024;
 	char *buf = NULL;
 	int c = 0;
 
@@ -42,39 +43,39 @@ numstr *str_to_numstr(const char *number_str, unsigned int base)
 	if (!buf || !arr)
 		goto cleanup_numstr;
 
-	for (s_i = 0; number_str[s_i] == '-' || number_str[s_i] == '+'; s_i++)
-		if (number_str[s_i] == '-')
+	for (str_i = 0; number_str[str_i] == '-' || number_str[str_i] == '+'; str_i++)
+		if (number_str[str_i] == '-')
 			arr->is_negative = !arr->is_negative;
 
-	if (number_str[s_i] == '_')
+	if (number_str[str_i] == '_')
 	{
 		fprintf(stderr, "ParsingError: Leading underscores not allowed.\n");
 		goto cleanup_numstr;
 	}
 
-	s_i += leading_chars_len(&number_str[s_i], "0");
-	while (number_str[s_i])
+	str_i += leading_chars_len(&number_str[str_i], "0");
+	while (number_str[str_i])
 	{
-		for (b_i = 0; b_i < buf_size - 2 && number_str[s_i]; s_i++)
+		for (buf_i = 0; buf_i < buf_size - 2 && number_str[str_i]; str_i++)
 		{
-			if (number_str[s_i] == '_')
+			if (number_str[str_i] == '_')
 				continue;
 
-			c = char_to_int(number_str[s_i]);
+			c = char_to_int(number_str[str_i]);
 			if (c < 0 || (unsigned int)c >= base)
 				break;
 
-			buf[b_i] = toupper(number_str[s_i]);
-			b_i++;
+			buf[buf_i] = toupper(number_str[str_i]);
+			buf_i++;
 		}
 
-		buf[b_i] = '\0';
-		arr->str = xrealloc(arr->str, arr->len + b_i + sizeof(*arr->str));
+		buf[buf_i] = '\0';
+		arr->str = xrealloc(arr->str, arr->len + buf_i + sizeof(*arr->str));
 		if (!arr->str)
 			goto cleanup_numstr;
 
 		strcpy(&arr->str[arr->len], buf);
-		arr->len += b_i;
+		arr->len += buf_i;
 		if (c < 0 || (unsigned int)c >= base)
 			break;
 	}
@@ -85,12 +86,15 @@ numstr *str_to_numstr(const char *number_str, unsigned int base)
 		goto cleanup_numstr;
 	}
 
-	if (number_str[s_i - 1] == '_')
+	if (number_str[str_i - 1] == '_')
 	{
 		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
 cleanup_numstr:
 		arr = free_numstr(arr);
 	}
+
+	if (processed)
+		*processed = str_i + 1;
 
 	free_n_null(buf);
 	return (arr);
