@@ -58,7 +58,7 @@ typedef struct deque
 single_link_nd *push(stack *s, void *data);
 void *pop(stack *s);
 void *clear_stack(stack *s, void *(*free_data)(void *));
-void print_stack(stack *s, void (*print_data)(void *));
+/*void print_stack(stack *s, void (*print_data)(void *));*/
 
 /*deque*/
 
@@ -67,6 +67,6 @@ double_link_nd *push_tail(deque *dq, void *data);
 void *pop_head(deque *dq);
 void *pop_tail(deque *dq);
 void *clear_deque(deque *dq, void *(*free_data)(void *));
-void print_deque(deque *dq, void (*print_data)(void *));
+/*void print_deque(deque *dq, void (*print_data)(void *));*/
 
 #endif /* STACK_H */

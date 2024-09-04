@@ -1,80 +1,6 @@
 #include "parsing.h"
 
 /**
- * get_token - tokenises characters in a string.
- * @str: the string.
- * @processed: address to store number of characters processed.
- */
-static token *get_token(const char *str, size_t *processed)
-{
-	token *t = str ? malloc(sizeof(*t) * 1) : NULL;
-	numstr *n = NULL;
-
-	if (!t || !str)
-		return (NULL);
-
-	switch (*str)
-	{
-	case '(':
-	{
-		*t = (token){.id = PAREN_L, .op = {NULL}};
-		break;
-	}
-	case ')':
-	{
-		*t = (token){.id = PAREN_R, .op = {NULL}};
-		break;
-	}
-	case '+':
-	{
-		*t = (token){.id = ADD_OP, .op = {bn_addition}};
-		break;
-	}
-	case '-':
-	{
-		*t = (token){.id = SUB_OP, .op = {bn_subtraction}};
-		break;
-	}
-	case '*':
-	{
-		*t = (token){.id = MUL_OP, .op = {bn_multiplication}};
-		break;
-	}
-	case '/':
-	{
-		*t = (token){.id = DIV_OP, .op = {bn_division}};
-		break;
-	}
-	case '%':
-	{
-		*t = (token){.id = MOD_OP, .op = {bn_modulus}};
-		break;
-	}
-	case '^':
-	{
-		*t = (token){.id = POW_OP, .op = {bn_power}};
-		break;
-	}
-	default:
-	{
-		n = str_to_numstr(str, 10, processed);
-		if (!n)
-			t = free_n_null(t);
-		else
-			*t = (token){.id = NUMBER, .op.number = *n};
-
-		free_n_null(n);
-		return (t);
-	}
-	}
-
-	if (processed)
-		*processed = 1;
-
-	return (t);
-}
-
-/**
  * is_binary_operator - checks if element is a binary operator.
  * @id: element id to check.
  *
@@ -155,30 +81,14 @@ static bool syntax_is_valid(token *left, token *right)
 }
 
 /**
- * free_token - frees a token.
- * @freeable_token: pointer to a token struct.
- *
- * Return: NULL always.
- */
-void *free_token(void *freeable_token)
-{
-	token *p = (token *)freeable_token;
-
-	if (p && p->id == NUMBER)
-		free_n_null(p->op.number.str);
-
-	return (free_n_null(p));
-}
-
-/**
- * print_error - prints a parsing error.
+ * syntax_error - logs a syntax error to standard error.
  * @expression: pointer to whole expression.
  * @idx: index of the first character where error occurred.
  * @msg: message to print.
  */
-void print_syntax_error(const char *expression, size_t idx, const char *msg)
+void syntax_error(const char *expression, size_t idx, const char *msg)
 {
-	char slice[12] = {0}, highlight[12] = {0};
+	/* char slice[12] = {0}, highlight[12] = {0};
 	int i = 0, upper = 0;
 
 	if (!expression)
@@ -197,7 +107,8 @@ void print_syntax_error(const char *expression, size_t idx, const char *msg)
 	if (msg)
 		fprintf(stderr, "%s:", msg);
 
-	fprintf(stderr, "\n...%s...\n   " ANSI_RED "%s" ANSI_NORMAL, slice, highlight);
+	fprintf(
+		stderr, "\n...%s...\n   " ANSI_RED "%s" ANSI_NORMAL, slice, highlight); */
 }
 
 /**
@@ -206,13 +117,16 @@ void print_syntax_error(const char *expression, size_t idx, const char *msg)
  *
  * Return: pointer to a deque, NULL on failure.
  */
-deque *parser(const char *expression)
+deque *parser(deque *tokens)
 {
 	stack number_stack = {0}, operator_stack = {0};
 	deque *output = NULL;
 	token *current = NULL, *prev = NULL;
 	size_t exp_i = 0, processed = 0;
 
+	/*TODO: Update parser to iterate over tokens from lexer.*/
+	/*TODO: Finish the shunting yard algorithm.*/
+	/*TODO: Handle syntax errors.*/
 	while (expression[exp_i] && expression[exp_i] != '\n')
 	{
 		while (expression[exp_i] &&
@@ -224,11 +138,11 @@ deque *parser(const char *expression)
 		current = get_token(&expression[exp_i], &processed);
 		if (!syntax_is_valid(prev, current))
 		{
-			print_syntax_error(expression, exp_i + processed, "invalid syntax");
+			syntax_error(expression, exp_i + processed, "invalid syntax");
 			break;
 		}
 		/*Identifying unary prefix operators.*/
-		if (!is_ender(prev->id) && is_unary_prefix_operator(current->id))
+		if ((!prev || !is_ender(prev->id)) && is_unary_prefix_operator(current->id))
 			current->op.operator= NULL;
 
 		if (current->id == NUMBER)
@@ -239,7 +153,6 @@ deque *parser(const char *expression)
 			continue;
 		}
 
-		/*TODO: Finish this shunting yard.*/
 		exp_i += processed;
 	}
 

@@ -71,11 +71,13 @@ union ops
 /**
  * struct token - a token of a math expression.
  * @id: the type of the token.
+ * @start: pointer to the start of the token in the original string.
  * @op: a pointer to a number or operator function.
  */
 typedef struct token
 {
 	enum token_type id;
+	const char *start;
 	union ops op;
 } token;
 
