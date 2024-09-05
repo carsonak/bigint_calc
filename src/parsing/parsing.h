@@ -11,7 +11,7 @@
 
 #include "xalloc.h"
 #include "bignum_math.h"
-#include "deque_n_stack.h"
+#include "data_structures.h"
 
 #define ANSI_RED "\x1b[31m"
 #define ANSI_NORMAL "\x1b[m"
@@ -43,6 +43,7 @@ typedef bignum * (math_function)(bignum *, bignum *);
  * @DIV_OP: a division operator.
  * @MOD_OP: a modulo operator.
  * @POW_OP: an exponentiation operator.
+ * @INVALID: an invalid character.
  */
 enum token_type
 {
@@ -54,7 +55,8 @@ enum token_type
 	MUL_OP,
 	DIV_OP,
 	MOD_OP,
-	POW_OP
+	POW_OP,
+	INVALID
 };
 
 /**

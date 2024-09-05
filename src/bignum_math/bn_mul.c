@@ -1,7 +1,7 @@
 #include "bignum_math.h"
 
-static inline ATTR_NONNULL bignum *multiply(bignum *n1, bignum *n2);
-static inline ATTR_NONNULL bignum *multiply_negatives(bignum *n1, bignum *n2);
+static ATTR_NONNULL bignum *multiply(bignum *n1, bignum *n2);
+static ATTR_NONNULL bignum *multiply_negatives(bignum *n1, bignum *n2);
 
 /**
  * multiply - multiply two bignums.
@@ -10,7 +10,7 @@ static inline ATTR_NONNULL bignum *multiply_negatives(bignum *n1, bignum *n2);
  *
  * Return: pointer to result, NULL on failure.
  */
-static inline bignum *multiply(bignum *n1, bignum *n2)
+static bignum *multiply(bignum *n1, bignum *n2)
 {
 	lint byt_prod = 0;
 	size_t n1_i = 0, n2_i = 0;
@@ -69,7 +69,7 @@ static inline bignum *multiply(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static inline bignum *multiply_negatives(bignum *n1, bignum *n2)
+static bignum *multiply_negatives(bignum *n1, bignum *n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bignum *result = NULL;

@@ -50,6 +50,7 @@ typedef struct bignum
 void *free_bignum(bignum *freeable_ptr);
 ATTR_MALLOC ATTR_MALLOC_FREE(free_bignum)
 bignum *alloc_bignum(size_t len);
+bool realloc_bignum(bignum *bn, size_t len);
 ATTR_MALLOC ATTR_MALLOC_FREE(free_bignum)
 bignum *bignum_dup(bignum *bn);
 
@@ -63,11 +64,15 @@ void trim_bignum(bignum *const arr);
 
 /*math_funcs*/
 
+bool bn_add_inplace(bignum *n1, bignum *n2);
 bignum *bn_addition(bignum *n1, bignum *n2);
 bignum *bn_division(bignum *n1, bignum *n2);
 bignum *bn_modulus(bignum *n1, bignum *n2);
 bignum *bn_multiplication(bignum *n1, bignum *n2);
 bignum *bn_power(bignum *base, bignum *exponent);
+bool bn_sub_inplace(bignum *n1, bignum *n2);
 bignum *bn_subtraction(bignum *n1, bignum *n2);
+
+bool bn_swap(bignum *n1, bignum *n2);
 
 #endif /* BIGNUM_MATH_H */

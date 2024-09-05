@@ -1,15 +1,15 @@
 #include "bignum_math.h"
 
-static inline void ATTR_NONNULL_IDX(1) imultiply(bignum **n1, bignum *n2);
-static inline void ATTR_NONNULL_IDX(1) idivide(bignum **n1, bignum *n2);
-static inline void ATTR_NONNULL_IDX(1) isubtract(bignum **n1, bignum *n2);
+static void ATTR_NONNULL_IDX(1) imultiply(bignum **n1, bignum *n2);
+static void ATTR_NONNULL_IDX(1) idivide(bignum **n1, bignum *n2);
+static void ATTR_NONNULL_IDX(1) isubtract(bignum **n1, bignum *n2);
 
 /**
  * imultiply - "inplace" bignum multiplication.
  * @n1: address of the first bignum pointer.
  * @n2: pointer to the second bignum.
  */
-static inline void imultiply(bignum **n1, bignum *n2)
+static void imultiply(bignum **n1, bignum *n2)
 {
 	bignum *cpy = *n1;
 
@@ -22,7 +22,7 @@ static inline void imultiply(bignum **n1, bignum *n2)
  * @n1: address of the first bignum pointer.
  * @n2: pointer to the second bignum.
  */
-static inline void idivide(bignum **n1, bignum *n2)
+static void idivide(bignum **n1, bignum *n2)
 {
 	bignum *cpy = *n1;
 
@@ -35,7 +35,7 @@ static inline void idivide(bignum **n1, bignum *n2)
  * @n1: address of the first bignum pointer.
  * @n2: pointer to the second bignum.
  */
-static inline void isubtract(bignum **n1, bignum *n2)
+static void isubtract(bignum **n1, bignum *n2)
 {
 	bignum *cpy = *n1;
 

@@ -54,12 +54,14 @@ Test(null_inputs, test_1_plus_null,
 	uint in1[] = {1};
 
 	num1 = (bignum){
-		.len = sizeof(in1) / sizeof(*in1),
-		.is_negative = false,
-		.num = in1};
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	expected = num1;
 	bignum *output = bn_addition(&num1, NULL);
 
-	cr_expect(zero(ptr, output));
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
 }
 
 Test(null_inputs, test_null_plus_1,
@@ -79,11 +81,15 @@ Test(null_inputs, test_0_plus_null,
 {
 	uint in1[] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	expected = num1;
 	bignum *output = bn_addition(&num1, NULL);
 
-	cr_expect(zero(ptr, output));
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
 }
 
 Test(null_inputs, test_null_plus_0,
@@ -104,12 +110,14 @@ Test(null_inputs, test_minus1_plus_null,
 	uint in1[] = {1};
 
 	num1 = (bignum){
-		.len = sizeof(in1) / sizeof(*in1),
-		.is_negative = true,
-		.num = in1};
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
+	expected = num1;
 	bignum *output = bn_addition(&num1, NULL);
 
-	cr_expect(zero(ptr, output));
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
 }
 
 Test(null_inputs, test_null_plus_minus1,

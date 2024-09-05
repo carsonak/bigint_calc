@@ -12,12 +12,15 @@ static token *match_token(const char *str, size_t *processed)
     token *t = NULL;
     numstr *n = NULL;
 
-    if (!str)
+    if (!str || !*str)
         return (NULL);
 
     t = xmalloc(sizeof(*t));
     if (!t)
         return (NULL);
+
+    if (processed)
+        *processed = 1;
 
     if (*str == '(')
         *t = (token){.id = PAREN_L, .start = str, .op = {NULL}};
@@ -35,7 +38,7 @@ static token *match_token(const char *str, size_t *processed)
         *t = (token){.id = MOD_OP, .start = str, .op = {bn_modulus}};
     else if (*str == '^')
         *t = (token){.id = POW_OP, .start = str, .op = {bn_power}};
-    else
+    else if (isdigit(*str))
     {
         n = str_to_numstr(str, 10, processed);
         if (n)
@@ -44,11 +47,9 @@ static token *match_token(const char *str, size_t *processed)
             t = free_n_null(t);
 
         free_n_null(n);
-        return (t);
     }
-
-    if (processed)
-        *processed = 1;
+    else
+        *t = (token){.id = INVALID, .start = str, .op = {NULL}};
 
     return (t);
 }
@@ -58,6 +59,17 @@ static token *match_token(const char *str, size_t *processed)
  * @expression: pointer to whole expression.
  * @idx: index of the first character where error occurred.
  * @msg: message to print.
+ *
+ * Takes a snapshot of 10 or so characters around the given index, then places
+ * a coloured caret underneath the character at index and prints to standard
+ * error with the given message.
+ *
+ * Example:
+ *  lexing_error("(123 + 34957,02347) / 2", 12, "invalid character");
+ *  output:
+ *  ParsingError: invalid character:
+ *  ...34957,02347...
+ *          ^
  */
 static void lexing_error(const char *expression, size_t idx, const char *msg)
 {
@@ -128,12 +140,14 @@ deque *lex_str(const char *str)
         if (!t)
             break;
 
-        i += processed;
-        if (str[i] != ' ')
+        push_tail(tokens, t);
+        if (t->id == INVALID)
         {
             lexing_error(str, i, "invalid character");
             break;
         }
+
+        i += processed;
     }
 
     if (str[i])

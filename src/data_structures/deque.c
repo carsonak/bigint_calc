@@ -1,4 +1,4 @@
-#include "deque_n_stack.h"
+#include "data_structures.h"
 
 /**
  * push_head - push an item to the head of the deque.

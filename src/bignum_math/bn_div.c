@@ -1,13 +1,13 @@
 #include "bignum_math.h"
 
-static inline ATTR_NONNULL lint
+static ATTR_NONNULL lint
 get_current_quotient(uint *slice, size_t len_slice, bignum *n2, bignum **rem);
-static inline ATTR_NONNULL bool check_division_by_0(bignum *n2);
-static inline ATTR_NONNULL int
+static ATTR_NONNULL bool check_division_by_0(bignum *n2);
+static ATTR_NONNULL int
 check_0_result(bignum *n1, bignum *n2, bignum **rem);
-static inline ATTR_NONNULL bignum *
+static ATTR_NONNULL bignum *
 divide(bignum *n1, bignum *n2, bignum **rem);
-static inline ATTR_NONNULL bignum *
+static ATTR_NONNULL bignum *
 divide_negatives(bignum *n1, bignum *n2, bignum **rem);
 
 /**
@@ -19,7 +19,7 @@ divide_negatives(bignum *n1, bignum *n2, bignum **rem);
  *
  * Return: an int representing current quotient, -1 on error.
  */
-static inline lint
+static lint
 get_current_quotient(uint *slice, size_t len_slice, bignum *n2, bignum **rem)
 {
 	uint temp_array[1] = {0};
@@ -94,7 +94,7 @@ get_current_quotient(uint *slice, size_t len_slice, bignum *n2, bignum **rem)
  *
  * Return: 1 if n2 is zero, else 0.
  */
-static inline bool check_division_by_0(bignum *n2)
+static bool check_division_by_0(bignum *n2)
 {
 	if (!n2->len || (n2->len == 1 && !n2->num[0]))
 	{
@@ -116,7 +116,7 @@ static inline bool check_division_by_0(bignum *n2)
  *
  * Return: 1 if numerator < denominator, 0 if not, -1 on error.
  */
-static inline int check_0_result(bignum *n1, bignum *n2, bignum **rem)
+static int check_0_result(bignum *n1, bignum *n2, bignum **rem)
 {
 	if (cmp_bignum(n1, n2) >= 0)
 		return (0);
@@ -144,7 +144,7 @@ static inline int check_0_result(bignum *n1, bignum *n2, bignum **rem)
  *
  * Return: pointer ro the result, NULL on failure.
  */
-static inline bignum *divide(bignum *n1, bignum *n2, bignum **rem)
+static bignum *divide(bignum *n1, bignum *n2, bignum **rem)
 {
 	uint *slice = NULL;
 	size_t slice_offset = 1, q_i = 0, n1_i = 0, len_slice = 0;
@@ -255,7 +255,7 @@ static inline bignum *divide(bignum *n1, bignum *n2, bignum **rem)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static inline bignum *divide_negatives(bignum *n1, bignum *n2, bignum **rem)
+static bignum *divide_negatives(bignum *n1, bignum *n2, bignum **rem)
 {
 	int is_zero = 0;
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;

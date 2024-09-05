@@ -1,4 +1,4 @@
-#include "deque_n_stack.h"
+#include "data_structures.h"
 
 /**
  * push - push an item onto a stack.

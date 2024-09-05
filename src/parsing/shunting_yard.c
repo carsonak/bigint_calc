@@ -86,7 +86,7 @@ static bool syntax_is_valid(token *left, token *right)
  * @idx: index of the first character where error occurred.
  * @msg: message to print.
  */
-void syntax_error(const char *expression, size_t idx, const char *msg)
+static void syntax_error(const char *expression, size_t idx, const char *msg)
 {
 	/* char slice[12] = {0}, highlight[12] = {0};
 	int i = 0, upper = 0;

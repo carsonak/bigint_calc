@@ -28,6 +28,29 @@ bignum *alloc_bignum(size_t len)
 }
 
 /**
+ * realloc_bignum - resizes memory of a bignum array.
+ * @bn: pointer to the bignum.
+ * @len: size in bytes to resize to.
+ *
+ * Return: true on success, false on failure.
+ */
+bool realloc_bignum(bignum *bn, size_t len)
+{
+	if (!bn)
+		return (false);
+
+	bn->num = xrealloc(bn->num, len);
+	if (len && !bn->num)
+		return (false);
+
+	if (len > bn->len)
+		memset(&bn->num[bn->len], 0, sizeof(*bn->num) * (len - bn->len));
+
+	bn->len = len;
+	return (true);
+}
+
+/**
  * bignum_dup - duplicate a bignum.
  * @bn: a pointer to a bignum.
  *
@@ -40,7 +63,6 @@ bignum *bignum_dup(bignum *bn)
 	if (!bn)
 		return (NULL);
 
-	trim_bignum(bn);
 	dup = alloc_bignum(0);
 	if (!bn->len || !dup)
 		return (dup);

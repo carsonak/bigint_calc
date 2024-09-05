@@ -10,13 +10,14 @@ T_OBJS := $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%.o)
 MATH_OBJS := $(filter $(OBJ_DIR)/bignum_math/%.o %xalloc.o,$(OBJS))
 TEXT_OBJS := $(filter $(OBJ_DIR)/parsing/%.o %xalloc.o,$(OBJS))
 UTILITY_OBJS := $(filter %alloc.o %_funcs.o,$(OBJS))
+DS_OBJS := $(filter $(OBJ_DIR)/data_structures/%.o,$(OBJS))
 T_BINS := $(T_OBJS:%.o=%)
 T_DEPS := $(T_OBJS:%.o=%.d)
 
 MATH_TESTS := $(filter $(T_SRCDIR)/test_bignum_math/%,$(T_SRCS))
 MATH_TBINS := $(MATH_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 PARSING_TESTS := $(filter $(T_SRCDIR)/test_parsing/%,$(T_SRCS))
-TEXT_TBINS := $(PARSING_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
+PARSING_TBINS := $(PARSING_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 
 
 tests: math-tests parsing-tests
@@ -38,8 +39,8 @@ math-tests: $(MATH_TBINS)
 parsing-tests: INCLUDE_DIRS += $(T_INCLUDES)
 parsing-tests: LDLIBS += -lcriterion
 parsing-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
-parsing-tests: $(TEXT_TBINS)
-	$(call run_tests,$(TEXT_TBINS))
+parsing-tests: $(PARSING_TBINS)
+	$(call run_tests,$(PARSING_TBINS))
 
 $(T_BINDIR)/%.o: $(T_SRCDIR)/%.c
 	@mkdir -vp $(@D)
@@ -62,8 +63,11 @@ $(T_BINDIR)/test_bignum_math/test_bn_mod: $(T_BINDIR)/test_bignum_math/test_bn_m
 
 
 $(T_BINDIR)/test_parsing/test_base_conversion: $(filter %base_conversion.o,$(TEXT_OBJS)) $(MATH_OBJS)
+$(T_BINDIR)/test_parsing/test_lexer: $(filter %lexer.o,$(TEXT_OBJS)) $(DS_OBJS)
+$(T_BINDIR)/test_parsing/test_shunting_yard: $(filter %shunting_yard.o,$(TEXT_OBJS)) $(DS_OBJS)
+$(T_BINDIR)/test_parsing/test_uint_array_to_str: $(filter %printing.o,$(TEXT_OBJS))
 # https://www.gnu.org/software/make/manual/html_node/Static-Pattern.html
-$(TEXT_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(filter-out %base_conversion.o %shunting_yard.o %deque.o %stack.o,$(TEXT_OBJS)) $(filter %bignum_alloc.o %_funcs.o,$(MATH_OBJS))
+$(PARSING_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(filter-out %base_conversion.o %shunting_yard.o %lexer.o %printing.o,$(TEXT_OBJS)) $(filter %bignum_alloc.o %_funcs.o,$(MATH_OBJS))
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 

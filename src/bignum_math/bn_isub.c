@@ -1,20 +1,19 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL bignum *subtract(bignum *n1, bignum *n2);
-static ATTR_NONNULL bignum *subtract_negatives(bignum *n1, bignum *n2);
+static ATTR_NONNULL void subtract(bignum *n1, bignum *n2);
+static ATTR_NONNULL bool subtract_negatives(bignum *n1, bignum *n2);
 
 /**
- * subtract - subtract two bignums.
+ * subtract - subtract two bignums inplace.
  * @n1: first number.
  * @n2: second numbers.
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bignum *subtract(bignum *n1, bignum *n2)
+static void subtract(bignum *n1, bignum *n2)
 {
-	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
+	size_t n1_i = 0, n2_i = 0, result_len = 0;
 	lint n1_is_bigger = 0, byt_diff = 0;
-	bignum *diff = NULL;
 
 	/*result_len = max(n1->len, n2->len)*/
 	result_len = (n1->len > n2->len) ? n1->len : n2->len;
@@ -25,15 +24,8 @@ static bignum *subtract(bignum *n1, bignum *n2)
 		while (result_len > 2 && n1->num[result_len - 1] == n2->num[result_len - 1])
 			result_len--;
 
-	diff = alloc_bignum(result_len);
-	if (!diff)
-		return (NULL);
-
 	n1_is_bigger = cmp_bignum(n1, n2);
-	if (n1_is_bigger <= 0)
-		diff->is_negative = true;
-
-	while ((n1_i < n1->len || n2_i < n2->len) && diff_i < diff->len)
+	while (n1_i < result_len && (n1_i < n1->len || n2_i < n2->len))
 	{
 		if (n1_is_bigger > 0) /*then; n1 - n2*/
 		{
@@ -44,34 +36,30 @@ static bignum *subtract(bignum *n1, bignum *n2)
 		}
 		else /*n2 - n1*/
 		{
-			if (n1_i < n1->len)
-				byt_diff += (lint)n2->num[n2_i] - n1->num[n1_i];
-			else
-				byt_diff += n2->num[n2_i];
+			byt_diff += (lint)n2->num[n2_i] - n1->num[n1_i];
 		}
 
 		if (byt_diff < 0) /*borrow 1 from next.*/
 		{
 			byt_diff += BIGNUM_UINT_MAX;
-			diff->num[diff_i] = byt_diff % BIGNUM_UINT_MAX;
+			n1->num[n1_i] = byt_diff % BIGNUM_UINT_MAX;
 			byt_diff = -1;
 		}
 		else
 		{
-			diff->num[diff_i] = byt_diff % BIGNUM_UINT_MAX;
+			n1->num[n1_i] = byt_diff % BIGNUM_UINT_MAX;
 			byt_diff = 0;
 		}
 
 		++n1_i;
 		++n2_i;
-		++diff_i;
 	}
 
-	if (diff_i < diff->len)
-		memset(&diff->num[diff_i], 0, sizeof(*diff->num) * (diff->len - diff_i));
+	if (n1_is_bigger <= 0)
+		n1->is_negative = true;
 
-	trim_bignum(diff);
-	return (diff);
+	n1->len = result_len;
+	trim_bignum(n1);
 }
 
 /**
@@ -81,62 +69,62 @@ static bignum *subtract(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bignum *subtract_negatives(bignum *n1, bignum *n2)
+static bool subtract_negatives(bignum *n1, bignum *n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
-	bignum *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
 	if (neg1 && neg2) /*-8 - -5 = -(8-5)*/
 	{
-		result = subtract(n1, n2);
-		if (result)
-			result->is_negative = !result->is_negative;
+		subtract(n1, n2);
+		n1->is_negative = !n1->is_negative;
 	}
 	else if (neg2) /*8 - -5 = 8+5*/
-		result = bn_addition(n1, n2);
+	{
+		if (!bn_add_inplace(n1, n2))
+			return (false);
+	}
 	else if (neg1)
 	{
 		/*-8 - 5 = -(8+5)*/
-		result = bn_addition(n1, n2);
-		if (result)
-			result->is_negative = !result->is_negative;
+		if (!bn_add_inplace(n1, n2))
+			return (false);
+
+		n1->is_negative = !n1->is_negative;
 	}
 
-	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	trim_bignum(result);
-	return (result);
+	trim_bignum(n1);
+	return (true);
 }
 
 /**
- * bn_subtraction - handle subtraction of two bignums.
- * @n1: first number.
+ * bn_sub_inplace - handle subtraction of two bignums inplace.
+ * @n1: first number, must have enough space to store the result.
  * @n2: second number.
  *
  * This function does preliminary checks on the parameters.
+ * It assumes n1.num is large enough to contain the result of subtraction.
  *
  * Return: pointer to the result, NULL on failure.
  */
-bignum *bn_subtraction(bignum *n1, bignum *n2)
+bool bn_sub_inplace(bignum *n1, bignum *n2)
 {
-	bignum *res = NULL;
-
 	if (!n1)
-		return (NULL);
+		return (false);
 
 	trim_bignum(n1);
 	if (!n2)
 	{
-		res = bignum_dup(n1);
-		res->is_negative = !res->is_negative;
-		return (res);
+		n1->is_negative = !n1->is_negative;
+		return (true);
 	}
 
 	trim_bignum(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (subtract_negatives(n1, n2));
 
-	return (subtract(n1, n2));
+	subtract(n1, n2);
+	return (true);
 }

@@ -1,7 +1,7 @@
 #include "bignum_math.h"
 
-static inline ATTR_NONNULL bignum *add(bignum *n1, bignum *n2);
-static inline ATTR_NONNULL bignum *add_negatives(bignum *n1, bignum *n2);
+static ATTR_NONNULL bignum *add(bignum *n1, bignum *n2);
+static ATTR_NONNULL bignum *add_negatives(bignum *n1, bignum *n2);
 
 /**
  * add - add two bignums.
@@ -10,7 +10,7 @@ static inline ATTR_NONNULL bignum *add_negatives(bignum *n1, bignum *n2);
  *
  * Return: pointer to result, NULL on failure.
  */
-static inline bignum *add(bignum *n1, bignum *n2)
+static bignum *add(bignum *n1, bignum *n2)
 {
 	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
 	lint byt_sum = 0;
@@ -55,7 +55,7 @@ static inline bignum *add(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static inline bignum *add_negatives(bignum *n1, bignum *n2)
+static bignum *add_negatives(bignum *n1, bignum *n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bignum *result = NULL;
@@ -67,7 +67,7 @@ static inline bignum *add_negatives(bignum *n1, bignum *n2)
 		/*-8 + -7 = -(8+7)*/
 		result = add(n1, n2);
 		if (result)
-			result->is_negative = true;
+			result->is_negative = !result->is_negative;
 	}
 	else if (neg1) /*-8 + 7 = 7-8*/
 		result = bn_subtraction(n2, n1);
@@ -91,10 +91,13 @@ static inline bignum *add_negatives(bignum *n1, bignum *n2)
  */
 bignum *bn_addition(bignum *n1, bignum *n2)
 {
-	if (!n1 || !n2)
+	if (!n1)
 		return (NULL);
 
 	trim_bignum(n1);
+	if (!n2)
+		return (bignum_dup(n1));
+
 	trim_bignum(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (add_negatives(n1, n2));
