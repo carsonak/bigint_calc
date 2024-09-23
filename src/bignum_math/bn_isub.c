@@ -12,20 +12,20 @@ static ATTR_NONNULL bool subtract_negatives(bignum *n1, bignum *n2);
  */
 static void subtract(bignum *n1, bignum *n2)
 {
-	size_t n1_i = 0, n2_i = 0, result_len = 0;
+	size_t n1_i = 0, n2_i = 0, tmp_len = 0, final_len = 0;
 	lint n1_is_bigger = 0, byt_diff = 0;
 
 	/*result_len = max(n1->len, n2->len)*/
-	result_len = (n1->len > n2->len) ? n1->len : n2->len;
+	tmp_len = (n1->len > n2->len) ? n1->len : n2->len;
 	/*If both arrays are of the same length then;*/
 	/*result_len = n1->len - */
-	/*(length of continuous matches in n1 and n2 from msd down to lsd).*/
+	/*(length of continuous matches in n1 and n2 from msd down to lsd)*/
 	if (n1->len == n2->len)
-		while (result_len > 2 && n1->num[result_len - 1] == n2->num[result_len - 1])
-			result_len--;
+		while (tmp_len > 1 && n1->num[tmp_len - 1] == n2->num[tmp_len - 1])
+			tmp_len--;
 
 	n1_is_bigger = cmp_bignum(n1, n2);
-	while (n1_i < result_len && (n1_i < n1->len || n2_i < n2->len))
+	while (n1_i < tmp_len && (n1_i < n1->len || n2_i < n2->len))
 	{
 		if (n1_is_bigger > 0) /*then; n1 - n2*/
 		{
@@ -36,7 +36,10 @@ static void subtract(bignum *n1, bignum *n2)
 		}
 		else /*n2 - n1*/
 		{
-			byt_diff += (lint)n2->num[n2_i] - n1->num[n1_i];
+			if (n1_i < n1->len)
+				byt_diff += (lint)n2->num[n2_i] - n1->num[n1_i];
+			else
+				byt_diff += n2->num[n2_i];
 		}
 
 		if (byt_diff < 0) /*borrow 1 from next.*/
@@ -44,10 +47,19 @@ static void subtract(bignum *n1, bignum *n2)
 			byt_diff += BIGNUM_UINT_MAX;
 			n1->num[n1_i] = byt_diff % BIGNUM_UINT_MAX;
 			byt_diff = -1;
+			final_len++;
 		}
 		else
 		{
-			n1->num[n1_i] = byt_diff % BIGNUM_UINT_MAX;
+			/*For the case: 1,000,000,000 - 5 = 999,999,995*/
+			/*A borrow needs to be performed but may cause an out of bounds*/
+			/*n1 access, as n1 needs only be large enough to hold the answer.*/
+			if (byt_diff || (n2_i + 1 < n2->len || n1_i < n1->len))
+			{
+				n1->num[n1_i] = byt_diff % BIGNUM_UINT_MAX;
+				final_len++;
+			}
+
 			byt_diff = 0;
 		}
 
@@ -58,7 +70,7 @@ static void subtract(bignum *n1, bignum *n2)
 	if (n1_is_bigger <= 0)
 		n1->is_negative = true;
 
-	n1->len = result_len;
+	n1->len = final_len;
 	trim_bignum(n1);
 }
 
@@ -100,22 +112,22 @@ static bool subtract_negatives(bignum *n1, bignum *n2)
 }
 
 /**
- * bn_sub_inplace - handle subtraction of two bignums inplace.
+ * bn_sub_inplace - handles subtraction of two bignums inplace.
  * @n1: first number, must have enough space to store the result.
  * @n2: second number.
  *
- * This function does preliminary checks on the parameters.
- * It assumes n1.num is large enough to contain the result of subtraction.
+ * The results of the subtraction will be stored in n1. No extra memory
+ * will be allocated via calls to *alloc family functions.
  *
  * Return: pointer to the result, NULL on failure.
  */
 bool bn_sub_inplace(bignum *n1, bignum *n2)
 {
-	if (!n1)
+	if (!n1 || !n1->num)
 		return (false);
 
 	trim_bignum(n1);
-	if (!n2)
+	if (!n2 || !n2->num)
 	{
 		n1->is_negative = !n1->is_negative;
 		return (true);

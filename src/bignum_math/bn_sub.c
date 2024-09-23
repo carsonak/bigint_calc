@@ -22,7 +22,7 @@ static bignum *subtract(bignum *n1, bignum *n2)
 	/*result_len = n1->len - */
 	/*(length of continuous matches in n1 and n2 from msd down to lsd).*/
 	if (n1->len == n2->len)
-		while (result_len > 2 && n1->num[result_len - 1] == n2->num[result_len - 1])
+		while (result_len > 1 && n1->num[result_len - 1] == n2->num[result_len - 1])
 			result_len--;
 
 	diff = alloc_bignum(result_len);

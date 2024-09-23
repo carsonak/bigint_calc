@@ -320,6 +320,138 @@ Test(simple_subtractions, test_50000_minus_100000000,
 	output = free_bignum(output);
 }
 
+TestSuite(same_number_subtractions, .init = setup, .fini = teardown);
+
+Test(same_number_subtractions, test_1_minus_1,
+	 .description = "1 - 1 = 0", .timeout = 2.0)
+{
+	uint in1[] = {1}, in2[] = {1}, out[] = {0};
+
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+
+	bignum *output = bn_subtraction(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
+}
+
+Test(same_number_subtractions, test_1000000001_minus_1000000001,
+	 .description = "1000000001 - 1000000001 = 0", .timeout = 2.0)
+{
+	uint in1[] = {1, 1}, in2[] = {1, 1}, out[] = {0};
+
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+
+	bignum *output = bn_subtraction(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
+}
+
+Test(same_number_subtractions, test_longnum_minus_longnum,
+	 .description = "1000000001000000001 - 1000000001000000001 = 0",
+	 .timeout = 2.0)
+{
+	uint in1[] = {1, 1, 1}, in2[] = {1, 1, 1}, out[] = {0};
+
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+
+	bignum *output = bn_subtraction(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
+}
+
+Test(same_number_subtractions, test_largenum_minus_largenum,
+	 .description = "1,1,1,1,1,1,1,1,1,1,1,1,1 - 1,1,1,1,1,1,1,1,1,1,1,1,1 = 0",
+	 .timeout = 2.0)
+{
+	uint in1[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	uint in2[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	uint out[] = {0};
+
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+
+	bignum *output = bn_subtraction(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
+}
+
+Test(same_number_subtractions, test_almostsame_minus_almostsame,
+	 .description = "1,1,1,1,1,1,1,1,1,1,1,1,0 - 1,1,1,1,1,1,1,1,1,1,1,1,1 = -1",
+	 .timeout = 2.0)
+{
+	uint in1[] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	uint in2[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	uint out[] = {1};
+
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+
+	bignum *output = bn_subtraction(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
+}
+
+Test(same_number_subtractions, test_almostsame_minus_almostsame_reverse,
+	 .description = "1,1,1,1,1,1,1,1,1,1,1,1,1 - 1,1,1,1,1,1,1,1,1,1,1,1,0 = 1",
+	 .timeout = 2.0)
+{
+	uint in1[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	uint in2[] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+	uint out[] = {1};
+
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+
+	bignum *output = bn_subtraction(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = free_bignum(output);
+}
+
 TestSuite(long_subtractions, .init = setup, .fini = teardown);
 
 Test(long_subtractions, test_long9s_minus_1,

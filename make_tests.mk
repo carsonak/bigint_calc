@@ -9,7 +9,6 @@ T_INCLUDES := $(shell find "$(T_SRCDIR)" -mount -name '*.h' -exec dirname {} \+ 
 T_OBJS := $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%.o)
 MATH_OBJS := $(filter $(OBJ_DIR)/bignum_math/%.o %xalloc.o,$(OBJS))
 TEXT_OBJS := $(filter $(OBJ_DIR)/parsing/%.o %xalloc.o,$(OBJS))
-UTILITY_OBJS := $(filter %alloc.o %_funcs.o,$(OBJS))
 DS_OBJS := $(filter $(OBJ_DIR)/data_structures/%.o,$(OBJS))
 T_BINS := $(T_OBJS:%.o=%)
 T_DEPS := $(T_OBJS:%.o=%.d)
@@ -18,7 +17,6 @@ MATH_TESTS := $(filter $(T_SRCDIR)/test_bignum_math/%,$(T_SRCS))
 MATH_TBINS := $(MATH_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 PARSING_TESTS := $(filter $(T_SRCDIR)/test_parsing/%,$(T_SRCS))
 PARSING_TBINS := $(PARSING_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
-
 
 tests: math-tests parsing-tests
 
@@ -51,13 +49,13 @@ $(T_BINDIR)/test_bignum_math/test_cmp_bignum: $(T_BINDIR)/test_bignum_math/test_
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 $(T_BINDIR)/test_bignum_math/test_bn_mul: $(filter %bn_add.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_div: $(filter-out %bn_div.o %bn_pow.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_pow: $(filter-out %bn_pow.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_div: $(filter-out %bn_div.o %bn_pow.o %bn_iadd.o %bn_isub.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_pow: $(filter-out %bn_pow.o %bn_iadd.o %bn_isub.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(OBJ_DIR)/bignum_math/%.o $(filter %alloc.o %_funcs.o,$(MATH_OBJS))
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_bignum_math/test_bn_mod: $(T_BINDIR)/test_bignum_math/test_bn_mod.o $(filter-out %bn_pow.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_mod: $(T_BINDIR)/test_bignum_math/test_bn_mod.o $(filter-out %bn_pow.o %bn_iadd.o %bn_isub.o,$(MATH_OBJS))
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
