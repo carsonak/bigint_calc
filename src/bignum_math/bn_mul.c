@@ -14,7 +14,7 @@ static bignum *multiply(bignum *n1, bignum *n2)
 {
 	lint byt_prod = 0;
 	size_t n1_i = 0, n2_i = 0;
-	bignum *product = NULL, *current_mul = NULL, *increment = NULL;
+	bignum *product = NULL, *current_mul = NULL;
 
 	/*Multiplication by zero.*/
 	if (!n1->len || !n2->len)
@@ -22,10 +22,14 @@ static bignum *multiply(bignum *n1, bignum *n2)
 	else if ((n1->len == 1 && !n1->num[0]) || (n2->len == 1 && !n2->num[0]))
 		return (alloc_bignum(1));
 
-	increment = alloc_bignum(0);
-	if (!increment)
-		return (NULL);
+	/*Length of product = length of n1 + length of n2*/
+	product = alloc_bignum(n1->len + n2->len);
+	current_mul = alloc_bignum(n1->len + n2->len);
+	if (!product || !current_mul)
+		goto clean_up;
 
+	memset(product->num, 0, sizeof(*product->num) * product->len);
+	product->len = 1;
 	/*Iterate over every number in n2 and multiply with every number in n1.*/
 	for (n2_i = 0; n2_i < n2->len; n2_i++)
 	{
@@ -35,10 +39,7 @@ static bignum *multiply(bignum *n1, bignum *n2)
 
 		/*Length of current_mul = */
 		/*length of n1 + (number of digits between n2[0] and n2[n2_i])*/
-		current_mul = alloc_bignum(n1->len + n2_i + 1);
-		if (!current_mul)
-			return (free_bignum(product));
-
+		current_mul->len = n1->len + (n2_i + 1);
 		memset(current_mul->num, 0, sizeof(*current_mul->num) * (n2_i + 1));
 		byt_prod = 0;
 		for (n1_i = 0; n1_i < n1->len; n1_i++)
@@ -49,14 +50,14 @@ static bignum *multiply(bignum *n1, bignum *n2)
 		}
 
 		current_mul->num[n2_i + n1_i] = byt_prod;
-		product = bn_addition(increment, current_mul);
-		current_mul = free_bignum(current_mul);
-		increment = free_bignum(increment);
-		if (!product)
-			return (NULL);
-
-		increment = product;
+		if (!bn_add_inplace(product, current_mul))
+			break;
 	}
+
+clean_up:
+	current_mul = free_bignum(current_mul);
+	if (n2_i < n2->len)
+		product = free_bignum(product);
 
 	trim_bignum(product);
 	return (product);

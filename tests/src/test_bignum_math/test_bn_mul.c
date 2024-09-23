@@ -5,17 +5,17 @@ bignum num2 = {.len = 0, .is_negative = false, .num = NULL};
 bignum expected = {.len = 0, .is_negative = false, .num = NULL};
 
 /**
- * bn_subtraction - dummy.
+ * bn_sub_inplace - dummy.
  * @n1: unused.
  * @n2: unused.
  *
- * Return: a 0 length array, NULL on failure.
+ * Return: true always.
  */
-bignum *bn_subtraction(bignum *n1, bignum *n2)
+bool bn_sub_inplace(bignum *n1, bignum *n2)
 {
-	(void)n1;
-	(void)n2;
-	return (alloc_bignum(0));
+	n1->num[0] = 10;
+	n2->num[0] = 10;
+	return (true);
 }
 
 /**
