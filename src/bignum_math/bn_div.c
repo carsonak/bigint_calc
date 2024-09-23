@@ -206,7 +206,7 @@ static bignum *divide(bignum *n1, bignum *n2, bignum **rem)
 		/*If remainder is shorter than denominator then; drop in more digits*/
 		if (q_i && (ulint)tmp > 0)
 		{
-			/*Have to be careful of unsigned int wrapping.*/
+			/*Be careful of unsigned int wrapping.*/
 			if (n1_i + 1 > (ulint)tmp)
 				n1_i -= tmp;
 			else

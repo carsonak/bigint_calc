@@ -37,10 +37,13 @@ static void idivide(bignum **n1, bignum *n2)
  */
 static void isubtract(bignum **n1, bignum *n2)
 {
-	bignum *cpy = *n1;
+	if ((*n1)->len < n2->len)
+	{
+		if (!realloc_bignum(*n1, n2->len))
+			*n1 = free_bignum(*n1);
+	}
 
-	*n1 = bn_subtraction(cpy, n2);
-	free_bignum(cpy);
+	bn_sub_inplace(*n1, n2);
 }
 
 /**
@@ -74,11 +77,7 @@ bignum *bn_power(bignum *base, bignum *exponent)
 	x = bignum_dup(base);
 	y = alloc_bignum(1);
 	if (!exp || !x || !y)
-	{
-		free_bignum(exp);
-		free_bignum(y);
-		return (free_bignum(x));
-	}
+		goto clean_up;
 
 	exp->is_negative = false;
 	x->is_negative = false;
@@ -103,11 +102,14 @@ bignum *bn_power(bignum *base, bignum *exponent)
 		}
 
 		imultiply(&x, x);
+		if (!exp || !x || !y)
+			goto clean_up;
+
 		idivide(&exp, &tmp);
 	}
 
 	imultiply(&x, y);
-	if (exponent->is_negative)
+	if (exponent->is_negative && x)
 	{
 		tmp.num = one;
 		idivide(&x, &tmp);
@@ -115,6 +117,12 @@ bignum *bn_power(bignum *base, bignum *exponent)
 
 	if (x && base->is_negative && exponent->num[0] % 2)
 		x->is_negative = true;
+
+	if (false)
+	{
+	clean_up:
+		x = free_bignum(x);
+	}
 
 	free_bignum(exp);
 	free_bignum(y);
