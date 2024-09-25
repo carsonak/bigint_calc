@@ -1,12 +1,12 @@
 #include "bignum_math.h"
 
 /**
- * alloc_bignum - allocate memory for a bignum of given length.
+ * bn_alloc - allocate memory for a bignum of given length.
  * @len: length of the array, length 0 returns the struct with a NULL array.
  *
  * Return: a pointer to a bignum struct, NULL on failure.
  */
-bignum *alloc_bignum(size_t len)
+bignum *bn_alloc(size_t len)
 {
 	bignum *arr = xcalloc(1, sizeof(*arr));
 
@@ -28,48 +28,48 @@ bignum *alloc_bignum(size_t len)
 }
 
 /**
- * realloc_bignum - resizes memory of a bignum array.
+ * bn_realloc - resizes memory of a bignum array.
  * @bn: pointer to the bignum.
  * @len: size in bytes to resize to.
  *
  * Return: true on success, false on failure.
  */
-bool realloc_bignum(bignum *bn, size_t len)
+bool bn_realloc(bignum *bn, size_t len)
 {
 	if (!bn)
 		return (false);
 
-	bn->num = xrealloc(bn->num, len);
+	bn->num = xrealloc(bn->num, sizeof(*bn->num) * len);
 	if (len && !bn->num)
 		return (false);
 
 	if (len > bn->len)
-		memset(&bn->num[bn->len], 0, sizeof(*bn->num) * (len - bn->len));
+		memset(&(bn->num[bn->len]), 0, sizeof(*bn->num) * (len - bn->len));
 
 	bn->len = len;
 	return (true);
 }
 
 /**
- * bignum_dup - duplicate a bignum.
+ * bn_dup - duplicate a bignum.
  * @bn: a pointer to a bignum.
  *
  * Return: a pointer to a copy of bn.
  */
-bignum *bignum_dup(bignum *bn)
+bignum *bn_dup(bignum *bn)
 {
 	bignum *dup = NULL;
 
 	if (!bn)
 		return (NULL);
 
-	dup = alloc_bignum(0);
+	dup = bn_alloc(0);
 	if (!bn->len || !dup)
 		return (dup);
 
 	dup->num = xmalloc(bn->len * sizeof(*dup->num));
 	if (!dup->num)
-		return (free_bignum(dup));
+		return (bn_free(dup));
 
 	dup->is_negative = bn->is_negative;
 	dup->len = bn->len;
@@ -78,12 +78,12 @@ bignum *bignum_dup(bignum *bn)
 }
 
 /**
- * free_bignum - free a bignum, return NULL.
+ * bn_free - free a bignum, return NULL.
  * @freeable_ptr: a pointer to a bignum.
  *
  * Return: NULL always.
  */
-void *free_bignum(bignum *freeable_ptr)
+void *bn_free(bignum *freeable_ptr)
 {
 	if (freeable_ptr)
 		free_n_null(freeable_ptr->num);

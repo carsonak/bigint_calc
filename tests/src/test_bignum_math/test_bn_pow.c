@@ -125,7 +125,7 @@ Test(zero_len_arrays, test_nullarray_pow_nullarray,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(zero_len_arrays, test_4490998_pow_nullarray,
@@ -142,7 +142,7 @@ Test(zero_len_arrays, test_4490998_pow_nullarray,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(zero_len_arrays, test_nullarray_pow_largenum,
@@ -160,7 +160,7 @@ Test(zero_len_arrays, test_nullarray_pow_largenum,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 TestSuite(simple_exponentiations, .init = setup, .fini = teardown);
@@ -180,7 +180,7 @@ Test(simple_exponentiations, test_123_pow_0, .description = "123 ^ 0", .timeout 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_1, .description = "123 ^ 1", .timeout = 2.0)
@@ -198,7 +198,7 @@ Test(simple_exponentiations, test_123_pow_1, .description = "123 ^ 1", .timeout 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_2, .description = "123 ^ 2", .timeout = 2.0)
@@ -216,7 +216,7 @@ Test(simple_exponentiations, test_123_pow_2, .description = "123 ^ 2", .timeout 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_3, .description = "123 ^ 3", .timeout = 2.0)
@@ -234,7 +234,7 @@ Test(simple_exponentiations, test_123_pow_3, .description = "123 ^ 3", .timeout 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_4, .description = "123 ^ 4", .timeout = 2.0)
@@ -252,7 +252,7 @@ Test(simple_exponentiations, test_123_pow_4, .description = "123 ^ 4", .timeout 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_5, .description = "123 ^ 5", .timeout = 2.0)
@@ -270,7 +270,7 @@ Test(simple_exponentiations, test_123_pow_5, .description = "123 ^ 5", .timeout 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(simple_exponentiations, test_234_pow_477, .description = "234 ^ 477", .timeout = 2.0)
@@ -289,7 +289,7 @@ Test(simple_exponentiations, test_234_pow_477, .description = "234 ^ 477", .time
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(simple_exponentiations, test_234_pow_266, .description = "234 ^ 266", .timeout = 2.0)
@@ -308,7 +308,7 @@ Test(simple_exponentiations, test_234_pow_266, .description = "234 ^ 266", .time
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 TestSuite(negative_exponentiations, .init = setup, .fini = teardown);
@@ -330,7 +330,7 @@ Test(negative_exponentiations, test_minus123_pow_2,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }
 
 Test(negative_exponentiations, test_minus123_pow_3,
@@ -351,5 +351,5 @@ Test(negative_exponentiations, test_minus123_pow_3,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = free_bignum(output);
+	output = bn_free(output);
 }

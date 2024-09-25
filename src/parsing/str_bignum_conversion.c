@@ -123,7 +123,7 @@ bignum *numstr_to_bignum(numstr *num)
 	if (num->len % digits)
 		a_i++;
 
-	arr = alloc_bignum(a_i);
+	arr = bn_alloc(a_i);
 	if (!arr)
 		return (NULL);
 
@@ -143,7 +143,7 @@ bignum *numstr_to_bignum(numstr *num)
 		if (*end)
 		{
 			fprintf(stderr, "ParsingError: Invalid character '%c'\n", *end);
-			return (free_bignum(arr));
+			return (bn_free(arr));
 		}
 
 		arr->num[a_i] = tmp % BIGNUM_UINT_MAX;

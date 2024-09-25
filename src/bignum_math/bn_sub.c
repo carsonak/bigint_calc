@@ -25,7 +25,7 @@ static bignum *subtract(bignum *n1, bignum *n2)
 		while (result_len > 1 && n1->num[result_len - 1] == n2->num[result_len - 1])
 			result_len--;
 
-	diff = alloc_bignum(result_len);
+	diff = bn_alloc(result_len);
 	if (!diff)
 		return (NULL);
 
@@ -129,7 +129,7 @@ bignum *bn_subtraction(bignum *n1, bignum *n2)
 	trim_bignum(n1);
 	if (!n2)
 	{
-		res = bignum_dup(n1);
+		res = bn_dup(n1);
 		res->is_negative = !res->is_negative;
 		return (res);
 	}
