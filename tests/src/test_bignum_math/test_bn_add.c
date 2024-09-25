@@ -1,8 +1,8 @@
 #include "tests.h"
 
-bignum num1 = {.len = 0, .is_negative = false, .num = NULL};
-bignum num2 = {.len = 0, .is_negative = false, .num = NULL};
-bignum expected = {.len = 0, .is_negative = false, .num = NULL};
+bignum num1;
+bignum num2;
+bignum expected;
 
 /**
  * bn_subtraction - dummy.
@@ -13,7 +13,7 @@ bignum expected = {.len = 0, .is_negative = false, .num = NULL};
  */
 bignum *bn_subtraction(bignum *n1, bignum *n2)
 {
-	bignum *res = bn_alloc(1);
+	bignum *res = bignum_alloc(1);
 
 	(void)n1;
 	(void)n2;
@@ -26,16 +26,18 @@ bignum *bn_subtraction(bignum *n1, bignum *n2)
 /**
  * setup - initialises variables for tests.
  */
-void setup(void) {}
+void setup(void)
+{
+	num1 = (bignum){.len = 0, .is_negative = false, .num = NULL};
+	num2 = (bignum){.len = 0, .is_negative = false, .num = NULL};
+	expected = (bignum){.len = 0, .is_negative = false, .num = NULL};
+}
 
 /**
  * teardown - resets variables for tests.
  */
 void teardown(void)
 {
-	num1 = (bignum){.len = 0, .is_negative = false, .num = NULL};
-	num2 = (bignum){.len = 0, .is_negative = false, .num = NULL};
-	expected = (bignum){.len = 0, .is_negative = false, .num = NULL};
 }
 
 TestSuite(null_inputs, .init = setup, .fini = teardown);
@@ -55,13 +57,9 @@ Test(null_inputs, test_1_plus_null,
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	expected = num1;
 	bignum *output = bn_addition(&num1, NULL);
 
-	cr_expect(eq(sz, output->len, expected.len));
-	cr_expect(eq(chr, output->is_negative, expected.is_negative));
-	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	cr_expect(zero(ptr, output));
 }
 
 Test(null_inputs, test_null_plus_1,
@@ -83,13 +81,9 @@ Test(null_inputs, test_0_plus_null,
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	expected = num1;
 	bignum *output = bn_addition(&num1, NULL);
 
-	cr_expect(eq(sz, output->len, expected.len));
-	cr_expect(eq(chr, output->is_negative, expected.is_negative));
-	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	cr_expect(zero(ptr, output));
 }
 
 Test(null_inputs, test_null_plus_0,
@@ -111,13 +105,9 @@ Test(null_inputs, test_minus1_plus_null,
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = num1;
 	bignum *output = bn_addition(&num1, NULL);
 
-	cr_expect(eq(sz, output->len, expected.len));
-	cr_expect(eq(chr, output->is_negative, expected.is_negative));
-	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	cr_expect(zero(ptr, output));
 }
 
 Test(null_inputs, test_null_plus_minus1,
@@ -144,7 +134,7 @@ Test(zero_len_arrays, test_nullarray_plus_nullarray,
 	cr_expect(zero(sz, output->len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(zero(ptr, output->num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(zero_len_arrays, test_4490998_plus_nullarray,
@@ -161,7 +151,7 @@ Test(zero_len_arrays, test_4490998_plus_nullarray,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(zero_len_arrays, test_nullarray_plus_largenum,
@@ -180,7 +170,7 @@ Test(zero_len_arrays, test_nullarray_plus_largenum,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 TestSuite(simple_additions, .init = setup, .fini = teardown);
@@ -199,7 +189,7 @@ Test(simple_additions, test_0_plus_0,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(simple_additions, test_1_plus_0,
@@ -218,7 +208,7 @@ Test(simple_additions, test_1_plus_0,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(simple_additions, test_0_plus_1,
@@ -237,7 +227,7 @@ Test(simple_additions, test_0_plus_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(simple_additions, test_1_plus_1,
@@ -254,7 +244,7 @@ Test(simple_additions, test_1_plus_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(simple_additions, test_12345_plus_54321,
@@ -273,7 +263,7 @@ Test(simple_additions, test_12345_plus_54321,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(simple_additions, test_54321_plus_12345,
@@ -292,7 +282,7 @@ Test(simple_additions, test_54321_plus_12345,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 TestSuite(long_additions, .init = setup, .fini = teardown);
@@ -313,7 +303,7 @@ Test(long_additions, test_999999999_plus_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(long_additions, test_999999999999999999_plus_999999999,
@@ -334,7 +324,7 @@ Test(long_additions, test_999999999999999999_plus_999999999,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(long_additions, test_long9s_plus_1,
@@ -357,7 +347,7 @@ Test(long_additions, test_long9s_plus_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(long_additions, test_1_plus_long9s,
@@ -380,7 +370,7 @@ Test(long_additions, test_1_plus_long9s,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(long_additions, test_long_sparse_num1_plus_long_sparse_num2,
@@ -404,7 +394,7 @@ Test(long_additions, test_long_sparse_num1_plus_long_sparse_num2,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(long_additions, test_long_sparse_num2_plus_long_sparse_num1,
@@ -428,7 +418,7 @@ Test(long_additions, test_long_sparse_num2_plus_long_sparse_num1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 TestSuite(negative_additions, .init = setup, .fini = teardown);
@@ -453,7 +443,7 @@ Test(negative_additions, test_minus1_plus_minus1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(negative_additions, test_1_plus_minus1,
@@ -469,7 +459,7 @@ Test(negative_additions, test_1_plus_minus1,
 	bignum *output = bn_addition(&num1, &num2);
 
 	cr_expect(zero(chr, output->is_negative));
-	bn_free(output);
+	bignum_free(output);
 }
 
 Test(negative_additions, test_minus1_plus_1,
@@ -485,7 +475,7 @@ Test(negative_additions, test_minus1_plus_1,
 	bignum *output = bn_addition(&num1, &num2);
 
 	cr_expect(zero(chr, output->is_negative));
-	bn_free(output);
+	bignum_free(output);
 }
 
 TestSuite(large_additions, .init = setup, .fini = teardown);
@@ -508,7 +498,7 @@ Test(large_additions, test_o1kb_plus_o1kc,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(large_additions, test_o1kb_plus_o1ka,
@@ -529,7 +519,7 @@ Test(large_additions, test_o1kb_plus_o1ka,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(large_additions, test_o500c_plus_o500d,
@@ -551,7 +541,7 @@ Test(large_additions, test_o500c_plus_o500d,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }
 
 Test(large_additions, test_o500d_plus_o500c,
@@ -573,5 +563,5 @@ Test(large_additions, test_o500d_plus_o500c,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bignum_free(output);
 }

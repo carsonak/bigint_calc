@@ -47,12 +47,12 @@ typedef struct bignum
 
 /* alloc_funcs */
 
-void *bn_free(bignum *freeable_ptr);
-ATTR_MALLOC ATTR_MALLOC_FREE(bn_free)
-bignum *bn_alloc(size_t len);
-bool bn_realloc(bignum *bn, size_t len);
-ATTR_MALLOC ATTR_MALLOC_FREE(bn_free)
-bignum *bn_dup(bignum *bn);
+void *bignum_free(bignum *freeable_ptr);
+ATTR_MALLOC ATTR_MALLOC_FREE(bignum_free)
+bignum *bignum_alloc(size_t len);
+bool bignum_realloc(bignum *bn, size_t len);
+ATTR_MALLOC ATTR_MALLOC_FREE(bignum_free)
+bignum *bignum_dup(bignum *bn);
 
 /*array_funcs*/
 

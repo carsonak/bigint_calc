@@ -67,8 +67,7 @@ lint cmp_rev_uint32array(
  */
 bool is_zero(bignum * const arr)
 {
-	trim_bignum(arr);
-	if (arr && (!arr->len || (arr->len == 1 && !arr->num[0])))
+	if (arr && (!arr->len || !arr->num || (arr->len == 1 && !arr->num[0])))
 		return (true);
 
 	return (false);

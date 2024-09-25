@@ -27,7 +27,7 @@ get_current_quotient(bignum *slice, bignum *n2, bignum **rem)
 	bignum *estimate_check = NULL;
 	lint msd_slice = 0, is_larger = 0;
 
-	*rem = bn_free(*rem);
+	*rem = bignum_free(*rem);
 	msd_slice = slice->num[slice->len - 1];
 	if (slice->len > n2->len)
 		msd_slice = (msd_slice * BIGNUM_UINT_MAX) + slice->num[slice->len - 2];
@@ -38,8 +38,8 @@ get_current_quotient(bignum *slice, bignum *n2, bignum **rem)
 	*rem = bn_subtraction(slice, estimate_check);
 	if (!(*rem) || !estimate_check)
 	{
-		*rem = bn_free(*rem);
-		bn_free(estimate_check);
+		*rem = bignum_free(*rem);
+		bignum_free(estimate_check);
 		return (-1);
 	}
 
@@ -66,22 +66,22 @@ get_current_quotient(bignum *slice, bignum *n2, bignum **rem)
 			q_estimate.num[0] += (*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1];
 		}
 
-		estimate_check = bn_free(estimate_check);
-		bn_free(*rem);
+		estimate_check = bignum_free(estimate_check);
+		bignum_free(*rem);
 
 		estimate_check = bn_multiplication(n2, &q_estimate);
 		*rem = bn_subtraction(slice, estimate_check);
 		if (!(*rem) || !estimate_check)
 		{
-			*rem = bn_free(*rem);
-			bn_free(estimate_check);
+			*rem = bignum_free(*rem);
+			bignum_free(estimate_check);
 			return (-1);
 		}
 
 		is_larger = cmp_bignum(*rem, n2);
 	}
 
-	bn_free(estimate_check);
+	bignum_free(estimate_check);
 	return (q_estimate.num[0]);
 }
 
@@ -135,7 +135,7 @@ static bool check_0_result(bignum *n1, bignum *n2)
 static bignum *divide(bignum *n1, bignum *n2, bignum **rem)
 {
 	bignum *current_slice = NULL;
-	size_t slc_offset = 1, q_i = 0, n1_i = 0;
+	size_t slice_offset = 1, q_i = 0, n1_i = 0;
 	lint tmp = 0;
 	bignum *quotient = NULL;
 
@@ -143,17 +143,17 @@ static bignum *divide(bignum *n1, bignum *n2, bignum **rem)
 	/*quotient digits = numerator digits - denominator digits + (0 or 1).*/
 	if (n1->num[n1->len - 1] < n2->num[n2->len - 1])
 		/*If m.s.d of numerator < m.s.d denominator.*/
-		quotient = bn_alloc((n1->len - n2->len ? n1->len - n2->len : 1));
+		quotient = bignum_alloc((n1->len - n2->len ? n1->len - n2->len : 1));
 	else
-		quotient = bn_alloc(n1->len - n2->len + 1);
+		quotient = bignum_alloc(n1->len - n2->len + 1);
 
 	/*len_slice = len of n2, +1 for a dropdown*/
-	current_slice = bn_alloc(n2->len + 1);
+	current_slice = bignum_alloc(n2->len + 1);
 	if (!current_slice || !quotient)
 		goto error_cleanup;
 
 	n1_i = n1->len - n2->len;
-	memmove(&current_slice->num[slc_offset], &n1->num[n1_i], sizeof(*n1->num) * n2->len);
+	memmove(&current_slice->num[slice_offset], &n1->num[n1_i], sizeof(*n1->num) * n2->len);
 	if (n1_i)
 		n1_i--;
 
@@ -161,7 +161,7 @@ static bignum *divide(bignum *n1, bignum *n2, bignum **rem)
 	{
 		/*If most significant digit (m.s.d) of current_slice < m.s.d of denominator then;*/
 		/*dropdown an extra digit from the numerator.*/
-		slc_offset = 0;
+		slice_offset = 0;
 		current_slice->num[0] = n1->num[n1_i];
 		if (n1_i)
 			n1_i--;
@@ -172,18 +172,18 @@ static bignum *divide(bignum *n1, bignum *n2, bignum **rem)
 	while (q_i > 0)
 	{
 		q_i--;
-		current_slice->num += slc_offset;
-		current_slice->len -= slc_offset;
+		current_slice->num += slice_offset;
+		current_slice->len -= slice_offset;
 		tmp = get_current_quotient(current_slice, n2, rem);
-		current_slice->num -= slc_offset;
-		current_slice->len += slc_offset;
+		current_slice->num -= slice_offset;
+		current_slice->len += slice_offset;
 		if (tmp < 0)
 			goto error_cleanup;
 
 		quotient->num[q_i] = tmp;
 		/*Copy remainder into current_slice starting from m.s.ds.*/
 		memmove(&current_slice->num[current_slice->len - (*rem)->len], (*rem)->num, sizeof(*(*rem)->num) * (*rem)->len);
-		slc_offset = 1;
+		slice_offset = 1;
 		tmp = n2->len - (*rem)->len;
 		/*If remainder is shorter than denominator then; drop in more digits*/
 		if (q_i && (ulint)tmp > 0)
@@ -193,39 +193,39 @@ static bignum *divide(bignum *n1, bignum *n2, bignum **rem)
 				n1_i -= tmp;
 			else
 			{
-				slc_offset += (ulint)tmp - (n1_i + 1);
+				slice_offset += (ulint)tmp - (n1_i + 1);
 				tmp = (n1_i + 1);
 				n1_i = 0;
 			}
 
-			memmove(&current_slice->num[slc_offset], &n1->num[n1_i], sizeof(*n1->num) * tmp);
+			memmove(&current_slice->num[slice_offset], &n1->num[n1_i], sizeof(*n1->num) * tmp);
 			q_i -= tmp - 1;
 			/*For every index "i" dropped into current_slice set quotient[i] to 0.*/
 			memset(&quotient->num[q_i], 0, sizeof(*quotient->num) * ((ulint)tmp - 1));
 		}
 
-		if (q_i && cmp_rev_uint32array(&current_slice->num[slc_offset], n2->num, n2->len) < 0)
+		if (q_i && cmp_rev_uint32array(&current_slice->num[slice_offset], n2->num, n2->len) < 0)
 		{
-			slc_offset = 0;
+			slice_offset = 0;
 			current_slice->num[0] = n1->num[n1_i];
 			if (n1_i)
 				n1_i--;
 		}
 	}
 
-	bn_free(*rem);
-	*rem = bn_alloc(current_slice->len - slc_offset);
+	bignum_free(*rem);
+	*rem = bignum_alloc(current_slice->len - slice_offset);
 	if (*rem) /* The number left over in current_slice is the remainder */
-		memmove((*rem)->num, current_slice->num + slc_offset, sizeof(*current_slice->num) * (current_slice->len - slc_offset));
+		memmove((*rem)->num, current_slice->num + slice_offset, sizeof(*current_slice->num) * (current_slice->len - slice_offset));
 
 	if (!(*rem))
 	{
-	error_cleanup:
-		quotient = bn_free(quotient);
-		*rem = bn_free(*rem);
+error_cleanup:
+		quotient = bignum_free(quotient);
+		*rem = bignum_free(*rem);
 	}
 
-	bn_free(current_slice);
+	bignum_free(current_slice);
 	trim_bignum(quotient);
 	trim_bignum(*rem);
 	return (quotient);
@@ -250,10 +250,10 @@ static bignum *divide_negatives(bignum *n1, bignum *n2, bignum **rem)
 	n2->is_negative = false;
 	/*If n1 == 0; then *rem == 0*/
 	if (is_zero(n1))
-		*rem = bn_alloc(1);
+		*rem = bignum_alloc(1);
 	else
 	{
-		*rem = bn_alloc(n1->len);
+		*rem = bignum_alloc(n1->len);
 		if (*rem)
 			memmove((*rem)->num, n1->num, sizeof(*n1->num) * n1->len);
 	}
@@ -263,7 +263,7 @@ static bignum *divide_negatives(bignum *n1, bignum *n2, bignum **rem)
 
 	if (check_0_result(n1, n2))
 	{
-		result = bn_alloc(1);
+		result = bignum_alloc(1);
 		goto clean_exit;
 	}
 
@@ -274,7 +274,7 @@ static bignum *divide_negatives(bignum *n1, bignum *n2, bignum **rem)
 		/* -8 // 5 = -((8 // 5) + 1)*/
 		/* 8 // -5 = -((8 // 5) + 1) */
 		result = divide(n1, n2, rem);
-		if (!bn_realloc(result, result->len + 1))
+		if (!bignum_realloc(result, result->len + 1))
 			goto error_cleanup;
 
 		bn_add_inplace(result, &one);
@@ -283,9 +283,9 @@ static bignum *divide_negatives(bignum *n1, bignum *n2, bignum **rem)
 
 	if (!result)
 	{
-	error_cleanup:
-		*rem = bn_free(*rem);
-		result = bn_free(result);
+error_cleanup:
+		*rem = bignum_free(*rem);
+		result = bignum_free(result);
 	}
 
 clean_exit:
@@ -324,12 +324,12 @@ bignum *bn_division(bignum *n1, bignum *n2)
 		/*If n1 == 0; then rem == 0*/
 		/*No need for this check as rem is not needed here.*/
 		if (check_0_result(n1, n2))
-			result = bn_alloc(1);
+			result = bignum_alloc(1);
 		else
 			result = divide(n1, n2, &rem);
 	}
 
-	bn_free(rem);
+	bignum_free(rem);
 	trim_bignum(result);
 	return (result);
 }
@@ -362,10 +362,10 @@ bignum *bn_modulus(bignum *n1, bignum *n2)
 	{
 		/*If n1 == 0; then rem == 0*/
 		if (is_zero(n1))
-			rem = bn_alloc(1);
+			rem = bignum_alloc(1);
 		else
 		{
-			rem = bn_alloc(n1->len);
+			rem = bignum_alloc(n1->len);
 			if (rem)
 				memmove(rem->num, n1->num, sizeof(*n1->num) * n1->len);
 		}
@@ -374,13 +374,13 @@ bignum *bn_modulus(bignum *n1, bignum *n2)
 			return (NULL);
 
 		if (check_0_result(n1, n2))
-			result = bn_alloc(1);
+			result = bignum_alloc(1);
 		else
 			result = divide(n1, n2, &rem);
 	}
 
 	if (!result)
-		return (bn_free(rem));
+		return (bignum_free(rem));
 
 	if (result->is_negative)
 	{
@@ -388,11 +388,11 @@ bignum *bn_modulus(bignum *n1, bignum *n2)
 		/*-7 % 4 = 1 and 7 % -4 = -1*/
 		is_negative = n2->is_negative;
 		n2->is_negative = false;
-		bn_free(result);
+		bignum_free(result);
 
 		result = bn_subtraction(n2, rem);
 		n2->is_negative = is_negative;
-		bn_free(rem);
+		bignum_free(rem);
 		rem = result;
 		result = NULL;
 	}
@@ -400,7 +400,7 @@ bignum *bn_modulus(bignum *n1, bignum *n2)
 	if (rem)
 		rem->is_negative = n2->is_negative;
 
-	bn_free(result);
+	bignum_free(result);
 	trim_bignum(rem);
 	return (rem);
 }

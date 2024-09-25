@@ -18,13 +18,13 @@ static bignum *multiply(bignum *n1, bignum *n2)
 
 	/*Multiplication by zero.*/
 	if (!n1->len || !n2->len)
-		return (bn_alloc(0));
+		return (bignum_alloc(0));
 	else if ((n1->len == 1 && !n1->num[0]) || (n2->len == 1 && !n2->num[0]))
-		return (bn_alloc(1));
+		return (bignum_alloc(1));
 
 	/*Length of product = length of n1 + length of n2*/
-	product = bn_alloc(n1->len + n2->len);
-	current_mul = bn_alloc(n1->len + n2->len);
+	product = bignum_alloc(n1->len + n2->len);
+	current_mul = bignum_alloc(n1->len + n2->len);
 	if (!product || !current_mul)
 		goto clean_up;
 
@@ -55,9 +55,9 @@ static bignum *multiply(bignum *n1, bignum *n2)
 	}
 
 clean_up:
-	current_mul = bn_free(current_mul);
+	current_mul = bignum_free(current_mul);
 	if (n2_i < n2->len)
-		product = bn_free(product);
+		product = bignum_free(product);
 
 	trim_bignum(product);
 	return (product);

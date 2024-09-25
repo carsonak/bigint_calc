@@ -14,7 +14,7 @@ static void imultiply(bignum **n1, bignum *n2)
 	bignum *cpy = *n1;
 
 	*n1 = bn_multiplication(cpy, n2);
-	bn_free(cpy);
+	bignum_free(cpy);
 }
 
 /**
@@ -27,7 +27,7 @@ static void idivide(bignum **n1, bignum *n2)
 	bignum *cpy = *n1;
 
 	*n1 = bn_division(cpy, n2);
-	bn_free(cpy);
+	bignum_free(cpy);
 }
 
 /**
@@ -39,8 +39,8 @@ static void isubtract(bignum **n1, bignum *n2)
 {
 	if ((*n1)->len < n2->len)
 	{
-		if (!bn_realloc(*n1, n2->len))
-			*n1 = bn_free(*n1);
+		if (!bignum_realloc(*n1, n2->len))
+			*n1 = bignum_free(*n1);
 	}
 
 	bn_sub_inplace(*n1, n2);
@@ -66,16 +66,16 @@ bignum *bn_power(bignum *base, bignum *exponent)
 	trim_bignum(exponent);
 	if (is_zero(base) || is_zero(exponent))
 	{
-		x = bn_alloc(1);
+		x = bignum_alloc(1);
 		if (x)
 			x->num[0] = 1;
 
 		return (x);
 	}
 
-	exp = bn_dup(exponent);
-	x = bn_dup(base);
-	y = bn_alloc(1);
+	exp = bignum_dup(exponent);
+	x = bignum_dup(base);
+	y = bignum_alloc(1);
 	if (!exp || !x || !y)
 		goto clean_up;
 
@@ -121,10 +121,10 @@ bignum *bn_power(bignum *base, bignum *exponent)
 	if (false)
 	{
 	clean_up:
-		x = bn_free(x);
+		x = bignum_free(x);
 	}
 
-	bn_free(exp);
-	bn_free(y);
+	bignum_free(exp);
+	bignum_free(y);
 	return (x);
 }
