@@ -24,7 +24,7 @@ static void subtract(bignum *n1, bignum *n2)
 		while (tmp_len > 1 && n1->num[tmp_len - 1] == n2->num[tmp_len - 1])
 			tmp_len--;
 
-	n1_is_bigger = cmp_bignum(n1, n2);
+	n1_is_bigger = bn_compare(n1, n2);
 	while (n1_i < tmp_len && (n1_i < n1->len || n2_i < n2->len))
 	{
 		if (n1_is_bigger > 0) /*then; n1 - n2*/
@@ -119,15 +119,16 @@ static bool subtract_negatives(bignum *n1, bignum *n2)
  * The results of the subtraction will be stored in n1. No extra memory
  * will be allocated via calls to *alloc family functions.
  *
- * Return: pointer to the result, NULL on failure.
+ * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
 bool bn_sub_inplace(bignum *n1, bignum *n2)
 {
+	/*n1.num cannot be NULL as this function does not allocate any memory.*/
 	if (!n1 || !n1->num)
 		return (false);
 
 	trim_bignum(n1);
-	if (!n2 || !n2->num)
+	if (!n2) /*This case is treated as -(n1).*/
 	{
 		n1->is_negative = !n1->is_negative;
 		return (true);

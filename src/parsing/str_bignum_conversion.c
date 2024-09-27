@@ -1,25 +1,6 @@
 #include "parsing.h"
 
 /**
- * count_digits - calculate how many digits can represent a number.
- * @num: the decimal number.
- *
- * Return: number of digits calculated.
- */
-unsigned int count_digits(size_t num)
-{
-	int d = 0;
-
-	while (num)
-	{
-		d++;
-		num /= 10;
-	}
-
-	return (d);
-}
-
-/**
  * str_to_numstr - parse a string of digits.
  * @number_str: a string with a number.
  * @base: an int between 2-36 indicating the base of the number.
@@ -123,7 +104,7 @@ bignum *numstr_to_bignum(numstr *num)
 	if (num->len % digits)
 		a_i++;
 
-	arr = bignum_alloc(a_i);
+	arr = bn_alloc(a_i);
 	if (!arr)
 		return (NULL);
 
@@ -143,7 +124,7 @@ bignum *numstr_to_bignum(numstr *num)
 		if (*end)
 		{
 			fprintf(stderr, "ParsingError: Invalid character '%c'\n", *end);
-			return (bignum_free(arr));
+			return (bn_free(arr));
 		}
 
 		arr->num[a_i] = tmp % BIGNUM_UINT_MAX;

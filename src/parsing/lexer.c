@@ -9,49 +9,49 @@
  */
 static token *match_token(const char *str, size_t *processed)
 {
-    token *t = NULL;
-    numstr *n = NULL;
+	token *t = NULL;
+	numstr *n = NULL;
 
-    if (!str || !*str)
-        return (NULL);
+	if (!str || !*str)
+		return (NULL);
 
-    t = xmalloc(sizeof(*t));
-    if (!t)
-        return (NULL);
+	t = xmalloc(sizeof(*t));
+	if (!t)
+		return (NULL);
 
-    if (processed)
-        *processed = 1;
+	if (processed)
+		*processed = 1;
 
-    if (*str == '(')
-        *t = (token){.id = PAREN_L, .start = str, .op = {NULL}};
-    else if (*str == ')')
-        *t = (token){.id = PAREN_R, .start = str, .op = {NULL}};
-    else if (*str == '+')
-        *t = (token){.id = ADD_OP, .start = str, .op = {bn_addition}};
-    else if (*str == '-')
-        *t = (token){.id = SUB_OP, .start = str, .op = {bn_subtraction}};
-    else if (*str == '*')
-        *t = (token){.id = MUL_OP, .start = str, .op = {bn_multiplication}};
-    else if (*str == '/')
-        *t = (token){.id = DIV_OP, .start = str, .op = {bn_division}};
-    else if (*str == '%')
-        *t = (token){.id = MOD_OP, .start = str, .op = {bn_modulus}};
-    else if (*str == '^')
-        *t = (token){.id = POW_OP, .start = str, .op = {bn_power}};
-    else if (isdigit(*str))
-    {
-        n = str_to_numstr(str, 10, processed);
-        if (n)
-            *t = (token){.id = NUMBER, .start = str, .op.number = *n};
-        else
-            t = free_n_null(t);
+	if (*str == '(')
+		*t = (token){.id = PAREN_L, .start = str, .op = {NULL}};
+	else if (*str == ')')
+		*t = (token){.id = PAREN_R, .start = str, .op = {NULL}};
+	else if (*str == '+')
+		*t = (token){.id = ADD_OP, .start = str, .op = {bn_addition}};
+	else if (*str == '-')
+		*t = (token){.id = SUB_OP, .start = str, .op = {bn_subtraction}};
+	else if (*str == '*')
+		*t = (token){.id = MUL_OP, .start = str, .op = {bn_multiplication}};
+	else if (*str == '/')
+		*t = (token){.id = DIV_OP, .start = str, .op = {bn_division}};
+	else if (*str == '%')
+		*t = (token){.id = MOD_OP, .start = str, .op = {bn_modulus}};
+	else if (*str == '^')
+		*t = (token){.id = POW_OP, .start = str, .op = {bn_power}};
+	else if (isdigit(*str))
+	{
+		n = str_to_numstr(str, 10, processed);
+		if (n)
+			*t = (token){.id = NUMBER, .start = str, .op.number = *n};
+		else
+			t = free_n_null(t);
 
-        free_n_null(n);
-    }
-    else
-        *t = (token){.id = INVALID, .start = str, .op = {NULL}};
+		free_n_null(n);
+	}
+	else
+		*t = (token){.id = INVALID, .start = str, .op = {NULL}};
 
-    return (t);
+	return (t);
 }
 
 /**
@@ -73,27 +73,27 @@ static token *match_token(const char *str, size_t *processed)
  */
 static void lexing_error(const char *expression, size_t idx, const char *msg)
 {
-    char slice[12] = {0}, highlight[12] = {0};
-    int i = 0, upper = 0;
+	char slice[12] = {0}, highlight[12] = {0};
+	int i = 0, upper = 0;
 
-    if (!expression)
-        return;
+	if (!expression)
+		return;
 
-    memset(highlight, ' ', 11);
-    upper = idx > 5 ? 5 : (int)idx;
-    highlight[upper] = '^';
-    for (i = 0; i < upper; i++)
-        slice[i] = expression[idx - upper + i];
+	memset(highlight, ' ', 11);
+	upper = idx > 5 ? 5 : (int)idx;
+	highlight[upper] = '^';
+	for (i = 0; i < upper; i++)
+		slice[i] = expression[idx - upper + i];
 
-    for (i = 0; expression[idx + i] && i < 6; i++)
-        slice[upper + i] = expression[idx + i];
+	for (i = 0; expression[idx + i] && i < 6; i++)
+		slice[upper + i] = expression[idx + i];
 
-    fprintf(stderr, "ParsingError:");
-    if (msg)
-        fprintf(stderr, "%s:", msg);
+	fprintf(stderr, "ParsingError:");
+	if (msg)
+		fprintf(stderr, "%s:", msg);
 
-    fprintf(
-        stderr, "\n...%s...\n   " ANSI_RED "%s" ANSI_NORMAL, slice, highlight);
+	fprintf(
+		stderr, "\n...%s...\n   " ANSI_RED "%s" ANSI_NORMAL, slice, highlight);
 }
 
 /**
@@ -104,12 +104,12 @@ static void lexing_error(const char *expression, size_t idx, const char *msg)
  */
 void *free_token(void *freeable_token)
 {
-    token *p = (token *)freeable_token;
+	token *p = (token *)freeable_token;
 
-    if (p && p->id == NUMBER)
-        free_n_null(p->op.number.str);
+	if (p && p->id == NUMBER)
+		free_n_null(p->op.number.str);
 
-    return (free_n_null(p));
+	return (free_n_null(p));
 }
 
 /**
@@ -120,41 +120,41 @@ void *free_token(void *freeable_token)
  */
 deque *lex_str(const char *str)
 {
-    deque *tokens = NULL;
-    token *t = NULL;
-    size_t processed = 0, i = 0;
+	deque *tokens = NULL;
+	token *t = NULL;
+	size_t processed = 0, i = 0;
 
-    if (!str)
-        return (NULL);
+	if (!str)
+		return (NULL);
 
-    tokens = xmalloc(sizeof(*tokens));
-    if (!tokens)
-        return (NULL);
+	tokens = xmalloc(sizeof(*tokens));
+	if (!tokens)
+		return (NULL);
 
-    while (str[i])
-    {
-        while (str[i] == ' ')
-            i++;
+	while (str[i])
+	{
+		while (str[i] == ' ')
+			i++;
 
-        t = match_token(&str[i], &processed);
-        if (!t)
-            break;
+		t = match_token(&str[i], &processed);
+		if (!t)
+			break;
 
-        push_tail(tokens, t);
-        if (t->id == INVALID)
-        {
-            lexing_error(str, i, "invalid character");
-            break;
-        }
+		push_tail(tokens, t);
+		if (t->id == INVALID)
+		{
+			lexing_error(str, i, "invalid character");
+			break;
+		}
 
-        i += processed;
-    }
+		i += processed;
+	}
 
-    if (str[i])
-    {
-        clear_deque(tokens, free_token);
-        tokens = free_n_null(tokens);
-    }
+	if (str[i])
+	{
+		clear_deque(tokens, free_token);
+		tokens = free_n_null(tokens);
+	}
 
-    return (tokens);
+	return (tokens);
 }

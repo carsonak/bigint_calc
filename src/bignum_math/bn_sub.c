@@ -25,11 +25,11 @@ static bignum *subtract(bignum *n1, bignum *n2)
 		while (result_len > 1 && n1->num[result_len - 1] == n2->num[result_len - 1])
 			result_len--;
 
-	diff = bignum_alloc(result_len);
+	diff = bn_alloc(result_len);
 	if (!diff)
 		return (NULL);
 
-	n1_is_bigger = cmp_bignum(n1, n2);
+	n1_is_bigger = bn_compare(n1, n2);
 	if (n1_is_bigger <= 0)
 		diff->is_negative = true;
 

@@ -1,12 +1,12 @@
-#include "bignum_math.h"
+#include "bignum_utils.h"
 
 /**
- * bignum_alloc - allocate memory for a bignum of given length.
+ * bn_alloc - allocate memory for a bignum of given length.
  * @len: length of the array, length 0 returns the struct with a NULL array.
  *
  * Return: a pointer to a bignum struct, NULL on failure.
  */
-bignum *bignum_alloc(size_t len)
+bignum *bn_alloc(size_t len)
 {
 	bignum *arr = xcalloc(1, sizeof(*arr));
 
@@ -28,13 +28,13 @@ bignum *bignum_alloc(size_t len)
 }
 
 /**
- * bignum_realloc - resizes memory of a bignum array.
+ * bn_realloc - resizes memory of a bignum array.
  * @bn: pointer to the bignum.
  * @len: size in bytes to resize to.
  *
  * Return: true on success, false on failure.
  */
-bool bignum_realloc(bignum *bn, size_t len)
+bool bn_realloc(bignum *bn, size_t len)
 {
 	if (!bn)
 		return (false);
@@ -51,25 +51,25 @@ bool bignum_realloc(bignum *bn, size_t len)
 }
 
 /**
- * bignum_dup - duplicate a bignum.
+ * bn_dup - duplicate a bignum.
  * @bn: a pointer to a bignum.
  *
  * Return: a pointer to a copy of bn.
  */
-bignum *bignum_dup(bignum *bn)
+bignum *bn_dup(bignum *bn)
 {
 	bignum *dup = NULL;
 
 	if (!bn)
 		return (NULL);
 
-	dup = bignum_alloc(0);
+	dup = bn_alloc(0);
 	if (!bn->len || !dup)
 		return (dup);
 
 	dup->num = xmalloc(bn->len * sizeof(*dup->num));
 	if (!dup->num)
-		return (bignum_free(dup));
+		return (bn_free(dup));
 
 	dup->is_negative = bn->is_negative;
 	dup->len = bn->len;
@@ -78,12 +78,12 @@ bignum *bignum_dup(bignum *bn)
 }
 
 /**
- * bignum_free - free a bignum, return NULL.
+ * bn_free - free a bignum, return NULL.
  * @freeable_ptr: a pointer to a bignum.
  *
  * Return: NULL always.
  */
-void *bignum_free(bignum *freeable_ptr)
+void *bn_free(bignum *freeable_ptr)
 {
 	if (freeable_ptr)
 		free_n_null(freeable_ptr->num);

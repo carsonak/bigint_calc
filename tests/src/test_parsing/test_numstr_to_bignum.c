@@ -12,7 +12,7 @@ void setup(void) {}
  */
 void teardown(void)
 {
-	output = bignum_free(output);
+	output = bn_free(output);
 }
 
 TestSuite(null_inputs);

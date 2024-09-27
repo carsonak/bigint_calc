@@ -78,15 +78,16 @@ static bool add_negatives(bignum *n1, bignum *n2)
  * The results of the addittion will be stored in n1. No extra memory
  * will be allocated via calls to *alloc family functions.
  *
- * Return: true on success, false on failure.
+ * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
 bool bn_add_inplace(bignum *n1, bignum *n2)
 {
+	/*n1.num cannot be NULL as this function does not allocate any memory.*/
 	if (!n1 || !n1->num)
 		return (false);
 
 	trim_bignum(n1);
-	if (!n2 || !n2->num)
+	if (!n2) /*This case is treated as +(n1).*/
 		return (true);
 
 	trim_bignum(n2);

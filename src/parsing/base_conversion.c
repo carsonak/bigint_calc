@@ -19,7 +19,7 @@ bignum *anybase_to_bignum(numstr *num, unsigned int base)
 	if (!num || !num->str || base < 2 || base > 36)
 		return (NULL);
 
-	bigint = bignum_alloc(1);
+	bigint = bn_alloc(1);
 	if (!bigint)
 		return (NULL);
 
@@ -28,20 +28,20 @@ bignum *anybase_to_bignum(numstr *num, unsigned int base)
 	{
 		tmp = bigint;
 		bigint = bn_multiplication(&base_bn, bigint);
-		tmp = bignum_free(tmp);
+		tmp = bn_free(tmp);
 		cval = char_to_int(num->str[i]);
 		if (cval < 0 || (uint)cval >= base)
 		{
 			fprintf(
 				stderr, "ParsingError: Invalid character '%c' for base%u\n",
 				num->str[i], base);
-			return (bignum_free(bigint));
+			return (bn_free(bigint));
 		}
 
 		c_arr[0] = cval;
 		tmp = bigint;
 		bigint = bn_addition(bigint, &char_bn);
-		tmp = bignum_free(tmp);
+		tmp = bn_free(tmp);
 	}
 
 	return (bigint);

@@ -19,9 +19,9 @@ static bignum *add(bignum *n1, bignum *n2)
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	if (result_len <= 1)
-		return (bignum_alloc(0));
+		return (bn_alloc(0));
 
-	sum = bignum_alloc(result_len);
+	sum = bn_alloc(result_len);
 	while (sum && (n1_i < n1->len || n2_i < n2->len || byt_sum > 0))
 	{
 		if (n1_i < n1->len)
