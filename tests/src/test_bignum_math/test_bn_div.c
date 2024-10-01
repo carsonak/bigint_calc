@@ -454,3 +454,45 @@ Test(large_divisions, test_o500d_over_o500e,
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
 	output = bn_free(output);
 }
+
+Test(large_divisions, test_o100a_over_o100f, .description = "o_100.a / o_100.f = long_num", .timeout = 2.0)
+{
+	uint in1[] = {502884197, 643383279, 62, 0, 0, 0, 0, 222550000, 972222222, 999999999, 338499999, 112000333, 111111111, 28347111, 0, 0, 0, 289104938, 487298347, 832000092, 94, 284000000, 576231637, 28, 0, 57349857, 0, 0, 698750000};
+	uint in2[] = {0, 101000000, 555555555, 295555555, 9574, 0, 0, 684800000, 252449427, 2, 0, 94930300, 13103309, 99070958, 766};
+	uint out[] = {467911615, 986420336, 456339159, 762062729, 530481552, 890502739, 598230926, 265770966, 42977542, 156122193, 174848149, 489493242, 12775684, 300963748, 912088};
+
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+
+	bignum *output = bn_division(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = bn_free(output);
+}
+
+Test(large_divisions, test_o100f_over_o100a, .description = "o_100.f / o_100.a = long_num", .timeout = 2.0)
+{
+	uint in1[] = {0, 101000000, 555555555, 295555555, 9574, 0, 0, 684800000, 252449427, 2, 0, 94930300, 13103309, 99070958, 766};
+	uint in2[] = {502884197, 643383279, 62, 0, 0, 0, 0, 222550000, 972222222, 999999999, 338499999, 112000333, 111111111, 28347111, 0, 0, 0, 289104938, 487298347, 832000092, 94, 284000000, 576231637, 28, 0, 57349857, 0, 0, 698750000};
+	uint out[] = {0};
+
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+
+	bignum *output = bn_division(&num1, &num2);
+
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
+	output = bn_free(output);
+}

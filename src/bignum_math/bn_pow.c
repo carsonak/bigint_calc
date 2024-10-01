@@ -120,7 +120,7 @@ bignum *bn_power(bignum *base, bignum *exponent)
 
 	if (false)
 	{
-	clean_up:
+clean_up:
 		x = bn_free(x);
 	}
 

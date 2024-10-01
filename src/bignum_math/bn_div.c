@@ -44,7 +44,6 @@ static bool check_0_result(bignum *n1, bignum *n2)
 /**
  * get_current_quotient - calculate the current quotient.
  * @slice: the current number being divided.
- * @len_slice: length of slice.
  * @n2: the denominator.
  * @rem: Address of a bignum pointer to store the remainder.
  *
@@ -53,11 +52,10 @@ static bool check_0_result(bignum *n1, bignum *n2)
 static lint
 get_current_quotient(bignum *slice, bignum *n2, bignum **rem)
 {
-	uint temp_array[1] = {0};
 	bignum q_estimate = {
-		.len = 1, .is_negative = false, .num = temp_array};
+		.len = 1, .is_negative = false, .num = (uint[]){0, 0, 0}};
 	bignum *estimate_check = NULL;
-	lint msd_slice = 0, is_larger = 0;
+	lint msd_slice = 0, bigger_than_divisor = 0;
 
 	*rem = bn_free(*rem);
 	msd_slice = slice->num[slice->len - 1];
@@ -76,30 +74,31 @@ get_current_quotient(bignum *slice, bignum *n2, bignum **rem)
 	}
 
 	/*0 <= (slice - (q_estimate * denominator)) < denominator*/
-	is_larger = bn_compare(*rem, n2);
-	while ((*rem)->is_negative || is_larger >= 0)
+	bigger_than_divisor = bn_compare(*rem, n2);
+	while ((*rem)->is_negative || bigger_than_divisor >= 0)
 	{
 		if ((*rem)->is_negative)
 		{
 			/*q_estimate was too big.*/
 			/*over_shoot = ceil(m.s.d rem / m.s.d denominator)*/
 
-			/*TODO: Test for possible overflow.*/
-			/*TODO: Test, overshoot might be longer than denominator*/
-			q_estimate.num[0] -= (*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1];
+			/*TODO: Test, possible case: overshoot.len > n2.len.*/
+			bn_subint_inplace(
+				&q_estimate, (*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1]);
 			if (q_estimate.num[0] &&
 				((*rem)->num[(*rem)->len - 1] % n2->num[n2->len - 1]))
-				q_estimate.num[0]--;
+				bn_subint_inplace(&q_estimate, 1);
 		}
 		else
 		{
 			/*q_estimate was too small.*/
 			/*under_shoot = floor(m.s.d rem / m.s.d denominator)*/
-			q_estimate.num[0] += (*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1];
+			bn_addint_inplace(
+				&q_estimate, (*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1]);
 		}
 
 		estimate_check = bn_free(estimate_check);
-		bn_free(*rem);
+		*rem = bn_free(*rem);
 
 		estimate_check = bn_multiplication(n2, &q_estimate);
 		*rem = bn_subtraction(slice, estimate_check);
@@ -110,7 +109,7 @@ get_current_quotient(bignum *slice, bignum *n2, bignum **rem)
 			return (-1);
 		}
 
-		is_larger = bn_compare(*rem, n2);
+		bigger_than_divisor = bn_compare(*rem, n2);
 	}
 
 	bn_free(estimate_check);
@@ -265,19 +264,14 @@ static bignum *divide_negatives(bignum *n1, bignum *n2, bignum **rem)
 	/*If n1 == 0; then *rem == 0*/
 	if (is_zero(n1))
 		*rem = bn_alloc(1);
-	else
-	{
-		*rem = bn_alloc(n1->len);
-		if (*rem)
-			memmove((*rem)->num, n1->num, sizeof(*n1->num) * n1->len);
-	}
-
-	if (!(*rem))
-		goto error_cleanup;
-
-	if (check_0_result(n1, n2))
+	else if (check_0_result(n1, n2))
 	{
 		result = bn_alloc(1);
+		*rem = bn_alloc(n1->len);
+		if (!(*rem))
+			goto error_cleanup;
+
+		memmove((*rem)->num, n1->num, sizeof(*n1->num) * n1->len);
 		goto clean_exit;
 	}
 
@@ -376,27 +370,26 @@ bignum *bn_modulus(bignum *n1, bignum *n2)
 	{
 		/*If n1 == 0; then rem == 0*/
 		if (is_zero(n1))
-			rem = bn_alloc(1);
-		else
+			return (bn_alloc(1));
+
+		if (check_0_result(n1, n2))
 		{
+			/* No need to allocate for the quotient*/
+			/* result = bn_alloc(1); */
 			rem = bn_alloc(n1->len);
 			if (rem)
 				memmove(rem->num, n1->num, sizeof(*n1->num) * n1->len);
+
+			return (rem);
 		}
 
-		if (!rem)
-			return (NULL);
-
-		if (check_0_result(n1, n2))
-			result = bn_alloc(1);
-		else
-			result = divide(n1, n2, &rem);
+		result = divide(n1, n2, &rem);
 	}
 
 	if (!result)
 		return (bn_free(rem));
 
-	if (result->is_negative)
+	if (rem && result->is_negative)
 	{
 		/*for case: -7 // 4 == -2 or 7 // -4 == -2 then;*/
 		/*-7 % 4 = 1 and 7 % -4 = -1*/

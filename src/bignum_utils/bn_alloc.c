@@ -86,7 +86,7 @@ bignum *bn_dup(bignum *bn)
 void *bn_free(bignum *freeable_ptr)
 {
 	if (freeable_ptr)
-		free_n_null(freeable_ptr->num);
+		freeable_ptr->num = free_n_null(freeable_ptr->num);
 
 	return (free_n_null(freeable_ptr));
 }

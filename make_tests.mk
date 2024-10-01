@@ -58,6 +58,7 @@ $(T_BINDIR)/%.o: $(T_SRCDIR)/%.c
 
 # utils tests
 $(T_BINDIR)/test_bignum_utils/test_bn_compare: $(filter %trim_bignum.o,$(BN_UTILS_OBJS))
+$(T_BINDIR)/test_bignum_utils/test_int_to_bignum: $(filter %int_to_bignum.o %bn_alloc.o,$(BN_UTILS_OBJS)) $(ALLOC_OBJS)
 $(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o  $(OBJ_DIR)/bignum_utils/%.o
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)

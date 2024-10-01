@@ -620,7 +620,7 @@ Test(negative_subtractions, test_1_minus_minus1,
 {
 	uint in1[] = {1}, in2[] = {1};
 	/*Special value to indicate mock subtract has been called.*/
-	uint expected[] = {10};
+	uint out[] = {10};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -630,8 +630,8 @@ Test(negative_subtractions, test_1_minus_minus1,
 
 	bn_sub_inplace(&num1, &num2);
 
-	cr_expect(eq(u32[1], num1.num, expected));
-	cr_expect(eq(u32[1], num2.num, expected));
+	cr_expect(eq(u32[1], num1.num, out));
+	cr_expect(eq(u32[1], num2.num, out));
 }
 
 Test(negative_subtractions, test_minus1_minus_1,
@@ -639,7 +639,7 @@ Test(negative_subtractions, test_minus1_minus_1,
 {
 	uint in1[] = {1}, in2[] = {1};
 	/*Special value to indicate mock subtract has been called.*/
-	uint expected[] = {10};
+	uint out[] = {10};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.is_negative = true;
@@ -649,8 +649,8 @@ Test(negative_subtractions, test_minus1_minus_1,
 
 	bn_sub_inplace(&num1, &num2);
 
-	cr_expect(eq(u32[1], num1.num, expected));
-	cr_expect(eq(u32[1], num2.num, expected));
+	cr_expect(eq(u32[1], num1.num, out));
+	cr_expect(eq(u32[1], num2.num, out));
 }
 
 TestSuite(large_subtractions, .init = setup, .fini = teardown);
