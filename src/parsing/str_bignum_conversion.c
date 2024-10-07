@@ -1,5 +1,26 @@
 #include "parsing.h"
 
+static ATTR_NONNULL bool
+check_is_negative(const char *num_str, size_t *str_i);
+
+/**
+ * check_is_negative - determine signedness of number.
+ * @num_str: a string with a number.
+ * @str_i: pointer to num_str's index.
+ *
+ * Return: true if the sign is negative, false otherwise.
+ */
+static bool check_is_negative(const char *num_str, size_t *str_i)
+{
+	bool is_neg = false;
+
+	for (*str_i = 0; num_str[*str_i] == '-' || num_str[*str_i] == '+'; (*str_i)++)
+		if (num_str[*str_i] == '-')
+			is_neg = !is_neg;
+
+	return (is_neg);
+}
+
 /**
  * str_to_numstr - parse a string of digits.
  * @number_str: a string with a number.
@@ -8,7 +29,8 @@
  *
  * Return: pointer to a numstr struct, NULL of failure.
  */
-numstr *str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
+numstr *
+str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 {
 	numstr *arr = NULL;
 	size_t str_i = 0, buf_i = 0;
@@ -24,10 +46,7 @@ numstr *str_to_numstr(const char *number_str, unsigned int base, size_t *process
 	if (!buf || !arr)
 		goto cleanup_numstr;
 
-	for (str_i = 0; number_str[str_i] == '-' || number_str[str_i] == '+'; str_i++)
-		if (number_str[str_i] == '-')
-			arr->is_negative = !arr->is_negative;
-
+	arr->is_negative = check_is_negative(number_str, &str_i);
 	if (number_str[str_i] == '_')
 	{
 		fprintf(stderr, "ParsingError: Leading underscores not allowed.\n");
@@ -98,8 +117,8 @@ bignum *numstr_to_bignum(numstr *num)
 		return (NULL);
 
 	/*sizeof(bignum) == */
-	/*ceil(numstr.len / no. of digits that can represent BIGNUM_UINT_MAX)*/
-	digits = count_digits(BIGNUM_UINT_MAX - 1);
+	/*ceil(numstr.len / no. of digits that can represent BIGNUM_BASE)*/
+	digits = count_digits(BIGNUM_BASE - 1);
 	a_i = (num->len / digits);
 	if (num->len % digits)
 		a_i++;
@@ -127,14 +146,14 @@ bignum *numstr_to_bignum(numstr *num)
 			return (bn_free(arr));
 		}
 
-		arr->num[a_i] = tmp % BIGNUM_UINT_MAX;
-		tmp /= BIGNUM_UINT_MAX;
+		arr->num[a_i] = tmp % BIGNUM_BASE;
+		tmp /= BIGNUM_BASE;
 	}
 
 	while (a_i < arr->len && tmp)
 	{
-		arr->num[a_i] = tmp % BIGNUM_UINT_MAX;
-		tmp /= BIGNUM_UINT_MAX;
+		arr->num[a_i] = tmp % BIGNUM_BASE;
+		tmp /= BIGNUM_BASE;
 		a_i++;
 	}
 
@@ -158,7 +177,7 @@ numstr *bignum_to_numstr(bignum *arr, unsigned int base)
 	if (!arr || base < 2 || base > 36)
 		return (NULL);
 
-	num = alloc_numstr(arr->len * count_digits(BIGNUM_UINT_MAX - 1) + 1);
+	num = alloc_numstr(arr->len * count_digits(BIGNUM_BASE - 1) + 1);
 	for (g = arr->len, h = 0; num && g > 0 && h < num->len;)
 	{
 		--g;

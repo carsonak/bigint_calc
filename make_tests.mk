@@ -58,14 +58,16 @@ $(T_BINDIR)/%.o: $(T_SRCDIR)/%.c
 
 # utils tests
 $(T_BINDIR)/test_bignum_utils/test_bn_compare: $(filter %trim_bignum.o,$(BN_UTILS_OBJS))
-$(T_BINDIR)/test_bignum_utils/test_int_to_bignum: $(filter %int_to_bignum.o %bn_alloc.o,$(BN_UTILS_OBJS)) $(ALLOC_OBJS)
 $(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o  $(OBJ_DIR)/bignum_utils/%.o
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 # bignum math tests
+$(T_BINDIR)/test_bignum_math/test_bn_addint: $(filter %int_to_bignum.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_subint: $(filter %int_to_bignum.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_mul: $(filter %bn_iadd.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_div: $(filter-out %bn_div.o %bn_pow.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_mod: $(filter-out %bn_div.o %bn_pow.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_pow: $(filter-out %bn_pow.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(OBJ_DIR)/bignum_math/%.o $(BN_UTILS_OBJS) $(ALLOC_OBJS)
 	@mkdir -vp $(@D)
@@ -94,5 +96,8 @@ tclean: clean
 retests: tclean tests
 
 .PHONY: tests retest tclean utils-tests math-tests parsing-tests
+
+# https://unix.stackexchange.com/questions/517190/what-causes-make-to-delete-intermediate-files/517196#517196
+.PRECIOUS: $(T_OBJS)
 
 sinclude $(T_DEPS)

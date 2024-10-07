@@ -1,7 +1,8 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL void subtract(bignum *n1, bignum *n2);
-static ATTR_NONNULL bool subtract_negatives(bignum *n1, bignum *n2);
+static ATTR_NONNULL void subtract(bignum * const n1, bignum * const n2);
+static ATTR_NONNULL bool
+subtract_negatives(bignum * const n1, bignum * const n2);
 
 /**
  * subtract - subtract two bignums inplace.
@@ -10,7 +11,7 @@ static ATTR_NONNULL bool subtract_negatives(bignum *n1, bignum *n2);
  *
  * Return: pointer to the result, NULL on failure.
  */
-static void subtract(bignum *n1, bignum *n2)
+static void subtract(bignum * const n1, bignum * const n2)
 {
 	size_t n1_i = 0, n2_i = 0, tmp_len = 0, final_len = 0;
 	lint n1_is_bigger = 0, byt_diff = 0;
@@ -44,19 +45,19 @@ static void subtract(bignum *n1, bignum *n2)
 
 		if (byt_diff < 0) /*borrow 1 from next.*/
 		{
-			byt_diff += BIGNUM_UINT_MAX;
-			n1->num[n1_i] = byt_diff % BIGNUM_UINT_MAX;
+			byt_diff += BIGNUM_BASE;
+			n1->num[n1_i] = byt_diff % BIGNUM_BASE;
 			byt_diff = -1;
 			final_len++;
 		}
 		else
 		{
-			/*For the case: 1,000,000,000 - 5 = 999,999,995*/
-			/*A borrow needs to be performed but may cause an out of bounds*/
-			/*n1 access, as n1 needs only be large enough to hold the answer.*/
+			/*For cases such as: 1,000,000,000 - 5 = 999,999,995*/
+			/*n1 is reduced in length from the original number, therefore */
+			/*don't update n1 as the borrow reduces the next digit to 0.*/
 			if (byt_diff || (n2_i + 1 < n2->len || n1_i < n1->len))
 			{
-				n1->num[n1_i] = byt_diff % BIGNUM_UINT_MAX;
+				n1->num[n1_i] = byt_diff % BIGNUM_BASE;
 				final_len++;
 			}
 
@@ -81,7 +82,7 @@ static void subtract(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bool subtract_negatives(bignum *n1, bignum *n2)
+static bool subtract_negatives(bignum * const n1, bignum * const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 
@@ -121,7 +122,7 @@ static bool subtract_negatives(bignum *n1, bignum *n2)
  *
  * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
-bool bn_sub_inplace(bignum *n1, bignum *n2)
+bool bn_sub_inplace(bignum * const n1, bignum * const n2)
 {
 	/*n1.num cannot be NULL as this function does not allocate any memory.*/
 	if (!n1 || !n1->num)

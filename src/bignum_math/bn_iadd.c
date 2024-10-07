@@ -1,29 +1,31 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL void add(bignum *n1, bignum *n2);
-static ATTR_NONNULL bool add_negatives(bignum *n1, bignum *n2);
+static ATTR_NONNULL void add(bignum * const n1, bignum * const n2);
+static ATTR_NONNULL bool add_negatives(bignum * const n1, bignum * const n2);
 
 /**
  * add - add two bignums inplace.
  * @n1: the first number, should be large enough to store the results.
  * @n2: the second number.
  */
-static void add(bignum *n1, bignum *n2)
+static void add(bignum * const n1, bignum * const n2)
 {
 	size_t n1_i = 0, n2_i = 0, res_len = 0;
 	lint byt_sum = 0;
 
 	while (n1_i < n1->len || n2_i < n2->len || byt_sum > 0)
 	{
-		byt_sum += n1->num[n1_i];
+		if (n1_i < n1->len)
+			byt_sum += n1->num[n1_i];
+
 		if (n2_i < n2->len)
 		{
 			byt_sum += n2->num[n2_i];
 			++n2_i;
 		}
 
-		n1->num[n1_i] = byt_sum % (BIGNUM_UINT_MAX);
-		byt_sum /= (BIGNUM_UINT_MAX);
+		n1->num[n1_i] = byt_sum % (BIGNUM_BASE);
+		byt_sum /= (BIGNUM_BASE);
 		++n1_i;
 		++res_len;
 	}
@@ -39,7 +41,7 @@ static void add(bignum *n1, bignum *n2)
  *
  * Return: true on success, false on failure.
  */
-static bool add_negatives(bignum *n1, bignum *n2)
+static bool add_negatives(bignum * const n1, bignum * const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 
@@ -80,7 +82,7 @@ static bool add_negatives(bignum *n1, bignum *n2)
  *
  * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
-bool bn_add_inplace(bignum *n1, bignum *n2)
+bool bn_add_inplace(bignum * const n1, bignum * const n2)
 {
 	/*n1.num cannot be NULL as this function does not allocate any memory.*/
 	if (!n1 || !n1->num)

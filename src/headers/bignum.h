@@ -8,8 +8,8 @@
 
 #ifdef UINT64_MAX
 
-/*Maximum value of a uint in bignum.*/
-#define BIGNUM_UINT_MAX (1000000000)
+/*Maximum value of a single bignum "digit".*/
+#define BIGNUM_BASE (1000000000)
 
 typedef uint32_t uint;
 typedef int64_t lint;
@@ -17,8 +17,7 @@ typedef uint64_t ulint;
 
 #else
 
-/*Maximum value of a uint in bignum.*/
-#define BIGNUM_UINT_MAX (10000)
+#define BIGNUM_BASE (10000)
 
 typedef uint16_t uint;
 typedef int32_t lint;

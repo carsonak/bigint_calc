@@ -2,34 +2,35 @@
 
 /**
  * bn_compare - compare 2 bignums.
- * @a1: the first array.
- * @a2: the second array.
+ * @n1: the first array.
+ * @n2: the second array.
  *
- * Return: +ve number if a1 > a2, -ve number if a1 < a2 else 0.
+ * Return: +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
-lint bn_compare(bignum * const a1, bignum * const a2)
+lint bn_compare(bignum * const n1, bignum * const n2)
 {
-	if (!a1 || !a2)
+	if (!n1 || !n2)
 		return (0);
 
-	trim_bignum(a1);
-	trim_bignum(a2);
-	if (a1->is_negative && a2->is_negative)
+	trim_bignum(n1);
+	trim_bignum(n2);
+	if (n1->is_negative && n2->is_negative)
 	{
-		if ((lint)a2->len - a1->len)
-			return ((lint)a2->len - a1->len);
+		/*CAUTION: possible case => len truncated when casting to lint.*/
+		if ((lint)n2->len - n1->len)
+			return ((lint)n2->len - n1->len);
 
-		return (reverse_cmp_uint32array(a2->num, a1->num, a1->len));
+		return (reverse_cmp_uint32array(n2->num, n1->num, n1->len));
 	}
-	else if (a1->is_negative)
+	else if (n1->is_negative)
 		return (-1);
-	else if (a2->is_negative)
+	else if (n2->is_negative)
 		return (1);
 
-	if ((lint)a1->len - a2->len)
-		return ((lint)a1->len - a2->len);
+	if ((lint)n1->len - n2->len)
+		return ((lint)n1->len - n2->len);
 
-	return (reverse_cmp_uint32array(a1->num, a2->num, a1->len));
+	return (reverse_cmp_uint32array(n1->num, n2->num, n1->len));
 }
 
 /**

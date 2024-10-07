@@ -27,7 +27,7 @@ bool bn_realloc(bignum *bn, size_t len);
 bool bn_copy(bignum *src, bignum *dest);
 lint bn_compare(bignum *const a1, bignum *const a2);
 bool bn_deepcopy(bignum *src, bignum *dest);
-bool bn_swap(bignum *n1, bignum *n2);
+bool bn_swap(bignum *const n1, bignum *const n2);
 bool int_to_bignum(bignum *dest, long long int n);
 bignum *int_to_bignuma(long long int n);
 bool is_zero(bignum *const x);

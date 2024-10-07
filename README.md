@@ -38,6 +38,4 @@ to build the executable.
 - Support for Floating Point numbers.
 - Support for longer expressions.
 - Parenthesis.
-- Allow underscores and commas as digit separators.
-- Support for different bases.
-- Improve speed and memory consumption.
+- Improve speed and memory usage.

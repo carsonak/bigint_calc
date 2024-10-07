@@ -1,7 +1,8 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL bignum *subtract(bignum *n1, bignum *n2);
-static ATTR_NONNULL bignum *subtract_negatives(bignum *n1, bignum *n2);
+static ATTR_NONNULL bignum *subtract(bignum *const n1, bignum *const n2);
+static ATTR_NONNULL bignum *
+subtract_negatives(bignum *const n1, bignum *const n2);
 
 /**
  * subtract - subtract two bignums.
@@ -10,7 +11,7 @@ static ATTR_NONNULL bignum *subtract_negatives(bignum *n1, bignum *n2);
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bignum *subtract(bignum *n1, bignum *n2)
+static bignum *subtract(bignum *const n1, bignum *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
 	lint n1_is_bigger = 0, byt_diff = 0;
@@ -52,13 +53,13 @@ static bignum *subtract(bignum *n1, bignum *n2)
 
 		if (byt_diff < 0) /*borrow 1 from next.*/
 		{
-			byt_diff += BIGNUM_UINT_MAX;
-			diff->num[diff_i] = byt_diff % BIGNUM_UINT_MAX;
+			byt_diff += BIGNUM_BASE;
+			diff->num[diff_i] = byt_diff % BIGNUM_BASE;
 			byt_diff = -1;
 		}
 		else
 		{
-			diff->num[diff_i] = byt_diff % BIGNUM_UINT_MAX;
+			diff->num[diff_i] = byt_diff % BIGNUM_BASE;
 			byt_diff = 0;
 		}
 
@@ -81,7 +82,7 @@ static bignum *subtract(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bignum *subtract_negatives(bignum *n1, bignum *n2)
+static bignum *subtract_negatives(bignum *const n1, bignum *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bignum *result = NULL;
@@ -95,11 +96,11 @@ static bignum *subtract_negatives(bignum *n1, bignum *n2)
 			result->is_negative = !result->is_negative;
 	}
 	else if (neg2) /*8 - -5 = 8+5*/
-		result = bn_addition(n1, n2);
+		result = bn_add(n1, n2);
 	else if (neg1)
 	{
 		/*-8 - 5 = -(8+5)*/
-		result = bn_addition(n1, n2);
+		result = bn_add(n1, n2);
 		if (result)
 			result->is_negative = !result->is_negative;
 	}
@@ -111,15 +112,13 @@ static bignum *subtract_negatives(bignum *n1, bignum *n2)
 }
 
 /**
- * bn_subtraction - handle subtraction of two bignums.
+ * bn_subtract - handle subtraction of two bignums.
  * @n1: first number.
  * @n2: second number.
  *
- * This function does preliminary checks on the parameters.
- *
  * Return: pointer to the result, NULL on failure.
  */
-bignum *bn_subtraction(bignum *n1, bignum *n2)
+bignum *bn_subtract(bignum *const n1, bignum *const n2)
 {
 	if (!n1 || !n2)
 		return (NULL);

@@ -1,7 +1,8 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL bignum *multiply(bignum *n1, bignum *n2);
-static ATTR_NONNULL bignum *multiply_negatives(bignum *n1, bignum *n2);
+static ATTR_NONNULL bignum *multiply(bignum *const n1, bignum *const n2);
+static ATTR_NONNULL bignum *
+multiply_negatives(bignum *const n1, bignum *const n2);
 
 /**
  * multiply - multiply two bignums.
@@ -10,16 +11,14 @@ static ATTR_NONNULL bignum *multiply_negatives(bignum *n1, bignum *n2);
  *
  * Return: pointer to result, NULL on failure.
  */
-static bignum *multiply(bignum *n1, bignum *n2)
+static bignum *multiply(bignum *const n1, bignum *const n2)
 {
 	lint byt_prod = 0;
 	size_t n1_i = 0, n2_i = 0;
 	bignum *product = NULL, *current_mul = NULL;
 
 	/*Multiplication by zero.*/
-	if (!n1->len || !n2->len)
-		return (bn_alloc(0));
-	else if ((n1->len == 1 && !n1->num[0]) || (n2->len == 1 && !n2->num[0]))
+	if (is_zero(n1) || is_zero(n2))
 		return (bn_alloc(1));
 
 	/*Length of product = length of n1 + length of n2*/
@@ -28,9 +27,8 @@ static bignum *multiply(bignum *n1, bignum *n2)
 	if (!product || !current_mul)
 		goto clean_up;
 
-	memset(product->num, 0, sizeof(*product->num) * product->len);
 	product->len = 1;
-	/*Iterate over every number in n2 and multiply with every number in n1.*/
+	/*For every "digit" in n2, multiply with every "digit" in n1.*/
 	for (n2_i = 0; n2_i < n2->len; n2_i++)
 	{
 		/*Skip multiplication by zero*/
@@ -38,15 +36,16 @@ static bignum *multiply(bignum *n1, bignum *n2)
 			continue;
 
 		/*Length of current_mul = */
-		/*length of n1 + (number of digits between n2[0] and n2[n2_i])*/
+		/*length of n1 + (number of digits upto n2_i)*/
 		current_mul->len = n1->len + (n2_i + 1);
-		memset(current_mul->num, 0, sizeof(*current_mul->num) * (n2_i + 1));
+		/*The least significant n2_i digits will be 0 for every iteration.*/
+		memset(current_mul->num, 0, sizeof(*current_mul->num) * n2_i);
 		byt_prod = 0;
 		for (n1_i = 0; n1_i < n1->len; n1_i++)
 		{
 			byt_prod += (lint)n2->num[n2_i] * n1->num[n1_i];
-			current_mul->num[n2_i + n1_i] = byt_prod % BIGNUM_UINT_MAX;
-			byt_prod /= BIGNUM_UINT_MAX;
+			current_mul->num[n2_i + n1_i] = byt_prod % BIGNUM_BASE;
+			byt_prod /= BIGNUM_BASE;
 		}
 
 		current_mul->num[n2_i + n1_i] = byt_prod;
@@ -70,7 +69,7 @@ clean_up:
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bignum *multiply_negatives(bignum *n1, bignum *n2)
+static bignum *multiply_negatives(bignum *const n1, bignum *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bignum *result = NULL;
@@ -99,11 +98,9 @@ static bignum *multiply_negatives(bignum *n1, bignum *n2)
  * @n1: the first number.
  * @n2: the second number.
  *
- * This function does preliminary checks on the parameters.
- *
  * Return: pointer to result, NULL on failure.
  */
-bignum *bn_multiplication(bignum *n1, bignum *n2)
+bignum *bn_multiplication(bignum *const n1, bignum *const n2)
 {
 	if (!n1 || !n2)
 		return (NULL);

@@ -40,7 +40,7 @@ bignum *anybase_to_bignum(numstr *num, unsigned int base)
 
 		c_arr[0] = cval;
 		tmp = bigint;
-		bigint = bn_addition(bigint, &char_bn);
+		bigint = bn_add(bigint, &char_bn);
 		tmp = bn_free(tmp);
 	}
 

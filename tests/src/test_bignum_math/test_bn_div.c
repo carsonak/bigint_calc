@@ -32,7 +32,7 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_null_over_null,
 	 .description = "NULL / NULL = NULL", .timeout = 2.0)
 {
-	bignum *output = bn_division(NULL, NULL);
+	bignum *output = bn_divide(NULL, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -44,7 +44,7 @@ Test(null_inputs, test_1_over_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	bignum *output = bn_division(&num1, NULL);
+	bignum *output = bn_divide(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -56,7 +56,7 @@ Test(null_inputs, test_null_over_1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = bn_division(NULL, &num2);
+	bignum *output = bn_divide(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -64,11 +64,11 @@ Test(null_inputs, test_null_over_1,
 Test(null_inputs, test_0_over_null,
 	 .description = "0 / NULL = NULL", .timeout = 2.0)
 {
-	uint in1[] = {0};
+	uint in1[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	bignum *output = bn_division(&num1, NULL);
+	bignum *output = bn_divide(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -76,11 +76,11 @@ Test(null_inputs, test_0_over_null,
 Test(null_inputs, test_null_over_0,
 	 .description = "NULL / 0 = NULL", .timeout = 2.0)
 {
-	uint in2[] = {0};
+	uint in2[1] = {0};
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = bn_division(NULL, &num2);
+	bignum *output = bn_divide(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -93,7 +93,7 @@ Test(null_inputs, test_minus1_over_null,
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
 	num1.is_negative = true;
-	bignum *output = bn_division(&num1, NULL);
+	bignum *output = bn_divide(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -106,7 +106,7 @@ Test(null_inputs, test_null_over_minus1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 	num2.is_negative = true;
-	bignum *output = bn_division(NULL, &num2);
+	bignum *output = bn_divide(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -117,7 +117,7 @@ Test(zero_len_arrays, test_nullarray_over_nullarray,
 	 .description = "null_array / null_array = NULL", .timeout = 2.0)
 {
 	cr_redirect_stderr();
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -130,7 +130,7 @@ Test(zero_len_arrays, test_4490998_over_nullarray,
 	cr_redirect_stderr();
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -149,7 +149,7 @@ Test(zero_len_arrays, test_null_over_largenum,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -162,14 +162,14 @@ TestSuite(division_by_zero, .init = setup, .fini = teardown);
 Test(division_by_zero, test_0_over_0,
 	 .description = "0 / 0 = NULL", .timeout = 2.0)
 {
-	uint in1[] = {0}, in2[] = {0};
+	uint in1[1] = {0}, in2[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -177,14 +177,14 @@ Test(division_by_zero, test_0_over_0,
 Test(division_by_zero, test_1_over_0,
 	 .description = "1 / 0 = NULL", .timeout = 2.0)
 {
-	uint in1[] = {1}, in2[] = {0};
+	uint in1[] = {1}, in2[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -194,7 +194,7 @@ TestSuite(simple_divisions, .init = setup, .fini = teardown);
 Test(simple_divisions, test_0_over_1,
 	 .description = "0 / 1 = 0", .timeout = 2.0)
 {
-	uint in1[] = {0}, in2[] = {1}, out[1] = {0};
+	uint in1[1] = {0}, in2[] = {1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -203,7 +203,7 @@ Test(simple_divisions, test_0_over_1,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -223,7 +223,7 @@ Test(simple_divisions, test_1_over_1,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -243,7 +243,7 @@ Test(simple_divisions, test_9723746_over_2938487,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -264,7 +264,7 @@ Test(simple_divisions, test_1000000000_over_50000,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -285,7 +285,7 @@ Test(simple_divisions, test_50000_over_100000000,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -294,9 +294,8 @@ Test(simple_divisions, test_50000_over_100000000,
 }
 
 Test(simple_divisions, test_longnum1_over_longnum2,
-	 .description = "2,100,550,005,550,000,000,000,000,045,000,000,000,005,000,065,000"
-					" / 75,006,000,000,000"
-					" = 28,005,092,999,893,341,865,984,055,208,916,620",
+	 .description = "2100, 550005550, 0, 45000, 5, 65000 / 75006, 0 = "
+					"28005092, 999893341, 865984055, 208916620",
 	 .timeout = 2.0)
 {
 	uint in1[] = {65000, 5, 45000, 0, 550005550, 2100};
@@ -309,7 +308,7 @@ Test(simple_divisions, test_longnum1_over_longnum2,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -333,7 +332,7 @@ Test(simple_divisions, test_equal_over_equal,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -360,7 +359,7 @@ Test(negative_divisions, test_minus9107428777003_over_minus809754437,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -381,7 +380,7 @@ Test(negative_divisions, test_minus9107428777003_over_809754437,
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -402,7 +401,7 @@ Test(negative_divisions, test_9107428777003_over_minus809754437,
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -425,7 +424,7 @@ Test(large_divisions, test_o1kb_over_o1kc,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -447,7 +446,7 @@ Test(large_divisions, test_o500d_over_o500e,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -468,7 +467,7 @@ Test(large_divisions, test_o100a_over_o100f, .description = "o_100.a / o_100.f =
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -489,7 +488,7 @@ Test(large_divisions, test_o100f_over_o100a, .description = "o_100.f / o_100.a =
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bignum *output = bn_division(&num1, &num2);
+	bignum *output = bn_divide(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));

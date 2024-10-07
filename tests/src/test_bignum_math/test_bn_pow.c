@@ -64,7 +64,7 @@ Test(null_inputs, test_null_pow_1,
 Test(null_inputs, test_0_pow_null,
 	 .description = "0 ^ NULL = NULL", .timeout = 2.0)
 {
-	uint bs[] = {0};
+	uint bs[1] = {0};
 
 	base.len = sizeof(bs) / sizeof(*bs);
 	base.num = bs;
@@ -76,7 +76,7 @@ Test(null_inputs, test_0_pow_null,
 Test(null_inputs, test_null_pow_0,
 	 .description = "NULL ^ 0 = NULL", .timeout = 2.0)
 {
-	uint exp[] = {0};
+	uint exp[1] = {0};
 
 	exponent.len = sizeof(exp) / sizeof(*exp);
 	exponent.num = exp;

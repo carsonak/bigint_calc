@@ -11,7 +11,7 @@ bignum expected = {.len = 0, .is_negative = false, .num = NULL};
  *
  * Return: true always.
  */
-bool bn_sub_inplace(bignum *n1, bignum *n2)
+bool bn_sub_inplace(bignum *const n1, bignum *const n2)
 {
 	n1->num[0] = 10;
 	n2->num[0] = 10;
@@ -78,7 +78,7 @@ Test(null_inputs, test_null_times_1,
 Test(null_inputs, test_0_times_null,
 	 .description = "0 * NULL = NULL", .timeout = 2.0)
 {
-	uint in1[] = {0};
+	uint in1[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -90,7 +90,7 @@ Test(null_inputs, test_0_times_null,
 Test(null_inputs, test_null_times_0,
 	 .description = "NULL * 0 = NULL", .timeout = 2.0)
 {
-	uint in2[] = {0};
+	uint in2[1] = {0};
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
@@ -130,26 +130,33 @@ TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
 Test(zero_len_arrays, test_null_times_null,
 	 .description = "null_array * null_array = null_array", .timeout = 2.0)
 {
+	uint out[] = {0};
+
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 	bignum *output = bn_multiplication(&num1, &num2);
 
-	cr_expect(zero(sz, output->len));
-	cr_expect(zero(chr, output->is_negative));
-	cr_expect(zero(ptr, output->num));
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
 	output = bn_free(output);
 }
 
 Test(zero_len_arrays, test_4490998_times_null,
-	 .description = "4,490,998 * null_array = null_array", .timeout = 2.0)
+	 .description = "4,490,998 * null_array = 0", .timeout = 2.0)
 {
 	uint in1[] = {4490998};
+	uint out[] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 	bignum *output = bn_multiplication(&num1, &num2);
 
-	cr_expect(zero(sz, output->len));
-	cr_expect(zero(chr, output->is_negative));
-	cr_expect(zero(ptr, output->num));
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
 	output = bn_free(output);
 }
 
@@ -158,14 +165,17 @@ Test(zero_len_arrays, test_null_times_largenum,
 	 .timeout = 2.0)
 {
 	uint in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+	uint out[] = {0};
 
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 	bignum *output = bn_multiplication(&num1, &num2);
 
-	cr_expect(zero(sz, output->len));
-	cr_expect(zero(chr, output->is_negative));
-	cr_expect(zero(ptr, output->num));
+	cr_expect(eq(sz, output->len, expected.len));
+	cr_expect(eq(chr, output->is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], output->num, expected.num));
 	output = bn_free(output);
 }
 
@@ -174,7 +184,7 @@ TestSuite(simple_multiplications, .init = setup, .fini = teardown);
 Test(simple_multiplications, test_0_times_0, .description = "0 * 0 = 0",
 	 .timeout = 2.0)
 {
-	uint in1[] = {0}, in2[] = {0}, out[1] = {0};
+	uint in1[1] = {0}, in2[1] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -193,7 +203,7 @@ Test(simple_multiplications, test_0_times_0, .description = "0 * 0 = 0",
 Test(simple_multiplications, test_1_times_0, .description = "1 * 0 = 0",
 	 .timeout = 2.0)
 {
-	uint in1[] = {1}, in2[] = {0}, out[1] = {0};
+	uint in1[] = {1}, in2[1] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -212,7 +222,7 @@ Test(simple_multiplications, test_1_times_0, .description = "1 * 0 = 0",
 Test(simple_multiplications, test_0_times_1, .description = "0 * 1 = 0",
 	 .timeout = 2.0)
 {
-	uint in1[] = {0}, in2[] = {1}, out[1] = {0};
+	uint in1[1] = {0}, in2[] = {1}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -252,7 +262,7 @@ Test(simple_multiplications, test_long_times_0,
 	 .timeout = 2.0)
 {
 	uint in1[] = {691273964, 472346283, 197812382, 3, 0, 938736};
-	uint in2[] = {0}, out[1] = {0};
+	uint in2[1] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -274,8 +284,8 @@ Test(simple_multiplications, test_0_times_long,
 	 .description = "0 * 938736,0,3,197812382,472346283,691273964 = 0",
 	 .timeout = 2.0)
 {
+	uint in1[1] = {0}, out[1] = {0};
 	uint in2[] = {691273964, 472346283, 197812382, 3, 0, 938736};
-	uint in1[] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;

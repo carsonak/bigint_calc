@@ -35,7 +35,7 @@ LDLIBS :=
 LDFLAGS := -Wl,-z,relro
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 CPPFLAGS := -MMD
-OPTIMISATION_FLAGS := -Og
+OPTIMISATION_FLAGS := -O0
 DEBUG_FLAGS := -g3 -fno-omit-frame-pointer
 WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -Wshadow -Werror
 INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKS) $(CONTROL_TRANSFER_CHECKS) -fsanitize-trap=all
@@ -61,21 +61,21 @@ release: OPTIMISATION_FLAGS := -O3
 release: DEBUG_FLAGS :=
 release: ADDRESS_SANITISER :=
 release: HARDENING := -D_FORTIFY_SOURCE=2
-release: fclean all
+release: clean all
 
 clean:
-	@$(RM) -vrd --preserve-root -- $(OBJS) $(DEP_FILES)
-
-fclean:
 ifdef OBJ_DIR
 	@$(RM) -vrd --preserve-root -- $(shell find $(OBJ_DIR) -mount -mindepth 1 ! -name ".gitignore") $(BINARY)
 else
 	@$(RM) -vrd --preserve-root -- $(BINARY)
 endif
 
-re: fclean all
+re: clean all
 
-.PHONY: all clean fclean release re
+.PHONY: all clean release re
+
+# https://unix.stackexchange.com/questions/517190/what-causes-make-to-delete-intermediate-files/517196#517196
+.PRECIOUS: $(OBJS)
 
 # include will "paste" the rules it finds in the included files at this
 # location, therefore best to place it at end of file so as not to interfere

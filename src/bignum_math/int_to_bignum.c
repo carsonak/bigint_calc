@@ -15,8 +15,8 @@ bignum *int_to_bignuma(long long int n)
 
 	while (un)
 	{
-		tmp[i] = un % BIGNUM_UINT_MAX;
-		un /= BIGNUM_UINT_MAX;
+		tmp[i] = un % BIGNUM_BASE;
+		un /= BIGNUM_BASE;
 		i++;
 	}
 
@@ -53,8 +53,8 @@ bool int_to_bignum(bignum *dest, long long int n)
 
 	while (un)
 	{
-		tmp[i] = un % BIGNUM_UINT_MAX;
-		un /= BIGNUM_UINT_MAX;
+		tmp[i] = un % BIGNUM_BASE;
+		un /= BIGNUM_BASE;
 		i++;
 	}
 

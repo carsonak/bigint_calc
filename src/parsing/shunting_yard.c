@@ -81,12 +81,12 @@ static bool syntax_is_valid(token *left, token *right)
 }
 
 /**
- * syntax_error - logs a syntax error to standard error.
+ * format_syntax_error - logs a syntax error to standard error.
  * @expression: pointer to whole expression.
  * @idx: index of the first character where error occurred.
  * @msg: message to print.
  */
-static void syntax_error(const char *expression, size_t idx, const char *msg)
+static void format_syntax_error(const char *expression, size_t idx, const char *msg)
 {
 	/* char slice[12] = {0}, highlight[12] = {0};
 	int i = 0, upper = 0;
@@ -112,19 +112,19 @@ static void syntax_error(const char *expression, size_t idx, const char *msg)
 }
 
 /**
- * parser - converts an infix expression to an RPN deque of tokens.
+ * parse_tokens - converts an infix expression to an RPN deque of tokens.
  * @expression: pointer to a math expression.
  *
  * Return: pointer to a deque, NULL on failure.
  */
-deque *parser(deque *tokens)
+deque *parse_tokens(deque *tokens)
 {
 	stack number_stack = {0}, operator_stack = {0};
 	deque *output = NULL;
 	token *current = NULL, *prev = NULL;
 	size_t exp_i = 0, processed = 0;
 
-	/*TODO: Update parser to iterate over tokens from lexer.*/
+	/*TODO: Update parse_tokens to iterate over tokens from lexer.*/
 	/*TODO: Finish the shunting yard algorithm.*/
 	/*TODO: Handle syntax errors.*/
 	while (expression[exp_i] && expression[exp_i] != '\n')
@@ -138,7 +138,7 @@ deque *parser(deque *tokens)
 		current = get_token(&expression[exp_i], &processed);
 		if (!syntax_is_valid(prev, current))
 		{
-			syntax_error(expression, exp_i + processed, "invalid syntax");
+			format_syntax_error(expression, exp_i + processed, "invalid syntax");
 			break;
 		}
 		/*Identifying unary prefix operators.*/

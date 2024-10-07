@@ -27,15 +27,15 @@ static token *match_token(const char *str, size_t *processed)
 	else if (*str == ')')
 		*t = (token){.id = PAREN_R, .start = str, .op = {NULL}};
 	else if (*str == '+')
-		*t = (token){.id = ADD_OP, .start = str, .op = {bn_addition}};
+		*t = (token){.id = ADD_OP, .start = str, .op = {bn_add}};
 	else if (*str == '-')
-		*t = (token){.id = SUB_OP, .start = str, .op = {bn_subtraction}};
+		*t = (token){.id = SUB_OP, .start = str, .op = {bn_subtract}};
 	else if (*str == '*')
 		*t = (token){.id = MUL_OP, .start = str, .op = {bn_multiplication}};
 	else if (*str == '/')
-		*t = (token){.id = DIV_OP, .start = str, .op = {bn_division}};
+		*t = (token){.id = DIV_OP, .start = str, .op = {bn_divide}};
 	else if (*str == '%')
-		*t = (token){.id = MOD_OP, .start = str, .op = {bn_modulus}};
+		*t = (token){.id = MOD_OP, .start = str, .op = {bn_modulo}};
 	else if (*str == '^')
 		*t = (token){.id = POW_OP, .start = str, .op = {bn_power}};
 	else if (isdigit(*str))
@@ -55,7 +55,7 @@ static token *match_token(const char *str, size_t *processed)
 }
 
 /**
- * lexing_error - logs a lexing error to standard error.
+ * format_lexing_error_msg - logs a lexing error to standard error.
  * @expression: pointer to whole expression.
  * @idx: index of the first character where error occurred.
  * @msg: message to print.
@@ -65,13 +65,13 @@ static token *match_token(const char *str, size_t *processed)
  * error with the given message.
  *
  * Example:
- *  lexing_error("(123 + 34957,02347) / 2", 12, "invalid character");
+ *  format_lexing_error_msg("(123 + 34957,02347) / 2", 12, "invalid character");
  *  output:
  *  ParsingError: invalid character:
  *  ...34957,02347...
  *          ^
  */
-static void lexing_error(const char *expression, size_t idx, const char *msg)
+static void format_lexing_error_msg(const char *expression, size_t idx, const char *msg)
 {
 	char slice[12] = {0}, highlight[12] = {0};
 	int i = 0, upper = 0;
@@ -143,7 +143,7 @@ deque *lex_str(const char *str)
 		push_tail(tokens, t);
 		if (t->id == INVALID)
 		{
-			lexing_error(str, i, "invalid character");
+			format_lexing_error_msg(str, i, "invalid character");
 			break;
 		}
 

@@ -1,7 +1,7 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL bignum *add(bignum *n1, bignum *n2);
-static ATTR_NONNULL bignum *add_negatives(bignum *n1, bignum *n2);
+static ATTR_NONNULL bignum *add(bignum *const n1, bignum *const n2);
+static ATTR_NONNULL bignum *add_negatives(bignum *const n1, bignum *const n2);
 
 /**
  * add - add two bignums.
@@ -10,7 +10,7 @@ static ATTR_NONNULL bignum *add_negatives(bignum *n1, bignum *n2);
  *
  * Return: pointer to result, NULL on failure.
  */
-static bignum *add(bignum *n1, bignum *n2)
+static bignum *add(bignum *const n1, bignum *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
 	lint byt_sum = 0;
@@ -36,8 +36,8 @@ static bignum *add(bignum *n1, bignum *n2)
 			++n2_i;
 		}
 
-		sum->num[sum_i] = byt_sum % (BIGNUM_UINT_MAX);
-		byt_sum /= (BIGNUM_UINT_MAX);
+		sum->num[sum_i] = byt_sum % (BIGNUM_BASE);
+		byt_sum /= (BIGNUM_BASE);
 		++sum_i;
 	}
 
@@ -55,7 +55,7 @@ static bignum *add(bignum *n1, bignum *n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bignum *add_negatives(bignum *n1, bignum *n2)
+static bignum *add_negatives(bignum *const n1, bignum *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bignum *result = NULL;
@@ -70,9 +70,9 @@ static bignum *add_negatives(bignum *n1, bignum *n2)
 			result->is_negative = !result->is_negative;
 	}
 	else if (neg1) /*-8 + 7 = 7-8*/
-		result = bn_subtraction(n2, n1);
+		result = bn_subtract(n2, n1);
 	else if (neg2) /*8 + -7 = 8-7*/
-		result = bn_subtraction(n1, n2);
+		result = bn_subtract(n1, n2);
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
@@ -81,15 +81,13 @@ static bignum *add_negatives(bignum *n1, bignum *n2)
 }
 
 /**
- * bn_addition - handle addition of two bignums.
+ * bn_add - handle addition of two bignums.
  * @n1: the first number.
  * @n2: the second number.
  *
- * This function does preliminary checks on the parameters.
- *
  * Return: pointer to result, NULL on failure.
  */
-bignum *bn_addition(bignum *n1, bignum *n2)
+bignum *bn_add(bignum *const n1, bignum *const n2)
 {
 	if (!n1 || !n2)
 		return (NULL);

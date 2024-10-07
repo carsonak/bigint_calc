@@ -5,13 +5,13 @@ bignum num2 = {.len = 0, .is_negative = false, .num = NULL};
 bignum expected = {.len = 0, .is_negative = false, .num = NULL};
 
 /**
- * bn_addition - Dummy.
+ * bn_add_inplace - Dummy.
  * @n1: unused.
  * @n2: unused.
  *
  * Return: true always.
  */
-bool bn_add_inplace(bignum *n1, bignum *n2)
+bool bn_add_inplace(bignum *const n1, bignum *const n2)
 {
 	n1->num[0] = 10;
 	n2->num[0] = 10;
@@ -80,7 +80,7 @@ Test(null_inputs, test_null_minus_1,
 Test(null_inputs, test_0_minus_null,
 	 .description = "0 - NULL = NULL", .timeout = 2.0)
 {
-	uint in1[] = {0};
+	uint in1[1] = {0};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
@@ -97,7 +97,7 @@ Test(null_inputs, test_0_minus_null,
 Test(null_inputs, test_null_minus_0,
 	 .description = "NULL - 0 = NULL", .timeout = 2.0)
 {
-	uint in2[] = {0};
+	uint in2[1] = {0};
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
@@ -212,7 +212,7 @@ TestSuite(simple_subtractions, .init = setup, .fini = teardown);
 Test(simple_subtractions, test_0_minus_0,
 	 .description = "0 - 0 = 0", .timeout = 2.0)
 {
-	uint in1[] = {0}, in2[] = {0}, out[1] = {0};
+	uint in1[1] = {0}, in2[1] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -231,7 +231,7 @@ Test(simple_subtractions, test_0_minus_0,
 Test(simple_subtractions, test_1_minus_0,
 	 .description = "1 - 0 = 1", .timeout = 2.0)
 {
-	uint in1[] = {1}, in2[] = {0}, out[] = {1};
+	uint in1[] = {1}, in2[1] = {0}, out[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -250,7 +250,7 @@ Test(simple_subtractions, test_1_minus_0,
 Test(simple_subtractions, test_0_minus_1,
 	 .description = "0 - 1 = -1", .timeout = 2.0)
 {
-	uint in1[] = {0}, in2[] = {1}, out[] = {1};
+	uint in1[1] = {0}, in2[] = {1}, out[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -460,9 +460,9 @@ Test(long_subtractions, test_long9s_minus_1,
 					"999999999,999999999,999999999,999999999,999999998",
 	 .timeout = 2.0)
 {
-	uint in1[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
+	uint in1[] = {BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1};
 	uint in2[] = {1};
-	uint out[] = {BIGNUM_UINT_MAX - 2, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
+	uint out[] = {BIGNUM_BASE - 2, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -484,8 +484,8 @@ Test(long_subtractions, test_1_minus_long9s,
 	 .timeout = 2.0)
 {
 	uint in1[5] = {1, 0, 0, 0, 0};
-	uint in2[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
-	uint out[5] = {BIGNUM_UINT_MAX - 2, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
+	uint in2[] = {BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1};
+	uint out[5] = {BIGNUM_BASE - 2, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;

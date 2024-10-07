@@ -5,13 +5,13 @@ bignum num2;
 bignum expected;
 
 /**
- * bn_subtraction - dummy.
+ * bn_subtract - dummy.
  * @n1: unused.
  * @n2: unused.
  *
  * Return: a 0 length array, NULL on failure.
  */
-bignum *bn_subtraction(bignum *n1, bignum *n2)
+bignum *bn_subtract(bignum *const n1, bignum *const n2)
 {
 	(void)n1;
 	(void)n2;
@@ -40,7 +40,7 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_null_plus_null,
 	 .description = "NULL + NULL = NULL", .timeout = 2.0)
 {
-	bignum *output = bn_addition(NULL, NULL);
+	bignum *output = bn_add(NULL, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -52,7 +52,7 @@ Test(null_inputs, test_1_plus_null,
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	bignum *output = bn_addition(&num1, NULL);
+	bignum *output = bn_add(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -64,7 +64,7 @@ Test(null_inputs, test_null_plus_1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = bn_addition(NULL, &num2);
+	bignum *output = bn_add(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -72,11 +72,11 @@ Test(null_inputs, test_null_plus_1,
 Test(null_inputs, test_0_plus_null,
 	 .description = "0 + NULL = NULL", .timeout = 2.0)
 {
-	uint in1[] = {0};
+	uint in1[1] = {0};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	bignum *output = bn_addition(&num1, NULL);
+	bignum *output = bn_add(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -84,11 +84,11 @@ Test(null_inputs, test_0_plus_null,
 Test(null_inputs, test_null_plus_0,
 	 .description = "NULL + 0 = NULL", .timeout = 2.0)
 {
-	uint in2[] = {0};
+	uint in2[1] = {0};
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = bn_addition(NULL, &num2);
+	bignum *output = bn_add(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -100,7 +100,7 @@ Test(null_inputs, test_minus1_plus_null,
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	bignum *output = bn_addition(&num1, NULL);
+	bignum *output = bn_add(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -114,7 +114,7 @@ Test(null_inputs, test_null_plus_minus1,
 		.len = sizeof(in2) / sizeof(*in2),
 		.is_negative = true,
 		.num = in2};
-	bignum *output = bn_addition(NULL, &num2);
+	bignum *output = bn_add(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -124,7 +124,7 @@ TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
 Test(zero_len_arrays, test_nullarray_plus_nullarray,
 	 .description = "null_array + null_array = null_array", .timeout = 2.0)
 {
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(zero(sz, output->len));
 	cr_expect(zero(chr, output->is_negative));
@@ -135,7 +135,7 @@ Test(zero_len_arrays, test_nullarray_plus_nullarray,
 Test(zero_len_arrays, test_neg_nullarray_plus_nullarray,
 	 .description = "-null_array + null_array = null_array", .timeout = 2.0)
 {
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	num1.is_negative = true;
 	cr_expect(zero(sz, output->len));
@@ -147,7 +147,7 @@ Test(zero_len_arrays, test_neg_nullarray_plus_nullarray,
 Test(zero_len_arrays, test_nullarray_plus_neg_nullarray,
 	 .description = "null_array + -null_array = null_array", .timeout = 2.0)
 {
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	num2.is_negative = true;
 	cr_expect(zero(sz, output->len));
@@ -159,7 +159,7 @@ Test(zero_len_arrays, test_nullarray_plus_neg_nullarray,
 Test(zero_len_arrays, test_neg_nullarray_plus_neg_nullarray,
 	 .description = "-null_array + -null_array = null_array", .timeout = 2.0)
 {
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	num1.is_negative = true;
 	num2.is_negative = true;
@@ -178,7 +178,7 @@ Test(zero_len_arrays, test_4490998_plus_nullarray,
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -195,7 +195,7 @@ Test(zero_len_arrays, test_neg_4490998_plus_nullarray,
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	/*Mocked out!*/
 	/* cr_expect(eq(sz, output->len, expected.len)); */
@@ -214,7 +214,7 @@ Test(zero_len_arrays, test_4490998_plus_neg_nullarray,
 	num2.is_negative = true;
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -232,7 +232,7 @@ Test(zero_len_arrays, test_neg_4490998_plus_neg_nullarray,
 	num2.is_negative = true;
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	/*Mocked out!*/
 	/* cr_expect(eq(sz, output->len, expected.len)); */
@@ -252,7 +252,7 @@ Test(zero_len_arrays, test_nullarray_plus_largenum,
 		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -272,7 +272,7 @@ Test(zero_len_arrays, test_neg_nullarray_plus_largenum,
 		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -291,7 +291,7 @@ Test(zero_len_arrays, test_nullarray_plus_neg_largenum,
 		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	/*Mocked out!*/
 	/* cr_expect(eq(sz, output->len, expected.len)); */
@@ -312,7 +312,7 @@ Test(zero_len_arrays, test_neg_nullarray_plus_neg_largenum,
 		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
 	expected = (bignum){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	/*Mocked out!*/
 	/* cr_expect(eq(sz, output->len, expected.len)); */
@@ -326,13 +326,13 @@ TestSuite(simple_additions, .init = setup, .fini = teardown);
 Test(simple_additions, test_0_plus_0,
 	 .description = "0 + 0 = 0", .timeout = 2.0)
 {
-	uint in1[] = {0}, out[1] = {0};
+	uint in1[1] = {0}, out[1] = {0};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num1);
+	bignum *output = bn_add(&num1, &num1);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -343,7 +343,7 @@ Test(simple_additions, test_0_plus_0,
 Test(simple_additions, test_1_plus_0,
 	 .description = "1 + 0 = 1", .timeout = 2.0)
 {
-	uint in1[] = {1}, in2[] = {0}, out[] = {1};
+	uint in1[] = {1}, in2[1] = {0}, out[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -351,7 +351,7 @@ Test(simple_additions, test_1_plus_0,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -362,7 +362,7 @@ Test(simple_additions, test_1_plus_0,
 Test(simple_additions, test_0_plus_1,
 	 .description = "0 + 1 = 1", .timeout = 2.0)
 {
-	uint in1[] = {0}, in2[] = {1}, out[] = {1};
+	uint in1[1] = {0}, in2[] = {1}, out[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -370,7 +370,7 @@ Test(simple_additions, test_0_plus_1,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -387,7 +387,7 @@ Test(simple_additions, test_1_plus_1,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num1);
+	bignum *output = bn_add(&num1, &num1);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -406,7 +406,7 @@ Test(simple_additions, test_12345_plus_54321,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -425,7 +425,7 @@ Test(simple_additions, test_54321_plus_12345,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -438,7 +438,7 @@ TestSuite(long_additions, .init = setup, .fini = teardown);
 Test(long_additions, test_999999999_plus_1,
 	 .description = "999,999,999 + 1 = 1,000,000,000", .timeout = 2.0)
 {
-	uint in1[] = {BIGNUM_UINT_MAX - 1}, in2[] = {1}, out[] = {0, 1};
+	uint in1[] = {BIGNUM_BASE - 1}, in2[] = {1}, out[] = {0, 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -446,7 +446,7 @@ Test(long_additions, test_999999999_plus_1,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -458,7 +458,7 @@ Test(long_additions, test_999999999999999999_plus_999999999,
 	 .description = "999,999,999,999,999,999 + 999,999,999 = 1,000,000,000,999,999,998",
 	 .timeout = 2.0)
 {
-	uint in1[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1}, in2[] = {BIGNUM_UINT_MAX - 1};
+	uint in1[] = {BIGNUM_BASE - 1, BIGNUM_BASE - 1}, in2[] = {BIGNUM_BASE - 1};
 	uint out[] = {999999998, 0, 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
@@ -467,7 +467,7 @@ Test(long_additions, test_999999999999999999_plus_999999999,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -480,7 +480,7 @@ Test(long_additions, test_long9s_plus_1,
 					"1,0,0,0,0,0",
 	 .timeout = 2.0)
 {
-	uint in1[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
+	uint in1[] = {BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1};
 	uint in2[] = {1};
 	uint out[] = {0, 0, 0, 0, 0, 1};
 
@@ -490,7 +490,7 @@ Test(long_additions, test_long9s_plus_1,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -504,7 +504,7 @@ Test(long_additions, test_1_plus_long9s,
 	 .timeout = 2.0)
 {
 	uint in1[] = {1};
-	uint in2[] = {BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1, BIGNUM_UINT_MAX - 1};
+	uint in2[] = {BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1, BIGNUM_BASE - 1};
 	uint out[] = {0, 0, 0, 0, 0, 1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
@@ -513,7 +513,7 @@ Test(long_additions, test_1_plus_long9s,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -537,7 +537,7 @@ Test(long_additions, test_long_sparse_num1_plus_long_sparse_num2,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -561,7 +561,7 @@ Test(long_additions, test_long_sparse_num2_plus_long_sparse_num1,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -586,7 +586,7 @@ Test(negative_additions, test_minus1_plus_minus1,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.is_negative = true;
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
@@ -604,7 +604,7 @@ Test(negative_additions, test_1_plus_minus1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.is_negative = true;
 	num2.num = in2;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(zero(chr, output->is_negative));
 	bn_free(output);
@@ -620,7 +620,7 @@ Test(negative_additions, test_minus1_plus_1,
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(zero(chr, output->is_negative));
 	bn_free(output);
@@ -641,7 +641,7 @@ Test(large_additions, test_o1kb_plus_o1kc,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -662,7 +662,7 @@ Test(large_additions, test_o1kb_plus_o1ka,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -684,7 +684,7 @@ Test(large_additions, test_o500c_plus_o500d,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
@@ -706,7 +706,7 @@ Test(large_additions, test_o500d_plus_o500c,
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_addition(&num1, &num2);
+	bignum *output = bn_add(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));

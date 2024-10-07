@@ -9,7 +9,7 @@
  *
  * Return: true on success, false on failure.
  */
-bool bn_swap(bignum *n1, bignum *n2)
+bool bn_swap(bignum * const n1, bignum * const n2)
 {
 	bignum tmp = {0};
 	size_t n1_size = 0, n2_size = 0;

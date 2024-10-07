@@ -33,7 +33,7 @@ Test(null_inputs, test_NULL_cmp_NULL,
 Test(null_inputs, test_0_cmp_NULL,
 	 .description = "compare(0, NULL) == 0", .timeout = 2.0)
 {
-	uint in1[] = {0};
+	uint in1[1];
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -43,7 +43,7 @@ Test(null_inputs, test_0_cmp_NULL,
 Test(null_inputs, test_NULL_cmp_0,
 	 .description = "compare(NULL, 0) == 0", .timeout = 2.0)
 {
-	uint in1[] = {0};
+	uint in1[1];
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -93,7 +93,7 @@ Test(null_arrays, test_nullarray_cmp_nullarray,
 Test(null_arrays, test_0_cmp_nullarray,
 	 .description = "compare(0, null_array) == 1", .timeout = 2.0)
 {
-	uint in1[] = {0};
+	uint in1[1];
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -103,7 +103,7 @@ Test(null_arrays, test_0_cmp_nullarray,
 Test(null_arrays, test_nullarray_cmp_0,
 	 .description = "compare(null_array, 0) == -1", .timeout = 2.0)
 {
-	uint in2[] = {0};
+	uint in2[1];
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
@@ -179,8 +179,8 @@ TestSuite(compare_arrays, .init = setup, .fini = teardown);
 Test(compare_arrays, test_0_cmp_0,
 	 .description = "compare(0, 0) == 0(equal)", .timeout = 2.0)
 {
-	uint in1[] = {0};
-	uint in2[] = {0};
+	uint in1[1];
+	uint in2[1];
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -208,7 +208,7 @@ Test(compare_arrays, test_1_cmp_0,
 	 .description = "compare(1, 0) > 0", .timeout = 2.0)
 {
 	uint in1[] = {1};
-	uint in2[] = {0};
+	uint in2[1];
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -221,7 +221,7 @@ Test(compare_arrays, test_1_cmp_0,
 Test(compare_arrays, test_0_cmp_1,
 	 .description = "compare(0, 1) < 0", .timeout = 2.0)
 {
-	uint in1[] = {0};
+	uint in1[1];
 	uint in2[] = {1};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
