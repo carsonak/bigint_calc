@@ -345,12 +345,10 @@ Test(negative_numbers, test_minus1_cmp_minus1,
 	u_int in1[] = {1};
 	u_int in2[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
 
 	cr_assert(zero(long, bn_compare(&num1, &num2)));
 }
@@ -363,9 +361,8 @@ Test(negative_numbers, test_1_cmp_minus1,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
 
 	cr_assert(gt(long, bn_compare(&num1, &num2), 0));
 }
@@ -376,9 +373,8 @@ Test(negative_numbers, test_minus1_cmp_1,
 	u_int in1[] = {1};
 	u_int in2[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 

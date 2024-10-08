@@ -363,12 +363,10 @@ Test(negative_multiplications, test_minus_u100a_times_minus_u100c,
 	u_int in2[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 	bignum *output = bn_multiplication(&num1, &num2);
@@ -390,12 +388,10 @@ Test(negative_multiplications, test_minus_u100c_times_minus_u100a,
 	u_int in2[] = {1, 0, 0, 0, 0, 0, 0, 0, 1000};
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 	bignum *output = bn_multiplication(&num1, &num2);
@@ -418,12 +414,10 @@ Test(negative_multiplications, test_u100a_times_minus_u100c,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
@@ -443,14 +437,12 @@ Test(negative_multiplications, test_minus_u100c_times_u100a,
 	u_int in2[] = {1, 0, 0, 0, 0, 0, 0, 0, 1000};
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
@@ -469,14 +461,12 @@ Test(negative_multiplications, test_minus_u100a_times_u100c,
 	u_int in2[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112};
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
@@ -498,12 +488,10 @@ Test(negative_multiplications, test_u100c_times_minus_u100a,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 	bignum *output = bn_multiplication(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));

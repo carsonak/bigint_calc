@@ -318,9 +318,8 @@ Test(negative_exponentiations, test_minus123_pow_2,
 {
 	u_int bs[] = {123}, exp[] = {2}, out[] = {15129};
 
-	base.len = sizeof(bs) / sizeof(*bs);
-	base.is_negative = true;
-	base.num = bs;
+	base = (bignum){
+		.len = sizeof(bs) / sizeof(*bs), .is_negative = true, .num = bs};
 	exponent.len = sizeof(exp) / sizeof(*exp);
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
@@ -338,14 +337,12 @@ Test(negative_exponentiations, test_minus123_pow_3,
 {
 	u_int bs[] = {123}, exp[] = {3}, out[] = {1860867};
 
-	base.len = sizeof(bs) / sizeof(*bs);
-	base.is_negative = true;
-	base.num = bs;
+	base = (bignum){
+		.len = sizeof(bs) / sizeof(*bs), .is_negative = true, .num = bs};
 	exponent.len = sizeof(exp) / sizeof(*exp);
 	exponent.num = exp;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 	bignum *output = bn_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));

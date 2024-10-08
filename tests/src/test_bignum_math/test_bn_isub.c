@@ -6,15 +6,15 @@ bignum expected = {.len = 0, .is_negative = false, .num = NULL};
 
 /**
  * bn_add_inplace - Dummy.
- * @n1: unused.
- * @n2: unused.
+ * @n1: set to a dummy value.
+ * @n2: set to a dummy value.
  *
  * Return: true always.
  */
 bool bn_add_inplace(bignum *const n1, bignum *const n2)
 {
-	n1->num[0] = 10;
-	n2->num[0] = 10;
+	n1->num[0] = DUMMY_VALUE;
+	n2->num[0] = DUMMY_VALUE;
 	return (true);
 }
 
@@ -28,17 +28,9 @@ void setup(void) {}
  */
 void teardown(void)
 {
-	num1.len = 0;
-	num1.is_negative = false;
-	num1.num = NULL;
-
-	num2.len = 0;
-	num2.is_negative = false;
-	num2.num = NULL;
-
-	expected.len = 0;
-	expected.is_negative = false;
-	expected.num = NULL;
+	num1 = (bignum){.len = 0, .is_negative = false, .num = NULL};
+	num2 = (bignum){.len = 0, .is_negative = false, .num = NULL};
+	expected = (bignum){.len = 0, .is_negative = false, .num = NULL};
 }
 
 TestSuite(null_inputs, .init = setup, .fini = teardown);
@@ -58,7 +50,6 @@ Test(null_inputs, test_1_minus_null,
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
 	expected = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-
 	bn_sub_inplace(&num1, NULL);
 
 	cr_expect(eq(sz, num1.len, expected.len));
@@ -256,9 +247,8 @@ Test(simple_subtractions, test_0_minus_1,
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bn_sub_inplace(&num1, &num2);
 
@@ -316,9 +306,8 @@ Test(simple_subtractions, test_50000_minus_100000000,
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bn_sub_inplace(&num1, &num2);
 
@@ -491,9 +480,8 @@ Test(long_subtractions, test_1_minus_long9s,
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bn_sub_inplace(&num1, &num2);
 
@@ -508,17 +496,16 @@ Test(long_subtractions, test_long_sparse_num1_minus_long_sparse_num2,
 					"-41975,999999999,999999999,999999999,999999999,111111112,0,0,0,0",
 	 .timeout = 2.0)
 {
-	u_int in1[] = {0, 0, 0, 0, 999999999, 0, 0, 0, 0, 56789};
+	u_int in1[10] = {0, 0, 0, 0, 999999999, 0, 0, 0, 0, 56789};
 	u_int in2[] = {0, 0, 0, 0, 111111111, 0, 0, 0, 0, 98765};
-	u_int out[] = {0, 0, 0, 0, 111111112, 999999999, 999999999, 999999999, 999999999, 41975};
+	u_int out[10] = {0, 0, 0, 0, 111111112, 999999999, 999999999, 999999999, 999999999, 41975};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bn_sub_inplace(&num1, &num2);
 
@@ -533,9 +520,9 @@ Test(long_subtractions, test_long_sparse_num2_minus_long_sparse_num1,
 					"41975,999999999,999999999,999999999,999999999,111111112,0,0,0,0",
 	 .timeout = 2.0)
 {
-	u_int in1[] = {0, 0, 0, 0, 111111111, 0, 0, 0, 0, 98765};
+	u_int in1[10] = {0, 0, 0, 0, 111111111, 0, 0, 0, 0, 98765};
 	u_int in2[] = {0, 0, 0, 0, 999999999, 0, 0, 0, 0, 56789};
-	u_int out[] = {0, 0, 0, 0, 111111112, 999999999, 999999999, 999999999, 999999999, 41975};
+	u_int out[10] = {0, 0, 0, 0, 111111112, 999999999, 999999999, 999999999, 999999999, 41975};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
@@ -581,9 +568,8 @@ Test(long_subtractions, test_999999000_minus_4000000000678,
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bn_sub_inplace(&num1, &num2);
 
@@ -599,12 +585,10 @@ Test(negative_subtractions, test_minus1_minus_minus1,
 {
 	u_int in1[] = {1}, in2[] = {1}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
@@ -618,39 +602,37 @@ Test(negative_subtractions, test_minus1_minus_minus1,
 Test(negative_subtractions, test_1_minus_minus1,
 	 .description = "1 - -1 = 0 (does addition)", .timeout = 2.0)
 {
-	u_int in1[] = {1}, in2[] = {1};
-	/*Special value to indicate mock subtract has been called.*/
-	u_int out[] = {10};
+	u_int in1[] = {1}, in2[] = {1}, out[] = {DUMMY_VALUE};
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
-
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 	bn_sub_inplace(&num1, &num2);
 
-	cr_expect(eq(u32[1], num1.num, out));
-	cr_expect(eq(u32[1], num2.num, out));
+	cr_expect(eq(sz, num1.len, expected.len));
+	cr_expect(eq(chr, num1.is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
 Test(negative_subtractions, test_minus1_minus_1,
 	 .description = "-1 - 1 = -2(does addition)", .timeout = 2.0)
 {
-	u_int in1[] = {1}, in2[] = {1};
-	/*Special value to indicate mock subtract has been called.*/
-	u_int out[] = {10};
+	u_int in1[] = {1}, in2[] = {1}, out[] = {DUMMY_VALUE};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 	bn_sub_inplace(&num1, &num2);
 
-	cr_expect(eq(u32[1], num1.num, out));
-	cr_expect(eq(u32[1], num2.num, out));
+	cr_expect(eq(sz, num1.len, expected.len));
+	cr_expect(eq(chr, num1.is_negative, expected.is_negative));
+	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
 TestSuite(large_subtractions, .init = setup, .fini = teardown);
@@ -687,9 +669,8 @@ Test(large_subtractions, test_o1kb_minus_o1ka,
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bn_sub_inplace(&num1, &num2);
 
@@ -732,9 +713,8 @@ Test(large_subtractions, test_o500d_minus_o500c,
 	num1.num = in1;
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bn_sub_inplace(&num1, &num2);
 

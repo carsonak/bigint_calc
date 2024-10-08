@@ -63,8 +63,10 @@ $(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o  $(
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 # bignum math tests
-$(T_BINDIR)/test_bignum_math/test_bn_addint: $(filter %int_to_bignum.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_subint: $(filter %int_to_bignum.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_addint: $(filter %int_to_bignum.o %bn_add.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_subint: $(filter %int_to_bignum.o %bn_sub.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_iadd_int: $(filter %int_to_bignum.o %bn_iadd.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_isub_int: $(filter %int_to_bignum.o %bn_isub.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_mul: $(filter %bn_iadd.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_div: $(filter-out %bn_div.o %bn_pow.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_mod: $(filter-out %bn_div.o %bn_pow.o,$(MATH_OBJS))
@@ -73,7 +75,8 @@ $(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(OBJ
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_bignum_math/test_bn_mod: $(T_BINDIR)/test_bignum_math/test_bn_mod.o $(filter-out %bn_pow.o,$(MATH_OBJS)) $(BN_UTILS_OBJS) $(ALLOC_OBJS)
+$(T_BINDIR)/test_bignum_math/test_bn_mod: $(filter-out %bn_pow.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(BN_UTILS_OBJS) $(ALLOC_OBJS)
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 

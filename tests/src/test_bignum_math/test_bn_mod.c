@@ -175,15 +175,12 @@ Test(negative_modulus, test_neg_9107428777003_modulo_neg_809754437,
 {
 	u_int in1[] = {428777003, 9107}, in2[] = {809754437}, out[] = {120624064};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bignum *output = bn_modulo(&num1, &num2);
 
@@ -199,9 +196,8 @@ Test(negative_modulus, test_neg_9107428777003_modulo_809754437,
 {
 	u_int in1[] = {428777003, 9107}, in2[] = {809754437}, out[] = {689130373};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.is_negative = true;
-	num1.num = in1;
+	num1 = (bignum){
+		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
@@ -223,12 +219,10 @@ Test(negative_modulus, test_9107428777003_modulo_neg_809754437,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.is_negative = true;
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.is_negative = true;
-	expected.num = out;
+	num2 = (bignum){
+		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
+	expected = (bignum){
+		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
 	bignum *output = bn_modulo(&num1, &num2);
 
