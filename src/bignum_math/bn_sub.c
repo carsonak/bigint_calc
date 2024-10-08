@@ -14,7 +14,7 @@ subtract_negatives(bignum *const n1, bignum *const n2);
 static bignum *subtract(bignum *const n1, bignum *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
-	lint n1_is_bigger = 0, byt_diff = 0;
+	l_int n1_is_bigger = 0, byt_diff = 0;
 	bignum *diff = NULL;
 
 	/*result_len = max(n1->len, n2->len)*/
@@ -39,14 +39,14 @@ static bignum *subtract(bignum *const n1, bignum *const n2)
 		if (n1_is_bigger > 0) /*then; n1 - n2*/
 		{
 			if (n2_i < n2->len)
-				byt_diff += (lint)n1->num[n1_i] - n2->num[n2_i];
+				byt_diff += (l_int)n1->num[n1_i] - n2->num[n2_i];
 			else
 				byt_diff += n1->num[n1_i];
 		}
 		else /*n2 - n1*/
 		{
 			if (n1_i < n1->len)
-				byt_diff += (lint)n2->num[n2_i] - n1->num[n1_i];
+				byt_diff += (l_int)n2->num[n2_i] - n1->num[n1_i];
 			else
 				byt_diff += n2->num[n2_i];
 		}

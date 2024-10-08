@@ -9,7 +9,7 @@
  */
 bool bn_subtract_int(bignum * const n1, long long int n2)
 {
-	bignum num2 = {.len = 4, .is_negative = 0, .num = (uint[]){0}};
+	bignum num2 = {.len = 4, .is_negative = 0, .num = (u_int[]){0}};
 
 	if (!n1)
 		return (NULL);
@@ -30,7 +30,7 @@ bool bn_subtract_int(bignum * const n1, long long int n2)
  */
 bool bn_subint_inplace(bignum *const n1, long long int n2)
 {
-	bignum num2 = {.len = 4, .is_negative = 0, .num = (uint[]){0}};
+	bignum num2 = {.len = 4, .is_negative = 0, .num = (u_int[]){0}};
 
 	if (!n1)
 		return (false);

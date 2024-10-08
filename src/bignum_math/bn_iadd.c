@@ -11,7 +11,7 @@ static ATTR_NONNULL bool add_negatives(bignum * const n1, bignum * const n2);
 static void add(bignum * const n1, bignum * const n2)
 {
 	size_t n1_i = 0, n2_i = 0, res_len = 0;
-	lint byt_sum = 0;
+	l_int byt_sum = 0;
 
 	while (n1_i < n1->len || n2_i < n2->len || byt_sum > 0)
 	{

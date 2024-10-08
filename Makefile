@@ -35,7 +35,7 @@ LDLIBS :=
 LDFLAGS := -Wl,-z,relro
 # https://gcc.gnu.org/onlinedocs/gcc/Preprocessor-Options.html#index-MMD
 CPPFLAGS := -MMD
-OPTIMISATION_FLAGS := -O0
+OPTIMISATION_FLAGS := -Og
 DEBUG_FLAGS := -g3 -fno-omit-frame-pointer
 WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -Wshadow -Werror
 INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKS) $(CONTROL_TRANSFER_CHECKS) -fsanitize-trap=all

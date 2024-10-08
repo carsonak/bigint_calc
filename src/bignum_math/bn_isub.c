@@ -14,7 +14,7 @@ subtract_negatives(bignum * const n1, bignum * const n2);
 static void subtract(bignum * const n1, bignum * const n2)
 {
 	size_t n1_i = 0, n2_i = 0, tmp_len = 0, final_len = 0;
-	lint n1_is_bigger = 0, byt_diff = 0;
+	l_int n1_is_bigger = 0, byt_diff = 0;
 
 	/*result_len = max(n1->len, n2->len)*/
 	tmp_len = (n1->len > n2->len) ? n1->len : n2->len;
@@ -31,14 +31,14 @@ static void subtract(bignum * const n1, bignum * const n2)
 		if (n1_is_bigger > 0) /*then; n1 - n2*/
 		{
 			if (n2_i < n2->len)
-				byt_diff += (lint)n1->num[n1_i] - n2->num[n2_i];
+				byt_diff += (l_int)n1->num[n1_i] - n2->num[n2_i];
 			else
 				byt_diff += n1->num[n1_i];
 		}
 		else /*n2 - n1*/
 		{
 			if (n1_i < n1->len)
-				byt_diff += (lint)n2->num[n2_i] - n1->num[n1_i];
+				byt_diff += (l_int)n2->num[n2_i] - n1->num[n1_i];
 			else
 				byt_diff += n2->num[n2_i];
 		}
@@ -54,7 +54,7 @@ static void subtract(bignum * const n1, bignum * const n2)
 		{
 			/*For cases such as: 1,000,000,000 - 5 = 999,999,995*/
 			/*n1 is reduced in length from the original number, therefore */
-			/*don't update n1 as the borrow reduces the next digit to 0.*/
+			/*don't update n1 as the borrow reduces the next "digit" to 0.*/
 			if (byt_diff || (n2_i + 1 < n2->len || n1_i < n1->len))
 			{
 				n1->num[n1_i] = byt_diff % BIGNUM_BASE;

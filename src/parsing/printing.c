@@ -34,7 +34,7 @@ size_t print_bignum(bignum *arr)
  *
  * Return: pointer to a string, NULL on error.
  */
-char *uintarray_to_str(const uint *arr, size_t len)
+char *uintarray_to_str(const u_int *arr, size_t len)
 {
 	size_t s_i = 0, n = 0, len_sep = 0, len_str = 0;
 	int bytes_written = 0;
@@ -44,9 +44,9 @@ char *uintarray_to_str(const uint *arr, size_t len)
 		return (xstrdup("{NULL}"));
 
 	len_sep = strlen(sep);
-	/*sizeof(str) == (max digits in 4 bytes * len) + */
+	/*sizeof(str) == (max "digits" in U_INT_MAX * len) + */
 	/*total sizeof(separators) + sizeof("{}") + 1*/
-	len_str = ((count_digits(UINT_MAX) - 1) * len) +
+	len_str = ((count_digits(U_INT_MAX) - 1) * len) +
 			  (len_sep * (len - 1)) + 2 + 1;
 	str = xmalloc(len_str * sizeof(*str));
 	if (!str)

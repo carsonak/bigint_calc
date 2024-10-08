@@ -76,8 +76,8 @@ TestSuite(trailing_zeros, .init = setup, .fini = teardown);
 
 Test(trailing_zeros, test_one_zero, .description = "0", .timeout = 2.0)
 {
-	uint in1[1];
-	uint out[] = {0};
+	u_int in1[1];
+	u_int out[] = {0};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
@@ -93,8 +93,8 @@ Test(trailing_zeros, test_one_zero, .description = "0", .timeout = 2.0)
 
 Test(trailing_zeros, test_several_zeros, .description = "{0,0,0,0}", .timeout = 2.0)
 {
-	uint in1[] = {0, 0, 0, 0};
-	uint out[] = {0};
+	u_int in1[] = {0, 0, 0, 0};
+	u_int out[] = {0};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
@@ -110,8 +110,8 @@ Test(trailing_zeros, test_several_zeros, .description = "{0,0,0,0}", .timeout = 
 
 Test(trailing_zeros, test_0001, .description = "{1,0,0,0}", .timeout = 2.0)
 {
-	uint in1[] = {1, 0, 0, 0};
-	uint out[] = {1};
+	u_int in1[] = {1, 0, 0, 0};
+	u_int out[] = {1};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
@@ -127,8 +127,8 @@ Test(trailing_zeros, test_0001, .description = "{1,0,0,0}", .timeout = 2.0)
 
 Test(trailing_zeros, test_0100, .description = "{0,0,1,0}", .timeout = 2.0)
 {
-	uint in1[] = {0, 0, 1, 0};
-	uint out[] = {0, 0, 1};
+	u_int in1[] = {0, 0, 1, 0};
+	u_int out[] = {0, 0, 1};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
@@ -146,8 +146,8 @@ TestSuite(trailing_zeros_negative, .init = setup, .fini = teardown);
 
 Test(trailing_zeros_negative, test_one_zero, .description = "0", .timeout = 2.0)
 {
-	uint in1[1];
-	uint out[] = {0};
+	u_int in1[1];
+	u_int out[] = {0};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
@@ -163,8 +163,8 @@ Test(trailing_zeros_negative, test_one_zero, .description = "0", .timeout = 2.0)
 
 Test(trailing_zeros_negative, test_several_zeros, .description = "{0,0,0,0}", .timeout = 2.0)
 {
-	uint in1[] = {0, 0, 0, 0};
-	uint out[] = {0};
+	u_int in1[] = {0, 0, 0, 0};
+	u_int out[] = {0};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
@@ -180,8 +180,8 @@ Test(trailing_zeros_negative, test_several_zeros, .description = "{0,0,0,0}", .t
 
 Test(trailing_zeros_negative, test_0001, .description = "{1,0,0,0}", .timeout = 2.0)
 {
-	uint in1[] = {1, 0, 0, 0};
-	uint out[] = {1};
+	u_int in1[] = {1, 0, 0, 0};
+	u_int out[] = {1};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
@@ -197,8 +197,8 @@ Test(trailing_zeros_negative, test_0001, .description = "{1,0,0,0}", .timeout = 
 
 Test(trailing_zeros_negative, test_0100, .description = "{0,0,1,0}", .timeout = 2.0)
 {
-	uint in1[] = {0, 0, 1, 0};
-	uint out[] = {0, 0, 1};
+	u_int in1[] = {0, 0, 1, 0};
+	u_int out[] = {0, 0, 1};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
@@ -216,8 +216,8 @@ TestSuite(normal_input, .init = setup, .fini = teardown);
 
 Test(normal_input, test_1, .description = "1", .timeout = 2.0)
 {
-	uint in1[] = {1};
-	uint out[] = {1};
+	u_int in1[] = {1};
+	u_int out[] = {1};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
@@ -233,8 +233,8 @@ Test(normal_input, test_1, .description = "1", .timeout = 2.0)
 
 Test(normal_input, test_neg1, .description = "is_negative; 1", .timeout = 2.0)
 {
-	uint in1[] = {1};
-	uint out[] = {1};
+	u_int in1[] = {1};
+	u_int out[] = {1};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
@@ -250,8 +250,8 @@ Test(normal_input, test_neg1, .description = "is_negative; 1", .timeout = 2.0)
 
 Test(normal_input, test_100, .description = "{0,0,1}", .timeout = 2.0)
 {
-	uint in1[] = {0, 0, 1};
-	uint out[] = {0, 0, 1};
+	u_int in1[] = {0, 0, 1};
+	u_int out[] = {0, 0, 1};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
@@ -267,8 +267,8 @@ Test(normal_input, test_100, .description = "{0,0,1}", .timeout = 2.0)
 
 Test(normal_input, test_neg100, .description = "is_negative; {0,0,1}", .timeout = 2.0)
 {
-	uint in1[] = {0, 0, 1};
-	uint out[] = {0, 0, 1};
+	u_int in1[] = {0, 0, 1};
+	u_int out[] = {0, 0, 1};
 
 	num1 = (bignum){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};

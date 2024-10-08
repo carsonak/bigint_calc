@@ -5,7 +5,7 @@ static ATTR_NONNULL bool check_division_by_0(bignum * const n2);
 static ATTR_NONNULL bool check_0_result(bignum * const n1, bignum * const n2);
 static ATTR_NONNULL bignum *
 get_remainder(bignum *const n1, bignum *const n2, bignum *quotient);
-static ATTR_NONNULL lint
+static ATTR_NONNULL l_int
 get_current_quotient(bignum *slice, bignum *const n2, bignum **remainder);
 static ATTR_NONNULL bignum *
 divide(bignum *const n1, bignum *const n2, bignum **remainder);
@@ -75,19 +75,19 @@ get_remainder(bignum *const n1, bignum *const n2, bignum *quotient)
  *
  * Return: an int representing current quotient, -1 on error.
  */
-static lint
+static l_int
 get_current_quotient(bignum *slice, bignum *const n2, bignum **remainder)
 {
-	bignum q_estimate = {.len = 1, .is_negative = false, .num = (uint[3]) {0}};
+	bignum q_estimate = {.len = 1, .is_negative = false, .num = (u_int[3]){0}};
 	size_t excess = 0;
-	lint msd_slice = 0, bigger_than_divisor = 0;
+	l_int msd_slice = 0, bigger_than_divisor = 0;
 
 	*remainder = bn_free(*remainder);
 	msd_slice = slice->num[slice->len - 1];
 	if (slice->len > n2->len)
 		msd_slice = (msd_slice * BIGNUM_BASE) + slice->num[slice->len - 2];
 
-	/*quotient ≈ most significant digit of slice / m.s.d of denominator.*/
+	/*quotient ≈ most significant "digit" of slice / m.s.d of denominator.*/
 	q_estimate.num[0] = msd_slice / n2->num[n2->len - 1];
 	*remainder = get_remainder(slice, n2, &q_estimate);
 	if (!(*remainder))
@@ -132,7 +132,7 @@ get_current_quotient(bignum *slice, bignum *const n2, bignum **remainder)
  * @slice: holder for "digits" to be dropped.
  * @remainder: remainder from previous division step.
  * @n1: numerator/dividend.
- * @n1_i: index just before the last dropped "digit".
+ * @n1_i: index of the next "digit" to be dropped.
  * @n2: denominator/divisor.
  *
  * Return: number of "digits" dropped from n1.
@@ -143,15 +143,17 @@ static size_t drop_next(
 {
 	size_t due = n2->len, offset = 1;
 
-	if (remainder) /*Move digits from remainder into slice.*/
+	if (remainder) /*Move "digits" from remainder into slice.*/
 	{
 		memmove(&slice->num[slice->len - remainder->len],
 				remainder->num, sizeof(*remainder->num) * remainder->len);
-		/*If !remainder then; n2.len digits will be dropped from n1.*/
 		due = n2->len - remainder->len;
 	}
+	/*If !remainder then; n2.len "digits" will be dropped from n1.*/
 
-	/*Drop in as many digits as possible from n1.*/
+	/*Drop in as many "digits" as possible from n1.*/
+	/*n1_i should not wrap.*/
+	/*calling function must also detect this condition.*/
 	if (due > (n1_i + 1))
 	{
 		offset += due - (n1_i + 1);
@@ -161,17 +163,17 @@ static size_t drop_next(
 		return (due);
 	}
 
-	/*Drop in digits from n1 until due == 0.*/
+	/*Drop in "digits" from n1 until due == 0.*/
 	if (due)
 	{
 		n1_i -= due - 1; /*n1_i is already included.*/
 		memmove(&slice->num[offset], &n1->num[n1_i], sizeof(*n1->num) * due);
-		/*n1_i should point to the index just before the last dropped digit.*/
+		/*n1_i should point to the index of the next "digit" to drop.*/
 		n1_i--;
 	}
 
 	if (reverse_cmp_uint32array(&slice->num[offset], n2->num, n2->len) < 0)
-	{ /*If slice < n2 then; drop an extra digit.*/
+	{ /*If slice < n2 then; drop an extra "digit".*/
 		slice->num[0] = n1->num[n1_i];
 		due++;
 	}
@@ -191,11 +193,11 @@ static bignum *divide(bignum *const n1, bignum *const n2, bignum **remainder)
 {
 	bignum *current_slice = NULL;
 	size_t slice_offset = 1, q_i = 0, n1_i = 0, dropped = 0;
-	lint current_q = 0;
+	l_int current_q = 0;
 	bignum *quotient = NULL;
 
 	/*Since division is reverse of multiplication then;*/
-	/*quotient digits = numerator digits - denominator digits + (0 or 1).*/
+	/*quotient "digits" = numerator "digits" - denominator "digits" + (0 or 1).*/
 	if (n1->num[n1->len - 1] < n2->num[n2->len - 1])
 		/*If m.s.d of numerator < m.s.d denominator.*/
 		quotient = bn_alloc((n1->len - n2->len ? n1->len - n2->len : 1));
@@ -211,7 +213,7 @@ static bignum *divide(bignum *const n1, bignum *const n2, bignum **remainder)
 	dropped = drop_next(current_slice, NULL, n1, n1_i, n2);
 	if (n1_i < dropped)
 		n1_i = 0;
-	else /*n1_i should point to the index just before the last dropped digit.*/
+	else /*n1_i should point to the index of the next "digit" to drop.*/
 		n1_i -= dropped;
 
 	slice_offset = current_slice->len - dropped;
@@ -269,7 +271,7 @@ divide_negatives(bignum *const n1, bignum *const n2, bignum **remainder)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bignum *result = NULL;
-	uint a[1] = {1};
+	u_int a[1] = {1};
 	bignum one = {.len = 1, .is_negative = false, .num = a};
 
 	n1->is_negative = false;

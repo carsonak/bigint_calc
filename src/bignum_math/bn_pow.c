@@ -55,7 +55,7 @@ static void isubtract(bignum **n1, bignum * const n2)
  */
 bignum *bn_power(bignum *base, bignum *exponent)
 {
-	uint one[1] = {1}, two[1] = {2};
+	u_int one[1] = {1}, two[1] = {2};
 	bignum tmp = {.len = 1, .is_negative = false, .num = two};
 	bignum *x = NULL, *y = NULL, *exp = NULL;
 

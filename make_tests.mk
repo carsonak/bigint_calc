@@ -97,7 +97,6 @@ retests: tclean tests
 
 .PHONY: tests retest tclean utils-tests math-tests parsing-tests
 
-# https://unix.stackexchange.com/questions/517190/what-causes-make-to-delete-intermediate-files/517196#517196
 .PRECIOUS: $(T_OBJS)
 
 sinclude $(T_DEPS)

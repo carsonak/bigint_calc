@@ -13,7 +13,7 @@ multiply_negatives(bignum *const n1, bignum *const n2);
  */
 static bignum *multiply(bignum *const n1, bignum *const n2)
 {
-	lint byt_prod = 0;
+	l_int byt_prod = 0;
 	size_t n1_i = 0, n2_i = 0;
 	bignum *product = NULL, *current_mul = NULL;
 
@@ -36,14 +36,14 @@ static bignum *multiply(bignum *const n1, bignum *const n2)
 			continue;
 
 		/*Length of current_mul = */
-		/*length of n1 + (number of digits upto n2_i)*/
+		/*length of n1 + (number of "digits" upto n2_i)*/
 		current_mul->len = n1->len + (n2_i + 1);
-		/*The least significant n2_i digits will be 0 for every iteration.*/
+		/*The least significant n2_i "digits" will be 0 for every iteration.*/
 		memset(current_mul->num, 0, sizeof(*current_mul->num) * n2_i);
 		byt_prod = 0;
 		for (n1_i = 0; n1_i < n1->len; n1_i++)
 		{
-			byt_prod += (lint)n2->num[n2_i] * n1->num[n1_i];
+			byt_prod += (l_int)n2->num[n2_i] * n1->num[n1_i];
 			current_mul->num[n2_i + n1_i] = byt_prod % BIGNUM_BASE;
 			byt_prod /= BIGNUM_BASE;
 		}

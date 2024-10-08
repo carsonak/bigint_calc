@@ -104,7 +104,7 @@ numstr *bignum_to_numstr(bignum *arr, unsigned int base);
 bignum *anybase_to_bignum(numstr *num, unsigned int base);
 
 size_t print_bignum(bignum *arr);
-char *uintarray_to_str(const uint *arr, size_t len);
+char *uintarray_to_str(const u_int *arr, size_t len);
 
 /* shunting_yard */
 deque *parse_tokens(const char *expression);

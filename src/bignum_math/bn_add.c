@@ -13,7 +13,7 @@ static ATTR_NONNULL bignum *add_negatives(bignum *const n1, bignum *const n2);
 static bignum *add(bignum *const n1, bignum *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
-	lint byt_sum = 0;
+	l_int byt_sum = 0;
 	bignum *sum = NULL;
 
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/

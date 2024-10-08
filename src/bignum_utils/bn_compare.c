@@ -7,7 +7,7 @@
  *
  * Return: +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
-lint bn_compare(bignum * const n1, bignum * const n2)
+l_int bn_compare(bignum *const n1, bignum *const n2)
 {
 	if (!n1 || !n2)
 		return (0);
@@ -16,9 +16,9 @@ lint bn_compare(bignum * const n1, bignum * const n2)
 	trim_bignum(n2);
 	if (n1->is_negative && n2->is_negative)
 	{
-		/*CAUTION: possible case => len truncated when casting to lint.*/
-		if ((lint)n2->len - n1->len)
-			return ((lint)n2->len - n1->len);
+		/*CAUTION: possible case => len truncated when casting to l_int.*/
+		if ((l_int)n2->len - n1->len)
+			return ((l_int)n2->len - n1->len);
 
 		return (reverse_cmp_uint32array(n2->num, n1->num, n1->len));
 	}
@@ -27,8 +27,8 @@ lint bn_compare(bignum * const n1, bignum * const n2)
 	else if (n2->is_negative)
 		return (1);
 
-	if ((lint)n1->len - n2->len)
-		return ((lint)n1->len - n2->len);
+	if ((l_int)n1->len - n2->len)
+		return ((l_int)n1->len - n2->len);
 
 	return (reverse_cmp_uint32array(n1->num, n2->num, n1->len));
 }
@@ -41,9 +41,9 @@ lint bn_compare(bignum * const n1, bignum * const n2)
  *
  * Return: +ve number if arr1 > arr2, -ve number if arr1 < arr2 else 0.
  */
-lint reverse_cmp_uint32array(
-	uint const *const arr1,
-	uint const *const arr2,
+l_int reverse_cmp_uint32array(
+	u_int const *const arr1,
+	u_int const *const arr2,
 	size_t len)
 {
 	size_t i = len ? len - 1 : 0;
@@ -53,9 +53,9 @@ lint reverse_cmp_uint32array(
 
 	for (; i > 0; i--)
 	{
-		if ((lint)arr1[i] - arr2[i])
+		if ((l_int)arr1[i] - arr2[i])
 			break;
 	}
 
-	return ((lint)arr1[i] - arr2[i]);
+	return ((l_int)arr1[i] - arr2[i]);
 }

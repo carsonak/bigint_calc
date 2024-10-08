@@ -8,7 +8,7 @@
  */
 bignum *int_to_bignuma(long long int n)
 {
-	uint tmp[4] = {0};
+	u_int tmp[4] = {0};
 	unsigned long long int un = llabs(n);
 	unsigned int i = 0;
 	bignum *num = NULL;
@@ -44,7 +44,7 @@ bignum *int_to_bignuma(long long int n)
  */
 bool int_to_bignum(bignum *dest, long long int n)
 {
-	uint tmp[4] = {0};
+	u_int tmp[4] = {0};
 	unsigned long long int un = llabs(n);
 	unsigned int i = 0;
 

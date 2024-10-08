@@ -138,7 +138,7 @@ TestSuite(valid_inputs, .init = setup, .fini = teardown);
 Test(valid_inputs, test_0, .description = "0", .timeout = 2.0)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = "0"};
-	uint arr[] = {0};
+	u_int arr[] = {0};
 	bignum out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
@@ -151,7 +151,7 @@ Test(valid_inputs, test_0, .description = "0", .timeout = 2.0)
 Test(valid_inputs, test_eight9s, .description = "99999999", .timeout = 2.0)
 {
 	numstr in = {.len = 8, .is_negative = false, .str = "99999999"};
-	uint arr[] = {99999999};
+	u_int arr[] = {99999999};
 	bignum out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
@@ -164,7 +164,7 @@ Test(valid_inputs, test_eight9s, .description = "99999999", .timeout = 2.0)
 Test(valid_inputs, test_nine9s, .description = "999999999", .timeout = 2.0)
 {
 	numstr in = {.len = 9, .is_negative = false, .str = "999999999"};
-	uint arr[] = {999999999};
+	u_int arr[] = {999999999};
 	bignum out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
@@ -177,7 +177,7 @@ Test(valid_inputs, test_nine9s, .description = "999999999", .timeout = 2.0)
 Test(valid_inputs, test_ten9s, .description = "9,999999999", .timeout = 2.0)
 {
 	numstr in = {.len = 10, .is_negative = false, .str = "9999999999"};
-	uint arr[] = {999999999, 9};
+	u_int arr[] = {999999999, 9};
 	bignum out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 

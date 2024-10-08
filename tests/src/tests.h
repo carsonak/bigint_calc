@@ -7,8 +7,6 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
-#ifndef MAX_VAL_u4b
-#define MAX_VAL_u4b (1000000000)
-#endif
+#define BN_BASE 1000000000
 
 #endif /*TESTS_H*/

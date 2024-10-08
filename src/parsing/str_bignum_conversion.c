@@ -14,7 +14,7 @@ static bool check_is_negative(const char *num_str, size_t *str_i)
 {
 	bool is_neg = false;
 
-	for (*str_i = 0; num_str[*str_i] == '-' || num_str[*str_i] == '+'; (*str_i)++)
+	for (; num_str[*str_i] == '-' || num_str[*str_i] == '+'; (*str_i)++)
 		if (num_str[*str_i] == '-')
 			is_neg = !is_neg;
 
@@ -32,7 +32,7 @@ static bool check_is_negative(const char *num_str, size_t *str_i)
 numstr *
 str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 {
-	numstr *arr = NULL;
+	numstr *ns = NULL;
 	size_t str_i = 0, buf_i = 0;
 	const unsigned int buf_size = 1024;
 	char *buf = NULL;
@@ -41,12 +41,12 @@ str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 	if (!number_str || base < 2 || base > 36)
 		return (NULL);
 
-	arr = alloc_numstr(0);
+	ns = alloc_numstr(0);
 	buf = xmalloc(buf_size);
-	if (!buf || !arr)
+	if (!buf || !ns)
 		goto cleanup_numstr;
 
-	arr->is_negative = check_is_negative(number_str, &str_i);
+	ns->is_negative = check_is_negative(number_str, &str_i);
 	if (number_str[str_i] == '_')
 	{
 		fprintf(stderr, "ParsingError: Leading underscores not allowed.\n");
@@ -70,17 +70,17 @@ str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 		}
 
 		buf[buf_i] = '\0';
-		arr->str = xrealloc(arr->str, arr->len + buf_i + sizeof(*arr->str));
-		if (!arr->str)
+		ns->str = xrealloc(ns->str, ns->len + buf_i + sizeof(*ns->str));
+		if (!ns->str)
 			goto cleanup_numstr;
 
-		strcpy(&arr->str[arr->len], buf);
-		arr->len += buf_i;
+		strcpy(&ns->str[ns->len], buf);
+		ns->len += buf_i;
 		if (c < 0 || (unsigned int)c >= base)
 			break;
 	}
 
-	if (!arr->str || !arr->str[0])
+	if (!ns->str || !ns->str[0])
 	{
 		fprintf(stderr, "ParsingError: string did not contain any valid digits.\n");
 		goto cleanup_numstr;
@@ -90,14 +90,14 @@ str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 	{
 		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
 cleanup_numstr:
-		arr = free_numstr(arr);
+	ns = free_numstr(ns);
 	}
 
 	if (processed)
 		*processed = str_i + 1;
 
 	free_n_null(buf);
-	return (arr);
+	return (ns);
 }
 
 /**
