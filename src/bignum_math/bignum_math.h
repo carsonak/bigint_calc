@@ -12,17 +12,17 @@
 #include "bignum.h"
 #include "bignum_utils.h"
 
-bool bn_add_inplace(bignum * const n1, bignum * const n2);
+bool bn_iadd(bignum * const n1, bignum * const n2);
 bignum *bn_add(bignum * const n1, bignum * const n2);
 bignum *bn_add_int(bignum *const n1, long long int n2);
-bool bn_addint_inplace(bignum * const n1, long long int n2);
+bool bn_iadd_int(bignum *const n1, long long int n2);
 bignum *bn_divide(bignum * const n1, bignum * const n2);
 bignum *bn_modulo(bignum * const n1, bignum * const n2);
 bignum *bn_multiplication(bignum * const n1, bignum * const n2);
 bignum *bn_power(bignum *base, bignum *exponent);
-bool bn_sub_inplace(bignum * const n1, bignum * const n2);
+bool bn_isubtract(bignum *const n1, bignum *const n2);
 bignum *bn_subtract(bignum * const n1, bignum * const n2);
 bignum *bn_subtract_int(bignum *const n1, long long int n2);
-bool bn_subint_inplace(bignum * const n1, long long int n2);
+bool bn_isubtract_int(bignum *const n1, long long int n2);
 
 #endif /* BIGNUM_MATH_H */

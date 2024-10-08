@@ -78,7 +78,7 @@ get_remainder(bignum *const n1, bignum *const n2, bignum *quotient)
 static l_int
 get_current_quotient(bignum *slice, bignum *const n2, bignum **remainder)
 {
-	bignum q_estimate = {.len = 1, .is_negative = false, .num = (u_int[3]){0}};
+	bignum q_estimate = {.len = 1, .is_negative = false, .num = (u_int[3]) {0}};
 	size_t excess = 0;
 	l_int msd_slice = 0, bigger_than_divisor = 0;
 
@@ -106,14 +106,14 @@ get_current_quotient(bignum *slice, bignum *const n2, bignum **remainder)
 			if ((*remainder)->num[(*remainder)->len - 1] % n2->num[n2->len - 1])
 				excess++;
 
-			bn_subint_inplace(&q_estimate, excess);
+			bn_isubtract_int(&q_estimate, excess);
 		}
 		else
 		{
 			/*q_estimate was too small.*/
 			/*under_shoot = floor(m.s.d remainder / m.s.d denominator)*/
 			excess = (*remainder)->num[(*remainder)->len - 1] / n2->num[n2->len - 1];
-			bn_addint_inplace(&q_estimate, excess);
+			bn_iadd_int(&q_estimate, excess);
 		}
 
 		*remainder = bn_free(*remainder);
@@ -300,7 +300,7 @@ divide_negatives(bignum *const n1, bignum *const n2, bignum **remainder)
 		if (!bn_realloc(result, result->len + 1))
 			goto error_cleanup;
 
-		bn_add_inplace(result, &one);
+		bn_iadd(result, &one);
 		result->is_negative = true;
 	}
 

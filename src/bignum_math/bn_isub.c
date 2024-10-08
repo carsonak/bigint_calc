@@ -95,13 +95,13 @@ static bool subtract_negatives(bignum * const n1, bignum * const n2)
 	}
 	else if (neg2) /*8 - -5 = 8+5*/
 	{
-		if (!bn_add_inplace(n1, n2))
+		if (!bn_iadd(n1, n2))
 			return (false);
 	}
 	else if (neg1)
 	{
 		/*-8 - 5 = -(8+5)*/
-		if (!bn_add_inplace(n1, n2))
+		if (!bn_iadd(n1, n2))
 			return (false);
 
 		n1->is_negative = !n1->is_negative;
@@ -113,7 +113,7 @@ static bool subtract_negatives(bignum * const n1, bignum * const n2)
 }
 
 /**
- * bn_sub_inplace - handles subtraction of two bignums inplace.
+ * bn_isubtract - handles subtraction of two bignums inplace.
  * @n1: first number, must have enough space to store the result.
  * @n2: second number.
  *
@@ -122,7 +122,7 @@ static bool subtract_negatives(bignum * const n1, bignum * const n2)
  *
  * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
-bool bn_sub_inplace(bignum * const n1, bignum * const n2)
+bool bn_isubtract(bignum * const n1, bignum * const n2)
 {
 	/*n1.num cannot be NULL as this function does not allocate any memory.*/
 	if (!n1 || !n1->num)

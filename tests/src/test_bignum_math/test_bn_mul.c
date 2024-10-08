@@ -5,13 +5,13 @@ bignum num2 = {.len = 0, .is_negative = false, .num = NULL};
 bignum expected = {.len = 0, .is_negative = false, .num = NULL};
 
 /**
- * bn_sub_inplace - dummy.
+ * bn_isubtract - dummy.
  * @n1: unused.
  * @n2: unused.
  *
  * Return: true always.
  */
-bool bn_sub_inplace(bignum *const n1, bignum *const n2)
+bool bn_isubtract(bignum *const n1, bignum *const n2)
 {
 	n1->num[0] = 10;
 	n2->num[0] = 10;

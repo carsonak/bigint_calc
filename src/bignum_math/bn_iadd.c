@@ -55,14 +55,14 @@ static bool add_negatives(bignum * const n1, bignum * const n2)
 	}
 	else if (neg1) /*-8 + 7 = -(8-7)*/
 	{
-		if (!bn_sub_inplace(n1, n2))
+		if (!bn_isubtract(n1, n2))
 			return (false);
 
 		n1->is_negative = !n1->is_negative;
 	}
 	else if (neg2) /*8 + -7 = 8-7*/
 	{
-		if (!bn_sub_inplace(n1, n2))
+		if (!bn_isubtract(n1, n2))
 			return (false);
 
 		n2->is_negative = true;
@@ -73,7 +73,7 @@ static bool add_negatives(bignum * const n1, bignum * const n2)
 }
 
 /**
- * bn_add_inplace - add two bignums and store results in first number.
+ * bn_iadd - add two bignums and store results in first number.
  * @n1: the first number, should have enough space to store the result.
  * @n2: the second number.
  *
@@ -82,7 +82,7 @@ static bool add_negatives(bignum * const n1, bignum * const n2)
  *
  * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
-bool bn_add_inplace(bignum * const n1, bignum * const n2)
+bool bn_iadd(bignum *const n1, bignum *const n2)
 {
 	/*n1.num cannot be NULL as this function does not allocate any memory.*/
 	if (!n1 || !n1->num)

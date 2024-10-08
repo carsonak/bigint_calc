@@ -7,7 +7,7 @@
  *
  * Return: +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
-l_int bn_compare(bignum *const n1, bignum *const n2)
+l_int bn_compare(bignum * const n1, bignum * const n2)
 {
 	if (!n1 || !n2)
 		return (0);

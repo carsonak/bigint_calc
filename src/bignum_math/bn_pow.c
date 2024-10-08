@@ -43,7 +43,7 @@ static void isubtract(bignum **n1, bignum * const n2)
 			*n1 = bn_free(*n1);
 	}
 
-	bn_sub_inplace(*n1, n2);
+	bn_isubtract(*n1, n2);
 }
 
 /**

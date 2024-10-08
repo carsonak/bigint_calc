@@ -49,7 +49,7 @@ static bignum *multiply(bignum *const n1, bignum *const n2)
 		}
 
 		current_mul->num[n2_i + n1_i] = byt_prod;
-		if (!bn_add_inplace(product, current_mul))
+		if (!bn_iadd(product, current_mul))
 			break;
 	}
 
