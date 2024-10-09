@@ -41,7 +41,7 @@ static bignum *add(bignum *const n1, bignum *const n2)
 		++sum_i;
 	}
 
-	if (sum_i < sum->len)
+	if (sum && sum_i < sum->len)
 		memset(&sum->num[sum_i], 0, sizeof(*sum->num) * (sum->len - sum_i));
 
 	trim_bignum(sum);

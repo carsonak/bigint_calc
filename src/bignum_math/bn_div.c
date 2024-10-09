@@ -57,7 +57,7 @@ static bool check_0_result(bignum *const n1, bignum *const n2)
 static bignum *
 get_remainder(bignum *const n1, bignum *const n2, bignum *quotient)
 {
-	bignum *multiple = bn_multiplication(n2, quotient);
+	bignum *multiple = bn_multiply(n2, quotient);
 	bignum *rem = NULL;
 
 	if (multiple)

@@ -13,7 +13,7 @@ static void imultiply(bignum **n1, bignum * const n2)
 {
 	bignum *cpy = *n1;
 
-	*n1 = bn_multiplication(cpy, n2);
+	*n1 = bn_multiply(cpy, n2);
 	bn_free(cpy);
 }
 

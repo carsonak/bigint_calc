@@ -9,10 +9,11 @@ T_INCLUDES := $(shell find "$(T_SRCDIR)" -mount -name '*.h' -exec dirname {} \+ 
 # Object files.
 T_OBJS := $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%.o)
 ALLOC_OBJS := $(filter %xalloc.o,$(OBJS))
-MATH_OBJS := $(filter $(OBJ_DIR)/bignum_math/%.o,$(OBJS))
 BN_UTILS_OBJS := $(filter $(OBJ_DIR)/bignum_utils/%.o,$(OBJS))
-PARSING_OBJS := $(filter $(OBJ_DIR)/parsing/%.o,$(OBJS))
 DS_OBJS := $(filter $(OBJ_DIR)/data_structures/%.o,$(OBJS))
+MATH_OBJS := $(filter $(OBJ_DIR)/bignum_math/%.o,$(OBJS))
+PARSING_OBJS := $(filter $(OBJ_DIR)/parsing/%.o,$(OBJS))
+STR_UTILS_OBJS := $(filter $(OBJ_DIR)/string_utils/%.o,$(OBJS))
 # Binaries
 T_BINS := $(T_OBJS:%.o=%)
 T_DEPS := $(T_OBJS:%.o=%.d)
@@ -62,9 +63,14 @@ $(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o  $(
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
+$(T_BINDIR)/test_bignum_utils/test_alloc_fail: $(T_BINDIR)/dummy_xalloc.o $(filter %bn_alloc.o %bn_swap.o,$(BN_UTILS_OBJS))
+$(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o
+	@mkdir -vp $(@D)
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
+
 # bignum math tests
-$(T_BINDIR)/test_bignum_math/test_bn_addint: $(filter %int_to_bignum.o %bn_add.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_subint: $(filter %int_to_bignum.o %bn_sub.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_add_int: $(filter %int_to_bignum.o %bn_add.o,$(MATH_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_sub_int: $(filter %int_to_bignum.o %bn_sub.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_iadd_int: $(filter %int_to_bignum.o %bn_iadd.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_isub_int: $(filter %int_to_bignum.o %bn_isub.o,$(MATH_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_mul: $(filter %bn_iadd.o,$(MATH_OBJS))
@@ -75,8 +81,9 @@ $(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(OBJ
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_bignum_math/test_bn_mod: $(filter-out %bn_pow.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(BN_UTILS_OBJS) $(ALLOC_OBJS)
+$(T_BINDIR)/test_bignum_math/test_alloc_fail: $(T_BINDIR)/dummy_xalloc.o $(MATH_OBJS) $(filter-out %xalloc.o,$(ALLOC_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_mod: $(filter-out %bn_pow.o,$(MATH_OBJS)) $(ALLOC_OBJS)
+$(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(BN_UTILS_OBJS)
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
@@ -89,7 +96,7 @@ $(T_BINDIR)/test_parsing/test_uint_array_to_str: $(filter %printing.o,$(PARSING_
 $(T_BINDIR)/test_parsing/test_str_to_numstr: $(filter %str_bignum_conversion.o,$(PARSING_OBJS))
 $(T_BINDIR)/test_parsing/test_numstr_to_bignum: $(filter %str_bignum_conversion.o,$(PARSING_OBJS))
 # https://www.gnu.org/software/make/manual/html_node/Static-Pattern.html
-$(PARSING_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(filter %count_digits.o %numstr_alloc.o %funcs.o,$(PARSING_OBJS)) $(BN_UTILS_OBJS) $(ALLOC_OBJS)
+$(PARSING_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(filter %count_digits.o %numstr_alloc.o,$(PARSING_OBJS)) $(STR_UTILS_OBJS) $(BN_UTILS_OBJS) $(ALLOC_OBJS)
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 

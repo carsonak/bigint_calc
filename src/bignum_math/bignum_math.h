@@ -18,7 +18,7 @@ bignum *bn_add_int(bignum *const n1, long long int n2);
 bool bn_iadd_int(bignum *const n1, long long int n2);
 bignum *bn_divide(bignum * const n1, bignum * const n2);
 bignum *bn_modulo(bignum * const n1, bignum * const n2);
-bignum *bn_multiplication(bignum * const n1, bignum * const n2);
+bignum *bn_multiply(bignum *const n1, bignum *const n2);
 bignum *bn_power(bignum *base, bignum *exponent);
 bool bn_isubtract(bignum *const n1, bignum *const n2);
 bignum *bn_subtract(bignum * const n1, bignum * const n2);

@@ -1,6 +1,6 @@
 #!/usr/bin/make -f
 # Beware of trailing white spaces.
-BINARY := math
+BINARY := calc
 CC := gcc
 SRC_DIR := src
 OBJ_DIR := obj

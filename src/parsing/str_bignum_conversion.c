@@ -22,6 +22,21 @@ static bool check_is_negative(const char *num_str, size_t *str_i)
 }
 
 /**
+ * transform_digits -
+ */
+// static char transform_digits(char c)
+// {
+// 	int a = char_to_int(c);
+// 	if (c == '_')
+// 		return (0);
+
+// 	if (a < 0 || (unsigned int)a >= base)
+// 		return (-1);
+
+// 	return (toupper(c));
+// }
+
+/**
  * str_to_numstr - parse a string of digits.
  * @number_str: a string with a number.
  * @base: an int between 2-36 indicating the base of the number.
@@ -53,7 +68,7 @@ str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 		goto cleanup_numstr;
 	}
 
-	str_i += leading_chars_len(&number_str[str_i], "0");
+	str_i += leading_chars_span(&number_str[str_i], "0");
 	while (number_str[str_i])
 	{
 		for (buf_i = 0; buf_i < buf_size - 2 && number_str[str_i]; str_i++)
@@ -70,7 +85,7 @@ str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 		}
 
 		buf[buf_i] = '\0';
-		ns->str = xrealloc(ns->str, ns->len + buf_i + sizeof(*ns->str));
+		ns->str = xrealloc(ns->str, (ns->len + buf_i + 1) * sizeof(*ns->str));
 		if (!ns->str)
 			goto cleanup_numstr;
 
@@ -90,7 +105,7 @@ str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 	{
 		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
 cleanup_numstr:
-	ns = free_numstr(ns);
+		ns = free_numstr(ns);
 	}
 
 	if (processed)

@@ -94,13 +94,13 @@ static bignum *multiply_negatives(bignum *const n1, bignum *const n2)
 }
 
 /**
- * bn_multiplication - handle multiplication of two bignums.
+ * bn_multiply - handle multiplication of two bignums.
  * @n1: the first number.
  * @n2: the second number.
  *
  * Return: pointer to result, NULL on failure.
  */
-bignum *bn_multiplication(bignum *const n1, bignum *const n2)
+bignum *bn_multiply(bignum *const n1, bignum *const n2)
 {
 	if (!n1 || !n2)
 		return (NULL);

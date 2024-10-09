@@ -12,6 +12,7 @@
 #include "xalloc.h"
 #include "bignum_math.h"
 #include "data_structures.h"
+#include "string_utils.h"
 
 #define ANSI_RED "\x1b[31m"
 #define ANSI_NORMAL "\x1b[m"
@@ -93,9 +94,6 @@ numstr *alloc_numstr(size_t len);
 
 /* text_funcs */
 
-char int_to_char(unsigned int num);
-int char_to_int(char c);
-size_t leading_chars_len(const char *str, char *ch);
 unsigned int count_digits(size_t num);
 
 numstr *str_to_numstr(const char *str, unsigned int base, size_t *processed);

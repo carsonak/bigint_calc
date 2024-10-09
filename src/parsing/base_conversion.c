@@ -27,7 +27,7 @@ bignum *anybase_to_bignum(numstr *num, unsigned int base)
 	for (i = 0; i < num->len && bigint; i++)
 	{
 		tmp = bigint;
-		bigint = bn_multiplication(&base_bn, bigint);
+		bigint = bn_multiply(&base_bn, bigint);
 		tmp = bn_free(tmp);
 		cval = char_to_int(num->str[i]);
 		if (cval < 0 || (u_int)cval >= base)

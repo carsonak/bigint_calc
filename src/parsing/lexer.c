@@ -31,7 +31,7 @@ static token *match_token(const char *str, size_t *processed)
 	else if (*str == '-')
 		*t = (token){.id = SUB_OP, .start = str, .op = {bn_subtract}};
 	else if (*str == '*')
-		*t = (token){.id = MUL_OP, .start = str, .op = {bn_multiplication}};
+		*t = (token){.id = MUL_OP, .start = str, .op = {bn_multiply}};
 	else if (*str == '/')
 		*t = (token){.id = DIV_OP, .start = str, .op = {bn_divide}};
 	else if (*str == '%')
