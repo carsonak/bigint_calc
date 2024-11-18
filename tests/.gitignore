@@ -1,6 +1,2 @@
-# ignore result files
-results
 # ignore binary files
-bin
-# ignore auto genarated files
-runners
+bin/*
