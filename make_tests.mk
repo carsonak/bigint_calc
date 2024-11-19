@@ -22,10 +22,12 @@ MATH_TESTS := $(filter $(T_SRCDIR)/test_bignum_math/%,$(T_SRCS))
 MATH_TBINS := $(MATH_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 PARSING_TESTS := $(filter $(T_SRCDIR)/test_parsing/%,$(T_SRCS))
 PARSING_TBINS := $(PARSING_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
+STR_TESTS := $(filter $(T_SRCDIR)/test_string_utils/%,$(T_SRCS))
+STR_TBINS := $(STR_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 BN_UTILS_TESTS := $(filter $(T_SRCDIR)/test_bignum_utils/%,$(T_SRCS))
 BN_UTILS_TBINS := $(BN_UTILS_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
 
-tests: utils-tests math-tests parsing-tests
+tests: utils-tests math-tests str-tests parsing-tests
 
 run_tests = $(shell export $(ASAN_OPTIONS) && export $(LSAN_OPTIONS); \
 for tbin in $(1); \
@@ -46,6 +48,12 @@ math-tests: LDLIBS += -lcriterion
 math-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
 math-tests: $(MATH_TBINS)
 	$(call run_tests,$(MATH_TBINS))
+
+str-tests: INCLUDE_DIRS += $(T_INCLUDES)
+str-tests: LDLIBS += -lcriterion
+str-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
+str-tests: $(STR_TBINS)
+	$(call run_tests,$(STR_TBINS))
 
 parsing-tests: INCLUDE_DIRS += $(T_INCLUDES)
 parsing-tests: LDLIBS += -lcriterion
@@ -87,6 +95,12 @@ $(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(BN_
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
+
+# string utils tests
+$(T_BINDIR)/test_string_utils/test_filter_str: $(ALLOC_OBJS)
+$(T_BINDIR)/test_string_utils/test_%: $(T_BINDIR)/test_string_utils/test_%.o $(OBJ_DIR)/string_utils/%.o
+	@mkdir -vp $(@D)
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 # parsing tests
 $(T_BINDIR)/test_parsing/test_base_conversion: $(filter %base_conversion.o,$(PARSING_OBJS)) $(MATH_OBJS)

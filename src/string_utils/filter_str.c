@@ -5,6 +5,7 @@
  * @str: the string to process.
  * @processed: pointer to store number of characters processed in the string.
  * @map: pointer to a function that transforms maps characters onto others.
+ * @map_args: pointer to more arguments to pass to map.
  *
  * If map returns a negative char, processing of the string will be stoped and
  * the processed string will be returned upto the character.
@@ -13,11 +14,11 @@
  *
  * Return: pointer to the filtered string, NULL on failure.
  */
-char *
-filter_str(const char *str, size_t *const processed, const mapping_func map)
+char *filter_str(const char *str, size_t *const processed,
+				 const mapping_func map, void *map_args)
 {
 	const unsigned int buf_size = 1024;
-	char *buffer = NULL, *output = NULL, c;
+	char *buffer = NULL, *output = NULL, c = 0;
 	size_t buf_i = 0, o_len = 0;
 
 	if (!str || !processed || !map)
@@ -32,7 +33,7 @@ filter_str(const char *str, size_t *const processed, const mapping_func map)
 	{
 		for (buf_i = 0; buf_i < buf_size - 1; (*processed)++)
 		{
-			c = (*map)(str[*processed]);
+			c = map(str[*processed], map_args);
 			if (c < 0)
 				break;
 

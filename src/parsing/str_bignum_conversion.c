@@ -22,18 +22,28 @@ static bool check_is_negative(const char *num_str, size_t *str_i)
 }
 
 /**
- * transform_digits -
+ * map_digits - validates that characters are acceptable digits.
+ * @c: the character to validate.
+ * @radix: pointer to an int indicating the current working radix.
+ *
+ * Return: the transformed character, -1 on error.
  */
-// static char transform_digits(char c)
+// static char map_digits(char c, void *radix)
 // {
 // 	int a = char_to_int(c);
-// 	if (c == '_')
-// 		return (0);
+// 	unsigned int base = 0;
 
-// 	if (a < 0 || (unsigned int)a >= base)
+// 	if (!radix)
 // 		return (-1);
 
-// 	return (toupper(c));
+// 	base = *((unsigned int *)radix);
+// 	if (c == '_')
+// 		return (0); /*underscores should be ignored.*/
+
+// 	if (a < 0 || (unsigned int)a >= base)
+// 		return (-1); /*the character is not within the accepted range.*/
+
+// 	return (int_to_char(a));
 // }
 
 /**

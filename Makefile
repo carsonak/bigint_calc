@@ -10,7 +10,7 @@ INCLUDE_DIRS := $(shell find "$(SRC_DIR)" -mount -name '*.h' -exec dirname {} \+
 
 # All .c files
 SRCS := $(shell find "$(SRC_DIR)" -mount -name '*.c' -type f | sort)
-# OBJ_DIR will have the same file tree as in the SRC_DIR
+# `OBJ_DIR` will have the same file tree as in the `SRC_DIR`
 OBJS := $(SRCS:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 # The dependency files have rules that track include files (i.e .h files)
 DEP_FILES := $(OBJS:.o=.d)
@@ -55,7 +55,7 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# Redefining CFLAGS for release build
+# Redefining `CFLAGS` for release build
 # https://www.gnu.org/software/make/manual/html_node/Target_002dspecific.html
 release: OPTIMISATION_FLAGS := -O3
 release: DEBUG_FLAGS :=

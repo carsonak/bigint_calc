@@ -9,11 +9,17 @@
 
 #include "xalloc.h"
 
-/*A pointer to a function that maps one character to another.*/
-typedef char (*mapping_func)(char);
+/**
+ * mapping_func - a pointer to a function that maps one character to another.
+ * @c: the character to be transformed.
+ * @args: pointer to more arguments that can be passed to the function.
+ *
+ * Return: the transformed character.
+ */
+typedef char (*mapping_func)(char c, void *args);
 
-char *
-filter_str(const char *str, size_t *const processed, const mapping_func f);
+char *filter_str(const char *str, size_t *const processed,
+				 const mapping_func f, void *f_args);
 char int_to_char(unsigned int num);
 int char_to_int(char c);
 size_t leading_chars_span(const char *str, char *ch);
