@@ -104,7 +104,7 @@ get_current_quotient(bignum *slice, bignum *const n2, bignum **remainder)
 			/*CAUTION: Possible case => overshoot.len > n2.len.*/
 			excess = (*remainder)->num[(*remainder)->len - 1] / n2->num[n2->len - 1];
 			if ((*remainder)->num[(*remainder)->len - 1] % n2->num[n2->len - 1])
-				excess++;
+				++excess;
 
 			bn_isubtract_int(&q_estimate, excess);
 		}
@@ -175,7 +175,7 @@ static size_t drop_next(
 	if (reverse_cmp_uint32array(&slice->num[offset], n2->num, n2->len) < 0)
 	{ /*If slice < n2 then; drop an extra "digit".*/
 		slice->num[0] = n1->num[n1_i];
-		due++;
+		++due;
 	}
 
 	return (due);

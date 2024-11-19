@@ -97,10 +97,10 @@ static void format_syntax_error(const char *expression, size_t idx, const char *
 	memset(highlight, ' ', 11);
 	upper = idx > 5 ? 5 : (int)idx;
 	highlight[upper] = '^';
-	for (i = 0; i < upper; i++)
+	for (i = 0; i < upper; ++i)
 		slice[i] = expression[idx - upper + i];
 
-	for (i = 0; expression[idx + i] && i < 6; i++)
+	for (i = 0; expression[idx + i] && i < 6; ++i)
 		slice[upper + i] = expression[idx + i];
 
 	fprintf(stderr, "ParsingError:");
@@ -132,7 +132,7 @@ deque *parse_tokens(deque *tokens)
 		while (expression[exp_i] &&
 			   expression[exp_i] != '\n' &&
 			   expression[exp_i] == ' ')
-			exp_i++;
+			exp_++ i;
 
 		prev = current;
 		current = get_token(&expression[exp_i], &processed);

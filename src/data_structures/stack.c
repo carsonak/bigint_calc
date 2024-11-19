@@ -21,7 +21,7 @@ single_link_nd *push(stack *s, void *data)
 	nw->data = data;
 	nw->next = s->top;
 	s->top = nw;
-	s->size++;
+	++(s->size);
 	return (nw);
 }
 

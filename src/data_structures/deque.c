@@ -27,7 +27,7 @@ double_link_nd *push_head(deque *dq, void *data)
 		dq->tail = nw;
 
 	dq->head = nw;
-	dq->size++;
+	++(dq->size);
 	return (nw);
 }
 
@@ -58,7 +58,7 @@ double_link_nd *push_tail(deque *dq, void *data)
 		dq->head = nw;
 
 	dq->tail = nw;
-	dq->size++;
+	++(dq->size);
 	return (nw);
 }
 

@@ -36,13 +36,14 @@ bignum *bn_alloc(size_t len)
  */
 bool bn_realloc(bignum *bn, size_t len)
 {
-	if (!bn)
+	if (!bn) /*Cannot resize a NULL pointer.*/
 		return (false);
 
 	bn->num = xrealloc(bn->num, sizeof(*bn->num) * len);
 	if (len && !bn->num)
 		return (false);
 
+	/*Initialise memory to 0 only when expanding the bignum.*/
 	if (len > bn->len)
 		memset(&(bn->num[bn->len]), 0, sizeof(*bn->num) * (len - bn->len));
 
@@ -63,16 +64,11 @@ bignum *bn_dup(bignum *bn)
 	if (!bn)
 		return (NULL);
 
-	dup = bn_alloc(0);
+	dup = bn_alloc(bn->len);
 	if (!bn->len || !dup)
 		return (dup);
 
-	dup->num = xmalloc(bn->len * sizeof(*dup->num));
-	if (!dup->num)
-		return (bn_free(dup));
-
 	dup->is_negative = bn->is_negative;
-	dup->len = bn->len;
 	memcpy(dup->num, bn->num, sizeof(*bn->num) * bn->len);
 	return (dup);
 }
@@ -86,7 +82,10 @@ bignum *bn_dup(bignum *bn)
 void *bn_free(bignum *freeable_ptr)
 {
 	if (freeable_ptr)
+	{
+		freeable_ptr->len = 0;
 		freeable_ptr->num = free_n_null(freeable_ptr->num);
+	}
 
 	return (free_n_null(freeable_ptr));
 }

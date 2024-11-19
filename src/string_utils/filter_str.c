@@ -31,7 +31,7 @@ char *filter_str(const char *str, size_t *const processed,
 	*processed = 0;
 	while (str[*processed])
 	{
-		for (buf_i = 0; buf_i < buf_size - 1; (*processed)++)
+		for (buf_i = 0; buf_i < buf_size - 1; ++(*processed))
 		{
 			c = map(str[*processed], map_args);
 			if (c < 0)
@@ -41,7 +41,7 @@ char *filter_str(const char *str, size_t *const processed,
 				continue;
 
 			buffer[buf_i] = c;
-			buf_i++;
+			++buf_i;
 		}
 
 		buffer[buf_i] = '\0';
@@ -55,6 +55,6 @@ char *filter_str(const char *str, size_t *const processed,
 			break;
 	}
 
-	(*processed)++;
+	++(*processed);
 	return (output);
 }

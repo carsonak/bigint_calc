@@ -48,7 +48,7 @@ static void subtract(bignum * const n1, bignum * const n2)
 			byt_diff += BIGNUM_BASE;
 			n1->num[n1_i] = byt_diff % BIGNUM_BASE;
 			byt_diff = -1;
-			final_len++;
+			++final_len;
 		}
 		else
 		{
@@ -58,7 +58,7 @@ static void subtract(bignum * const n1, bignum * const n2)
 			if (byt_diff || (n2_i + 1 < n2->len || n1_i < n1->len))
 			{
 				n1->num[n1_i] = byt_diff % BIGNUM_BASE;
-				final_len++;
+				++final_len;
 			}
 
 			byt_diff = 0;

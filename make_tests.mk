@@ -66,13 +66,13 @@ $(T_BINDIR)/%.o: $(T_SRCDIR)/%.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 # utils tests
+$(T_BINDIR)/test_bignum_utils/test_bn_alloc: $(ALLOC_OBJS)
 $(T_BINDIR)/test_bignum_utils/test_bn_compare: $(filter %trim_bignum.o,$(BN_UTILS_OBJS))
 $(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o  $(OBJ_DIR)/bignum_utils/%.o
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_bignum_utils/test_alloc_fail: $(T_BINDIR)/dummy_xalloc.o $(filter %bn_alloc.o %bn_swap.o,$(BN_UTILS_OBJS))
-$(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o
+$(T_BINDIR)/test_bignum_utils/test_alloc_fail: $(T_BINDIR)/test_bignum_utils/test_alloc_fail.o $(T_BINDIR)/dummy_xalloc.o $(filter %bn_alloc.o %bn_swap.o,$(BN_UTILS_OBJS))
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 

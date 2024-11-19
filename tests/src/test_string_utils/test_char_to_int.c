@@ -6,7 +6,7 @@ Test(zero_to_nine, test_zero_to_nine,
 	char c = '0';
 	int out = 0;
 
-	for (; c <= '9'; c++, out++)
+	for (; c <= '9'; ++c, ++out)
 	{
 		cr_expect(eq(int, char_to_int(c), out));
 	}
@@ -18,7 +18,7 @@ Test(a_to_z, test_a_to_z,
 	char c = 'a';
 	int out = 10;
 
-	for (; c <= 'z'; c++, out++)
+	for (; c <= 'z'; ++c, ++out)
 	{
 		cr_expect(eq(int, char_to_int(c), out));
 	}
@@ -30,7 +30,7 @@ Test(A_to_Z, test_A_to_Z,
 	char c = 'A';
 	int out = 10;
 
-	for (; c <= 'Z'; c++, out++)
+	for (; c <= 'Z'; ++c, ++out)
 	{
 		cr_expect(eq(int, char_to_int(c), out));
 	}
@@ -41,7 +41,7 @@ Test(everything_else, test_everything_else,
 {
 	int c = 0, out = -1;
 
-	for (; c <= UCHAR_MAX; c++)
+	for (; c <= UCHAR_MAX; ++c)
 	{
 		if (isalnum(c))
 			continue;

@@ -23,8 +23,8 @@ bignum *anybase_to_bignum(numstr *num, unsigned int base)
 	if (!bigint)
 		return (NULL);
 
-	/* while(str[i]); num = base * num + str[i]; i++; */
-	for (i = 0; i < num->len && bigint; i++)
+	/* while str[i]; num = base * num + str[i]; ++i; */
+	for (i = 0; i < num->len && bigint; ++i)
 	{
 		tmp = bigint;
 		bigint = bn_multiply(&base_bn, bigint);

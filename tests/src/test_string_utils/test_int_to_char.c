@@ -6,7 +6,7 @@ Test(zero_to_nine, test_zero_to_nine,
 	unsigned int n = 0;
 	char out = '0';
 
-	for (; n < 10; n++, out++)
+	for (; n < 10; ++n, ++out)
 	{
 		cr_expect(eq(chr, int_to_char(n), out));
 	}
@@ -18,7 +18,7 @@ Test(ten_to_thirtyfive, test_ten_to_thirtyfive,
 	unsigned int n = 10;
 	char out = 'A';
 
-	for (; n < 36; n++, out++)
+	for (; n < 36; ++n, ++out)
 	{
 		cr_expect(eq(chr, int_to_char(n), out));
 	}

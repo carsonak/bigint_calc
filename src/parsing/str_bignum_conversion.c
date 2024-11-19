@@ -14,7 +14,7 @@ static bool check_is_negative(const char *num_str, size_t *str_i)
 {
 	bool is_neg = false;
 
-	for (; num_str[*str_i] == '-' || num_str[*str_i] == '+'; (*str_i)++)
+	for (; num_str[*str_i] == '-' || num_str[*str_i] == '+'; ++(*str_i))
 		if (num_str[*str_i] == '-')
 			is_neg = !is_neg;
 
@@ -81,7 +81,7 @@ str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 	str_i += leading_chars_span(&number_str[str_i], "0");
 	while (number_str[str_i])
 	{
-		for (buf_i = 0; buf_i < buf_size - 2 && number_str[str_i]; str_i++)
+		for (buf_i = 0; buf_i < buf_size - 2 && number_str[str_i]; ++str_i)
 		{
 			if (number_str[str_i] == '_')
 				continue;
@@ -91,7 +91,7 @@ str_to_numstr(const char *number_str, unsigned int base, size_t *processed)
 				break;
 
 			buf[buf_i] = toupper(number_str[str_i]);
-			buf_i++;
+			++buf_i;
 		}
 
 		buf[buf_i] = '\0';
@@ -146,13 +146,13 @@ bignum *numstr_to_bignum(numstr *num)
 	digits = count_digits(BIGNUM_BASE - 1);
 	a_i = (num->len / digits);
 	if (num->len % digits)
-		a_i++;
+		++a_i;
 
 	arr = bn_alloc(a_i);
 	if (!arr)
 		return (NULL);
 
-	for (a_i = 0, n_i = num->len; a_i < arr->len && n_i; a_i++)
+	for (a_i = 0, n_i = num->len; a_i < arr->len && n_i; ++a_i)
 	{
 		if (n_i >= digits)
 			n_i -= digits;
@@ -179,7 +179,7 @@ bignum *numstr_to_bignum(numstr *num)
 	{
 		arr->num[a_i] = tmp % BIGNUM_BASE;
 		tmp /= BIGNUM_BASE;
-		a_i++;
+		++a_i;
 	}
 
 	trim_bignum(arr);

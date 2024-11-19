@@ -12,7 +12,7 @@ unsigned int count_digits(size_t num)
 
 	while (num)
 	{
-		d++;
+		++d;
 		num /= 10;
 	}
 

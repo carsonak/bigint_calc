@@ -82,10 +82,10 @@ static void format_lexing_error_msg(const char *expression, size_t idx, const ch
 	memset(highlight, ' ', 11);
 	upper = idx > 5 ? 5 : (int)idx;
 	highlight[upper] = '^';
-	for (i = 0; i < upper; i++)
+	for (i = 0; i < upper; ++i)
 		slice[i] = expression[idx - upper + i];
 
-	for (i = 0; expression[idx + i] && i < 6; i++)
+	for (i = 0; expression[idx + i] && i < 6; ++i)
 		slice[upper + i] = expression[idx + i];
 
 	fprintf(stderr, "ParsingError:");
@@ -134,7 +134,7 @@ deque *lex_str(const char *str)
 	while (str[i])
 	{
 		while (str[i] == ' ')
-			i++;
+			++i;
 
 		t = match_token(&str[i], &processed);
 		if (!t)

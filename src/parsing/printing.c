@@ -53,7 +53,7 @@ char *uintarray_to_str(const u_int *arr, size_t len)
 		return (NULL);
 
 	strcpy(str, "{");
-	for (n = 0, s_i = 1; n < len - 1 && s_i < len_str; n++)
+	for (n = 0, s_i = 1; n < len - 1 && s_i < len_str; ++n)
 	{
 		bytes_written = sprintf(&str[s_i], "%d", arr[n]);
 		if (bytes_written < 0)

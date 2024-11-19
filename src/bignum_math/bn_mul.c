@@ -29,7 +29,7 @@ static bignum *multiply(bignum *const n1, bignum *const n2)
 
 	product->len = 1;
 	/*For every "digit" in n2, multiply with every "digit" in n1.*/
-	for (n2_i = 0; n2_i < n2->len; n2_i++)
+	for (n2_i = 0; n2_i < n2->len; ++n2_i)
 	{
 		/*Skip multiplication by zero*/
 		if (n2->num[n2_i] == 0)
@@ -41,7 +41,7 @@ static bignum *multiply(bignum *const n1, bignum *const n2)
 		/*The least significant n2_i "digits" will be 0 for every iteration.*/
 		memset(current_mul->num, 0, sizeof(*current_mul->num) * n2_i);
 		byt_prod = 0;
-		for (n1_i = 0; n1_i < n1->len; n1_i++)
+		for (n1_i = 0; n1_i < n1->len; ++n1_i)
 		{
 			byt_prod += (l_int)n2->num[n2_i] * n1->num[n1_i];
 			current_mul->num[n2_i + n1_i] = byt_prod % BIGNUM_BASE;

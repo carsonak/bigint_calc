@@ -17,7 +17,7 @@ bignum *int_to_bignuma(long long int n)
 	{
 		tmp[i] = un % BIGNUM_BASE;
 		un /= BIGNUM_BASE;
-		i++;
+		++i;
 	}
 
 	if (!n)
@@ -55,7 +55,7 @@ bool int_to_bignum(bignum *dest, long long int n)
 	{
 		tmp[i] = un % BIGNUM_BASE;
 		un /= BIGNUM_BASE;
-		i++;
+		++i;
 	}
 
 	if (!n)

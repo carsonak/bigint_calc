@@ -33,7 +33,10 @@ numstr *alloc_numstr(size_t len)
 void *free_numstr(numstr *freeable_ptr)
 {
 	if (freeable_ptr)
-		free_n_null(freeable_ptr->str);
+	{
+		freeable_ptr->len = 0;
+		freeable_ptr->str = free_n_null(freeable_ptr->str);
+	}
 
 	return (free_n_null(freeable_ptr));
 }
