@@ -9,6 +9,7 @@
 
 /*Duplicate of BIGNUM_BASE*/
 #define BN_BASE 1000000000
+
 #define DUMMY_VALUE 2222222222
 
 #endif /*TESTS_H*/

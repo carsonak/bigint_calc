@@ -4,27 +4,28 @@
  * filter_str - translates all characters of a string according to a function.
  * @str: the string to process.
  * @processed: pointer to store number of characters processed in the string.
- * @map: pointer to a function that transforms maps characters onto others.
- * @map_args: pointer to more arguments to pass to map.
+ * @map: pointer to a function that transforms/maps characters onto others.
+ * @map_args: pointer to more arguments to pass to the map function.
  *
- * If map returns a negative char, processing of the string will be stoped and
- * the processed string will be returned upto the character.
+ * If map returns a negative char, processing is finalised and the processed
+ * string returned.
  * If map returns 0, the character will be ignored, essentially deleting the
- * character from the output.
+ * character from the returned string.
  *
  * Return: pointer to the filtered string, NULL on failure.
  */
 char *filter_str(const char *str, size_t *const processed,
-				 const mapping_func map, void *map_args)
+				 const mapping_func map, const void *map_args)
 {
 	const unsigned int buf_size = 1024;
-	char *buffer = NULL, *output = NULL, c = 0;
-	size_t buf_i = 0, o_len = 0;
+	char *output = NULL, c = 0;
+	size_t buf_i = 0, out_len = 0;
 
 	if (!str || !processed || !map)
 		return (NULL);
 
-	buffer = xmalloc(buf_size);
+	char *const buffer = xmalloc(buf_size);
+
 	if (!buffer)
 		return (NULL);
 
@@ -45,16 +46,17 @@ char *filter_str(const char *str, size_t *const processed,
 		}
 
 		buffer[buf_i] = '\0';
-		output = xrealloc(output, (o_len + buf_i + 1) * sizeof(*output));
+		output = xrealloc(output, (out_len + buf_i + 1) * sizeof(*output));
 		if (!output)
 			break;
 
-		strcpy(&output[o_len], buffer);
-		o_len += buf_i;
+		strcpy(&output[out_len], buffer);
+		out_len += buf_i;
 		if (c < 0)
 			break;
 	}
 
 	++(*processed);
+	free_n_null(buffer);
 	return (output);
 }
