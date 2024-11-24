@@ -16,7 +16,7 @@
  *
  * Return: the transformed character.
  */
-typedef char (*mapping_func)(char c, const void *args);
+typedef char (*mapping_func)(const char c, const void *args);
 
 char *filter_str(const char *str, size_t *const processed,
 				 const mapping_func f, const void *f_args);

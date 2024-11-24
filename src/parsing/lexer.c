@@ -42,11 +42,9 @@ static token *match_token(const char *str, size_t *processed)
 	{
 		n = str_to_numstr(str, 10, processed);
 		if (n)
-			*t = (token){.id = NUMBER, .start = str, .op.number = *n};
+			*t = (token){.id = NUMBER, .start = str, .op.number = n};
 		else
 			t = free_n_null(t);
-
-		free_n_null(n);
 	}
 	else
 		*t = (token){.id = INVALID, .start = str, .op = {NULL}};
@@ -65,11 +63,11 @@ static token *match_token(const char *str, size_t *processed)
  * error with the given message.
  *
  * Example:
- *  format_lexing_error_msg("(123 + 34957,02347) / 2", 12, "invalid character");
+ *  `format_lexing_error_msg("(123 + 34957,02347) / 2", 12, "invalid character");`
  *  output:
- *  ParsingError: invalid character:
+ *  `ParsingError: invalid character:
  *  ...34957,02347...
- *          ^
+ *          ^`
  */
 static void format_lexing_error_msg(const char *expression, size_t idx, const char *msg)
 {
@@ -102,21 +100,20 @@ static void format_lexing_error_msg(const char *expression, size_t idx, const ch
  *
  * Return: NULL always.
  */
-void *free_token(void *freeable_token)
+void *free_token(token *freeable_token)
 {
-	token *p = (token *)freeable_token;
+	if (freeable_token && freeable_token->id == NUMBER)
+		freeable_token->op.number = free_numstr(freeable_token->op.number);
 
-	if (p && p->id == NUMBER)
-		free_n_null(p->op.number.str);
-
-	return (free_n_null(p));
+	freeable_token->id = INVALID;
+	return (free_n_null(freeable_token));
 }
 
 /**
- * lex_str - breaks down a string into tokens.
+ * lex_str - breaks down a math expression into tokens.
  * @str: a math expression.
  *
- * Return: a double ended queue on success, NULL otherwise.
+ * Return: a deque of tokens on success, NULL otherwise.
  */
 deque *lex_str(const char *str)
 {
@@ -127,7 +124,7 @@ deque *lex_str(const char *str)
 	if (!str)
 		return (NULL);
 
-	tokens = xmalloc(sizeof(*tokens));
+	tokens = xcalloc(1, sizeof(*tokens));
 	if (!tokens)
 		return (NULL);
 

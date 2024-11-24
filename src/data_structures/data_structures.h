@@ -7,8 +7,8 @@
 
 /**
  * struct single_link_node - a singly linked list node.
- * @next: pointer to the next node.
  * @data: data that the node holds.
+ * @next: pointer to the next node.
  */
 typedef struct single_link_node
 {
@@ -18,16 +18,16 @@ typedef struct single_link_node
 
 /**
  * struct double_link_node - a doubly linked list node.
+ * @data: data that the node holds.
  * @next: pointer to the next node.
  * @prev: pointer to the previous node.
- * @data: data that the node holds.
  */
 typedef struct double_link_node
 {
 	void *data;
 	struct double_link_node *next;
 	struct double_link_node *prev;
-} double_link_nd;
+} double_link_node;
 
 /*stack*/
 
@@ -47,6 +47,23 @@ void *pop(stack *s);
 void *clear_stack(stack *s, void *(*free_data)(void *));
 /*void print_stack(stack *s, void (*print_data)(void *));*/
 
+/*linked list*/
+
+/**
+ * struct link_list - a linked list data structure.
+ * @size: the number of nodes in the linked list.
+ * @head: pointer to the head of the linked list.
+ */
+typedef struct link_list
+{
+	size_t size;
+	double_link_node *head;
+} link_list;
+
+double_link_node *insert_nd(double_link_node *node, void *data);
+void *remove_nd(double_link_node *node);
+void *clear_list(link_list *list, void *(*free_data)(void *));
+
 /*deque*/
 
 /**
@@ -58,15 +75,15 @@ void *clear_stack(stack *s, void *(*free_data)(void *));
 typedef struct deque
 {
 	size_t size;
-	double_link_nd *head;
-	double_link_nd *tail;
+	double_link_node *head;
+	double_link_node *tail;
 } deque;
 
-double_link_nd *push_head(deque *dq, void *data);
-double_link_nd *push_tail(deque *dq, void *data);
-void *pop_head(deque *dq);
-void *pop_tail(deque *dq);
+double_link_node *push_head(deque *dq_head, void *data);
+double_link_node *push_tail(deque *dq_head, void *data);
+void *pop_head(deque *dq_head);
+void *pop_tail(deque *dq_head);
 void *clear_deque(deque *dq, void *(*free_data)(void *));
-/*void print_deque(deque *dq, void (*print_data)(void *));*/
+/*void print_deque(deque *dq_head, void (*print_data)(void *));*/
 
 #endif /* DATA_STRUCTURES_H */

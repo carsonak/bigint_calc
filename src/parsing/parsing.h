@@ -68,7 +68,7 @@ enum token_type
 union ops
 {
 	math_function *operator;
-	numstr number;
+	numstr *number;
 };
 
 /**
@@ -86,8 +86,7 @@ typedef struct token
 
 /* alloc_funcs */
 
-void *
-free_numstr(numstr *freeable_ptr);
+void *free_numstr(numstr *freeable_ptr);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_numstr)
 numstr *alloc_numstr(size_t len);
@@ -96,10 +95,11 @@ numstr *alloc_numstr(size_t len);
 
 unsigned int count_digits(size_t num);
 
-numstr *str_to_numstr(const char *str, unsigned int base, size_t *processed);
+numstr *str_to_numstr(
+	const char *str, const unsigned int base, size_t *const processed);
 bignum *numstr_to_bignum(numstr *num);
-numstr *bignum_to_numstr(bignum *arr, unsigned int base);
-bignum *anybase_to_bignum(numstr *num, unsigned int base);
+numstr *bignum_to_numstr(bignum *bn_arr, const unsigned int base);
+bignum *anybase_to_bignum(numstr *nstr, const unsigned int base);
 
 size_t print_bignum(bignum *arr);
 char *uintarray_to_str(const u_int *arr, size_t len);

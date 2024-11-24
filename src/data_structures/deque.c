@@ -2,16 +2,16 @@
 
 /**
  * push_head - push an item to the head of the deque.
- * @dq: the deque to operate on.
+ * @dq_head: the deque to operate on.
  * @data: the data that the node will hold.
  *
- * Return: pointer to the newly added node, NULL if dq is NULL or failure.
+ * Return: pointer to the newly added node, NULL if dq_head is NULL or failure.
  */
-double_link_nd *push_head(deque *dq, void *data)
+double_link_node *push_head(deque *dq_head, void *data)
 {
-	double_link_nd *nw = NULL;
+	double_link_node *nw = NULL;
 
-	if (!dq)
+	if (!dq_head)
 		return (NULL);
 
 	nw = calloc(1, sizeof(*nw));
@@ -19,30 +19,30 @@ double_link_nd *push_head(deque *dq, void *data)
 		return (NULL);
 
 	nw->data = data;
-	nw->next = dq->head;
-	if (dq->head)
-		dq->head->prev = nw;
+	nw->next = dq_head->head;
+	if (dq_head->head)
+		dq_head->head->prev = nw;
 
-	if (!dq->tail)
-		dq->tail = nw;
+	if (!dq_head->tail)
+		dq_head->tail = nw;
 
-	dq->head = nw;
-	++(dq->size);
+	dq_head->head = nw;
+	++(dq_head->size);
 	return (nw);
 }
 
 /**
  * push_tail - push an item to the tail of the deque.
- * @dq: the deque to operate on.
+ * @dq_head: the deque to operate on.
  * @data: the data that the node will hold.
  *
- * Return: pointer to the newly added node, NULL if dq is NULL or failure.
+ * Return: pointer to the newly added node, NULL if dq_head is NULL or failure.
  */
-double_link_nd *push_tail(deque *dq, void *data)
+double_link_node *push_tail(deque *dq_head, void *data)
 {
-	double_link_nd *nw = NULL;
+	double_link_node *nw = NULL;
 
-	if (!dq)
+	if (!dq_head)
 		return (NULL);
 
 	nw = calloc(1, sizeof(*nw));
@@ -50,68 +50,68 @@ double_link_nd *push_tail(deque *dq, void *data)
 		return (NULL);
 
 	nw->data = data;
-	nw->prev = dq->tail;
-	if (dq->tail)
-		dq->tail->next = nw;
+	nw->prev = dq_head->tail;
+	if (dq_head->tail)
+		dq_head->tail->next = nw;
 
-	if (!dq->head)
-		dq->head = nw;
+	if (!dq_head->head)
+		dq_head->head = nw;
 
-	dq->tail = nw;
-	++(dq->size);
+	dq_head->tail = nw;
+	++(dq_head->size);
 	return (nw);
 }
 
 /**
  * pop_head - pops node at the head of the deque and returns its data.
- * @dq: the deque to operate on.
+ * @dq_head: the deque to operate on.
  *
  * Return: data that was in the popped node.
  */
-void *pop_head(deque *dq)
+void *pop_head(deque *dq_head)
 {
-	double_link_nd *p = NULL;
+	double_link_node *p = NULL;
 	void *d = NULL;
 
-	if (!dq || !dq->head)
+	if (!dq_head || !dq_head->head)
 		return (NULL);
 
-	p = dq->head;
-	d = dq->head->data;
-	dq->head = dq->head->next;
+	p = dq_head->head;
+	d = dq_head->head->data;
+	dq_head->head = dq_head->head->next;
 	free(p);
-	if (!dq->head)
-		dq->tail = NULL;
+	if (!dq_head->head)
+		dq_head->tail = NULL;
 
-	if (dq->size)
-		dq->size--;
+	if (dq_head->size)
+		dq_head->size--;
 
 	return (d);
 }
 
 /**
  * pop_tail - pops node at the tail of the deque and returns its data.
- * @dq: the deque to operate on.
+ * @dq_head: the deque to operate on.
  *
  * Return: data that was in the popped node.
  */
-void *pop_tail(deque *dq)
+void *pop_tail(deque *dq_head)
 {
-	double_link_nd *p = NULL;
+	double_link_node *p = NULL;
 	void *d = NULL;
 
-	if (!dq || !dq->tail)
+	if (!dq_head || !dq_head->tail)
 		return (NULL);
 
-	p = dq->tail;
-	d = dq->tail->data;
-	dq->tail = dq->tail->prev;
+	p = dq_head->tail;
+	d = dq_head->tail->data;
+	dq_head->tail = dq_head->tail->prev;
 	free(p);
-	if (!dq->tail)
-		dq->head = NULL;
+	if (!dq_head->tail)
+		dq_head->head = NULL;
 
-	if (dq->size)
-		dq->size--;
+	if (dq_head->size)
+		dq_head->size--;
 
 	return (d);
 }
@@ -150,25 +150,25 @@ void *clear_deque(deque *dq, void *(*free_data)(void *))
 
 /**
  * print_deque - print all nodes of a deque.
- * @dq: the deque to print.
+ * @dq_head: the deque to print.
  * @print_data: function that will be called to print data in nodes.
  */
-void print_deque(deque *dq, void (*print_data)(void *))
+void print_deque(deque *dq_head, void (*print_data)(void *))
 {
-	double_link_nd *walk = NULL;
+	double_link_node *walk = NULL;
 
-	if (!dq)
+	if (!dq_head)
 		return;
 
-	if (!dq->head)
+	if (!dq_head->head)
 		printf("(NULL)\n");
 
 	if (print_data)
-		(*print_data)(dq->head->data);
+		(*print_data)(dq_head->head->data);
 	else
-		printf("%p", (void *)dq->head);
+		printf("%p", (void *)dq_head->head);
 
-	walk = dq->head->next;
+	walk = dq_head->head->next;
 	while (walk)
 	{
 		if (print_data)

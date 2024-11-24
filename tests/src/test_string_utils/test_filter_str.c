@@ -7,7 +7,7 @@
  *
  * Return: the capitalised letter, 0 if digit, -1 otherwise.
  */
-static char capitalise(char c, const void *args)
+static char capitalise(const char c, const void *args)
 {
 	(void)args;
 	if (isalpha(c))
@@ -57,8 +57,12 @@ Test(NULL_inputs, test_processed_is_NULL,
 	 .timeout = 1.0)
 {
 	const char str[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+	char expected[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-	cr_assert(zero(ptr, filter_str(str, NULL, capitalise, NULL)));
+	char *out = filter_str(str, NULL, capitalise, NULL);
+
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	free(out);
 }
 
 Test(NULL_inputs, test_capitalise_is_NULL,
@@ -70,16 +74,46 @@ Test(NULL_inputs, test_capitalise_is_NULL,
 	cr_assert(zero(ptr, filter_str(str, &processed, NULL, NULL)));
 }
 
-Test(filter_all, test_all_chars_are_filtered,
+Test(NULL_inputs, test_first_character_of_str_is_null,
+	 .description = "in = \"\\0\"", .timeout = 1.0)
+{
+	const char in[] = "\0";
+	char expected[] = "\0";
+
+	char *out = filter_str(in, &processed, capitalise, NULL);
+
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, 0));
+	free(out);
+}
+
+TestSuite(filtering, .init = setup, .fini = teardown);
+
+Test(filtering, test_string_has_exactly_one_character,
+	 .description = "a => A",
+	 .timeout = 1.0)
+{
+	const char in[] = "a";
+	char expected[] = "A";
+
+	char *out = filter_str(in, &processed, capitalise, NULL);
+
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, sizeof(in) - 1));
+	free(out);
+}
+
+Test(filtering, test_all_chars_are_filtered,
 	 .description = "lowercase => LOWERCASE",
 	 .timeout = 1.0)
 {
 	const char in[] = "lowercase";
 	char expected[] = "LOWERCASE";
+
 	char *out = filter_str(in, &processed, capitalise, NULL);
 
-	cr_assert(eq(chr[sizeof(expected)], out, expected));
-	cr_assert(eq(sz, processed, sizeof(in)));
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	free(out);
 }
 
@@ -92,10 +126,12 @@ Test(ignore_chars, test_characters_are_ignored,
 
 	char *out = filter_str(in, &processed, capitalise, NULL);
 
-	cr_assert(eq(chr[sizeof(expected)], out, expected));
-	cr_assert(eq(sz, processed, sizeof(in)));
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	free(out);
 }
+
+TestSuite(early_break, .init = setup, .fini = teardown);
 
 Test(early_break, test_filtering_breaks_early_in_str,
 	 .description = "special characters cause function to exit early",
@@ -106,8 +142,21 @@ Test(early_break, test_filtering_breaks_early_in_str,
 
 	char *out = filter_str(in, &processed, capitalise, NULL);
 
-	cr_assert(eq(chr[sizeof(expected)], out, expected));
-	cr_assert(eq(sz, processed, sizeof(expected)));
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, sizeof(expected) - 1));
+	free(out);
+}
+
+Test(early_break, test_first_character_in_str_causes_a_break,
+	 .description = "in = '-The'", .timeout = 1.0)
+{
+	const char in[] = "-The";
+	char expected[] = "\0";
+
+	char *out = filter_str(in, &processed, capitalise, NULL);
+
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, 0));
 	free(out);
 }
 
@@ -119,8 +168,8 @@ Test(no_change, test_string_with_all_ignored_characters,
 
 	char *out = filter_str(in, &processed, capitalise, NULL);
 
-	cr_assert(eq(chr[sizeof(expected)], out, expected));
-	cr_assert(eq(sz, processed, sizeof(in)));
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	free(out);
 }
 
@@ -132,8 +181,8 @@ Test(all_ignored, test_all_characters_in_string_are_ignored,
 
 	char *out = filter_str(in, &processed, capitalise, NULL);
 
-	cr_assert(eq(chr[sizeof(expected)], out, expected));
-	cr_assert(eq(sz, processed, sizeof(in)));
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	free(out);
 }
 
@@ -145,7 +194,7 @@ Test(long_string, test_a_really_long_verse,
 
 	char *out = filter_str(in, &processed, capitalise, NULL);
 
-	cr_assert(eq(chr[sizeof(expected)], out, expected));
-	cr_assert(eq(sz, processed, sizeof(in)));
+	cr_assert(eq(chr[sizeof(expected) - 1], out, expected));
+	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	free(out);
 }

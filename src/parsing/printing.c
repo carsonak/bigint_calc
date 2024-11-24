@@ -67,7 +67,7 @@ char *uintarray_to_str(const u_int *arr, size_t len)
 	if (sprintf(&str[s_i], "%d}", arr[n]) < 0)
 		return (free_n_null(str));
 
-	return (xrealloc(str, strlen(str) + 1));
+	return (xrealloc_free_on_fail(str, strlen(str) + 1));
 }
 
 /**

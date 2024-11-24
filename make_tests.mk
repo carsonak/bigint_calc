@@ -72,7 +72,7 @@ $(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o  $(
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_bignum_utils/test_alloc_fail: $(T_BINDIR)/test_bignum_utils/test_alloc_fail.o $(T_BINDIR)/dummy_xalloc.o $(filter %bn_alloc.o %bn_swap.o,$(BN_UTILS_OBJS))
+$(T_BINDIR)/test_bignum_utils/test_bn_alloc_fail: $(T_BINDIR)/test_bignum_utils/test_bn_alloc_fail.o $(T_BINDIR)/dummy_xalloc.o $(filter %bn_alloc.o %bn_swap.o,$(BN_UTILS_OBJS))
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
@@ -89,7 +89,7 @@ $(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(OBJ
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_bignum_math/test_alloc_fail: $(T_BINDIR)/dummy_xalloc.o $(MATH_OBJS) $(filter-out %xalloc.o,$(ALLOC_OBJS))
+$(T_BINDIR)/test_bignum_math/test_bn_alloc_fail: $(T_BINDIR)/dummy_xalloc.o $(MATH_OBJS) $(filter-out %xalloc.o,$(ALLOC_OBJS))
 $(T_BINDIR)/test_bignum_math/test_bn_mod: $(filter-out %bn_pow.o,$(MATH_OBJS)) $(ALLOC_OBJS)
 $(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(BN_UTILS_OBJS)
 	@mkdir -vp $(@D)
@@ -103,16 +103,14 @@ $(T_BINDIR)/test_string_utils/test_%: $(T_BINDIR)/test_string_utils/test_%.o $(O
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 # parsing tests
-$(T_BINDIR)/test_parsing/test_base_conversion: $(filter %base_conversion.o,$(PARSING_OBJS)) $(MATH_OBJS)
-$(T_BINDIR)/test_parsing/test_lexer: $(filter %lexer.o,$(PARSING_OBJS)) $(DS_OBJS)
-$(T_BINDIR)/test_parsing/test_shunting_yard: $(filter %shunting_yard.o,$(PARSING_OBJS)) $(DS_OBJS)
-$(T_BINDIR)/test_parsing/test_uint_array_to_str: $(filter %printing.o,$(PARSING_OBJS))
-$(T_BINDIR)/test_parsing/test_str_to_numstr: $(filter %str_bignum_conversion.o,$(PARSING_OBJS))
-$(T_BINDIR)/test_parsing/test_numstr_to_bignum: $(filter %str_bignum_conversion.o,$(PARSING_OBJS))
-# https://www.gnu.org/software/make/manual/html_node/Static-Pattern.html
-$(PARSING_TBINS):$(T_BINDIR)/%: $(T_SRCDIR)/%.c $(filter %count_digits.o %numstr_alloc.o,$(PARSING_OBJS)) $(STR_UTILS_OBJS) $(BN_UTILS_OBJS) $(ALLOC_OBJS)
+$(T_BINDIR)/test_parsing/test_base_conversion: $(MATH_OBJS)
+$(T_BINDIR)/test_parsing/test_lexer: $(DS_OBJS)
+$(T_BINDIR)/test_parsing/test_shunting_yard: $(DS_OBJS)
+$(T_BINDIR)/test_parsing/test_%: $(OBJ_DIR)/parsing/%.o $(T_BINDIR)/test_parsing/test_%.o $(filter %count_digits.o %numstr_alloc.o,$(PARSING_OBJS)) $(STR_UTILS_OBJS) $(BN_UTILS_OBJS) $(ALLOC_OBJS)
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
+
+$(T_BINDIR)/test_parsing/test_uint_array_to_str: $(T_BINDIR)/test_parsing/test_uint_array_to_str.o $(filter %printing.o,$(PARSING_OBJS))
 
 tclean: clean
 	@$(RM) -vdr --preserve-root -- $(T_OBJS) $(T_BINS) $(T_DEPS) $(T_BINDIR)
@@ -124,3 +122,4 @@ retests: tclean tests
 .PRECIOUS: $(T_OBJS)
 
 sinclude $(T_DEPS)
+# https://www.gnu.org/software/make/manual/html_node/Static-Pattern.html

@@ -32,17 +32,22 @@ bignum *bn_alloc(size_t len)
  * @bn: pointer to the bignum.
  * @len: size in bytes to resize to.
  *
+ * The
+ *
  * Return: true on success, false on failure.
  */
 bool bn_realloc(bignum *bn, size_t len)
 {
+	uint *new_arr = NULL;
+
 	if (!bn) /*Cannot resize a NULL pointer.*/
 		return (false);
 
-	bn->num = xrealloc(bn->num, sizeof(*bn->num) * len);
-	if (len && !bn->num)
+	new_arr = xrealloc(bn->num, sizeof(*bn->num) * len);
+	if (len && !new_arr)
 		return (false);
 
+	bn->num = new_arr;
 	/*Initialise memory to 0 only when expanding the bignum.*/
 	if (len > bn->len)
 		memset(&(bn->num[bn->len]), 0, sizeof(*bn->num) * (len - bn->len));

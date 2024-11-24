@@ -51,6 +51,24 @@ void *xrealloc(void *nullable_ptr, size_t size)
 }
 
 /**
+ * xrealloc_free_on_fail - resize memory with xrealloc but free original memory on error.
+ * @nullable_ptr: pointer to an allocated block.
+ * @size: size in bytes to resize to.
+ *
+ * Return: pointer to the resized memory area, NULL on failure.
+ *
+ */
+void *xrealloc_free_on_fail(void *nullable_ptr, size_t size)
+{
+	void *ptr = xrealloc(nullable_ptr, size);
+
+	if (!ptr && size)
+		nullable_ptr = free_n_null(nullable_ptr);
+
+	return (ptr);
+}
+
+/**
  * xstrdup - duplicate a string and check for error.
  * @str: the string to duplicate.
  *

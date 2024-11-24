@@ -1,7 +1,7 @@
 #include "parsing.h"
 
 /**
- * filter_str - translates all characters of a string according to a function.
+ * filter_str - filter characters of a string.
  * @str: the string to process.
  * @processed: pointer to store number of characters processed in the string.
  * @map: pointer to a function that transforms/maps characters onto others.
@@ -19,9 +19,9 @@ char *filter_str(const char *str, size_t *const processed,
 {
 	const unsigned int buf_size = 1024;
 	char *output = NULL, c = 0;
-	size_t buf_i = 0, out_len = 0;
+	size_t buf_i = 0, str_i = 0, out_len = 0;
 
-	if (!str || !processed || !map)
+	if (!str || !map)
 		return (NULL);
 
 	char *const buffer = xmalloc(buf_size);
@@ -29,12 +29,11 @@ char *filter_str(const char *str, size_t *const processed,
 	if (!buffer)
 		return (NULL);
 
-	*processed = 0;
-	while (str[*processed])
+	while (str[str_i])
 	{
-		for (buf_i = 0; buf_i < buf_size - 1; ++(*processed))
+		for (buf_i = 0; buf_i < buf_size - 1 && str[str_i]; ++str_i)
 		{
-			c = map(str[*processed], map_args);
+			c = map(str[str_i], map_args);
 			if (c < 0)
 				break;
 
@@ -46,7 +45,7 @@ char *filter_str(const char *str, size_t *const processed,
 		}
 
 		buffer[buf_i] = '\0';
-		output = xrealloc(output, (out_len + buf_i + 1) * sizeof(*output));
+		output = xrealloc_free_on_fail(output, (out_len + buf_i + 1) * sizeof(*output));
 		if (!output)
 			break;
 
@@ -56,7 +55,14 @@ char *filter_str(const char *str, size_t *const processed,
 			break;
 	}
 
-	++(*processed);
+	if (processed)
+		*processed = str_i;
+
 	free_n_null(buffer);
+	/*In the case str = "\0", output will be NULL, which is undesirable as*/
+	/*NULL is an error value in this function.*/
+	if (!str_i && !str[str_i])
+		return (xcalloc(1, sizeof(*output)));
+
 	return (output);
 }
