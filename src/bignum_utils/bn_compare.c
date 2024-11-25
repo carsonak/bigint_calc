@@ -1,19 +1,19 @@
 #include "bignum_utils.h"
 
 /**
- * bn_compare - compare 2 bignums.
+ * bni_compare - compare 2 bignums.
  * @n1: the first array.
  * @n2: the second array.
  *
  * Return: +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
-l_int bn_compare(bignum * const n1, bignum * const n2)
+l_int bni_compare(bignum_i *const n1, bignum_i *const n2)
 {
 	if (!n1 || !n2)
 		return (0);
 
-	trim_bignum(n1);
-	trim_bignum(n2);
+	trim_bni(n1);
+	trim_bni(n2);
 	if (n1->is_negative && n2->is_negative)
 	{
 		/*CAUTION: possible case => len truncated when casting to l_int.*/

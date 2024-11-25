@@ -1,7 +1,7 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL bignum *add(bignum *const n1, bignum *const n2);
-static ATTR_NONNULL bignum *add_negatives(bignum *const n1, bignum *const n2);
+static ATTR_NONNULL bignum_i *add(bignum_i *const n1, bignum_i *const n2);
+static ATTR_NONNULL bignum_i *add_negatives(bignum_i *const n1, bignum_i *const n2);
 
 /**
  * add - add two bignums.
@@ -10,18 +10,18 @@ static ATTR_NONNULL bignum *add_negatives(bignum *const n1, bignum *const n2);
  *
  * Return: pointer to result, NULL on failure.
  */
-static bignum *add(bignum *const n1, bignum *const n2)
+static bignum_i *add(bignum_i *const n1, bignum_i *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
 	l_int byt_sum = 0;
-	bignum *sum = NULL;
+	bignum_i *sum = NULL;
 
 	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	if (result_len <= 1)
-		return (bn_alloc(0));
+		return (bni_alloc(0));
 
-	sum = bn_alloc(result_len);
+	sum = bni_alloc(result_len);
 	while (sum && (n1_i < n1->len || n2_i < n2->len || byt_sum > 0))
 	{
 		if (n1_i < n1->len)
@@ -44,7 +44,7 @@ static bignum *add(bignum *const n1, bignum *const n2)
 	if (sum && sum_i < sum->len)
 		memset(&sum->num[sum_i], 0, sizeof(*sum->num) * (sum->len - sum_i));
 
-	trim_bignum(sum);
+	trim_bni(sum);
 	return (sum);
 }
 
@@ -55,10 +55,10 @@ static bignum *add(bignum *const n1, bignum *const n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bignum *add_negatives(bignum *const n1, bignum *const n2)
+static bignum_i *add_negatives(bignum_i *const n1, bignum_i *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
-	bignum *result = NULL;
+	bignum_i *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -70,30 +70,30 @@ static bignum *add_negatives(bignum *const n1, bignum *const n2)
 			result->is_negative = !result->is_negative;
 	}
 	else if (neg1) /*-8 + 7 = 7-8*/
-		result = bn_subtract(n2, n1);
+		result = bni_subtract(n2, n1);
 	else if (neg2) /*8 + -7 = 8-7*/
-		result = bn_subtract(n1, n2);
+		result = bni_subtract(n1, n2);
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	trim_bignum(result);
+	trim_bni(result);
 	return (result);
 }
 
 /**
- * bn_add - handle addition of two bignums.
+ * bni_add - handle addition of two bignums.
  * @n1: the first number.
  * @n2: the second number.
  *
  * Return: pointer to result, NULL on failure.
  */
-bignum *bn_add(bignum *const n1, bignum *const n2)
+bignum_i *bni_add(bignum_i *const n1, bignum_i *const n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
 
-	trim_bignum(n1);
-	trim_bignum(n2);
+	trim_bni(n1);
+	trim_bni(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (add_negatives(n1, n2));
 

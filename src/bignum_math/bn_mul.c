@@ -1,8 +1,8 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL bignum *multiply(bignum *const n1, bignum *const n2);
-static ATTR_NONNULL bignum *
-multiply_negatives(bignum *const n1, bignum *const n2);
+static ATTR_NONNULL bignum_i *multiply(bignum_i *const n1, bignum_i *const n2);
+static ATTR_NONNULL bignum_i *
+multiply_negatives(bignum_i *const n1, bignum_i *const n2);
 
 /**
  * multiply - multiply two bignums.
@@ -11,19 +11,19 @@ multiply_negatives(bignum *const n1, bignum *const n2);
  *
  * Return: pointer to result, NULL on failure.
  */
-static bignum *multiply(bignum *const n1, bignum *const n2)
+static bignum_i *multiply(bignum_i *const n1, bignum_i *const n2)
 {
 	l_int byt_prod = 0;
 	size_t n1_i = 0, n2_i = 0;
-	bignum *product = NULL, *current_mul = NULL;
+	bignum_i *product = NULL, *current_mul = NULL;
 
 	/*Multiplication by zero.*/
-	if (is_zero(n1) || is_zero(n2))
-		return (bn_alloc(1));
+	if (bni_is_zero(n1) || bni_is_zero(n2))
+		return (bni_alloc(1));
 
 	/*Length of product = length of n1 + length of n2*/
-	product = bn_alloc(n1->len + n2->len);
-	current_mul = bn_alloc(n1->len + n2->len);
+	product = bni_alloc(n1->len + n2->len);
+	current_mul = bni_alloc(n1->len + n2->len);
 	if (!product || !current_mul)
 		goto clean_up;
 
@@ -49,16 +49,16 @@ static bignum *multiply(bignum *const n1, bignum *const n2)
 		}
 
 		current_mul->num[n2_i + n1_i] = byt_prod;
-		if (!bn_iadd(product, current_mul))
+		if (!bni_iadd(product, current_mul))
 			break;
 	}
 
 clean_up:
-	current_mul = bn_free(current_mul);
+	current_mul = bni_free(current_mul);
 	if (n2_i < n2->len)
-		product = bn_free(product);
+		product = bni_free(product);
 
-	trim_bignum(product);
+	trim_bni(product);
 	return (product);
 }
 
@@ -69,10 +69,10 @@ clean_up:
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bignum *multiply_negatives(bignum *const n1, bignum *const n2)
+static bignum_i *multiply_negatives(bignum_i *const n1, bignum_i *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
-	bignum *result = NULL;
+	bignum_i *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
@@ -89,24 +89,24 @@ static bignum *multiply_negatives(bignum *const n1, bignum *const n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	trim_bignum(result);
+	trim_bni(result);
 	return (result);
 }
 
 /**
- * bn_multiply - handle multiplication of two bignums.
+ * bni_multiply - handle multiplication of two bignums.
  * @n1: the first number.
  * @n2: the second number.
  *
  * Return: pointer to result, NULL on failure.
  */
-bignum *bn_multiply(bignum *const n1, bignum *const n2)
+bignum_i *bni_multiply(bignum_i *const n1, bignum_i *const n2)
 {
 	if (!n1 || !n2)
 		return (NULL);
 
-	trim_bignum(n1);
-	trim_bignum(n2);
+	trim_bni(n1);
+	trim_bni(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (multiply_negatives(n1, n2));
 

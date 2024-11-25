@@ -3,7 +3,7 @@
 
 #include "macros.h"
 
-#include <stddef.h> /* size_t, ptr_diff */
+#include <stddef.h> /* size_t */
 #include <stdio.h>  /* perror */
 #include <stdlib.h> /* *alloc */
 #include <string.h> /* strdup */

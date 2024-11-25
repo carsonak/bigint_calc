@@ -1,14 +1,14 @@
 #include "bignum_utils.h"
 
 /**
- * bn_alloc - allocate memory for a bignum of given length.
+ * bni_alloc - allocate memory for a bignum of given length.
  * @len: length of the array, length 0 returns the struct with a NULL array.
  *
  * Return: a pointer to a bignum struct, NULL on failure.
  */
-bignum *bn_alloc(size_t len)
+bignum_i *bni_alloc(size_t len)
 {
-	bignum *arr = xcalloc(1, sizeof(*arr));
+	bignum_i *arr = xcalloc(1, sizeof(*arr));
 
 	if (!arr)
 		return (NULL);
@@ -36,7 +36,7 @@ bignum *bn_alloc(size_t len)
  *
  * Return: true on success, false on failure.
  */
-bool bn_realloc(bignum *bn, size_t len)
+bool bn_realloc(bignum_i *bn, size_t len)
 {
 	uint *new_arr = NULL;
 
@@ -62,14 +62,14 @@ bool bn_realloc(bignum *bn, size_t len)
  *
  * Return: a pointer to a copy of bn.
  */
-bignum *bn_dup(bignum *bn)
+bignum_i *bn_dup(bignum_i *bn)
 {
-	bignum *dup = NULL;
+	bignum_i *dup = NULL;
 
 	if (!bn)
 		return (NULL);
 
-	dup = bn_alloc(bn->len);
+	dup = bni_alloc(bn->len);
 	if (!bn->len || !dup)
 		return (dup);
 
@@ -84,7 +84,7 @@ bignum *bn_dup(bignum *bn)
  *
  * Return: NULL always.
  */
-void *bn_free(bignum *freeable_ptr)
+void *bni_free(bignum_i *freeable_ptr)
 {
 	if (freeable_ptr)
 	{

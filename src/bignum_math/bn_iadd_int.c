@@ -1,7 +1,7 @@
 #include "bignum_math.h"
 
 /**
- * bn_iadd_int - add an int to a bignum inplace.
+ * bni_iadd_int - add an int to a bignum inplace.
  * @n1: the first number, must have enough memory allocated to hold the answer.
  * @n2: the second number.
  *
@@ -10,13 +10,13 @@
  *
  * Return: true on success, false on failure.
  */
-bool bn_iadd_int(bignum * const n1, long long int n2)
+bool bni_iadd_int(bignum_i *const n1, long long int n2)
 {
-	bignum num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]) {0}};
+	bignum_i num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
 
 	if (!n1)
 		return (false);
 
-	int_to_bignum(&num2, n2);
-	return (bn_iadd(n1, &num2));
+	int_to_bni(&num2, n2);
+	return (bni_iadd(n1, &num2));
 }

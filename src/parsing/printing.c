@@ -6,7 +6,7 @@
  *
  * Return: number of bytes printed, -1 on error.
  */
-size_t print_bignum(bignum *arr)
+size_t print_bignum(bignum_i *arr)
 {
 	char *str_arr = NULL;
 	size_t bytes_printed = 0;
@@ -14,7 +14,7 @@ size_t print_bignum(bignum *arr)
 	if (!arr)
 		return (-1);
 
-	str_arr = uintarray_to_str(arr->num, arr->len);
+	str_arr = uint_array_to_str(arr->num, arr->len);
 	if (!str_arr)
 		return (-1);
 
@@ -27,14 +27,15 @@ size_t print_bignum(bignum *arr)
 	return (bytes_printed);
 }
 
+/*INFO: The following function should ideally be static but that hinders easy testing.*/
 /**
- * uintarray_to_str - represent an uint array as a string.
+ * uint_array_to_str - represent an uint array as a string.
  * @arr: the uint array.
  * @len: number of items in the uint.
  *
  * Return: pointer to a string, NULL on error.
  */
-char *uintarray_to_str(const u_int *arr, size_t len)
+char *uint_array_to_str(const u_int *arr, size_t len)
 {
 	size_t s_i = 0, n = 0, len_sep = 0, len_str = 0;
 	int bytes_written = 0;

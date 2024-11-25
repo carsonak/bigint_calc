@@ -1,14 +1,14 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL void add(bignum * const n1, bignum * const n2);
-static ATTR_NONNULL bool add_negatives(bignum * const n1, bignum * const n2);
+static ATTR_NONNULL void add(bignum_i *const n1, bignum_i *const n2);
+static ATTR_NONNULL bool add_negatives(bignum_i *const n1, bignum_i *const n2);
 
 /**
  * add - add two bignums inplace.
  * @n1: the first number, should be large enough to store the results.
  * @n2: the second number.
  */
-static void add(bignum * const n1, bignum * const n2)
+static void add(bignum_i *const n1, bignum_i *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, res_len = 0;
 	l_int byt_sum = 0;
@@ -31,7 +31,7 @@ static void add(bignum * const n1, bignum * const n2)
 	}
 
 	n1->len = res_len;
-	trim_bignum(n1);
+	trim_bni(n1);
 }
 
 /**
@@ -41,7 +41,7 @@ static void add(bignum * const n1, bignum * const n2)
  *
  * Return: true on success, false on failure.
  */
-static bool add_negatives(bignum * const n1, bignum * const n2)
+static bool add_negatives(bignum_i *const n1, bignum_i *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 
@@ -55,25 +55,25 @@ static bool add_negatives(bignum * const n1, bignum * const n2)
 	}
 	else if (neg1) /*-8 + 7 = -(8-7)*/
 	{
-		if (!bn_isubtract(n1, n2))
+		if (!bni_isubtract(n1, n2))
 			return (false);
 
 		n1->is_negative = !n1->is_negative;
 	}
 	else if (neg2) /*8 + -7 = 8-7*/
 	{
-		if (!bn_isubtract(n1, n2))
+		if (!bni_isubtract(n1, n2))
 			return (false);
 
 		n2->is_negative = true;
 	}
 
-	trim_bignum(n1);
+	trim_bni(n1);
 	return (true);
 }
 
 /**
- * bn_iadd - add two bignums and store results in first number.
+ * bni_iadd - add two bignums and store results in first number.
  * @n1: the first number, should have enough space to store the result.
  * @n2: the second number.
  *
@@ -82,17 +82,17 @@ static bool add_negatives(bignum * const n1, bignum * const n2)
  *
  * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
-bool bn_iadd(bignum *const n1, bignum *const n2)
+bool bni_iadd(bignum_i *const n1, bignum_i *const n2)
 {
 	/*n1.num cannot be NULL as this function does not allocate any memory.*/
 	if (!n1 || !n1->num)
 		return (false);
 
-	trim_bignum(n1);
+	trim_bni(n1);
 	if (!n2) /*This case is treated as +(n1).*/
 		return (true);
 
-	trim_bignum(n2);
+	trim_bni(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (add_negatives(n1, n2));
 

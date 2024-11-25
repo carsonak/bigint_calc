@@ -1,16 +1,16 @@
 #include "tests.h"
 
-bignum num1 = {.len = 0, .is_negative = false, .num = NULL};
-bignum expected = {.len = 0, .is_negative = false, .num = NULL};
+bignum_i num1 = {.len = 0, .is_negative = false, .num = NULL};
+bignum_i expected = {.len = 0, .is_negative = false, .num = NULL};
 
 /**
- * bn_isubtract - dummy.
+ * bni_isubtract - dummy.
  * @n1: set to a dummy value.
  * @n2: set to a dummy value.
  *
  * Return: true always.
  */
-bool bn_isubtract(bignum *const n1, bignum *const n2)
+bool bni_isubtract(bignum_i *const n1, bignum_i *const n2)
 {
 	n1->num[0] = DUMMY_VALUE;
 	n2->num[0] = DUMMY_VALUE;
@@ -27,8 +27,8 @@ void setup(void) {}
  */
 void teardown(void)
 {
-	num1 = (bignum){.len = 0, .is_negative = false, .num = NULL};
-	expected = (bignum){.len = 0, .is_negative = false, .num = NULL};
+	num1 = (bignum_i){.len = 0, .is_negative = false, .num = NULL};
+	expected = (bignum_i){.len = 0, .is_negative = false, .num = NULL};
 }
 
 TestSuite(null_inputs, .init = setup, .fini = teardown);
@@ -36,13 +36,13 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_null_plus_null,
 	 .description = "NULL + 0 = NULL", .timeout = 2.0)
 {
-	cr_expect(zero(chr, bn_iadd_int(NULL, 0)));
+	cr_expect(zero(chr, bni_iadd_int(NULL, 0)));
 }
 
 Test(null_inputs, test_null_plus_1,
 	 .description = "NULL + 1 = NULL", .timeout = 2.0)
 {
-	cr_expect(zero(chr, bn_iadd_int(NULL, 1)));
+	cr_expect(zero(chr, bni_iadd_int(NULL, 1)));
 }
 
 TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
@@ -50,7 +50,7 @@ TestSuite(zero_len_arrays, .init = setup, .fini = teardown);
 Test(zero_len_arrays, test_nullarray_plus_nullarray,
 	 .description = "null_array + 0 = (invalid input)", .timeout = 2.0)
 {
-	cr_expect(zero(chr, bn_iadd_int(&num1, 0)));
+	cr_expect(zero(chr, bni_iadd_int(&num1, 0)));
 }
 
 TestSuite(simple_additions, .init = setup, .fini = teardown);
@@ -64,7 +64,7 @@ Test(simple_additions, test_0_plus_0,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, 0);
+	bni_iadd_int(&num1, 0);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -80,7 +80,7 @@ Test(simple_additions, test_1_plus_0,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, 0);
+	bni_iadd_int(&num1, 0);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -96,7 +96,7 @@ Test(simple_additions, test_0_plus_1,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, 1);
+	bni_iadd_int(&num1, 1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -112,7 +112,7 @@ Test(simple_additions, test_1_plus_1,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, 1);
+	bni_iadd_int(&num1, 1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -128,7 +128,7 @@ Test(simple_additions, test_12345_plus_54321,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, 54321);
+	bni_iadd_int(&num1, 54321);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -144,7 +144,7 @@ Test(simple_additions, test_54321_plus_12345,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, 12345);
+	bni_iadd_int(&num1, 12345);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -161,10 +161,10 @@ Test(long_additions, test_1_minus_long9s,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bn_iadd_int(&num1, 999999999999999999);
+	bni_iadd_int(&num1, 999999999999999999);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(eq(chr, num1.is_negative, expected.is_negative));
@@ -180,7 +180,7 @@ Test(long_additions, test_999999999_plus_1,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, 1);
+	bni_iadd_int(&num1, 1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -197,7 +197,7 @@ Test(long_additions, test_999999999999999999_plus_999999999,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, BN_BASE - 1);
+	bni_iadd_int(&num1, BN_BASE - 1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -216,7 +216,7 @@ Test(long_additions, test_long9s_plus_1,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, 1);
+	bni_iadd_int(&num1, 1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));
@@ -230,11 +230,11 @@ Test(negative_additions, test_minus1_plus_minus1,
 {
 	u_int in1[] = {1}, out[] = {2};
 
-	num1 = (bignum){
+	num1 = (bignum_i){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bn_iadd_int(&num1, -1);
+	bni_iadd_int(&num1, -1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(eq(chr, num1.is_negative, expected.is_negative));
@@ -248,9 +248,9 @@ Test(negative_additions, test_1_plus_minus1,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bn_iadd_int(&num1, -1);
+	bni_iadd_int(&num1, -1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(eq(chr, num1.is_negative, expected.is_negative));
@@ -262,11 +262,11 @@ Test(negative_additions, test_minus1_plus_1,
 {
 	u_int in1[] = {1}, out[] = {DUMMY_VALUE};
 
-	num1 = (bignum){
+	num1 = (bignum_i){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bn_iadd_int(&num1, 1);
+	bni_iadd_int(&num1, 1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	/* cr_expect(eq(chr, num1.is_negative, expected.is_negative)); */
@@ -280,9 +280,9 @@ Test(negative_additions, test_5_plus_minus1,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bn_iadd_int(&num1, -1);
+	bni_iadd_int(&num1, -1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(eq(chr, num1.is_negative, expected.is_negative));
@@ -294,11 +294,11 @@ Test(negative_additions, test_minus5_plus_1,
 {
 	u_int in1[] = {1}, out[] = {DUMMY_VALUE};
 
-	num1 = (bignum){
+	num1 = (bignum_i){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bn_iadd_int(&num1, 1);
+	bni_iadd_int(&num1, 1);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(eq(chr, num1.is_negative, expected.is_negative));
@@ -317,7 +317,7 @@ Test(large_additions, test_o1kb_plus_o1kc,
 	num1.num = in1;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bn_iadd_int(&num1, LLONG_MAX);
+	bni_iadd_int(&num1, LLONG_MAX);
 
 	cr_expect(eq(sz, num1.len, expected.len));
 	cr_expect(zero(chr, num1.is_negative));

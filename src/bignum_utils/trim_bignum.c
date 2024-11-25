@@ -1,12 +1,12 @@
 #include "bignum_utils.h"
 
 /**
- * trim_bignum - truncate length of a bignum to ignore trailing zeros.
+ * trim_bni - truncate length of a bignum to ignore trailing zeros.
  * @n: pointer to a bignum struct.
  *
  * Also sets the is_negative flag to 0 for 0s and NULL arrays.
  */
-void trim_bignum(bignum * const n)
+void trim_bni(bignum_i *const n)
 {
 	if (!n)
 		return;

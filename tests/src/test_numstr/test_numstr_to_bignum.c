@@ -1,6 +1,6 @@
 #include "tests.h"
 
-bignum *output = NULL;
+bignum_i *output = NULL;
 
 /**
  * setup - setup some variables.
@@ -12,21 +12,21 @@ void setup(void) {}
  */
 void teardown(void)
 {
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 TestSuite(null_inputs);
 
 Test(null_inputs, test_NULL, .description = "NULL", .timeout = 2.0)
 {
-	cr_assert(zero(ptr, numstr_to_bignum(NULL)));
+	cr_assert(zero(ptr, numstr_to_bni(NULL)));
 }
 
 Test(null_inputs, test_null_str, .description = "null string", .timeout = 2.0)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = NULL};
 
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 }
 
 TestSuite(invalid_inputs);
@@ -35,7 +35,7 @@ Test(invalid_inputs, test_0_len, .description = "len is 0", .timeout = 2.0)
 {
 	numstr in = {.len = 0, .is_negative = false, .str = "1"};
 
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 }
 
 Test(invalid_inputs, test_all_nonvalid_charbits,
@@ -48,7 +48,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits,
 	for (; c[0] < SCHAR_MAX; c[0]++)
 	{
 		if (!isalnum(c[0]))
-			cr_assert(zero(ptr, numstr_to_bignum(&in)));
+			cr_assert(zero(ptr, numstr_to_bni(&in)));
 	}
 }
 
@@ -62,7 +62,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits2,
 	for (; c[0] < SCHAR_MAX; c[0]++, c[1]++)
 	{
 		if (!isalnum(c[0]))
-			cr_assert(zero(ptr, numstr_to_bignum(&in)));
+			cr_assert(zero(ptr, numstr_to_bni(&in)));
 	}
 }
 
@@ -76,7 +76,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits2alt,
 	for (; c[0] < SCHAR_MAX && c[1] > SCHAR_MIN; c[0]++, c[1]--)
 	{
 		if (!isalnum(c[0]) || !isalnum(c[1]))
-			cr_assert(zero(ptr, numstr_to_bignum(&in)));
+			cr_assert(zero(ptr, numstr_to_bni(&in)));
 	}
 }
 
@@ -93,7 +93,7 @@ Test(invalid_inputs, test_all_invalid_charbits3,
 		for (c[2] = SCHAR_MIN; c[2] < SCHAR_MAX; c[2]++)
 		{
 			if (!isalnum(c[2]) && c[2] != '\0' && c[2] != '.')
-				cr_assert(zero(ptr, numstr_to_bignum(&in)));
+				cr_assert(zero(ptr, numstr_to_bni(&in)));
 		}
 	}
 
@@ -103,7 +103,7 @@ Test(invalid_inputs, test_all_invalid_charbits3,
 		for (c[2] = SCHAR_MIN; c[2] < SCHAR_MAX; c[2]++)
 		{
 			if (!isalnum(c[2]) && c[2] != '\0' && c[2] != '.')
-				cr_assert(zero(ptr, numstr_to_bignum(&in)));
+				cr_assert(zero(ptr, numstr_to_bni(&in)));
 		}
 	}
 }
@@ -113,24 +113,24 @@ Test(invalid_inputs, test_invalid_chars_mixed_with_valid_chars,
 {
 	numstr in = {.len = 7, .is_negative = false, .str = "123/567"};
 
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 	in.str = "123 567";
 	cr_redirect_stderr();
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 	in.str = "123\"567\"";
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 	in.str = "123+567";
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 	in.str = "123-567";
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 	in.str = "123*567";
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 	in.str = "123^567";
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 	in.str = "123(567)";
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 	in.str = "123>567";
-	cr_assert(zero(ptr, numstr_to_bignum(&in)));
+	cr_assert(zero(ptr, numstr_to_bni(&in)));
 }
 
 TestSuite(valid_inputs, .init = setup, .fini = teardown);
@@ -139,10 +139,10 @@ Test(valid_inputs, test_0, .description = "0", .timeout = 2.0)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = "0"};
 	u_int arr[] = {0};
-	bignum out = {
+	bignum_i out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
-	output = numstr_to_bignum(&in);
+	output = numstr_to_bni(&in);
 	cr_assert(eq(sz, output->len, out.len));
 	cr_assert(eq(chr, output->is_negative, out.is_negative));
 	cr_assert(eq(u32[out.len], output->num, out.num));
@@ -152,10 +152,10 @@ Test(valid_inputs, test_eight9s, .description = "99999999", .timeout = 2.0)
 {
 	numstr in = {.len = 8, .is_negative = false, .str = "99999999"};
 	u_int arr[] = {99999999};
-	bignum out = {
+	bignum_i out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
-	output = numstr_to_bignum(&in);
+	output = numstr_to_bni(&in);
 	cr_assert(eq(sz, output->len, out.len));
 	cr_assert(eq(chr, output->is_negative, out.is_negative));
 	cr_assert(eq(u32[out.len], output->num, out.num));
@@ -165,10 +165,10 @@ Test(valid_inputs, test_nine9s, .description = "999999999", .timeout = 2.0)
 {
 	numstr in = {.len = 9, .is_negative = false, .str = "999999999"};
 	u_int arr[] = {999999999};
-	bignum out = {
+	bignum_i out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
-	output = numstr_to_bignum(&in);
+	output = numstr_to_bni(&in);
 	cr_assert(eq(sz, output->len, out.len));
 	cr_assert(eq(chr, output->is_negative, out.is_negative));
 	cr_assert(eq(u32[out.len], output->num, out.num));
@@ -178,10 +178,10 @@ Test(valid_inputs, test_ten9s, .description = "9,999999999", .timeout = 2.0)
 {
 	numstr in = {.len = 10, .is_negative = false, .str = "9999999999"};
 	u_int arr[] = {999999999, 9};
-	bignum out = {
+	bignum_i out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
-	output = numstr_to_bignum(&in);
+	output = numstr_to_bni(&in);
 	cr_assert(eq(sz, output->len, out.len));
 	cr_assert(eq(chr, output->is_negative, out.is_negative));
 	cr_assert(eq(u32[out.len], output->num, out.num));

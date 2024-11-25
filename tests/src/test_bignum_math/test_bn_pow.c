@@ -1,8 +1,8 @@
 #include "tests.h"
 
-bignum base = {.len = 0, .is_negative = false, .num = NULL};
-bignum exponent = {.len = 0, .is_negative = false, .num = NULL};
-bignum expected = {.len = 0, .is_negative = false, .num = NULL};
+bignum_i base = {.len = 0, .is_negative = false, .num = NULL};
+bignum_i exponent = {.len = 0, .is_negative = false, .num = NULL};
+bignum_i expected = {.len = 0, .is_negative = false, .num = NULL};
 
 /**
  * setup - initialises variables for tests.
@@ -32,7 +32,7 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_null_pow_null,
 	 .description = "NULL ^ NULL = NULL", .timeout = 2.0)
 {
-	bignum *output = bn_power(NULL, NULL);
+	bignum_i *output = bni_power(NULL, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -44,7 +44,7 @@ Test(null_inputs, test_1_pow_null,
 
 	base.len = sizeof(bs) / sizeof(*bs);
 	base.num = bs;
-	bignum *output = bn_power(&base, NULL);
+	bignum_i *output = bni_power(&base, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -56,7 +56,7 @@ Test(null_inputs, test_null_pow_1,
 
 	exponent.len = sizeof(exp) / sizeof(*exp);
 	exponent.num = exp;
-	bignum *output = bn_power(NULL, &exponent);
+	bignum_i *output = bni_power(NULL, &exponent);
 
 	cr_expect(zero(ptr, output));
 }
@@ -68,7 +68,7 @@ Test(null_inputs, test_0_pow_null,
 
 	base.len = sizeof(bs) / sizeof(*bs);
 	base.num = bs;
-	bignum *output = bn_power(&base, NULL);
+	bignum_i *output = bni_power(&base, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -80,7 +80,7 @@ Test(null_inputs, test_null_pow_0,
 
 	exponent.len = sizeof(exp) / sizeof(*exp);
 	exponent.num = exp;
-	bignum *output = bn_power(NULL, &exponent);
+	bignum_i *output = bni_power(NULL, &exponent);
 
 	cr_expect(zero(ptr, output));
 }
@@ -93,7 +93,7 @@ Test(null_inputs, test_minus1_pow_null,
 	base.len = sizeof(bs) / sizeof(*bs);
 	base.num = bs;
 	base.is_negative = true;
-	bignum *output = bn_power(&base, NULL);
+	bignum_i *output = bni_power(&base, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -106,7 +106,7 @@ Test(null_inputs, test_null_pow_minus1,
 	exponent.len = sizeof(exp) / sizeof(*exp);
 	exponent.num = exp;
 	exponent.is_negative = true;
-	bignum *output = bn_power(NULL, &exponent);
+	bignum_i *output = bni_power(NULL, &exponent);
 
 	cr_expect(zero(ptr, output));
 }
@@ -120,12 +120,12 @@ Test(zero_len_arrays, test_nullarray_pow_nullarray,
 
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(zero_len_arrays, test_4490998_pow_nullarray,
@@ -137,12 +137,12 @@ Test(zero_len_arrays, test_4490998_pow_nullarray,
 	base.num = bs;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(zero_len_arrays, test_nullarray_pow_largenum,
@@ -155,12 +155,12 @@ Test(zero_len_arrays, test_nullarray_pow_largenum,
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 TestSuite(simple_exponentiations, .init = setup, .fini = teardown);
@@ -175,12 +175,12 @@ Test(simple_exponentiations, test_123_pow_0, .description = "123 ^ 0", .timeout 
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_1, .description = "123 ^ 1", .timeout = 2.0)
@@ -193,12 +193,12 @@ Test(simple_exponentiations, test_123_pow_1, .description = "123 ^ 1", .timeout 
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_2, .description = "123 ^ 2", .timeout = 2.0)
@@ -211,12 +211,12 @@ Test(simple_exponentiations, test_123_pow_2, .description = "123 ^ 2", .timeout 
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_3, .description = "123 ^ 3", .timeout = 2.0)
@@ -229,12 +229,12 @@ Test(simple_exponentiations, test_123_pow_3, .description = "123 ^ 3", .timeout 
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_4, .description = "123 ^ 4", .timeout = 2.0)
@@ -247,12 +247,12 @@ Test(simple_exponentiations, test_123_pow_4, .description = "123 ^ 4", .timeout 
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_exponentiations, test_123_pow_5, .description = "123 ^ 5", .timeout = 2.0)
@@ -265,12 +265,12 @@ Test(simple_exponentiations, test_123_pow_5, .description = "123 ^ 5", .timeout 
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_exponentiations, test_234_pow_477, .description = "234 ^ 477", .timeout = 2.0)
@@ -284,12 +284,12 @@ Test(simple_exponentiations, test_234_pow_477, .description = "234 ^ 477", .time
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_exponentiations, test_234_pow_266, .description = "234 ^ 266", .timeout = 2.0)
@@ -303,12 +303,12 @@ Test(simple_exponentiations, test_234_pow_266, .description = "234 ^ 266", .time
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 TestSuite(negative_exponentiations, .init = setup, .fini = teardown);
@@ -318,18 +318,18 @@ Test(negative_exponentiations, test_minus123_pow_2,
 {
 	u_int bs[] = {123}, exp[] = {2}, out[] = {15129};
 
-	base = (bignum){
+	base = (bignum_i){
 		.len = sizeof(bs) / sizeof(*bs), .is_negative = true, .num = bs};
 	exponent.len = sizeof(exp) / sizeof(*exp);
 	exponent.num = exp;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(negative_exponentiations, test_minus123_pow_3,
@@ -337,16 +337,16 @@ Test(negative_exponentiations, test_minus123_pow_3,
 {
 	u_int bs[] = {123}, exp[] = {3}, out[] = {1860867};
 
-	base = (bignum){
+	base = (bignum_i){
 		.len = sizeof(bs) / sizeof(*bs), .is_negative = true, .num = bs};
 	exponent.len = sizeof(exp) / sizeof(*exp);
 	exponent.num = exp;
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bignum *output = bn_power(&base, &exponent);
+	bignum_i *output = bni_power(&base, &exponent);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }

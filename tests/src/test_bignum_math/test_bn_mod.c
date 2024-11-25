@@ -1,8 +1,8 @@
 #include "tests.h"
 
-bignum num1 = {.len = 0, .is_negative = false, .num = NULL};
-bignum num2 = {.len = 0, .is_negative = false, .num = NULL};
-bignum expected = {.len = 0, .is_negative = false, .num = NULL};
+bignum_i num1 = {.len = 0, .is_negative = false, .num = NULL};
+bignum_i num2 = {.len = 0, .is_negative = false, .num = NULL};
+bignum_i expected = {.len = 0, .is_negative = false, .num = NULL};
 
 /**
  * setup - initialises variables for tests.
@@ -32,7 +32,7 @@ TestSuite(null_inputs, .init = setup, .fini = teardown);
 Test(null_inputs, test_null_modulo_null,
 	 .description = "NULL % NULL = NULL", .timeout = 2.0)
 {
-	bignum *output = bn_modulo(NULL, NULL);
+	bignum_i *output = bni_modulo(NULL, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -44,7 +44,7 @@ Test(null_inputs, test_1_modulo_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	bignum *output = bn_modulo(&num1, NULL);
+	bignum_i *output = bni_modulo(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -56,7 +56,7 @@ Test(null_inputs, test_null_modulo_1,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = bn_modulo(NULL, &num2);
+	bignum_i *output = bni_modulo(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -68,7 +68,7 @@ Test(null_inputs, test_0_modulo_null,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	bignum *output = bn_modulo(&num1, NULL);
+	bignum_i *output = bni_modulo(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -80,7 +80,7 @@ Test(null_inputs, test_null_modulo_0,
 
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
-	bignum *output = bn_modulo(NULL, &num2);
+	bignum_i *output = bni_modulo(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -93,7 +93,7 @@ Test(null_inputs, test_minus1_modulo_null,
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
 	num1.is_negative = true;
-	bignum *output = bn_modulo(&num1, NULL);
+	bignum_i *output = bni_modulo(&num1, NULL);
 
 	cr_expect(zero(ptr, output));
 }
@@ -106,7 +106,7 @@ Test(null_inputs, test_null_modulo_minus1,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 	num2.is_negative = true;
-	bignum *output = bn_modulo(NULL, &num2);
+	bignum_i *output = bni_modulo(NULL, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -127,12 +127,12 @@ Test(zero_len_arrays, test_null_modulo_largenum,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 TestSuite(division_by_zero, .init = setup, .fini = teardown);
@@ -147,7 +147,7 @@ Test(division_by_zero, test_0_mod_0,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -162,7 +162,7 @@ Test(division_by_zero, test_1_mod_0,
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(zero(ptr, output));
 }
@@ -175,19 +175,19 @@ Test(negative_modulus, test_neg_9107428777003_modulo_neg_809754437,
 {
 	u_int in1[] = {428777003, 9107}, in2[] = {809754437}, out[] = {120624064};
 
-	num1 = (bignum){
+	num1 = (bignum_i){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	num2 = (bignum){
+	num2 = (bignum_i){
 		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(negative_modulus, test_neg_9107428777003_modulo_809754437,
@@ -196,19 +196,19 @@ Test(negative_modulus, test_neg_9107428777003_modulo_809754437,
 {
 	u_int in1[] = {428777003, 9107}, in2[] = {809754437}, out[] = {689130373};
 
-	num1 = (bignum){
+	num1 = (bignum_i){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
 	num2.len = sizeof(in2) / sizeof(*in2);
 	num2.num = in2;
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(negative_modulus, test_9107428777003_modulo_neg_809754437,
@@ -219,17 +219,17 @@ Test(negative_modulus, test_9107428777003_modulo_neg_809754437,
 
 	num1.len = sizeof(in1) / sizeof(*in1);
 	num1.num = in1;
-	num2 = (bignum){
+	num2 = (bignum_i){
 		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 TestSuite(simple_modulus, .init = setup, .fini = teardown);
@@ -246,9 +246,9 @@ Test(simple_modulus, test_0_modulo_1,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_modulus, test_1_modulo_1,
@@ -263,12 +263,12 @@ Test(simple_modulus, test_1_modulo_1,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_modulus, test_1000000000_modulo_50000,
@@ -284,12 +284,12 @@ Test(simple_modulus, test_1000000000_modulo_50000,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_modulus, test_50000_modulo_100000000,
@@ -305,12 +305,12 @@ Test(simple_modulus, test_50000_modulo_100000000,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(simple_modulus, test_longnum1_modulo_longnum2,
@@ -327,12 +327,12 @@ Test(simple_modulus, test_longnum1_modulo_longnum2,
 	num2.num = in2;
 	expected.len = sizeof(rem) / sizeof(*rem);
 	expected.num = rem;
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 TestSuite(large_modulus, .init = setup, .fini = teardown);
@@ -351,12 +351,12 @@ Test(large_modulus, test_o1kb_modulo_o1kc,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(large_modulus, test_o500d_modulo_o500e,
@@ -373,12 +373,12 @@ Test(large_modulus, test_o500d_modulo_o500e,
 	expected.len = sizeof(out) / sizeof(*out);
 	expected.num = out;
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(large_modulus, test_o100a_modulo_o100f,
@@ -388,19 +388,19 @@ Test(large_modulus, test_o100a_modulo_o100f,
 	u_int in2[] = {0, 101000000, 555555555, 295555555, 9574, 0, 0, 684800000, 252449427, 2, 0, 94930300, 13103309, 99070958, 766};
 	u_int out[] = {502884197, 528383279, 54469664, 289382844, 236557835, 876778715, 905030941, 233307056, 991024687, 674279893, 935667396, 976411137, 700189127, 670035691, 302};
 
-	num1 = (bignum){
+	num1 = (bignum_i){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2 = (bignum){
+	num2 = (bignum_i){
 		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }
 
 Test(large_modulus, test_o100f_modulo_o100a,
@@ -410,17 +410,17 @@ Test(large_modulus, test_o100f_modulo_o100a,
 	u_int in2[] = {502884197, 643383279, 62, 0, 0, 0, 0, 222550000, 972222222, 999999999, 338499999, 112000333, 111111111, 28347111, 0, 0, 0, 289104938, 487298347, 832000092, 94, 284000000, 576231637, 28, 0, 57349857, 0, 0, 698750000};
 	u_int out[] = {0, 101000000, 555555555, 295555555, 9574, 0, 0, 684800000, 252449427, 2, 0, 94930300, 13103309, 99070958, 766};
 
-	num1 = (bignum){
+	num1 = (bignum_i){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2 = (bignum){
+	num2 = (bignum_i){
 		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bignum){
+	expected = (bignum_i){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bignum *output = bn_modulo(&num1, &num2);
+	bignum_i *output = bni_modulo(&num1, &num2);
 
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bn_free(output);
+	output = bni_free(output);
 }

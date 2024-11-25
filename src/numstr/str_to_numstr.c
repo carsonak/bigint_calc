@@ -1,4 +1,4 @@
-#include "parsing.h"
+#include "numstr.h"
 
 static ATTR_NONNULL bool
 check_is_negative(const char *num_str, size_t *str_i);
@@ -90,7 +90,7 @@ numstr *str_to_numstr(
 	if (number_str[str_i - 1] == '_')
 	{
 		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
-cleanup_numstr:
+	cleanup_numstr:
 		ns = free_numstr(ns);
 	}
 

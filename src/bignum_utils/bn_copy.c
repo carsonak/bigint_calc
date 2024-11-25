@@ -1,13 +1,13 @@
 #include "bignum_utils.h"
 
 /**
- * bn_copy - shallow copies a bignum struct (pointers won't be dereferenced).
+ * bni_copy - shallow copies a bignum struct (pointers won't be dereferenced).
  * @src: the bignum to be copied.
  * @dest: where to copy to.
  *
  * Return: true on success, false on failure (args are NULL).
  */
-bool bn_copy(bignum *src, bignum *dest)
+bool bni_copy(bignum_i *src, bignum_i *dest)
 {
 	if (!src || !dest)
 		return (false);
@@ -17,7 +17,7 @@ bool bn_copy(bignum *src, bignum *dest)
 }
 
 /**
- * bn_deepcopy - deep copies a bignum struct (pointers will be dereferenced).
+ * bni_deepcopy - deep copies a bignum struct (pointers will be dereferenced).
  * @src: the bignum to be copied.
  * @dest: where to copy to.
  *
@@ -27,7 +27,7 @@ bool bn_copy(bignum *src, bignum *dest)
  *
  * Return: true on success, false on failure.
  */
-bool bn_deepcopy(bignum *src, bignum *dest)
+bool bni_deepcopy(bignum_i *src, bignum_i *dest)
 {
 	if ((!src || !dest) ||
 		(src->len > dest->len) ||

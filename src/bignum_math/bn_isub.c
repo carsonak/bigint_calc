@@ -1,8 +1,8 @@
 #include "bignum_math.h"
 
-static ATTR_NONNULL void subtract(bignum * const n1, bignum * const n2);
+static ATTR_NONNULL void subtract(bignum_i *const n1, bignum_i *const n2);
 static ATTR_NONNULL bool
-subtract_negatives(bignum * const n1, bignum * const n2);
+subtract_negatives(bignum_i *const n1, bignum_i *const n2);
 
 /**
  * subtract - subtract two bignums inplace.
@@ -11,7 +11,7 @@ subtract_negatives(bignum * const n1, bignum * const n2);
  *
  * Return: pointer to the result, NULL on failure.
  */
-static void subtract(bignum * const n1, bignum * const n2)
+static void subtract(bignum_i *const n1, bignum_i *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, tmp_len = 0, final_len = 0;
 	l_int n1_is_bigger = 0, byt_diff = 0;
@@ -25,7 +25,7 @@ static void subtract(bignum * const n1, bignum * const n2)
 		while (tmp_len > 1 && n1->num[tmp_len - 1] == n2->num[tmp_len - 1])
 			tmp_len--;
 
-	n1_is_bigger = bn_compare(n1, n2);
+	n1_is_bigger = bni_compare(n1, n2);
 	while (n1_i < tmp_len && (n1_i < n1->len || n2_i < n2->len))
 	{
 		if (n1_is_bigger > 0) /*then; n1 - n2*/
@@ -72,7 +72,7 @@ static void subtract(bignum * const n1, bignum * const n2)
 		n1->is_negative = true;
 
 	n1->len = final_len;
-	trim_bignum(n1);
+	trim_bni(n1);
 }
 
 /**
@@ -82,7 +82,7 @@ static void subtract(bignum * const n1, bignum * const n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bool subtract_negatives(bignum * const n1, bignum * const n2)
+static bool subtract_negatives(bignum_i *const n1, bignum_i *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 
@@ -95,25 +95,25 @@ static bool subtract_negatives(bignum * const n1, bignum * const n2)
 	}
 	else if (neg2) /*8 - -5 = 8+5*/
 	{
-		if (!bn_iadd(n1, n2))
+		if (!bni_iadd(n1, n2))
 			return (false);
 	}
 	else if (neg1)
 	{
 		/*-8 - 5 = -(8+5)*/
-		if (!bn_iadd(n1, n2))
+		if (!bni_iadd(n1, n2))
 			return (false);
 
 		n1->is_negative = !n1->is_negative;
 	}
 
 	n2->is_negative = neg2;
-	trim_bignum(n1);
+	trim_bni(n1);
 	return (true);
 }
 
 /**
- * bn_isubtract - handles subtraction of two bignums inplace.
+ * bni_isubtract - handles subtraction of two bignums inplace.
  * @n1: first number, must have enough space to store the result.
  * @n2: second number.
  *
@@ -122,20 +122,20 @@ static bool subtract_negatives(bignum * const n1, bignum * const n2)
  *
  * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
-bool bn_isubtract(bignum * const n1, bignum * const n2)
+bool bni_isubtract(bignum_i *const n1, bignum_i *const n2)
 {
 	/*n1.num cannot be NULL as this function does not allocate any memory.*/
 	if (!n1 || !n1->num)
 		return (false);
 
-	trim_bignum(n1);
+	trim_bni(n1);
 	if (!n2) /*This case is treated as -(n1).*/
 	{
 		n1->is_negative = !n1->is_negative;
 		return (true);
 	}
 
-	trim_bignum(n2);
+	trim_bni(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (subtract_negatives(n1, n2));
 

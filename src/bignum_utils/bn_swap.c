@@ -1,7 +1,7 @@
 #include "bignum_utils.h"
 
 /**
- * bn_swap - swaps two bignums.
+ * bni_swap - swaps two bignums.
  * @n1: the first bignum.
  * @n2: the second bignum.
  *
@@ -9,9 +9,9 @@
  *
  * Return: true on success, false on failure.
  */
-bool bn_swap(bignum * const n1, bignum * const n2)
+bool bni_swap(bignum_i *const n1, bignum_i *const n2)
 {
-	bignum tmp = {0};
+	bignum_i tmp = {0};
 	size_t n1_size = 0, n2_size = 0;
 
 	if (!n1 || !n2)

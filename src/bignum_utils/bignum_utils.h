@@ -14,25 +14,25 @@
 
 /*memory allocation functions*/
 
-void *bn_free(bignum *freeable_ptr);
+void *bni_free(bignum_i *freeable_ptr);
 
-ATTR_MALLOC ATTR_MALLOC_FREE(bn_free)
-bignum *bn_alloc(size_t len);
-ATTR_MALLOC ATTR_MALLOC_FREE(bn_free)
-bignum *bn_dup(bignum *bn);
-bool bn_realloc(bignum *bn, size_t len);
+ATTR_MALLOC ATTR_MALLOC_FREE(bni_free)
+bignum_i *bni_alloc(size_t len);
+ATTR_MALLOC ATTR_MALLOC_FREE(bni_free)
+bignum_i *bn_dup(bignum_i *bn);
+bool bn_realloc(bignum_i *bn, size_t len);
 
 /*utilities*/
 
-bool bn_copy(bignum *src, bignum *dest);
-l_int bn_compare(bignum *const a1, bignum *const a2);
-bool bn_deepcopy(bignum *src, bignum *dest);
-bool bn_swap(bignum *const n1, bignum *const n2);
-bool int_to_bignum(bignum *dest, long long int n);
-bignum *int_to_bignuma(long long int n);
-bool is_zero(bignum *const x);
+bool bni_copy(bignum_i *src, bignum_i *dest);
+l_int bni_compare(bignum_i *const a1, bignum_i *const a2);
+bool bni_deepcopy(bignum_i *src, bignum_i *dest);
+bool bni_swap(bignum_i *const n1, bignum_i *const n2);
+bool int_to_bni(bignum_i *dest, long long int n);
+bignum_i *int_to_new_bni(long long int n);
+bool bni_is_zero(bignum_i *const x);
 l_int reverse_cmp_uint32array(
 	u_int const *const arr1, u_int const *const arr2, size_t len);
-void trim_bignum(bignum *const arr);
+void trim_bni(bignum_i *const arr);
 
 #endif /* BIGNUM_UTILS_H */

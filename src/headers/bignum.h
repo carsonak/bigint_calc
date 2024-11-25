@@ -3,7 +3,7 @@
 
 #include <limits.h>	 /* type_max */
 #include <stdbool.h> /* bool */
-#include <stddef.h>	 /* size_t, ptr_diff */
+#include <stddef.h>	 /* size_t */
 #include <stdint.h>	 /* fixed width types */
 
 #ifdef UINT64_MAX
@@ -36,16 +36,16 @@ typedef uint32_t ul_int;
 #endif /*UINT64_MAX*/
 
 /**
- * struct bignum - an array of unsigned 4 byte ints.
- * @len: number of items in the array.
+ * struct bignum_i - an arbitrary precision integer representation.
+ * @len: number of items in the int array.
  * @is_negative: a bool for signedness of the number.
- * @num: pointer to an array of unsigned 4 byte ints.
+ * @num: pointer to an array of unsigned ints.
  */
-typedef struct bignum
+typedef struct bignum_i
 {
 	size_t len;
 	bool is_negative;
 	u_int *num;
-} bignum;
+} bignum_i;
 
 #endif /*BIGNUM_H*/

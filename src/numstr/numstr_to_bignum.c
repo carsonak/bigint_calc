@@ -1,29 +1,29 @@
-#include "parsing.h"
+#include "numstr.h"
 
 /**
- * numstr_to_bignum - convert a numstr to a bignum.
+ * numstr_to_bni - convert a numstr to a bignum_i.
  * @nstr: the numstr.
  *
- * Return: a pointer to a bignum struct, NULL on failure.
+ * Return: a pointer to a bignum_i struct, NULL on failure.
  */
-bignum *numstr_to_bignum(numstr *nstr)
+bignum_i *numstr_to_bni(numstr *nstr)
 {
     size_t bn_i = 0, nstr_i = 0, tmp = 0;
     unsigned int digits = 0;
-    bignum *bn_arr = NULL;
+    bignum_i *bn_arr = NULL;
     char num_buf[16], *end = NULL;
 
     if (!nstr || !nstr->len || !nstr->str || !isalnum(nstr->str[0]))
         return (NULL);
 
-    /*sizeof(bignum) == */
+    /*sizeof(bignum_i) == */
     /*ceil(numstr.len / no. of digits that can represent BIGNUM_BASE)*/
     digits = count_digits(BIGNUM_BASE - 1);
     bn_i = (nstr->len / digits);
     if (nstr->len % digits)
         ++bn_i;
 
-    bn_arr = bn_alloc(bn_i);
+    bn_arr = bni_alloc(bn_i);
     if (!bn_arr)
         return (NULL);
 
@@ -43,7 +43,7 @@ bignum *numstr_to_bignum(numstr *nstr)
         if (*end)
         {
             fprintf(stderr, "ParsingError: Invalid character '%c'\n", *end);
-            return (bn_free(bn_arr));
+            return (bni_free(bn_arr));
         }
 
         bn_arr->num[bn_i] = tmp % BIGNUM_BASE;
@@ -57,6 +57,6 @@ bignum *numstr_to_bignum(numstr *nstr)
         ++bn_i;
     }
 
-    trim_bignum(bn_arr);
+    trim_bni(bn_arr);
     return (bn_arr);
 }

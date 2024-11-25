@@ -1,12 +1,12 @@
 #include "bignum_utils.h"
 
 /**
- * is_zero - check if a bignum is equal to 0.
+ * bni_is_zero - check if a bignum is equal to 0.
  * @n: the bignum to check.
  *
  * Return: true if bignum is NULL or equal to zero, else false.
  */
-bool is_zero(bignum * const n)
+bool bni_is_zero(bignum_i *const n)
 {
 	size_t i = 0;
 

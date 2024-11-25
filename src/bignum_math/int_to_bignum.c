@@ -1,17 +1,17 @@
 #include "bignum_utils.h"
 
 /**
- * int_to_bignuma - convert an integer to a bignum representation.
+ * int_to_new_bni - convert an integer to a bignum representation.
  * @n: the int to convert.
  *
  * Return: a pointer to the bignum, NULL on failure.
  */
-bignum *int_to_bignuma(long long int n)
+bignum_i *int_to_new_bni(long long int n)
 {
 	u_int tmp[4] = {0};
 	unsigned long long int un = llabs(n);
 	unsigned int i = 0;
-	bignum *num = NULL;
+	bignum_i *num = NULL;
 
 	while (un)
 	{
@@ -23,7 +23,7 @@ bignum *int_to_bignuma(long long int n)
 	if (!n)
 		i = 1;
 
-	num = bn_alloc(i);
+	num = bni_alloc(i);
 	if (num)
 	{
 		if (n < 0)
@@ -42,7 +42,7 @@ bignum *int_to_bignuma(long long int n)
  *
  * Return: true on success, false on failure.
  */
-bool int_to_bignum(bignum *dest, long long int n)
+bool int_to_bni(bignum_i *dest, long long int n)
 {
 	u_int tmp[4] = {0};
 	unsigned long long int un = llabs(n);

@@ -1,72 +1,72 @@
 #include "bignum_math.h"
 
-static void ATTR_NONNULL_IDX(1) imultiply(bignum * *n1, bignum * const n2);
-static void ATTR_NONNULL_IDX(1) idivide(bignum * *n1, bignum * const n2);
-static void ATTR_NONNULL_IDX(1) isubtract(bignum * *n1, bignum * const n2);
+static void ATTR_NONNULL_IDX(1) imultiply(bignum_i **n1, bignum_i *const n2);
+static void ATTR_NONNULL_IDX(1) idivide(bignum_i **n1, bignum_i *const n2);
+static void ATTR_NONNULL_IDX(1) isubtract(bignum_i **n1, bignum_i *const n2);
 
 /**
- * imultiply - "inplace" bignum multiplication.
- * @n1: address of the first bignum pointer.
- * @n2: pointer to the second bignum.
+ * imultiply - "inplace" bignum_i multiplication.
+ * @n1: address of the first bignum_i pointer.
+ * @n2: pointer to the second bignum_i.
  */
-static void imultiply(bignum **n1, bignum * const n2)
+static void imultiply(bignum_i **n1, bignum_i *const n2)
 {
-	bignum *cpy = *n1;
+	bignum_i *cpy = *n1;
 
-	*n1 = bn_multiply(cpy, n2);
-	bn_free(cpy);
+	*n1 = bni_multiply(cpy, n2);
+	bni_free(cpy);
 }
 
 /**
- * idivide - "inplace" bignum division.
- * @n1: address of the first bignum pointer.
- * @n2: pointer to the second bignum.
+ * idivide - "inplace" bignum_i division.
+ * @n1: address of the first bignum_i pointer.
+ * @n2: pointer to the second bignum_i.
  */
-static void idivide(bignum **n1, bignum * const n2)
+static void idivide(bignum_i **n1, bignum_i *const n2)
 {
-	bignum *cpy = *n1;
+	bignum_i *cpy = *n1;
 
-	*n1 = bn_divide(cpy, n2);
-	bn_free(cpy);
+	*n1 = bni_divide(cpy, n2);
+	bni_free(cpy);
 }
 
 /**
- * isubtract - "inplace" bignum subtraction.
- * @n1: address of the first bignum pointer.
- * @n2: pointer to the second bignum.
+ * isubtract - "inplace" bignum_i subtraction.
+ * @n1: address of the first bignum_i pointer.
+ * @n2: pointer to the second bignum_i.
  */
-static void isubtract(bignum **n1, bignum * const n2)
+static void isubtract(bignum_i **n1, bignum_i *const n2)
 {
 	if ((*n1)->len < n2->len)
 	{
 		if (!bn_realloc(*n1, n2->len))
-			*n1 = bn_free(*n1);
+			*n1 = bni_free(*n1);
 	}
 
-	bn_isubtract(*n1, n2);
+	bni_isubtract(*n1, n2);
 }
 
 /**
- * bn_power - handle exponentiation of a bignum.
+ * bni_power - handle exponentiation of a bignum_i.
  * @base: the base.
  * @exponent: the exponent.
  *
  * Return: pointer to the result, NULL on failure.
  */
-bignum *bn_power(bignum *base, bignum *exponent)
+bignum_i *bni_power(bignum_i *base, bignum_i *exponent)
 {
 	u_int one[1] = {1}, two[1] = {2};
-	bignum tmp = {.len = 1, .is_negative = false, .num = two};
-	bignum *x = NULL, *y = NULL, *exp = NULL;
+	bignum_i tmp = {.len = 1, .is_negative = false, .num = two};
+	bignum_i *x = NULL, *y = NULL, *exp = NULL;
 
 	if (!base || !exponent)
 		return (NULL);
 
-	trim_bignum(base);
-	trim_bignum(exponent);
-	if (is_zero(base) || is_zero(exponent))
+	trim_bni(base);
+	trim_bni(exponent);
+	if (bni_is_zero(base) || bni_is_zero(exponent))
 	{
-		x = bn_alloc(1);
+		x = bni_alloc(1);
 		if (x)
 			x->num[0] = 1;
 
@@ -75,7 +75,7 @@ bignum *bn_power(bignum *base, bignum *exponent)
 
 	exp = bn_dup(exponent);
 	x = bn_dup(base);
-	y = bn_alloc(1);
+	y = bni_alloc(1);
 	if (!exp || !x || !y)
 		goto clean_up;
 
@@ -121,10 +121,10 @@ bignum *bn_power(bignum *base, bignum *exponent)
 	if (false)
 	{
 clean_up:
-		x = bn_free(x);
+	x = bni_free(x);
 	}
 
-	bn_free(exp);
-	bn_free(y);
+	bni_free(exp);
+	bni_free(y);
 	return (x);
 }

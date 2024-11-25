@@ -1,13 +1,13 @@
-#include "parsing.h"
+#include "numstr.h"
 
 /**
- * bignum_to_numstr - convert a bignum to a numstr.
+ * bni_to_numstr - convert a bignum to a numstr.
  * @bn_arr: the bignum.
  * @base: an int between 2-36 indicating the base of the number.
  *
  * Return: a pointer to a numstr, NULL on failure.
  */
-numstr *bignum_to_numstr(bignum *bn_arr, const unsigned int base)
+numstr *bni_to_numstr(bignum_i *bn_arr, const unsigned int base)
 {
 	numstr *nstr = NULL;
 	int bytes_written = 0;

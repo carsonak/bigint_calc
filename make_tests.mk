@@ -1,33 +1,55 @@
 SHELL := bash
 TIMEOUT := timeout
 TIMEOUT_OPTS := --preserve-status
-T_BINDIR := $(TESTS_DIR)/bin
-T_SRCDIR := $(TESTS_DIR)/src
 
-T_SRCS := $(shell find "$(T_SRCDIR)" -mount -name 'test_*.c' -type f | sort)
-T_INCLUDES := $(shell find "$(T_SRCDIR)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
+# Tests directories.
+tests_bin_dir := $(TESTS_DIR)/bin
+tests_src_dir := $(TESTS_DIR)/src
+bn_utils_t_dir := $(tests_src_dir)/test_bignum_utils
+bn_utils_t_bin_dir := $(tests_bin_dir)/test_bignum_utils
+math_t_dir := $(tests_src_dir)/test_bignum_math
+math_t_bin_dir := $(tests_bin_dir)/test_bignum_math
+str_t_dir := $(tests_src_dir)/test_string_utils
+str_t_bin_dir := $(tests_bin_dir)/test_string_utils
+numstr_t_dir :=  $(tests_src_dir)/test_numstr
+numstr_t_bin_dir :=  $(tests_bin_dir)/test_numstr
+parsing_t_dir := $(tests_src_dir)/test_parsing
+parsing_t_bin_dir := $(tests_bin_dir)/test_parsing
+
+# Tests header files.
+t_includes := $(shell find "$(tests_src_dir)" -mount -name '*.h' -exec dirname {} \+ | sort -u)
+
+# Tests C files.
+t_srcs := $(shell find "$(tests_src_dir)" -mount -name 'test_*.c' -type f | sort)
+bn_utils_tests := $(filter $(bn_utils_t_dir)/%,$(t_srcs))
+math_tests := $(filter $(math_t_dir)/%,$(t_srcs))
+str_tests := $(filter $(str_t_dir)/%,$(t_srcs))
+numstr_tests := $(filter $(numstr_t_dir)/%,$(t_srcs))
+parsing_tests := $(filter $(parsing_t_dir)/%,$(t_srcs))
+
 # Object files.
-T_OBJS := $(T_SRCS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%.o)
-ALLOC_OBJS := $(filter %xalloc.o,$(OBJS))
-BN_UTILS_OBJS := $(filter $(OBJ_DIR)/bignum_utils/%.o,$(OBJS))
-DS_OBJS := $(filter $(OBJ_DIR)/data_structures/%.o,$(OBJS))
-MATH_OBJS := $(filter $(OBJ_DIR)/bignum_math/%.o,$(OBJS))
-PARSING_OBJS := $(filter $(OBJ_DIR)/parsing/%.o,$(OBJS))
-STR_UTILS_OBJS := $(filter $(OBJ_DIR)/string_utils/%.o,$(OBJS))
-# Binaries
-T_BINS := $(T_OBJS:%.o=%)
-T_DEPS := $(T_OBJS:%.o=%.d)
+t_objs := $(t_srcs:$(tests_src_dir)/%.c=$(tests_bin_dir)/%.o)
+alloc_objs := $(filter %xalloc.o,$(OBJS))
+bn_utils_objs := $(filter $(OBJ_DIR)/bignum_utils/%.o,$(OBJS))
+math_objs := $(filter $(OBJ_DIR)/bignum_math/%.o,$(OBJS))
+ds_objs := $(filter $(OBJ_DIR)/data_structures/%.o,$(OBJS))
+str_objs := $(filter $(OBJ_DIR)/string_utils/%.o,$(OBJS))
+numstr_objs := $(filter $(OBJ_DIR)/numstr/%.o,$(OBJS))
+parsing_objs := $(filter $(OBJ_DIR)/parsing/%.o,$(OBJS))
 
-MATH_TESTS := $(filter $(T_SRCDIR)/test_bignum_math/%,$(T_SRCS))
-MATH_TBINS := $(MATH_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
-PARSING_TESTS := $(filter $(T_SRCDIR)/test_parsing/%,$(T_SRCS))
-PARSING_TBINS := $(PARSING_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
-STR_TESTS := $(filter $(T_SRCDIR)/test_string_utils/%,$(T_SRCS))
-STR_TBINS := $(STR_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
-BN_UTILS_TESTS := $(filter $(T_SRCDIR)/test_bignum_utils/%,$(T_SRCS))
-BN_UTILS_TBINS := $(BN_UTILS_TESTS:$(T_SRCDIR)/%.c=$(T_BINDIR)/%)
+# Tests binary files.
+t_bins := $(t_objs:%.o=%)
+bn_utils_t_bins := $(bn_utils_tests:$(bn_utils_t_dir)/%.c=$(bn_utils_t_bin_dir)/%)
+math_t_bins := $(math_tests:$(math_t_dir)/%.c=$(math_t_bin_dir)/%)
+str_t_bins := $(str_tests:$(str_t_dir)/%.c=$(str_t_bin_dir)/%)
+numstr_t_bins := $(numstr_tests:$(numstr_t_dir)/%.c=$(numstr_t_bin_dir)/%)
+parsing_t_bins := $(parsing_tests:$(tests_src_dir)/%.c=$(tests_bin_dir)/%)
 
-tests: utils-tests math-tests str-tests parsing-tests
+t_deps := $(t_objs:%.o=%.d)
+
+
+.PHONY: tests
+tests: bn-utils-tests math-tests str-tests numstr-tests parsing-tests
 
 run_tests = $(shell export $(ASAN_OPTIONS) && export $(LSAN_OPTIONS); \
 for tbin in $(1); \
@@ -37,89 +59,109 @@ do if [[ -f $$tbin && -x $$tbin ]]; \
 	fi; \
 done)
 
-utils-tests: INCLUDE_DIRS += $(T_INCLUDES)
-utils-tests: LDLIBS += -lcriterion
-utils-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
-utils-tests: $(BN_UTILS_TBINS)
-	$(call run_tests,$(BN_UTILS_TBINS))
+.PHONY: bn-utils-tests
+bn-utils-tests: INCLUDE_DIRS += $(t_includes)
+bn-utils-tests: LDLIBS += -lcriterion
+bn-utils-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
+bn-utils-tests: $(bn_utils_t_bins)
+	$(call run_tests,$(bn_utils_t_bins))
 
-math-tests: INCLUDE_DIRS += $(T_INCLUDES)
+.PHONY: math-tests
+math-tests: INCLUDE_DIRS += $(t_includes)
 math-tests: LDLIBS += -lcriterion
 math-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
-math-tests: $(MATH_TBINS)
-	$(call run_tests,$(MATH_TBINS))
+math-tests: $(math_t_bins)
+	$(call run_tests,$(math_t_bins))
 
-str-tests: INCLUDE_DIRS += $(T_INCLUDES)
+.PHONY: str-tests
+str-tests: INCLUDE_DIRS += $(t_includes)
 str-tests: LDLIBS += -lcriterion
 str-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
-str-tests: $(STR_TBINS)
-	$(call run_tests,$(STR_TBINS))
+str-tests: $(str_t_bins)
+	$(call run_tests,$(str_t_bins))
 
-parsing-tests: INCLUDE_DIRS += $(T_INCLUDES)
+.PHONY: numstr-tests
+numstr-tests: INCLUDE_DIRS += $(t_includes)
+numstr-tests: LDLIBS += -lcriterion
+numstr-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
+numstr-tests: $(numstr_t_bins)
+	$(call run_tests,$(numstr_t_bins))
+
+.PHONY: parsing-tests
+parsing-tests: INCLUDE_DIRS += $(t_includes)
 parsing-tests: LDLIBS += -lcriterion
 parsing-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
-parsing-tests: $(PARSING_TBINS)
-	$(call run_tests,$(PARSING_TBINS))
+parsing-tests: $(parsing_t_bins)
+	$(call run_tests,$(parsing_t_bins))
 
-$(T_BINDIR)/%.o: $(T_SRCDIR)/%.c
+$(tests_bin_dir)/%.o: $(tests_src_dir)/%.c
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-# utils tests
-$(T_BINDIR)/test_bignum_utils/test_bn_alloc: $(ALLOC_OBJS)
-$(T_BINDIR)/test_bignum_utils/test_bn_compare: $(filter %trim_bignum.o,$(BN_UTILS_OBJS))
-$(T_BINDIR)/test_bignum_utils/test_%: $(T_BINDIR)/test_bignum_utils/test_%.o  $(OBJ_DIR)/bignum_utils/%.o
+# bignum utils tests
+$(bn_utils_t_bin_dir)/test_bn_alloc: $(alloc_objs)
+$(bn_utils_t_bin_dir)/test_bn_compare: $(filter %trim_bignum.o,$(bn_utils_objs))
+$(bn_utils_t_bin_dir)/test_%: $(bn_utils_t_bin_dir)/test_%.o  $(OBJ_DIR)/bignum_utils/%.o
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_bignum_utils/test_bn_alloc_fail: $(T_BINDIR)/test_bignum_utils/test_bn_alloc_fail.o $(T_BINDIR)/dummy_xalloc.o $(filter %bn_alloc.o %bn_swap.o,$(BN_UTILS_OBJS))
+$(bn_utils_t_bin_dir)/test_bn_alloc_fail: $(bn_utils_t_bin_dir)/test_bn_alloc_fail.o $(tests_bin_dir)/dummy_xalloc.o $(filter %bn_alloc.o %bn_swap.o,$(bn_utils_objs))
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 # bignum math tests
-$(T_BINDIR)/test_bignum_math/test_bn_add_int: $(filter %int_to_bignum.o %bn_add.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_sub_int: $(filter %int_to_bignum.o %bn_sub.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_iadd_int: $(filter %int_to_bignum.o %bn_iadd.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_isub_int: $(filter %int_to_bignum.o %bn_isub.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_mul: $(filter %bn_iadd.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_div: $(filter-out %bn_div.o %bn_pow.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_mod: $(filter-out %bn_div.o %bn_pow.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_pow: $(filter-out %bn_pow.o,$(MATH_OBJS))
-$(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(OBJ_DIR)/bignum_math/%.o $(BN_UTILS_OBJS) $(ALLOC_OBJS)
+$(math_t_bin_dir)/test_bn_add_int: $(filter %int_to_bignum.o %bn_add.o,$(math_objs))
+$(math_t_bin_dir)/test_bn_sub_int: $(filter %int_to_bignum.o %bn_sub.o,$(math_objs))
+$(math_t_bin_dir)/test_bn_iadd_int: $(filter %int_to_bignum.o %bn_iadd.o,$(math_objs))
+$(math_t_bin_dir)/test_bn_isub_int: $(filter %int_to_bignum.o %bn_isub.o,$(math_objs))
+$(math_t_bin_dir)/test_bn_mul: $(filter %bn_iadd.o,$(math_objs))
+$(math_t_bin_dir)/test_bn_div: $(filter-out %bn_div.o %bn_pow.o,$(math_objs))
+$(math_t_bin_dir)/test_bn_mod: $(filter-out %bn_div.o %bn_pow.o,$(math_objs))
+$(math_t_bin_dir)/test_bn_pow: $(filter-out %bn_pow.o,$(math_objs))
+$(math_t_bin_dir)/test_%: $(math_t_bin_dir)/test_%.o $(OBJ_DIR)/bignum_math/%.o $(bn_utils_objs) $(alloc_objs)
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_bignum_math/test_bn_alloc_fail: $(T_BINDIR)/dummy_xalloc.o $(MATH_OBJS) $(filter-out %xalloc.o,$(ALLOC_OBJS))
-$(T_BINDIR)/test_bignum_math/test_bn_mod: $(filter-out %bn_pow.o,$(MATH_OBJS)) $(ALLOC_OBJS)
-$(T_BINDIR)/test_bignum_math/test_%: $(T_BINDIR)/test_bignum_math/test_%.o $(BN_UTILS_OBJS)
+$(math_t_bin_dir)/test_bn_alloc_fail: $(tests_bin_dir)/dummy_xalloc.o $(math_objs) $(filter-out %xalloc.o,$(alloc_objs))
+$(math_t_bin_dir)/test_bn_mod: $(filter-out %bn_pow.o,$(math_objs)) $(alloc_objs)
+$(math_t_bin_dir)/test_%: $(math_t_bin_dir)/test_%.o $(bn_utils_objs)
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 
 # string utils tests
-$(T_BINDIR)/test_string_utils/test_filter_str: $(ALLOC_OBJS)
-$(T_BINDIR)/test_string_utils/test_%: $(T_BINDIR)/test_string_utils/test_%.o $(OBJ_DIR)/string_utils/%.o
+$(str_t_bin_dir)/test_filter_str: $(alloc_objs)
+$(str_t_bin_dir)/test_%: $(str_t_bin_dir)/test_%.o $(OBJ_DIR)/string_utils/%.o
+	@mkdir -vp $(@D)
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
+
+# numstr utils tests
+$(numstr_t_bin_dir)/test_str_to_numstr: $(str_objs)
+$(numstr_t_bin_dir)/test_anybase_to_bignum: $(filter %char_to_int.o,$(str_objs)) $(math_objs) $(bn_utils_objs)
+$(numstr_t_bin_dir)/test_numstr_to_bignum: $(filter %count_digits.o,$(numstr_objs)) $(bn_utils_objs)
+$(numstr_t_bin_dir)/test_bignum_to_numstr: $(filter %count_digits.o,$(numstr_objs))
+$(numstr_t_bin_dir)/test_%: $(OBJ_DIR)/numstr/%.o $(numstr_t_bin_dir)/test_%.o $(filter %numstr_alloc.o,$(numstr_objs)) $(alloc_objs)
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 # parsing tests
-$(T_BINDIR)/test_parsing/test_base_conversion: $(MATH_OBJS)
-$(T_BINDIR)/test_parsing/test_lexer: $(DS_OBJS)
-$(T_BINDIR)/test_parsing/test_shunting_yard: $(DS_OBJS)
-$(T_BINDIR)/test_parsing/test_%: $(OBJ_DIR)/parsing/%.o $(T_BINDIR)/test_parsing/test_%.o $(filter %count_digits.o %numstr_alloc.o,$(PARSING_OBJS)) $(STR_UTILS_OBJS) $(BN_UTILS_OBJS) $(ALLOC_OBJS)
+$(parsing_t_bin_dir)/test_lexer: $(ds_objs)
+$(parsing_t_bin_dir)/test_shunting_yard: $(ds_objs)
+$(parsing_t_bin_dir)/test_%: $(OBJ_DIR)/parsing/%.o $(parsing_t_bin_dir)/test_%.o $(str_objs) $(numstr_objs) $(bn_utils_objs) $(alloc_objs)
 	@mkdir -vp $(@D)
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
-$(T_BINDIR)/test_parsing/test_uint_array_to_str: $(T_BINDIR)/test_parsing/test_uint_array_to_str.o $(filter %printing.o,$(PARSING_OBJS))
+$(parsing_t_bin_dir)/test_uint_array_to_str: $(parsing_t_bin_dir)/test_uint_array_to_str.o $(filter %printing.o,$(parsing_objs)) $(filter %count_digits.o,$(numstr_objs)) $(alloc_objs)
+	@mkdir -vp $(@D)
+	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
+.PHONY: tclean
 tclean: clean
-	@$(RM) -vdr --preserve-root -- $(T_OBJS) $(T_BINS) $(T_DEPS) $(T_BINDIR)
+	@$(RM) -vdr --preserve-root -- $(t_objs) $(t_bins) $(t_deps) $(tests_bin_dir)
 
+.PHONY: retests
 retests: tclean tests
 
-.PHONY: tests retest tclean utils-tests math-tests parsing-tests
+.PRECIOUS: $(t_objs)
 
-.PRECIOUS: $(T_OBJS)
-
-sinclude $(T_DEPS)
-# https://www.gnu.org/software/make/manual/html_node/Static-Pattern.html
+sinclude $(t_deps)
