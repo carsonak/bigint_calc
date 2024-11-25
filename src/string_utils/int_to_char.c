@@ -6,7 +6,7 @@
  *
  * Return: the ascii symbol, '\0' on error.
  */
-char int_to_char(unsigned int num)
+char int_to_char(const unsigned int num)
 {
 	if (num > 35)
 		return ('\0');

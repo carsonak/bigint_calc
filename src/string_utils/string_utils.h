@@ -20,8 +20,8 @@ typedef char (*mapping_func)(const char c, const void *args);
 
 char *filter_str(const char *str, size_t *const processed,
 				 const mapping_func f, const void *f_args);
-char int_to_char(unsigned int num);
-int char_to_int(char c);
-size_t leading_chars_span(const char *str, char *ch);
+char int_to_char(const unsigned int num);
+int char_to_int(const char c);
+size_t leading_chars_span(const char *str, const char *ch);
 
 #endif /*STRING_UTILS*/

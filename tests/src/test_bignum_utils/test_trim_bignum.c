@@ -19,14 +19,14 @@ void teardown(void) {}
 
 TestSuite(null_inputs);
 
-Test(null_inputs, test_NULL, .description = "NULL", .timeout = 2.0)
+Test(null_inputs, test_NULL, .description = "NULL", .timeout = 1.0)
 {
 	trim_bni(NULL);
 }
 
 TestSuite(null_array, .init = setup, .fini = teardown);
 
-Test(null_array, test_nullarray, .description = "null_array", .timeout = 2.0)
+Test(null_array, test_nullarray, .description = "null_array", .timeout = 1.0)
 {
 	trim_bni(&num1);
 
@@ -36,7 +36,7 @@ Test(null_array, test_nullarray, .description = "null_array", .timeout = 2.0)
 }
 
 Test(null_array, test_nullarray_neg,
-	 .description = "is_negative; null_array", .timeout = 2.0)
+	 .description = "is_negative; null_array", .timeout = 1.0)
 {
 	num1.is_negative = true;
 
@@ -48,7 +48,7 @@ Test(null_array, test_nullarray_neg,
 }
 
 Test(null_array, test_nullarray_len5,
-	 .description = "len = 5; null_array", .timeout = 2.0)
+	 .description = "len = 5; null_array", .timeout = 1.0)
 {
 	num1.len = 5;
 
@@ -60,7 +60,7 @@ Test(null_array, test_nullarray_len5,
 }
 
 Test(null_array, test_nullarray_len5_neg,
-	 .description = "len = 5; is_negative; null_array", .timeout = 2.0)
+	 .description = "len = 5; is_negative; null_array", .timeout = 1.0)
 {
 	num1.len = 5;
 	num1.is_negative = true;
@@ -74,7 +74,7 @@ Test(null_array, test_nullarray_len5_neg,
 
 TestSuite(trailing_zeros, .init = setup, .fini = teardown);
 
-Test(trailing_zeros, test_one_zero, .description = "0", .timeout = 2.0)
+Test(trailing_zeros, test_one_zero, .description = "0", .timeout = 1.0)
 {
 	u_int in1[1];
 	u_int out[] = {0};
@@ -91,7 +91,7 @@ Test(trailing_zeros, test_one_zero, .description = "0", .timeout = 2.0)
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(trailing_zeros, test_several_zeros, .description = "{0,0,0,0}", .timeout = 2.0)
+Test(trailing_zeros, test_several_zeros, .description = "{0,0,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 0, 0};
 	u_int out[] = {0};
@@ -108,7 +108,7 @@ Test(trailing_zeros, test_several_zeros, .description = "{0,0,0,0}", .timeout = 
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(trailing_zeros, test_0001, .description = "{1,0,0,0}", .timeout = 2.0)
+Test(trailing_zeros, test_0001, .description = "{1,0,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {1, 0, 0, 0};
 	u_int out[] = {1};
@@ -125,7 +125,7 @@ Test(trailing_zeros, test_0001, .description = "{1,0,0,0}", .timeout = 2.0)
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(trailing_zeros, test_0100, .description = "{0,0,1,0}", .timeout = 2.0)
+Test(trailing_zeros, test_0100, .description = "{0,0,1,0}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 1, 0};
 	u_int out[] = {0, 0, 1};
@@ -144,7 +144,7 @@ Test(trailing_zeros, test_0100, .description = "{0,0,1,0}", .timeout = 2.0)
 
 TestSuite(trailing_zeros_negative, .init = setup, .fini = teardown);
 
-Test(trailing_zeros_negative, test_one_zero, .description = "0", .timeout = 2.0)
+Test(trailing_zeros_negative, test_one_zero, .description = "0", .timeout = 1.0)
 {
 	u_int in1[1];
 	u_int out[] = {0};
@@ -161,7 +161,7 @@ Test(trailing_zeros_negative, test_one_zero, .description = "0", .timeout = 2.0)
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(trailing_zeros_negative, test_several_zeros, .description = "{0,0,0,0}", .timeout = 2.0)
+Test(trailing_zeros_negative, test_several_zeros, .description = "{0,0,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 0, 0};
 	u_int out[] = {0};
@@ -178,7 +178,7 @@ Test(trailing_zeros_negative, test_several_zeros, .description = "{0,0,0,0}", .t
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(trailing_zeros_negative, test_0001, .description = "{1,0,0,0}", .timeout = 2.0)
+Test(trailing_zeros_negative, test_0001, .description = "{1,0,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {1, 0, 0, 0};
 	u_int out[] = {1};
@@ -195,7 +195,7 @@ Test(trailing_zeros_negative, test_0001, .description = "{1,0,0,0}", .timeout = 
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(trailing_zeros_negative, test_0100, .description = "{0,0,1,0}", .timeout = 2.0)
+Test(trailing_zeros_negative, test_0100, .description = "{0,0,1,0}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 1, 0};
 	u_int out[] = {0, 0, 1};
@@ -214,7 +214,7 @@ Test(trailing_zeros_negative, test_0100, .description = "{0,0,1,0}", .timeout = 
 
 TestSuite(normal_input, .init = setup, .fini = teardown);
 
-Test(normal_input, test_1, .description = "1", .timeout = 2.0)
+Test(normal_input, test_1, .description = "1", .timeout = 1.0)
 {
 	u_int in1[] = {1};
 	u_int out[] = {1};
@@ -231,7 +231,7 @@ Test(normal_input, test_1, .description = "1", .timeout = 2.0)
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(normal_input, test_neg1, .description = "is_negative; 1", .timeout = 2.0)
+Test(normal_input, test_neg1, .description = "is_negative; 1", .timeout = 1.0)
 {
 	u_int in1[] = {1};
 	u_int out[] = {1};
@@ -248,7 +248,7 @@ Test(normal_input, test_neg1, .description = "is_negative; 1", .timeout = 2.0)
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(normal_input, test_100, .description = "{0,0,1}", .timeout = 2.0)
+Test(normal_input, test_100, .description = "{0,0,1}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 1};
 	u_int out[] = {0, 0, 1};
@@ -265,7 +265,7 @@ Test(normal_input, test_100, .description = "{0,0,1}", .timeout = 2.0)
 	cr_expect(eq(u32[expected.len], num1.num, expected.num));
 }
 
-Test(normal_input, test_neg100, .description = "is_negative; {0,0,1}", .timeout = 2.0)
+Test(normal_input, test_neg100, .description = "is_negative; {0,0,1}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 1};
 	u_int out[] = {0, 0, 1};

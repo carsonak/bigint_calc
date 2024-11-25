@@ -90,7 +90,7 @@ numstr *str_to_numstr(
 	if (number_str[str_i - 1] == '_')
 	{
 		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
-	cleanup_numstr:
+cleanup_numstr:
 		ns = free_numstr(ns);
 	}
 

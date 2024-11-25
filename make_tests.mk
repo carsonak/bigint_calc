@@ -1,6 +1,6 @@
 SHELL := bash
 TIMEOUT := timeout
-TIMEOUT_OPTS := --preserve-status
+TIMEOUT_OPTS := --preserve-status --verbose
 
 # Tests directories.
 tests_bin_dir := $(TESTS_DIR)/bin
@@ -62,35 +62,35 @@ done)
 .PHONY: bn-utils-tests
 bn-utils-tests: INCLUDE_DIRS += $(t_includes)
 bn-utils-tests: LDLIBS += -lcriterion
-bn-utils-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
+bn-utils-tests: TIMEOUT_OPTS += --kill-after=7.0 5.0
 bn-utils-tests: $(bn_utils_t_bins)
 	$(call run_tests,$(bn_utils_t_bins))
 
 .PHONY: math-tests
 math-tests: INCLUDE_DIRS += $(t_includes)
 math-tests: LDLIBS += -lcriterion
-math-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
+math-tests: TIMEOUT_OPTS += --kill-after=7.0 5.0
 math-tests: $(math_t_bins)
 	$(call run_tests,$(math_t_bins))
 
 .PHONY: str-tests
 str-tests: INCLUDE_DIRS += $(t_includes)
 str-tests: LDLIBS += -lcriterion
-str-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
+str-tests: TIMEOUT_OPTS += --kill-after=7.0 5.0
 str-tests: $(str_t_bins)
 	$(call run_tests,$(str_t_bins))
 
 .PHONY: numstr-tests
 numstr-tests: INCLUDE_DIRS += $(t_includes)
 numstr-tests: LDLIBS += -lcriterion
-numstr-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
+numstr-tests: TIMEOUT_OPTS += --kill-after=7.0 5.0
 numstr-tests: $(numstr_t_bins)
 	$(call run_tests,$(numstr_t_bins))
 
 .PHONY: parsing-tests
 parsing-tests: INCLUDE_DIRS += $(t_includes)
 parsing-tests: LDLIBS += -lcriterion
-parsing-tests: TIMEOUT_OPTS += --kill-after=10.0 7.0
+parsing-tests: TIMEOUT_OPTS += --kill-after=7.0 5.0
 parsing-tests: $(parsing_t_bins)
 	$(call run_tests,$(parsing_t_bins))
 
@@ -145,7 +145,7 @@ $(numstr_t_bin_dir)/test_%: $(OBJ_DIR)/numstr/%.o $(numstr_t_bin_dir)/test_%.o $
 	$(CC) $(CFLAGS) $(filter-out %.h,$^) -o $@ $(LDLIBS) $(LDFLAGS)
 
 # parsing tests
-$(parsing_t_bin_dir)/test_lexer: $(ds_objs)
+$(parsing_t_bin_dir)/test_lexer: $(ds_objs) $(math_objs)
 $(parsing_t_bin_dir)/test_shunting_yard: $(ds_objs)
 $(parsing_t_bin_dir)/test_%: $(OBJ_DIR)/parsing/%.o $(parsing_t_bin_dir)/test_%.o $(str_objs) $(numstr_objs) $(bn_utils_objs) $(alloc_objs)
 	@mkdir -vp $(@D)

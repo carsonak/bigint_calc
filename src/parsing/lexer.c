@@ -69,7 +69,8 @@ static token *match_token(const char *str, size_t *processed)
  *  ...34957,02347...
  *          ^`
  */
-static void format_lexing_error_msg(const char *expression, size_t idx, const char *msg)
+static void format_lexing_error_msg(
+	const char *expression, size_t idx, const char *msg)
 {
 	char slice[12] = {0}, highlight[12] = {0};
 	int i = 0, upper = 0;
@@ -149,7 +150,7 @@ deque *lex_str(const char *str)
 
 	if (str[i])
 	{
-		clear_deque(tokens, free_token);
+		clear_deque(tokens, (void *(*)(void *))free_token);
 		tokens = free_n_null(tokens);
 	}
 

@@ -21,13 +21,13 @@ void teardown(void)
 
 TestSuite(null_inputs);
 
-Test(null_inputs, test_NULL, .description = "NULL", .timeout = 2.0)
+Test(null_inputs, test_NULL, .description = "NULL", .timeout = 1.0)
 {
 	cr_assert(zero(ptr, str_to_numstr(NULL, 10, &processed)));
 	cr_assert(zero(sz, processed));
 }
 
-Test(null_inputs, test_null, .description = "\0001", .timeout = 2.0)
+Test(null_inputs, test_null, .description = "\0001", .timeout = 1.0)
 {
 	cr_assert(zero(ptr, str_to_numstr("\0001", 10, &processed)));
 	cr_assert(eq(sz, processed, 1));
@@ -36,7 +36,7 @@ Test(null_inputs, test_null, .description = "\0001", .timeout = 2.0)
 TestSuite(invalid_inputs);
 
 Test(invalid_inputs, test_all_nonvalid_chars,
-	 .description = "invalid chars", .timeout = 2.0)
+	 .description = "invalid chars", .timeout = 1.0)
 {
 	char c[2] = {SCHAR_MIN, '\0'};
 
@@ -49,7 +49,7 @@ Test(invalid_inputs, test_all_nonvalid_chars,
 }
 
 Test(invalid_inputs, test_all_nonvalid_chars2,
-	 .description = "invalid 2chars", .timeout = 2.0)
+	 .description = "invalid 2chars", .timeout = 1.0)
 {
 	char c[3] = {SCHAR_MIN, SCHAR_MAX, '\0'};
 
@@ -64,7 +64,7 @@ Test(invalid_inputs, test_all_nonvalid_chars2,
 }
 
 Test(invalid_inputs, test_leading_separators_signs,
-	 .description = "Assortment of '.-_,+'", .timeout = 2.0)
+	 .description = "Assortment of '.-_,+'", .timeout = 1.0)
 {
 	cr_redirect_stderr();
 	/* Leading Separator. */
@@ -82,33 +82,33 @@ Test(invalid_inputs, test_leading_separators_signs,
 }
 
 Test(invalid_inputs, test_leading_underscore,
-	 .description = "_20", .timeout = 2.0)
+	 .description = "_20", .timeout = 1.0)
 {
 	cr_assert(zero(ptr, str_to_numstr("_20", 10, NULL)));
 }
 
 Test(invalid_inputs, test_trailing_underscore,
-	 .description = "20_", .timeout = 2.0)
+	 .description = "20_", .timeout = 1.0)
 {
 	cr_assert(zero(ptr, str_to_numstr("20_", 10, NULL)));
 }
 
 Test(invalid_inputs, test_neg_leading_underscore,
-	 .description = "-_20", .timeout = 2.0)
+	 .description = "-_20", .timeout = 1.0)
 {
 	cr_redirect_stderr();
 	cr_assert(zero(ptr, str_to_numstr("-_20", 10, NULL)));
 }
 
 Test(invalid_inputs, test_neg_leading_comma,
-	 .description = "-,20", .timeout = 2.0)
+	 .description = "-,20", .timeout = 1.0)
 {
 	cr_redirect_stderr();
 	cr_assert(zero(ptr, str_to_numstr("-,20", 10, NULL)));
 }
 
 Test(invalid_inputs, test_pos_leading_underscore,
-	 .description = "+_20", .timeout = 2.0)
+	 .description = "+_20", .timeout = 1.0)
 {
 	cr_redirect_stderr();
 	cr_assert(zero(ptr, str_to_numstr("+_20", 10, NULL)));
@@ -117,7 +117,7 @@ Test(invalid_inputs, test_pos_leading_underscore,
 TestSuite(invalid_chars_in_str, .init = setup, .fini = teardown);
 
 Test(invalid_chars_in_str, test_valid_chars_with_dash_in_middle,
-	 .description = "123-567", .timeout = 2.0)
+	 .description = "123-567", .timeout = 1.0)
 {
 	cr_redirect_stderr();
 	output = str_to_numstr("123-567", 10, &processed);
@@ -128,7 +128,7 @@ Test(invalid_chars_in_str, test_valid_chars_with_dash_in_middle,
 }
 
 Test(invalid_chars_in_str, test_valid_chars_with_space_in_middle,
-	 .description = "123 567", .timeout = 2.0)
+	 .description = "123 567", .timeout = 1.0)
 {
 	output = str_to_numstr("123 567", 10, &processed);
 	cr_assert(eq(sz, output->len, 3));
@@ -138,7 +138,7 @@ Test(invalid_chars_in_str, test_valid_chars_with_space_in_middle,
 }
 
 Test(invalid_chars_in_str, test_valid_chars_with_bracket_in_middle,
-	 .description = "123(567)", .timeout = 2.0)
+	 .description = "123(567)", .timeout = 1.0)
 {
 	output = str_to_numstr("123(567)", 10, &processed);
 	cr_assert(eq(sz, output->len, 3));
@@ -148,7 +148,7 @@ Test(invalid_chars_in_str, test_valid_chars_with_bracket_in_middle,
 
 TestSuite(valid_inputs, .init = setup, .fini = teardown);
 
-Test(valid_inputs, test_decimals1, .description = "0-9", .timeout = 2.0)
+Test(valid_inputs, test_decimals1, .description = "0-9", .timeout = 1.0)
 {
 	char c[2] = {'0', '\0'};
 
@@ -163,7 +163,7 @@ Test(valid_inputs, test_decimals1, .description = "0-9", .timeout = 2.0)
 }
 
 Test(valid_inputs, test_uppercase_letters1,
-	 .description = "A-Z", .timeout = 2.0)
+	 .description = "A-Z", .timeout = 1.0)
 {
 	char c[2] = {'A', '\0'};
 
@@ -178,7 +178,7 @@ Test(valid_inputs, test_uppercase_letters1,
 }
 
 Test(valid_inputs, test_lowercase_letters1,
-	 .description = "a-z", .timeout = 2.0)
+	 .description = "a-z", .timeout = 1.0)
 {
 	char c[2] = {'a', '\0'}, out[2] = {'A', '\0'};
 
@@ -193,7 +193,7 @@ Test(valid_inputs, test_lowercase_letters1,
 }
 
 Test(valid_inputs, test_decimals2,
-	 .description = "10-99", .timeout = 2.0)
+	 .description = "10-99", .timeout = 1.0)
 {
 	char c[3] = {'1', '0', '\0'};
 
@@ -211,7 +211,7 @@ Test(valid_inputs, test_decimals2,
 }
 
 Test(valid_inputs, test_uppercase_letters2,
-	 .description = "AA-ZZ", .timeout = 2.0)
+	 .description = "AA-ZZ", .timeout = 1.0)
 {
 	char c[3] = {'A', 'A', '\0'};
 
@@ -229,7 +229,7 @@ Test(valid_inputs, test_uppercase_letters2,
 }
 
 Test(valid_inputs, test_lowercase_letters2,
-	 .description = "aa-zz", .timeout = 2.0)
+	 .description = "aa-zz", .timeout = 1.0)
 {
 	char c[3] = {'a', 'a', '\0'}, out[3] = {'A', 'A', '\0'};
 
@@ -249,7 +249,7 @@ Test(valid_inputs, test_lowercase_letters2,
 }
 
 Test(valid_inputs, test_0000000000000,
-	 .description = "0000000000000", .timeout = 2.0)
+	 .description = "0000000000000", .timeout = 1.0)
 {
 	output = str_to_numstr("0000000000000", 10, &processed);
 
@@ -260,7 +260,7 @@ Test(valid_inputs, test_0000000000000,
 }
 
 Test(valid_inputs, test_neg0000000000000,
-	 .description = "-0000000000000", .timeout = 2.0)
+	 .description = "-0000000000000", .timeout = 1.0)
 {
 	output = str_to_numstr("-0000000000000", 10, &processed);
 
@@ -271,7 +271,7 @@ Test(valid_inputs, test_neg0000000000000,
 }
 
 Test(valid_inputs, test_00000000000001,
-	 .description = "00000000000001", .timeout = 2.0)
+	 .description = "00000000000001", .timeout = 1.0)
 {
 	output = str_to_numstr("00000000000001", 10, &processed);
 
@@ -282,7 +282,7 @@ Test(valid_inputs, test_00000000000001,
 }
 
 Test(valid_inputs, test_neg00000000000001,
-	 .description = "-00000000000001", .timeout = 2.0)
+	 .description = "-00000000000001", .timeout = 1.0)
 {
 	output = str_to_numstr("-00000000000001", 10, &processed);
 
@@ -293,7 +293,7 @@ Test(valid_inputs, test_neg00000000000001,
 }
 
 Test(valid_inputs, test_mmneg10_000_000_000,
-	 .description = "-10_000_000_000", .timeout = 2.0)
+	 .description = "-10_000_000_000", .timeout = 1.0)
 {
 	output = str_to_numstr("---10_000_000_000", 10, &processed);
 
@@ -303,7 +303,7 @@ Test(valid_inputs, test_mmneg10_000_000_000,
 	cr_assert(eq(str, output->str, "10000000000"));
 }
 
-Test(valid_inputs, test_neg1, .description = "--ZZZ_4Ar_YU8_012_qa9", .timeout = 2.0)
+Test(valid_inputs, test_neg1, .description = "--ZZZ_4Ar_YU8_012_qa9", .timeout = 1.0)
 {
 	output = str_to_numstr("--ZZZ_4Ar_YU8_012_qa9", 36, &processed);
 

@@ -35,6 +35,10 @@ typedef uint32_t ul_int;
 
 #endif /*UINT64_MAX*/
 
+/*Radix range*/
+#define MINIMUM_BIGNUM_RADIX 2
+#define MAXIMUM_BIGNUM_RADIX 36
+
 /**
  * struct bignum_i - an arbitrary precision integer representation.
  * @len: number of items in the int array.

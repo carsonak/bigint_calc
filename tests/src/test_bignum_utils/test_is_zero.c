@@ -17,7 +17,7 @@ void teardown(void) {}
 
 TestSuite(null_inputs);
 
-Test(null_inputs, test_NULL, .description = "NULL", .timeout = 2.0)
+Test(null_inputs, test_NULL, .description = "NULL", .timeout = 1.0)
 {
 	cr_assert(zero(chr, bni_is_zero(NULL)));
 }
@@ -25,27 +25,27 @@ Test(null_inputs, test_NULL, .description = "NULL", .timeout = 2.0)
 TestSuite(null_array, .init = setup, .fini = teardown);
 
 Test(null_array, test_nullarray_len0,
-	 .description = "len = 0; null_array;", .timeout = 2.0)
+	 .description = "len = 0; null_array;", .timeout = 1.0)
 {
 	cr_assert(eq(chr, bni_is_zero(&num1), true));
 }
 
 Test(null_array, test_nullarray_len0_neg,
-	 .description = "len = 0; is_negative; null_array;", .timeout = 2.0)
+	 .description = "len = 0; is_negative; null_array;", .timeout = 1.0)
 {
 	num1.is_negative = true;
 	cr_assert(eq(chr, bni_is_zero(&num1), true));
 }
 
 Test(null_array, test_nullarray_len1,
-	 .description = "len = 1; null_array;", .timeout = 2.0)
+	 .description = "len = 1; null_array;", .timeout = 1.0)
 {
 	num1.len = 1;
 	cr_assert(eq(chr, bni_is_zero(&num1), true));
 }
 
 Test(null_array, test_nullarray_len1_neg,
-	 .description = "len = 1; is_negative; null_array;", .timeout = 2.0)
+	 .description = "len = 1; is_negative; null_array;", .timeout = 1.0)
 {
 	num1.len = 1;
 	num1.is_negative = true;
@@ -55,7 +55,7 @@ Test(null_array, test_nullarray_len1_neg,
 TestSuite(incorrect_length, .init = setup, .fini = teardown);
 
 Test(incorrect_length, test_all_zeros,
-	 .description = "{0,0,0,0,0}", .timeout = 2.0)
+	 .description = "{0,0,0,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 0, 0, 0};
 
@@ -66,7 +66,7 @@ Test(incorrect_length, test_all_zeros,
 }
 
 Test(incorrect_length, test_lsd_is1,
-	 .description = "{1,0,0,0,0}", .timeout = 2.0)
+	 .description = "{1,0,0,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {1, 0, 0, 0, 0};
 
@@ -77,7 +77,7 @@ Test(incorrect_length, test_lsd_is1,
 }
 
 Test(incorrect_length, test_middle_is1,
-	 .description = "{0,0,1,0,0}", .timeout = 2.0)
+	 .description = "{0,0,1,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 1, 0, 0};
 
@@ -90,7 +90,7 @@ Test(incorrect_length, test_middle_is1,
 TestSuite(incorrect_length_and_negative, .init = setup, .fini = teardown);
 
 Test(incorrect_length_and_negative, test_all_zeros,
-	 .description = "{0,0,0,0,0}", .timeout = 2.0)
+	 .description = "{0,0,0,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 0, 0, 0};
 
@@ -101,7 +101,7 @@ Test(incorrect_length_and_negative, test_all_zeros,
 }
 
 Test(incorrect_length_and_negative, test_lsd_is1,
-	 .description = "{1,0,0,0,0}", .timeout = 2.0)
+	 .description = "{1,0,0,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {1, 0, 0, 0, 0};
 
@@ -112,7 +112,7 @@ Test(incorrect_length_and_negative, test_lsd_is1,
 }
 
 Test(incorrect_length_and_negative, test_middle_is1,
-	 .description = "{0,0,1,0,0}", .timeout = 2.0)
+	 .description = "{0,0,1,0,0}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 1, 0, 0};
 
@@ -124,28 +124,28 @@ Test(incorrect_length_and_negative, test_middle_is1,
 
 TestSuite(normal_input, .init = setup, .fini = teardown);
 
-Test(normal_input, test_0, .description = "0", .timeout = 2.0)
+Test(normal_input, test_0, .description = "0", .timeout = 1.0)
 {
 	num1 = (bignum_i){.len = 1, .is_negative = false, .num = (u_int[1]){0}};
 
 	cr_assert(eq(chr, bni_is_zero(&num1), true));
 }
 
-Test(normal_input, test_neg0, .description = "-0", .timeout = 2.0)
+Test(normal_input, test_neg0, .description = "-0", .timeout = 1.0)
 {
 	num1 = (bignum_i){.len = 1, .is_negative = true, .num = (u_int[1]){0}};
 
 	cr_assert(eq(chr, bni_is_zero(&num1), true));
 }
 
-Test(normal_input, test_1, .description = "1", .timeout = 2.0)
+Test(normal_input, test_1, .description = "1", .timeout = 1.0)
 {
 	num1 = (bignum_i){.len = 1, .is_negative = false, .num = (u_int[1]){1}};
 
 	cr_assert(eq(chr, bni_is_zero(&num1), false));
 }
 
-Test(normal_input, test_neg1, .description = "-1", .timeout = 2.0)
+Test(normal_input, test_neg1, .description = "-1", .timeout = 1.0)
 {
 	num1 = (bignum_i){.len = 1, .is_negative = true, .num = (u_int[1]){1}};
 
@@ -153,7 +153,7 @@ Test(normal_input, test_neg1, .description = "-1", .timeout = 2.0)
 }
 
 Test(normal_input, test_msd_is1,
-	 .description = "{0,0,0,0,1}", .timeout = 2.0)
+	 .description = "{0,0,0,0,1}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 0, 0, 1};
 
@@ -164,7 +164,7 @@ Test(normal_input, test_msd_is1,
 }
 
 Test(normal_input, test_msd_is_neg1,
-	 .description = "{0,0,0,0,1}", .timeout = 2.0)
+	 .description = "{0,0,0,0,1}", .timeout = 1.0)
 {
 	u_int in1[] = {0, 0, 0, 0, 1};
 

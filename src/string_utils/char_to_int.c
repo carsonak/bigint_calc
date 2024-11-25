@@ -6,7 +6,7 @@
  *
  * Return: decimal value of the symbol, -1 if invalid symbol.
  */
-int char_to_int(char c)
+int char_to_int(const char c)
 {
 	if (!isalnum(c))
 		return (-1);

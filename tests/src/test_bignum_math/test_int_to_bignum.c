@@ -17,7 +17,7 @@ void teardown(void) {}
 
 TestSuite(int_to_bignum_malloc);
 
-Test(int_to_bignum_malloc, test_0, .description = "0", .timeout = 2.0)
+Test(int_to_bignum_malloc, test_0, .description = "0", .timeout = 1.0)
 {
 	bignum_i expected = {.len = 1, .is_negative = false, .num = (u_int[]){0}};
 	bignum_i *output = int_to_new_bni(0);
@@ -28,7 +28,7 @@ Test(int_to_bignum_malloc, test_0, .description = "0", .timeout = 2.0)
 	output = bni_free(output);
 }
 
-Test(int_to_bignum_malloc, test_neg_1, .description = "-1", .timeout = 2.0)
+Test(int_to_bignum_malloc, test_neg_1, .description = "-1", .timeout = 1.0)
 {
 	bignum_i expected = {.len = 1, .is_negative = true, .num = (u_int[]){1}};
 	bignum_i *output = int_to_new_bni(-1);
@@ -39,7 +39,7 @@ Test(int_to_bignum_malloc, test_neg_1, .description = "-1", .timeout = 2.0)
 	output = bni_free(output);
 }
 
-Test(int_to_bignum_malloc, test_1000000000, .description = "1,000,000,000", .timeout = 2.0)
+Test(int_to_bignum_malloc, test_1000000000, .description = "1,000,000,000", .timeout = 1.0)
 {
 	bignum_i expected = {.len = 2, .is_negative = false, .num = (u_int[]){0, 1}};
 	bignum_i *output = int_to_new_bni(1000000000);
@@ -51,7 +51,7 @@ Test(int_to_bignum_malloc, test_1000000000, .description = "1,000,000,000", .tim
 }
 
 Test(int_to_bignum_malloc, test_neg_1000000000,
-	 .description = "-1,000,000,000", .timeout = 2.0)
+	 .description = "-1,000,000,000", .timeout = 1.0)
 {
 	bignum_i expected = {.len = 2, .is_negative = true, .num = (u_int[]){0, 1}};
 	bignum_i *output = int_to_new_bni(-1000000000);
@@ -63,7 +63,7 @@ Test(int_to_bignum_malloc, test_neg_1000000000,
 }
 
 Test(int_to_bignum_malloc, test_LLONG_MIN,
-	 .description = "LLONG_MIN + 1 (-9223372036854775807)", .timeout = 2.0)
+	 .description = "LLONG_MIN + 1 (-9223372036854775807)", .timeout = 1.0)
 {
 	bignum_i expected = {
 		.len = 3, .is_negative = true, .num = (u_int[]){854775807, 223372036, 9}};
@@ -76,7 +76,7 @@ Test(int_to_bignum_malloc, test_LLONG_MIN,
 }
 
 Test(int_to_bignum_malloc, test_LLONG_MAX,
-	 .description = "LLONG_MAX (9223372036854775807)", .timeout = 2.0)
+	 .description = "LLONG_MAX (9223372036854775807)", .timeout = 1.0)
 {
 	bignum_i expected = {
 		.len = 3, .is_negative = false, .num = (u_int[]){854775807, 223372036, 9}};
@@ -91,26 +91,26 @@ Test(int_to_bignum_malloc, test_LLONG_MAX,
 TestSuite(int_to_bignum_nomalloc, .init = setup, .fini = teardown);
 
 Test(int_to_bignum_nomalloc, test_NULL,
-	 .description = "NULL parameter", .timeout = 2.0)
+	 .description = "NULL parameter", .timeout = 1.0)
 {
 	cr_expect(zero(chr, int_to_bni(NULL, 0)));
 }
 
 Test(int_to_bignum_nomalloc, test_0_len,
-	 .description = "bignum with length 0", .timeout = 2.0)
+	 .description = "bignum with length 0", .timeout = 1.0)
 {
 	in1.num = (u_int[1]){0};
 	cr_expect(zero(chr, int_to_bni(&in1, 0)));
 }
 
 Test(int_to_bignum_nomalloc, test_nullarray,
-	 .description = "bignum with a null array", .timeout = 2.0)
+	 .description = "bignum with a null array", .timeout = 1.0)
 {
 	in1.len = 1;
 	cr_expect(zero(chr, int_to_bni(&in1, 0)));
 }
 
-Test(int_to_bignum_nomalloc, test_0, .description = "0", .timeout = 2.0)
+Test(int_to_bignum_nomalloc, test_0, .description = "0", .timeout = 1.0)
 {
 	bignum_i expected = {.len = 1, .is_negative = false, .num = (u_int[]){0}};
 
@@ -122,7 +122,7 @@ Test(int_to_bignum_nomalloc, test_0, .description = "0", .timeout = 2.0)
 	cr_expect(eq(u32[expected.len], in1.num, expected.num));
 }
 
-Test(int_to_bignum_nomalloc, test_neg_1, .description = "-1", .timeout = 2.0)
+Test(int_to_bignum_nomalloc, test_neg_1, .description = "-1", .timeout = 1.0)
 {
 	bignum_i expected = {.len = 1, .is_negative = true, .num = (u_int[]){1}};
 
@@ -134,7 +134,7 @@ Test(int_to_bignum_nomalloc, test_neg_1, .description = "-1", .timeout = 2.0)
 	cr_expect(eq(u32[expected.len], in1.num, expected.num));
 }
 
-Test(int_to_bignum_nomalloc, test_1000000000, .description = "1,000,000,000", .timeout = 2.0)
+Test(int_to_bignum_nomalloc, test_1000000000, .description = "1,000,000,000", .timeout = 1.0)
 {
 	bignum_i expected = {.len = 2, .is_negative = false, .num = (u_int[]){0, 1}};
 
@@ -147,7 +147,7 @@ Test(int_to_bignum_nomalloc, test_1000000000, .description = "1,000,000,000", .t
 }
 
 Test(int_to_bignum_nomalloc, test_neg_1000000000,
-	 .description = "-1,000,000,000", .timeout = 2.0)
+	 .description = "-1,000,000,000", .timeout = 1.0)
 {
 	bignum_i expected = {.len = 2, .is_negative = true, .num = (u_int[]){0, 1}};
 
@@ -160,7 +160,7 @@ Test(int_to_bignum_nomalloc, test_neg_1000000000,
 }
 
 Test(int_to_bignum_nomalloc, test_LLONG_MIN,
-	 .description = "LLONG_MIN + 1 (-9223372036854775807)", .timeout = 2.0)
+	 .description = "LLONG_MIN + 1 (-9223372036854775807)", .timeout = 1.0)
 {
 	bignum_i expected = {
 		.len = 3, .is_negative = true, .num = (u_int[]){854775807, 223372036, 9}};
@@ -174,7 +174,7 @@ Test(int_to_bignum_nomalloc, test_LLONG_MIN,
 }
 
 Test(int_to_bignum_nomalloc, test_LLONG_MAX,
-	 .description = "LLONG_MAX (9223372036854775807)", .timeout = 2.0)
+	 .description = "LLONG_MAX (9223372036854775807)", .timeout = 1.0)
 {
 	bignum_i expected = {
 		.len = 3, .is_negative = false, .num = (u_int[]){854775807, 223372036, 9}};

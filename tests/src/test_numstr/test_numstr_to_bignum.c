@@ -17,12 +17,12 @@ void teardown(void)
 
 TestSuite(null_inputs);
 
-Test(null_inputs, test_NULL, .description = "NULL", .timeout = 2.0)
+Test(null_inputs, test_NULL, .description = "NULL", .timeout = 1.0)
 {
 	cr_assert(zero(ptr, numstr_to_bni(NULL)));
 }
 
-Test(null_inputs, test_null_str, .description = "null string", .timeout = 2.0)
+Test(null_inputs, test_null_str, .description = "null string", .timeout = 1.0)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = NULL};
 
@@ -31,7 +31,7 @@ Test(null_inputs, test_null_str, .description = "null string", .timeout = 2.0)
 
 TestSuite(invalid_inputs);
 
-Test(invalid_inputs, test_0_len, .description = "len is 0", .timeout = 2.0)
+Test(invalid_inputs, test_0_len, .description = "len is 0", .timeout = 1.0)
 {
 	numstr in = {.len = 0, .is_negative = false, .str = "1"};
 
@@ -39,7 +39,7 @@ Test(invalid_inputs, test_0_len, .description = "len is 0", .timeout = 2.0)
 }
 
 Test(invalid_inputs, test_all_nonvalid_charbits,
-	 .description = "invalid chars", .timeout = 2.0)
+	 .description = "invalid chars", .timeout = 1.0)
 {
 	char c[2] = {SCHAR_MIN, '\0'};
 	numstr in = {.len = 4, .is_negative = false, .str = c};
@@ -53,7 +53,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits,
 }
 
 Test(invalid_inputs, test_all_nonvalid_charbits2,
-	 .description = "invalid 2chars", .timeout = 2.0)
+	 .description = "invalid 2chars", .timeout = 1.0)
 {
 	char c[3] = {SCHAR_MIN, SCHAR_MIN, '\0'};
 	numstr in = {.len = 4, .is_negative = false, .str = c};
@@ -67,7 +67,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits2,
 }
 
 Test(invalid_inputs, test_all_nonvalid_charbits2alt,
-	 .description = "invalid 2chars alt", .timeout = 2.0)
+	 .description = "invalid 2chars alt", .timeout = 1.0)
 {
 	char c[3] = {SCHAR_MIN, SCHAR_MAX, '\0'};
 	numstr in = {.len = 4, .is_negative = false, .str = c};
@@ -81,7 +81,7 @@ Test(invalid_inputs, test_all_nonvalid_charbits2alt,
 }
 
 Test(invalid_inputs, test_all_invalid_charbits3,
-	 .description = "invalid 3chars", .timeout = 2.0)
+	 .description = "invalid 3chars", .timeout = 1.0)
 {
 	char c[] = {'\0', '\0', '\0', '\0'};
 	numstr in = {.len = 4, .is_negative = false, .str = c};
@@ -109,7 +109,7 @@ Test(invalid_inputs, test_all_invalid_charbits3,
 }
 
 Test(invalid_inputs, test_invalid_chars_mixed_with_valid_chars,
-	 .description = "Assortment of valid and invalid chars", .timeout = 2.0)
+	 .description = "Assortment of valid and invalid chars", .timeout = 1.0)
 {
 	numstr in = {.len = 7, .is_negative = false, .str = "123/567"};
 
@@ -135,7 +135,7 @@ Test(invalid_inputs, test_invalid_chars_mixed_with_valid_chars,
 
 TestSuite(valid_inputs, .init = setup, .fini = teardown);
 
-Test(valid_inputs, test_0, .description = "0", .timeout = 2.0)
+Test(valid_inputs, test_0, .description = "0", .timeout = 1.0)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = "0"};
 	u_int arr[] = {0};
@@ -148,7 +148,7 @@ Test(valid_inputs, test_0, .description = "0", .timeout = 2.0)
 	cr_assert(eq(u32[out.len], output->num, out.num));
 }
 
-Test(valid_inputs, test_eight9s, .description = "99999999", .timeout = 2.0)
+Test(valid_inputs, test_eight9s, .description = "99999999", .timeout = 1.0)
 {
 	numstr in = {.len = 8, .is_negative = false, .str = "99999999"};
 	u_int arr[] = {99999999};
@@ -161,7 +161,7 @@ Test(valid_inputs, test_eight9s, .description = "99999999", .timeout = 2.0)
 	cr_assert(eq(u32[out.len], output->num, out.num));
 }
 
-Test(valid_inputs, test_nine9s, .description = "999999999", .timeout = 2.0)
+Test(valid_inputs, test_nine9s, .description = "999999999", .timeout = 1.0)
 {
 	numstr in = {.len = 9, .is_negative = false, .str = "999999999"};
 	u_int arr[] = {999999999};
@@ -174,7 +174,7 @@ Test(valid_inputs, test_nine9s, .description = "999999999", .timeout = 2.0)
 	cr_assert(eq(u32[out.len], output->num, out.num));
 }
 
-Test(valid_inputs, test_ten9s, .description = "9,999999999", .timeout = 2.0)
+Test(valid_inputs, test_ten9s, .description = "9,999999999", .timeout = 1.0)
 {
 	numstr in = {.len = 10, .is_negative = false, .str = "9999999999"};
 	u_int arr[] = {999999999, 9};
