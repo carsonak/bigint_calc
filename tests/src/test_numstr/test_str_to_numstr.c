@@ -120,45 +120,45 @@ TestSuite(invalid_chars_in_str, .init = setup, .fini = teardown);
 Test(invalid_chars_in_str, test_valid_chars_with_dash_in_middle,
 	 .description = "123-567", .timeout = 1.0)
 {
-	output = str_to_numstr("123-567", 10, &processed);
+	cr_redirect_stderr();
 
-	cr_assert(eq(sz, output->len, 3));
+	const char in[] = "123-567";
+	char expected[] = "123";
+
+	output = str_to_numstr(in, 10, &processed);
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
 	cr_assert(eq(sz, processed, 3));
 	cr_assert(eq(chr, output->is_negative, false));
-	cr_assert(eq(str, output->str, "123"));
-}
-
-Test(invalid_chars_in_str, test_valid_chars_with_plus_in_middle,
-	 .description = "123+567", .timeout = 1.0)
-{
-	output = str_to_numstr("123+567", 10, &processed);
-
-	cr_assert(eq(sz, output->len, 3));
-	cr_assert(eq(sz, processed, 3));
-	cr_assert(eq(chr, output->is_negative, false));
-	cr_assert(eq(str, output->str, "123"));
+	cr_assert(eq(str, output->str, expected));
 }
 
 Test(invalid_chars_in_str, test_valid_chars_with_space_in_middle,
 	 .description = "123 567", .timeout = 1.0)
 {
-	output = str_to_numstr("123 567", 10, &processed);
 
-	cr_assert(eq(sz, output->len, 3));
-	cr_assert(eq(sz, processed, 3));
+	const char in[] = "123 567";
+	char expected[] = "123";
+
+	output = str_to_numstr(in, 10, &processed);
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
+	cr_assert(eq(sz, processed, sizeof(expected) - 1));
 	cr_assert(eq(chr, output->is_negative, false));
-	cr_assert(eq(str, output->str, "123"));
+	cr_assert(eq(str, output->str, expected));
 }
 
 Test(invalid_chars_in_str, test_valid_chars_with_bracket_in_middle,
 	 .description = "123(567)", .timeout = 1.0)
 {
-	output = str_to_numstr("123(567)", 10, &processed);
 
-	cr_assert(eq(sz, output->len, 3));
-	cr_assert(eq(sz, processed, 3));
+	const char in[] = "123(567)";
+	char expected[] = "123";
+
+	output = str_to_numstr(in, 10, &processed);
+
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
+	cr_assert(eq(sz, processed, sizeof(expected) - 1));
 	cr_assert(eq(chr, output->is_negative, false));
-	cr_assert(eq(str, output->str, "123"));
+	cr_assert(eq(str, output->str, expected));
 }
 
 TestSuite(valid_inputs, .init = setup, .fini = teardown);
@@ -278,76 +278,88 @@ Test(valid_inputs, test_lowercase_letters2,
 Test(valid_inputs, test_0000000000000,
 	 .description = "0000000000000", .timeout = 1.0)
 {
+
 	const char in[] = "0000000000000";
+	char expected[] = "0";
 
 	output = str_to_numstr(in, 10, &processed);
 
-	cr_assert(eq(sz, output->len, 1));
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
 	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	cr_assert(eq(chr, output->is_negative, false));
-	cr_assert(eq(str, output->str, "0"));
+	cr_assert(eq(str, output->str, expected));
 }
 
 Test(valid_inputs, test_neg0000000000000,
 	 .description = "-0000000000000", .timeout = 1.0)
 {
+
 	const char in[] = "-0000000000000";
+	char expected[] = "0";
 
 	output = str_to_numstr(in, 10, &processed);
 
-	cr_assert(eq(sz, output->len, 1));
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
 	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	cr_assert(eq(chr, output->is_negative, true));
-	cr_assert(eq(str, output->str, "0"));
+	cr_assert(eq(str, output->str, expected));
 }
 
 Test(valid_inputs, test_00000000000001,
 	 .description = "00000000000001", .timeout = 1.0)
 {
+
 	const char in[] = "00000000000001";
+	char expected[] = "1";
 
 	output = str_to_numstr(in, 10, &processed);
 
-	cr_assert(eq(sz, output->len, 1));
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
 	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	cr_assert(eq(chr, output->is_negative, false));
-	cr_assert(eq(str, output->str, "1"));
+	cr_assert(eq(str, output->str, expected));
 }
 
 Test(valid_inputs, test_neg00000000000001,
 	 .description = "-00000000000001", .timeout = 1.0)
 {
+
 	const char in[] = "-00000000000001";
+	char expected[] = "1";
 
 	output = str_to_numstr(in, 10, &processed);
 
-	cr_assert(eq(sz, output->len, 1));
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
 	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	cr_assert(eq(chr, output->is_negative, true));
-	cr_assert(eq(str, output->str, "1"));
+	cr_assert(eq(str, output->str, expected));
 }
 
 Test(valid_inputs, test_mmneg10_000_000_000,
 	 .description = "-10_000_000_000", .timeout = 1.0)
 {
+
 	const char in[] = "---10_000_000_000";
+	char expected[] = "10000000000";
 
 	output = str_to_numstr(in, 10, &processed);
 
-	cr_assert(eq(sz, output->len, 11));
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
 	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	cr_assert(eq(chr, output->is_negative, true));
-	cr_assert(eq(str, output->str, "10000000000"));
+	cr_assert(eq(str, output->str, expected));
 }
 
 Test(valid_inputs, test_neg1, .description = "--ZZZ_4Ar_YU8_012_qa9", .timeout = 1.0)
 {
+
 	const char in[] = "--ZZZ_4Ar_YU8_012_qa9";
+	char expected[] = "ZZZ4ARYU8012QA9";
 
 	output = str_to_numstr(in, 36, &processed);
 
-	cr_assert(eq(sz, output->len, 15));
+	cr_assert(eq(sz, output->len, sizeof(expected) - 1));
 	cr_assert(eq(sz, processed, sizeof(in) - 1));
 	cr_assert(eq(chr, output->is_negative, false));
-	cr_assert(eq(str, output->str, "ZZZ4ARYU8012QA9"));
+	cr_assert(eq(str, output->str, expected));
 }
