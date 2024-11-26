@@ -7,28 +7,28 @@
  *
  * Return: pointer to the newly added node, NULL if dq_head is NULL or failure.
  */
-double_link_node *push_head(deque *dq_head, void *data)
+struct double_link_node *push_head(struct deque *dq_head, void *data)
 {
-	double_link_node *nw = NULL;
+	struct double_link_node *new_node = NULL;
 
 	if (!dq_head)
 		return (NULL);
 
-	nw = calloc(1, sizeof(*nw));
-	if (!nw)
+	new_node = xcalloc(1, sizeof(*new_node));
+	if (!new_node)
 		return (NULL);
 
-	nw->data = data;
-	nw->next = dq_head->head;
+	new_node->data = data;
+	new_node->next = dq_head->head;
 	if (dq_head->head)
-		dq_head->head->prev = nw;
+		dq_head->head->prev = new_node;
 
 	if (!dq_head->tail)
-		dq_head->tail = nw;
+		dq_head->tail = new_node;
 
-	dq_head->head = nw;
+	dq_head->head = new_node;
 	++(dq_head->size);
-	return (nw);
+	return (new_node);
 }
 
 /**
@@ -38,28 +38,28 @@ double_link_node *push_head(deque *dq_head, void *data)
  *
  * Return: pointer to the newly added node, NULL if dq_head is NULL or failure.
  */
-double_link_node *push_tail(deque *dq_head, void *data)
+struct double_link_node *push_tail(struct deque *dq_head, void *data)
 {
-	double_link_node *nw = NULL;
+	struct double_link_node *new_node = NULL;
 
 	if (!dq_head)
 		return (NULL);
 
-	nw = calloc(1, sizeof(*nw));
-	if (!nw)
+	new_node = xcalloc(1, sizeof(*new_node));
+	if (!new_node)
 		return (NULL);
 
-	nw->data = data;
-	nw->prev = dq_head->tail;
+	new_node->data = data;
+	new_node->prev = dq_head->tail;
 	if (dq_head->tail)
-		dq_head->tail->next = nw;
+		dq_head->tail->next = new_node;
 
 	if (!dq_head->head)
-		dq_head->head = nw;
+		dq_head->head = new_node;
 
-	dq_head->tail = nw;
+	dq_head->tail = new_node;
 	++(dq_head->size);
-	return (nw);
+	return (new_node);
 }
 
 /**
@@ -68,9 +68,9 @@ double_link_node *push_tail(deque *dq_head, void *data)
  *
  * Return: data that was in the popped node.
  */
-void *pop_head(deque *dq_head)
+void *pop_head(struct deque *dq_head)
 {
-	double_link_node *p = NULL;
+	struct double_link_node *p = NULL;
 	void *d = NULL;
 
 	if (!dq_head || !dq_head->head)
@@ -79,7 +79,7 @@ void *pop_head(deque *dq_head)
 	p = dq_head->head;
 	d = dq_head->head->data;
 	dq_head->head = dq_head->head->next;
-	free(p);
+	p = free_n_null(p);
 	if (!dq_head->head)
 		dq_head->tail = NULL;
 
@@ -95,9 +95,9 @@ void *pop_head(deque *dq_head)
  *
  * Return: data that was in the popped node.
  */
-void *pop_tail(deque *dq_head)
+void *pop_tail(struct deque *dq_head)
 {
-	double_link_node *p = NULL;
+	struct double_link_node *p = NULL;
 	void *d = NULL;
 
 	if (!dq_head || !dq_head->tail)
@@ -106,7 +106,7 @@ void *pop_tail(deque *dq_head)
 	p = dq_head->tail;
 	d = dq_head->tail->data;
 	dq_head->tail = dq_head->tail->prev;
-	free(p);
+	p = free_n_null(p);
 	if (!dq_head->tail)
 		dq_head->head = NULL;
 
@@ -123,7 +123,7 @@ void *pop_tail(deque *dq_head)
  *
  * Return: NULL always.
  */
-void *clear_deque(deque *dq, void *(*free_data)(void *))
+void *clear_deque(struct deque *dq, void *(*free_data)(void *))
 {
 	if (!dq || !dq->head)
 		return (NULL);
@@ -131,20 +131,18 @@ void *clear_deque(deque *dq, void *(*free_data)(void *))
 	while (dq->head->next)
 	{
 		if (free_data)
-			(*free_data)(dq->head->data);
+			free_data(dq->head->data);
 
 		dq->head = dq->head->next;
-		free(dq->head->prev);
+		dq->head->prev = free_n_null(dq->head->prev);
 	}
 
 	if (free_data)
-		(*free_data)(dq->head->data);
+		free_data(dq->head->data);
 
-	free(dq->head);
-	dq->head = NULL;
+	dq->head = free_n_null(dq->head);
 	dq->tail = NULL;
 	dq->size = 0;
-
 	return (NULL);
 }
 
@@ -153,9 +151,9 @@ void *clear_deque(deque *dq, void *(*free_data)(void *))
  * @dq_head: the deque to print.
  * @print_data: function that will be called to print data in nodes.
  */
-void print_deque(deque *dq_head, void (*print_data)(void *))
+void print_deque(struct deque *dq_head, void (*print_data)(void *))
 {
-	double_link_node *walk = NULL;
+	struct double_link_node *walk = NULL;
 
 	if (!dq_head)
 		return;

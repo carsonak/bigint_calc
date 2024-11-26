@@ -7,9 +7,9 @@
  *
  * Return: pointer to the newly added node, NULL if s is NULL or failure.
  */
-single_link_nd *push(stack *s, void *data)
+single_link_node *push(stack *s, void *data)
 {
-	single_link_nd *nw = NULL;
+	single_link_node *nw = NULL;
 
 	if (!s)
 		return (NULL);
@@ -33,7 +33,7 @@ single_link_nd *push(stack *s, void *data)
  */
 void *pop(stack *s)
 {
-	single_link_nd *n = NULL;
+	single_link_node *n = NULL;
 	void *data = NULL;
 
 	if (!s || !s->top)
@@ -58,7 +58,7 @@ void *pop(stack *s)
  */
 void *clear_stack(stack *s, void *(*free_data)(void *))
 {
-	single_link_nd *p = NULL;
+	single_link_node *p = NULL;
 
 	if (!s)
 		return (NULL);
@@ -84,7 +84,7 @@ void *clear_stack(stack *s, void *(*free_data)(void *))
  */
 void print_stack(stack *s, void (*print_data)(void *))
 {
-	single_link_nd *walk = NULL;
+	single_link_node *walk = NULL;
 
 	if (!s)
 		return;

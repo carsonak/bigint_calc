@@ -31,17 +31,17 @@ static bool check_is_negative(const char *num_str, size_t *str_i)
 static char map_digits(const char c, const void *radix)
 {
 	int a = char_to_int(c);
-	unsigned int base = 0;
 
 	if (!radix)
 		return (-1);
 
-	base = *((unsigned int *)radix);
+	const unsigned int base = *((const unsigned int *)radix);
+
 	if (c == '_')
 		return (0); /*underscores should be ignored.*/
 
 	if (a < 0 || (unsigned int)a >= base)
-		return (-1); /*the character is not within the accepted range.*/
+		return (-1); /*invalid character.*/
 
 	return (int_to_char(a));
 }
@@ -51,6 +51,8 @@ static char map_digits(const char c, const void *radix)
  * @number_str: a string with a number.
  * @base: an int between 2-36 indicating the base of the number.
  * @processed: address to store number of characters processed.
+ *
+ * If this function returns NULL, processed will not be changed.
  *
  * Return: pointer to a numstr struct, NULL of failure.
  */
@@ -65,37 +67,44 @@ numstr *str_to_numstr(
 
 	ns = alloc_numstr(0);
 	if (!ns)
-		goto cleanup_numstr;
+		return (NULL);
 
 	ns->is_negative = check_is_negative(number_str, &str_i);
 	if (number_str[str_i] == '_')
 	{
-		fprintf(stderr, "ParsingError: Leading underscores not allowed.\n");
+		fprintf(
+			stderr, "ParsingError: Leading underscores not allowed.\n");
 		goto cleanup_numstr;
 	}
 
 	str_i += leading_chars_span(&number_str[str_i], "0");
 	ns->str = filter_str(&number_str[str_i], &p, map_digits, &base);
 	if (!ns->str)
-		goto cleanup_numstr;
+		goto critical_failure;
 
 	ns->len = strlen(ns->str);
 	if (!ns->len)
 	{
-		fprintf(stderr, "ParsingError: string did not contain any valid digits.\n");
+		fprintf(
+			stderr, "ParsingError: string did not contain any valid digits.\n");
 		goto cleanup_numstr;
 	}
 
 	str_i += p;
-	if (number_str[str_i - 1] == '_')
+	if (str_i && number_str[str_i - 1] == '_')
 	{
-		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
+		fprintf(
+			stderr, "ParsingError: Trailing underscores not allowed.\n");
+		--str_i;
 cleanup_numstr:
 		ns = free_numstr(ns);
 	}
 
 	if (processed)
-		*processed = str_i + 1;
+		*processed = str_i;
 
 	return (ns);
+
+critical_failure:
+	return (free_numstr(ns));
 }

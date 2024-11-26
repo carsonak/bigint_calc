@@ -3,7 +3,9 @@
 
 #include <stddef.h>
 #include <stdio.h>
-#include <stdlib.h>
+// #include <stdlib.h>
+
+#include "xalloc.h"
 
 /**
  * struct single_link_node - a singly linked list node.
@@ -14,7 +16,7 @@ typedef struct single_link_node
 {
 	void *data;
 	struct single_link_node *next;
-} single_link_nd;
+} single_link_node;
 
 /**
  * struct double_link_node - a doubly linked list node.
@@ -39,12 +41,12 @@ typedef struct double_link_node
 typedef struct stack
 {
 	size_t size;
-	single_link_nd *top;
+	struct single_link_node *top;
 } stack;
 
-single_link_nd *push(stack *s, void *data);
-void *pop(stack *s);
-void *clear_stack(stack *s, void *(*free_data)(void *));
+struct single_link_node *push(struct stack *s, void *data);
+void *pop(struct stack *s);
+void *clear_stack(struct stack *s, void *(*free_data)(void *));
 /*void print_stack(stack *s, void (*print_data)(void *));*/
 
 /*linked list*/
@@ -57,12 +59,12 @@ void *clear_stack(stack *s, void *(*free_data)(void *));
 typedef struct link_list
 {
 	size_t size;
-	double_link_node *head;
+	struct double_link_node *head;
 } link_list;
 
-double_link_node *insert_nd(double_link_node *node, void *data);
-void *remove_nd(double_link_node *node);
-void *clear_list(link_list *list, void *(*free_data)(void *));
+struct double_link_node *insert_nd(struct double_link_node *node, void *data);
+void *remove_nd(struct double_link_node *node);
+void *clear_list(struct link_list *list, void *(*free_data)(void *));
 
 /*deque*/
 
@@ -75,15 +77,15 @@ void *clear_list(link_list *list, void *(*free_data)(void *));
 typedef struct deque
 {
 	size_t size;
-	double_link_node *head;
-	double_link_node *tail;
+	struct double_link_node *head;
+	struct double_link_node *tail;
 } deque;
 
-double_link_node *push_head(deque *dq_head, void *data);
-double_link_node *push_tail(deque *dq_head, void *data);
-void *pop_head(deque *dq_head);
-void *pop_tail(deque *dq_head);
-void *clear_deque(deque *dq, void *(*free_data)(void *));
+struct double_link_node *push_head(struct deque *dq_head, void *data);
+struct double_link_node *push_tail(struct deque *dq_head, void *data);
+void *pop_head(struct deque *dq_head);
+void *pop_tail(struct deque *dq_head);
+void *clear_deque(struct deque *dq, void *(*free_data)(void *));
 /*void print_deque(deque *dq_head, void (*print_data)(void *));*/
 
 #endif /* DATA_STRUCTURES_H */

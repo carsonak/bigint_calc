@@ -12,6 +12,8 @@
  * If map returns 0, the character will be ignored, essentially deleting the
  * character from the returned string.
  *
+ * If this function returns NULL, the value of processed will be unchanged.
+ *
  * Return: pointer to the filtered string, NULL on failure.
  */
 char *filter_str(const char *str, size_t *const processed,
@@ -55,13 +57,14 @@ char *filter_str(const char *str, size_t *const processed,
 			break;
 	}
 
-	if (processed)
+	/*processed should not change in case of alloc fail.*/
+	if (output && processed)
 		*processed = str_i;
 
 	free_n_null(buffer);
-	/*In the case str = "\0", output will be NULL, which is undesirable as*/
+	/*In the case `str = "\0"`, output will be NULL, which is undesirable as*/
 	/*NULL is an error value in this function.*/
-	if (!str_i && !str[str_i])
+	if (str_i == 0 && !str[str_i])
 		return (xcalloc(1, sizeof(*output)));
 
 	return (output);
