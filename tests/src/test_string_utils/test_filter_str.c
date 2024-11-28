@@ -7,7 +7,7 @@
  *
  * Return: the capitalised letter, 0 if digit, -1 otherwise.
  */
-static char capitalise(const char c, const void *args)
+static char capitalise(const char c, void const *const args)
 {
 	(void)args;
 	if (isalpha(c))

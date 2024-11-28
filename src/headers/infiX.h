@@ -7,7 +7,7 @@
 #include "bignum_math.h"
 #include "parsing.h"
 
-void panic(const char *err_type);
-void help_me(const char *which_help);
+void panic(char const *const err_type);
+void help_me(char const *const which_help);
 
 #endif /*INFIX_PROJ_API_H*/

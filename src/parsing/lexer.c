@@ -7,7 +7,7 @@
  *
  * Return: pointer to a token, NULL on failure.
  */
-static token *match_token(const char *str, size_t *processed)
+static token *match_token(char const *const str, size_t *processed)
 {
 	token *t = NULL;
 	numstr *n = NULL;
@@ -70,7 +70,7 @@ static token *match_token(const char *str, size_t *processed)
  *          ^`
  */
 static void format_lexing_error_msg(
-	const char *expression, size_t idx, const char *msg)
+	char const *const expression, size_t idx, char const *const msg)
 {
 	char slice[12] = {0}, highlight[12] = {0};
 	int i = 0, upper = 0;
@@ -116,7 +116,7 @@ void *free_token(token *freeable_token)
  *
  * Return: a deque of tokens on success, NULL otherwise.
  */
-deque *lex_str(const char *str)
+deque *lex_str(char const *const str)
 {
 	deque *tokens = NULL;
 	token *t = NULL;

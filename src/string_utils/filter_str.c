@@ -16,8 +16,8 @@
  *
  * Return: pointer to the filtered string, NULL on failure.
  */
-char *filter_str(const char *str, size_t *const processed,
-				 const mapping_func map, const void *map_args)
+char *filter_str(char const *const str, size_t *const processed,
+				 const mapping_func map, void const *const map_args)
 {
 	const unsigned int buf_size = 1024;
 	char *output = NULL, c = 0;

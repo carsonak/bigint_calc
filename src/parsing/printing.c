@@ -35,7 +35,7 @@ size_t print_bignum(bignum_i *arr)
  *
  * Return: pointer to a string, NULL on error.
  */
-char *uint_array_to_str(const u_int *arr, size_t len)
+char *uint_array_to_str(u_int const *const arr, size_t len)
 {
 	size_t s_i = 0, n = 0, len_sep = 0, len_str = 0;
 	int bytes_written = 0;

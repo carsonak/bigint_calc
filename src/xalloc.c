@@ -74,7 +74,7 @@ void *xrealloc_free_on_fail(void *nullable_ptr, size_t size)
  *
  * Return: pointer to the duplicated string, NULL on failure.
  */
-char *xstrdup(const char *str)
+char *xstrdup(char const *const str)
 {
 	char *s = strdup(str);
 

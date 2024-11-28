@@ -1,7 +1,7 @@
 #include "numstr.h"
 
 static ATTR_NONNULL bool
-check_is_negative(const char *num_str, size_t *str_i);
+check_is_negative(char const *const num_str, size_t *str_i);
 
 /**
  * check_is_negative - determine signedness of number.
@@ -10,7 +10,7 @@ check_is_negative(const char *num_str, size_t *str_i);
  *
  * Return: true if the sign is negative, false otherwise.
  */
-static bool check_is_negative(const char *num_str, size_t *str_i)
+static bool check_is_negative(char const *const num_str, size_t *str_i)
 {
 	bool is_neg = false;
 
@@ -28,7 +28,7 @@ static bool check_is_negative(const char *num_str, size_t *str_i)
  *
  * Return: the transformed character, -1 on error.
  */
-static char map_digits(const char c, const void *radix)
+static char map_digits(const char c, void const *const radix)
 {
 	int a = char_to_int(c);
 
@@ -57,7 +57,7 @@ static char map_digits(const char c, const void *radix)
  * Return: pointer to a numstr struct, NULL of failure.
  */
 numstr *str_to_numstr(
-	const char *number_str, const unsigned int base, size_t *const processed)
+	char const *const number_str, const unsigned int base, size_t *const processed)
 {
 	numstr *ns = NULL;
 	size_t str_i = 0, p = 0;

@@ -7,7 +7,7 @@
  *
  * Return: number of leading characters.
  */
-size_t leading_chars_span(const char *str, const char *ch)
+size_t leading_chars_span(char const *const str, char const *const ch)
 {
 	size_t count = 0;
 

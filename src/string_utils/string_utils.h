@@ -16,12 +16,12 @@
  *
  * Return: the transformed character.
  */
-typedef char (*mapping_func)(const char c, const void *args);
+typedef char (*mapping_func)(const char c, void const *const args);
 
-char *filter_str(const char *str, size_t *const processed,
-				 const mapping_func f, const void *f_args);
+char *filter_str(char const *const str, size_t *const processed,
+				 const mapping_func f, void const *const f_args);
 char int_to_char(const unsigned int num);
 int char_to_int(const char c);
-size_t leading_chars_span(const char *str, const char *ch);
+size_t leading_chars_span(char const *const str, char const *const ch);
 
 #endif /*STRING_UTILS*/

@@ -58,7 +58,7 @@ void *xrealloc(void *nullable_ptr, size_t size)
  *
  * Return: NULL always.
  */
-char *xstrdup(const char *str)
+char *xstrdup(char const *const str)
 {
 	(void)str;
 	return (NULL);

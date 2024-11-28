@@ -10,7 +10,7 @@
  * panic - app misuse error handler.
  * @err_type: a string with the error type.
  */
-void panic(const char *err_type)
+void panic(char const *const err_type)
 {
 	if (!err_type || (err_type && err_type[0] == 'H'))
 		help_me(err_type);
@@ -37,7 +37,7 @@ void panic(const char *err_type)
  * help_me - print help text.
  * @which_help: a string specifying which text to print.
  */
-void help_me(const char *which_help)
+void help_me(char const *const which_help)
 {
 	if (which_help && !strcmp(which_help, "Hops"))
 	{

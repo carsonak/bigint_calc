@@ -68,16 +68,16 @@ union ops
 typedef struct token
 {
 	enum token_type id;
-	const char *start;
+	char const *start;
 	union ops op;
 } token;
 
 size_t print_bignum(bignum_i *arr);
-char *uint_array_to_str(const u_int *arr, size_t len);
+char *uint_array_to_str(u_int const *const arr, size_t len);
 
 /* shunting_yard */
-deque *parse_tokens(const char *expression);
-void print_syntax_error(const char *expression, size_t idx, const char *msg);
+deque *parse_tokens(char const *const expression);
+void print_syntax_error(char const *const expression, size_t idx, char const *const msg);
 void *free_token(token *freeable_token);
 
 #endif /* PARSING_H */

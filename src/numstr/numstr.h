@@ -36,7 +36,7 @@ numstr *alloc_numstr(size_t len);
 
 unsigned int count_digits(size_t num);
 numstr *str_to_numstr(
-    const char *str, const unsigned int base, size_t *const processed);
+    char const *const str, const unsigned int base, size_t *const processed);
 bignum_i *numstr_to_bni(numstr *num);
 numstr *bni_to_numstr(bignum_i *bn_arr, const unsigned int base);
 bignum_i *anybase_to_bni(numstr *nstr, const unsigned int base);
