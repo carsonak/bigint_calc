@@ -29,7 +29,7 @@ STACK_CHECKS := -fstack-protector-strong -fstack-clash-protection
 CONTROL_TRANSFER_CHECKS := -fcf-protection=full
 
 # Include flags
-INCL_FLAGS = $(addprefix -I,$(INCLUDE_DIRS))
+INCL_FLAGS = $(addprefix -iquote ,$(INCLUDE_DIRS))
 # Linker flags
 LDLIBS :=
 LDFLAGS := -Wl,-z,relro

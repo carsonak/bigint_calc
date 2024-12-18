@@ -1,12 +1,12 @@
 #include "parsing.h"
 
 /**
- * print_bignum - print a bignum.
+ * print_bigint - print a bigint.
  * @arr: pointer to the array struct.
  *
  * Return: number of bytes printed, -1 on error.
  */
-size_t print_bignum(bignum_i *arr)
+size_t print_bigint(bigint *arr)
 {
 	char *str_arr = NULL;
 	size_t bytes_printed = 0;

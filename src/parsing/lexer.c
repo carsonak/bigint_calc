@@ -27,17 +27,17 @@ static token *match_token(char const *const str, size_t *processed)
 	else if (*str == ')')
 		*t = (token){.id = PAREN_R, .start = str, .op = {NULL}};
 	else if (*str == '+')
-		*t = (token){.id = ADD_OP, .start = str, .op = {bni_add}};
+		*t = (token){.id = ADD_OP, .start = str, .op = {bi_add}};
 	else if (*str == '-')
-		*t = (token){.id = SUB_OP, .start = str, .op = {bni_subtract}};
+		*t = (token){.id = SUB_OP, .start = str, .op = {bi_subtract}};
 	else if (*str == '*')
-		*t = (token){.id = MUL_OP, .start = str, .op = {bni_multiply}};
+		*t = (token){.id = MUL_OP, .start = str, .op = {bi_multiply}};
 	else if (*str == '/')
-		*t = (token){.id = DIV_OP, .start = str, .op = {bni_divide}};
+		*t = (token){.id = DIV_OP, .start = str, .op = {bi_divide}};
 	else if (*str == '%')
-		*t = (token){.id = MOD_OP, .start = str, .op = {bni_modulo}};
+		*t = (token){.id = MOD_OP, .start = str, .op = {bi_modulo}};
 	else if (*str == '^')
-		*t = (token){.id = POW_OP, .start = str, .op = {bni_power}};
+		*t = (token){.id = POW_OP, .start = str, .op = {bi_power}};
 	else if (isdigit(*str))
 	{
 		n = str_to_numstr(str, 10, processed);

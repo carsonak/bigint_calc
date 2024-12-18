@@ -10,7 +10,7 @@
 #include <string.h>	 /* strlen, strcpy */
 
 #include "xalloc.h"
-#include "bignum_math.h"
+#include "bigint_math.h"
 #include "data_structures.h"
 #include "string_utils.h"
 #include "numstr.h"
@@ -19,7 +19,7 @@
 #define ANSI_NORMAL "\x1b[m"
 
 /* generic prototype for basic arithmetic functions. */
-typedef bignum_i *(math_function)(bignum_i *, bignum_i *);
+typedef bigint *(math_function)(bigint *, bigint *);
 
 /**
  * enum token_type - tags for all the components of an expression.
@@ -72,7 +72,7 @@ typedef struct token
 	union ops op;
 } token;
 
-size_t print_bignum(bignum_i *arr);
+size_t print_bigint(bigint *arr);
 char *uint_array_to_str(u_int const *const arr, size_t len);
 
 /* shunting_yard */

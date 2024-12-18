@@ -1,0 +1,41 @@
+#include "bigint_utils.h"
+
+/**
+ * bni_swap - swaps two bigints.
+ * @n1: the first bigint.
+ * @n2: the second bigint.
+ *
+ * Both numbers will be adjusted to the same size in memory after the swap.
+ *
+ * Return: true on success, false on failure.
+ */
+bool bi_swap(bigint *const n1, bigint *const n2)
+{
+	bigint tmp = {0};
+	size_t n1_size = 0, n2_size = 0;
+
+	if (!n1 || !n2)
+		return (false);
+
+	n1_size = n1->len;
+	n2_size = n2->len;
+	if (n1_size > n2_size)
+	{
+		if (!bi_realloc(n2, n1_size))
+			return (false);
+
+		n2->len = n2_size;
+	}
+	else if (n1_size < n2_size)
+	{
+		if (!bi_realloc(n1, n2_size))
+			return (false);
+
+		n1->len = n1_size;
+	}
+
+	tmp = *n1;
+	*n1 = *n2;
+	*n2 = tmp;
+	return (true);
+}

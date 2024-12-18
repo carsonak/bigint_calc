@@ -10,8 +10,8 @@
 #include <string.h>  /* strlen, strcpy */
 
 #include "xalloc.h"
-#include "bignum_utils.h"
-#include "bignum_math.h"
+#include "bigint_utils.h"
+#include "bigint_math.h"
 #include "string_utils.h"
 
 /**
@@ -37,8 +37,8 @@ numstr *alloc_numstr(size_t len);
 unsigned int count_digits(size_t num);
 numstr *str_to_numstr(
     char const *const str, const unsigned int base, size_t *const processed);
-bignum_i *numstr_to_bni(numstr *num);
-numstr *bni_to_numstr(bignum_i *bn_arr, const unsigned int base);
-bignum_i *anybase_to_bni(numstr *nstr, const unsigned int base);
+bigint *numstr_to_bni(numstr *num);
+numstr *bi_to_numstr(bigint *bi_arr, const unsigned int base);
+bigint *anybase_to_bni(numstr *nstr, const unsigned int base);
 
 #endif /*NUMSTR_H*/

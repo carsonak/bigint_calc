@@ -4,7 +4,7 @@
 #include "macros.h"
 
 #include "xalloc.h"
-#include "bignum_math.h"
+#include "bigint_math.h"
 #include "parsing.h"
 
 void panic(char const *const err_type);

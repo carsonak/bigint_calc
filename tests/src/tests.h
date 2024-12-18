@@ -7,8 +7,8 @@
 #include <criterion/new/assert.h>
 #include <criterion/redirect.h>
 
-/*Duplicate of BIGNUM_BASE*/
-#define BN_BASE 1000000000
+/*Duplicate of BIGINT_BASE*/
+#define bi_BASE 1000000000
 
 #define DUMMY_VALUE 2222222222
 
