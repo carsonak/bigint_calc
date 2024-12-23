@@ -154,7 +154,7 @@ Test(zero_len_arrays, test_null_over_largenum,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 TestSuite(division_by_zero, .init = setup, .fini = teardown);
@@ -208,7 +208,7 @@ Test(simple_divisions, test_0_over_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_divisions, test_1_over_1,
@@ -228,7 +228,7 @@ Test(simple_divisions, test_1_over_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_divisions, test_9723746_over_2938487,
@@ -248,7 +248,7 @@ Test(simple_divisions, test_9723746_over_2938487,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_divisions, test_1000000000_over_50000,
@@ -269,7 +269,7 @@ Test(simple_divisions, test_1000000000_over_50000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_divisions, test_50000_over_100000000,
@@ -290,7 +290,7 @@ Test(simple_divisions, test_50000_over_100000000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_divisions, test_longnum1_over_longnum2,
@@ -313,7 +313,7 @@ Test(simple_divisions, test_longnum1_over_longnum2,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_divisions, test_equal_over_equal,
@@ -337,7 +337,7 @@ Test(simple_divisions, test_equal_over_equal,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 TestSuite(negative_divisions, .init = setup, .fini = teardown);
@@ -364,7 +364,7 @@ Test(negative_divisions, test_minus9107428777003_over_minus809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(negative_divisions, test_minus9107428777003_over_809754437,
@@ -385,7 +385,7 @@ Test(negative_divisions, test_minus9107428777003_over_809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(negative_divisions, test_9107428777003_over_minus809754437,
@@ -406,7 +406,7 @@ Test(negative_divisions, test_9107428777003_over_minus809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 TestSuite(large_divisions, .init = setup, .fini = teardown);
@@ -429,7 +429,7 @@ Test(large_divisions, test_o1kb_over_o1kc,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(large_divisions, test_o500d_over_o500e,
@@ -451,7 +451,7 @@ Test(large_divisions, test_o500d_over_o500e,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(zero(chr, output->is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(large_divisions, test_o100a_over_o100f, .description = "o_100.a / o_100.f = long_num", .timeout = 1.0)
@@ -472,7 +472,7 @@ Test(large_divisions, test_o100a_over_o100f, .description = "o_100.a / o_100.f =
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(large_divisions, test_o100f_over_o100a, .description = "o_100.f / o_100.a = long_num", .timeout = 1.0)
@@ -493,5 +493,5 @@ Test(large_divisions, test_o100f_over_o100a, .description = "o_100.f / o_100.a =
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }

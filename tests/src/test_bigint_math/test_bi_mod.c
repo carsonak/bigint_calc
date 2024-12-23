@@ -132,7 +132,7 @@ Test(zero_len_arrays, test_null_modulo_largenum,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 TestSuite(division_by_zero, .init = setup, .fini = teardown);
@@ -187,7 +187,7 @@ Test(negative_modulus, test_neg_9107428777003_modulo_neg_809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(negative_modulus, test_neg_9107428777003_modulo_809754437,
@@ -208,7 +208,7 @@ Test(negative_modulus, test_neg_9107428777003_modulo_809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(negative_modulus, test_9107428777003_modulo_neg_809754437,
@@ -229,7 +229,7 @@ Test(negative_modulus, test_9107428777003_modulo_neg_809754437,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 TestSuite(simple_modulus, .init = setup, .fini = teardown);
@@ -248,7 +248,7 @@ Test(simple_modulus, test_0_modulo_1,
 
 	bigint *output = bi_modulo(&num1, &num2);
 
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_modulus, test_1_modulo_1,
@@ -268,7 +268,7 @@ Test(simple_modulus, test_1_modulo_1,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_modulus, test_1000000000_modulo_50000,
@@ -289,7 +289,7 @@ Test(simple_modulus, test_1000000000_modulo_50000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_modulus, test_50000_modulo_100000000,
@@ -310,7 +310,7 @@ Test(simple_modulus, test_50000_modulo_100000000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(simple_modulus, test_longnum1_modulo_longnum2,
@@ -332,7 +332,7 @@ Test(simple_modulus, test_longnum1_modulo_longnum2,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 TestSuite(large_modulus, .init = setup, .fini = teardown);
@@ -356,7 +356,7 @@ Test(large_modulus, test_o1kb_modulo_o1kc,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(large_modulus, test_o500d_modulo_o500e,
@@ -378,7 +378,7 @@ Test(large_modulus, test_o500d_modulo_o500e,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(large_modulus, test_o100a_modulo_o100f,
@@ -400,7 +400,7 @@ Test(large_modulus, test_o100a_modulo_o100f,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(large_modulus, test_o100f_modulo_o100a,
@@ -422,5 +422,5 @@ Test(large_modulus, test_o100f_modulo_o100a,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }

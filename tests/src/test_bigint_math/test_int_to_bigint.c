@@ -25,7 +25,7 @@ Test(int_to_bigint_malloc, test_0, .description = "0", .timeout = 1.0)
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(int_to_bigint_malloc, test_neg_1, .description = "-1", .timeout = 1.0)
@@ -36,7 +36,7 @@ Test(int_to_bigint_malloc, test_neg_1, .description = "-1", .timeout = 1.0)
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(int_to_bigint_malloc, test_1000000000, .description = "1,000,000,000", .timeout = 1.0)
@@ -47,7 +47,7 @@ Test(int_to_bigint_malloc, test_1000000000, .description = "1,000,000,000", .tim
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(int_to_bigint_malloc, test_neg_1000000000,
@@ -59,7 +59,7 @@ Test(int_to_bigint_malloc, test_neg_1000000000,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(int_to_bigint_malloc, test_LLONG_MIN,
@@ -72,7 +72,7 @@ Test(int_to_bigint_malloc, test_LLONG_MIN,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 Test(int_to_bigint_malloc, test_LLONG_MAX,
@@ -85,7 +85,7 @@ Test(int_to_bigint_malloc, test_LLONG_MAX,
 	cr_expect(eq(sz, output->len, expected.len));
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	cr_expect(eq(u32[expected.len], output->num, expected.num));
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 TestSuite(int_to_bigint_nomalloc, .init = setup, .fini = teardown);

@@ -14,13 +14,13 @@
 
 /*memory allocation functions*/
 
-void *bi_free(bigint *freeable_ptr);
+void *bi_delete(bigint *freeable_ptr);
 
-ATTR_MALLOC ATTR_MALLOC_FREE(bi_free)
-bigint *bi_alloc(size_t len);
-ATTR_MALLOC ATTR_MALLOC_FREE(bi_free)
-bigint *bi_dup(bigint *bn);
-bool bi_realloc(bigint *bn, size_t len);
+ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
+bigint *bi_alloc(const size_t len);
+ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
+bigint *bi_dup(bigint const *const bn);
+bigint *bi_resize(bigint *bi, const size_t len);
 
 /*utilities*/
 

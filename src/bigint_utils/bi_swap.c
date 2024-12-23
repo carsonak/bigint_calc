@@ -9,28 +9,32 @@
  *
  * Return: true on success, false on failure.
  */
-bool bi_swap(bigint *const n1, bigint *const n2)
+bool bi_swap(bigint *n1, bigint *n2)
 {
-	bigint tmp = {0};
-	size_t n1_size = 0, n2_size = 0;
-
 	if (!n1 || !n2)
 		return (false);
 
-	n1_size = n1->len;
-	n2_size = n2->len;
+	bigint tmp = {0};
+	const size_t n1_size = n1->len, n2_size = n2->len;
+
 	if (n1_size > n2_size)
 	{
-		if (!bi_realloc(n2, n1_size))
+		bigint *nw = bi_resize(n2, n1_size);
+
+		if (!nw)
 			return (false);
 
+		n2 = nw;
 		n2->len = n2_size;
 	}
 	else if (n1_size < n2_size)
 	{
-		if (!bi_realloc(n1, n2_size))
+		bigint *nw = bi_resize(n1, n2_size);
+
+		if (!nw)
 			return (false);
 
+		n1 = nw;
 		n1->len = n1_size;
 	}
 

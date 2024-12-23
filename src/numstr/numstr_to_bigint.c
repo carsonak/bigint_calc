@@ -43,7 +43,7 @@ bigint *numstr_to_bni(numstr *nstr)
         if (*end)
         {
             fprintf(stderr, "ParsingError: Invalid character '%c'\n", *end);
-            return (bi_free(bi_arr));
+            return (bi_delete(bi_arr));
         }
 
         bi_arr->num[bi_i] = tmp % BIGINT_BASE;

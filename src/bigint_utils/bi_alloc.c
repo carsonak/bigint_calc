@@ -1,25 +1,23 @@
 #include "bigint_utils.h"
 
 /**
- * bni_alloc - allocate memory for a bigint of given length.
+ * bi_alloc - allocate memory for a bigint of given length.
  * @len: length of the array, length 0 returns the struct with a NULL array.
  *
  * Return: a pointer to a bigint struct, NULL on failure.
  */
-bigint *bi_alloc(size_t len)
+bigint *bi_alloc(const size_t len)
 {
-	bigint *arr = xcalloc(1, sizeof(*arr));
+	bigint *arr = xmalloc(sizeof(*arr) + (sizeof(*arr->num) * len));
 
 	if (!arr)
 		return (NULL);
 
+	*arr = (bigint){0};
 	arr->len = len;
 	if (len > 0)
 	{
-		arr->num = xmalloc(len * sizeof(*arr->num));
-		if (!arr->num)
-			return (free_n_null(arr));
-
+		arr->num = (u_int *)(arr + 1);
 		arr->num[0] = 0;
 		arr->num[len - 1] = 0;
 	}
@@ -28,66 +26,74 @@ bigint *bi_alloc(size_t len)
 }
 
 /**
- * bi_realloc - resizes memory of a bigint array.
- * @bn: pointer to the bigint.
+ * bi_resize - resizes memory of a bigint array.
+ * @bi: pointer to the bigint.
  * @len: size in bytes to resize to.
  *
- * Return: true on success, false on failure.
+ * If `bi` is NULL, returns pointer to a new bigint, otherwise
+ * resize to len. If len is 0 the resized bigint will not be able
+ * to store any numbers.
+ * On failure `bi` is left unchanged.
+ *
+ * Return: pointer to the resized bigint, NULL on failure.
  */
-bool bi_realloc(bigint *bn, size_t len)
+bigint *bi_resize(bigint *bi, const size_t len)
 {
-	uint *new_arr = NULL;
+	const size_t actual_size = sizeof(*bi) + (sizeof(*bi->num) * len);
 
-	if (!bn) /*Cannot resize a NULL pointer.*/
-		return (false);
+	bi = xrealloc(bi, actual_size);
+	if (!bi)
+		return (NULL);
 
-	new_arr = xrealloc(bn->num, sizeof(*bn->num) * len);
-	if (len && !new_arr)
-		return (false);
+	if (len)
+		bi->num = (u_int *)(bi + 1);
+	else
+		bi->num = NULL;
 
-	bn->num = new_arr;
 	/*Initialise memory to 0 only when expanding the bigint.*/
-	if (len > bn->len)
-		memset(&(bn->num[bn->len]), 0, sizeof(*bn->num) * (len - bn->len));
+	if (len > bi->len)
+		memset(&(bi->num[bi->len]), 0, sizeof(*bi->num) * (len - bi->len));
 
-	bn->len = len;
-	return (true);
+	bi->len = len;
+	return (bi);
 }
 
 /**
  * bi_dup - duplicate a bigint.
- * @bn: a pointer to a bigint.
+ * @bi: a pointer to a bigint.
  *
- * Return: a pointer to a copy of bn.
+ * Return: a pointer to duplicated bi, NULL on failure.
  */
-bigint *bi_dup(bigint *bn)
+bigint *bi_dup(bigint const *const bi)
 {
-	bigint *dup = NULL;
-
-	if (!bn)
+	if (!bi)
 		return (NULL);
 
-	dup = bi_alloc(bn->len);
-	if (!bn->len || !dup)
-		return (dup);
+	bigint *const dup = bi_alloc(bi->len);
 
-	dup->is_negative = bn->is_negative;
-	memcpy(dup->num, bn->num, sizeof(*bn->num) * bn->len);
+	if (!dup)
+		return (NULL);
+
+	dup->is_negative = bi->is_negative;
+	if (bi->len)
+		memcpy(dup->num, bi->num, sizeof(*bi->num) * bi->len);
+
 	return (dup);
 }
 
 /**
- * bni_free - free a bigint, return NULL.
+ * bi_delete - free a bigint, return NULL.
  * @freeable_ptr: a pointer to a bigint.
  *
  * Return: NULL always.
  */
-void *bi_free(bigint *freeable_ptr)
+void *bi_delete(bigint *const freeable_ptr)
 {
 	if (freeable_ptr)
 	{
 		freeable_ptr->len = 0;
-		freeable_ptr->num = free_n_null(freeable_ptr->num);
+		// freeable_ptr->num = free_n_null(freeable_ptr->num);
+		freeable_ptr->num = NULL;
 	}
 
 	return (free_n_null(freeable_ptr));

@@ -28,20 +28,20 @@ bigint *anybase_to_bni(numstr *num, unsigned int base)
 	{
 		tmp = bigint_final;
 		bigint_final = bi_multiply(&base_bn, bigint_final);
-		tmp = bi_free(tmp);
+		tmp = bi_delete(tmp);
 		cval = char_to_int(num->str[i]);
 		if (cval < 0 || (u_int)cval >= base)
 		{
 			fprintf(
 				stderr, "ParsingError: Invalid character '%c' for base%u\n",
 				num->str[i], base);
-			return (bi_free(bigint_final));
+			return (bi_delete(bigint_final));
 		}
 
 		c_arr[0] = cval;
 		tmp = bigint_final;
 		bigint_final = bi_add(bigint_final, &char_bn);
-		tmp = bi_free(tmp);
+		tmp = bi_delete(tmp);
 	}
 
 	return (bigint_final);

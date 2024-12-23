@@ -1,20 +1,20 @@
 #include "bigint_math.h"
 
-static void ATTR_NONNULL_IDX(1) imultiply(bigint **n1, bigint *const n2);
-static void ATTR_NONNULL_IDX(1) idivide(bigint **n1, bigint *const n2);
-static void ATTR_NONNULL_IDX(1) isubtract(bigint **n1, bigint *const n2);
+static void ATTR_NONNULL_IDX(1) imultiply(bigint **const n1, bigint *const n2);
+static void ATTR_NONNULL_IDX(1) idivide(bigint **const n1, bigint *const n2);
+static void ATTR_NONNULL_IDX(1) isubtract(bigint **const n1, bigint *const n2);
 
 /**
  * imultiply - "inplace" bigint multiplication.
  * @n1: address of the first bigint pointer.
  * @n2: pointer to the second bigint.
  */
-static void imultiply(bigint **n1, bigint *const n2)
+static void imultiply(bigint **const n1, bigint *const n2)
 {
 	bigint *cpy = *n1;
 
 	*n1 = bi_multiply(cpy, n2);
-	bi_free(cpy);
+	bi_delete(cpy);
 }
 
 /**
@@ -22,12 +22,12 @@ static void imultiply(bigint **n1, bigint *const n2)
  * @n1: address of the first bigint pointer.
  * @n2: pointer to the second bigint.
  */
-static void idivide(bigint **n1, bigint *const n2)
+static void idivide(bigint **const n1, bigint *const n2)
 {
 	bigint *cpy = *n1;
 
 	*n1 = bi_divide(cpy, n2);
-	bi_free(cpy);
+	bi_delete(cpy);
 }
 
 /**
@@ -35,12 +35,15 @@ static void idivide(bigint **n1, bigint *const n2)
  * @n1: address of the first bigint pointer.
  * @n2: pointer to the second bigint.
  */
-static void isubtract(bigint **n1, bigint *const n2)
+static void isubtract(bigint **const n1, bigint *const n2)
 {
 	if ((*n1)->len < n2->len)
 	{
-		if (!bi_realloc(*n1, n2->len))
-			*n1 = bi_free(*n1);
+		bigint *tmp = bi_resize(*n1, n2->len);
+		if (!tmp)
+			*n1 = bi_delete(*n1);
+
+		*n1 = tmp;
 	}
 
 	bi_isubtract(*n1, n2);
@@ -53,7 +56,7 @@ static void isubtract(bigint **n1, bigint *const n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-bigint *bi_power(bigint *base, bigint *exponent)
+bigint *bi_power(bigint *const base, bigint *const exponent)
 {
 	u_int one[1] = {1}, two[1] = {2};
 	bigint tmp = {.len = 1, .is_negative = false, .num = two};
@@ -121,10 +124,10 @@ bigint *bi_power(bigint *base, bigint *exponent)
 	if (false)
 	{
 	clean_up:
-		x = bi_free(x);
+		x = bi_delete(x);
 	}
 
-	bi_free(exp);
-	bi_free(y);
+	bi_delete(exp);
+	bi_delete(y);
 	return (x);
 }

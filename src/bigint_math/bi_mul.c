@@ -54,9 +54,9 @@ static bigint *multiply(bigint *const n1, bigint *const n2)
 	}
 
 clean_up:
-	current_mul = bi_free(current_mul);
+	current_mul = bi_delete(current_mul);
 	if (n2_i < n2->len)
-		product = bi_free(product);
+		product = bi_delete(product);
 
 	bi_trim(product);
 	return (product);

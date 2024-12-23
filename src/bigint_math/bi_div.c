@@ -6,11 +6,14 @@ static ATTR_NONNULL bool check_0_result(bigint *const n1, bigint *const n2);
 static ATTR_NONNULL bigint *
 get_remainder(bigint *const n1, bigint *const n2, bigint *quotient);
 static ATTR_NONNULL l_int
-get_current_quotient(bigint *slice, bigint *const n2, bigint **remainder);
+get_current_quotient(
+	bigint *const slice, bigint *const n2, bigint **const remainder);
+static size_t drop_next(bigint *const slice, bigint *const remainder,
+						bigint *const n1, size_t n1_i, bigint *const n2);
 static ATTR_NONNULL bigint *
-divide(bigint *const n1, bigint *const n2, bigint **remainder);
+divide(bigint *const n1, bigint *const n2, bigint **const remainder);
 static ATTR_NONNULL bigint *
-divide_negatives(bigint *const n1, bigint *const n2, bigint **remainder);
+divide_negatives(bigint *const n1, bigint *const n2, bigint **const remainder);
 
 /**
  * check_division_by_0 - checks if the denominator is zero.
@@ -63,7 +66,7 @@ get_remainder(bigint *const n1, bigint *const n2, bigint *quotient)
 	if (multiple)
 		rem = bi_subtract(n1, multiple);
 
-	bi_free(multiple);
+	bi_delete(multiple);
 	return (rem);
 }
 
@@ -76,13 +79,13 @@ get_remainder(bigint *const n1, bigint *const n2, bigint *quotient)
  * Return: an int representing current quotient, -1 on error.
  */
 static l_int
-get_current_quotient(bigint *slice, bigint *const n2, bigint **remainder)
+get_current_quotient(bigint *const slice, bigint *const n2, bigint **remainder)
 {
 	bigint q_estimate = {.len = 1, .is_negative = false, .num = (u_int[3]){0}};
 	size_t excess = 0;
 	l_int msd_slice = 0, bigger_than_divisor = 0;
 
-	*remainder = bi_free(*remainder);
+	*remainder = bi_delete(*remainder);
 	msd_slice = slice->num[slice->len - 1];
 	if (slice->len > n2->len)
 		msd_slice = (msd_slice * BIGINT_BASE) + slice->num[slice->len - 2];
@@ -116,7 +119,7 @@ get_current_quotient(bigint *slice, bigint *const n2, bigint **remainder)
 			bi_iadd_int(&q_estimate, excess);
 		}
 
-		*remainder = bi_free(*remainder);
+		*remainder = bi_delete(*remainder);
 		*remainder = get_remainder(slice, n2, &q_estimate);
 		if (!(*remainder))
 			return (-1);
@@ -138,7 +141,7 @@ get_current_quotient(bigint *slice, bigint *const n2, bigint **remainder)
  * Return: number of "digits" dropped from n1.
  */
 static size_t drop_next(
-	bigint *slice, bigint *remainder,
+	bigint *const slice, bigint *const remainder,
 	bigint *const n1, size_t n1_i, bigint *const n2)
 {
 	size_t due = n2->len, offset = 1;
@@ -248,11 +251,11 @@ static bigint *divide(bigint *const n1, bigint *const n2, bigint **remainder)
 	if (0)
 	{
 	error_cleanup:
-		quotient = bi_free(quotient);
-		*remainder = bi_free(*remainder);
+		quotient = bi_delete(quotient);
+		*remainder = bi_delete(*remainder);
 	}
 
-	current_slice = bi_free(current_slice);
+	current_slice = bi_delete(current_slice);
 	bi_trim(quotient);
 	bi_trim(*remainder);
 	return (quotient);
@@ -267,9 +270,9 @@ static bigint *divide(bigint *const n1, bigint *const n2, bigint **remainder)
  * Return: pointer to the result, NULL on failure.
  */
 static bigint *
-divide_negatives(bigint *const n1, bigint *const n2, bigint **remainder)
+divide_negatives(bigint *const n1, bigint *const n2, bigint **const remainder)
 {
-	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
+	const bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bigint *result = NULL;
 	u_int a[1] = {1};
 	bigint one = {.len = 1, .is_negative = false, .num = a};
@@ -283,7 +286,7 @@ divide_negatives(bigint *const n1, bigint *const n2, bigint **remainder)
 	{
 		result = bi_alloc(1);
 		*remainder = bi_alloc(n1->len);
-		if (!(*remainder))
+		if (!(*remainder) || !result)
 			goto error_cleanup;
 
 		memmove((*remainder)->num, n1->num, sizeof(*n1->num) * n1->len);
@@ -297,9 +300,14 @@ divide_negatives(bigint *const n1, bigint *const n2, bigint **remainder)
 		/* -8 // 5 = -((8 // 5) + 1)*/
 		/* 8 // -5 = -((8 // 5) + 1) */
 		result = divide(n1, n2, remainder);
-		if (!bi_realloc(result, result->len + 1))
+		if (!result)
 			goto error_cleanup;
 
+		bigint *tmp = bi_resize(result, result->len + 1);
+		if (!tmp)
+			goto error_cleanup;
+
+		result = tmp;
 		bi_iadd(result, &one);
 		result->is_negative = true;
 	}
@@ -307,8 +315,8 @@ divide_negatives(bigint *const n1, bigint *const n2, bigint **remainder)
 	if (!result)
 	{
 	error_cleanup:
-		*remainder = bi_free(*remainder);
-		result = bi_free(result);
+		*remainder = bi_delete(*remainder);
+		result = bi_delete(result);
 	}
 
 clean_exit:
@@ -350,7 +358,7 @@ bigint *bi_divide(bigint *const n1, bigint *const n2)
 			result = divide(n1, n2, &remainder);
 	}
 
-	bi_free(remainder);
+	bi_delete(remainder);
 	bi_trim(result);
 	return (result);
 }
@@ -398,7 +406,7 @@ bigint *bi_modulo(bigint *const n1, bigint *const n2)
 	}
 
 	if (!result)
-		return (bi_free(remainder));
+		return (bi_delete(remainder));
 
 	if (remainder && result->is_negative)
 	{
@@ -406,11 +414,11 @@ bigint *bi_modulo(bigint *const n1, bigint *const n2)
 		/*-7 % 4 = 1 and 7 % -4 = -1*/
 		is_negative = n2->is_negative;
 		n2->is_negative = false;
-		bi_free(result);
+		bi_delete(result);
 
 		result = bi_subtract(n2, remainder);
 		n2->is_negative = is_negative;
-		bi_free(remainder);
+		bi_delete(remainder);
 		remainder = result;
 		result = NULL;
 	}
@@ -418,7 +426,7 @@ bigint *bi_modulo(bigint *const n1, bigint *const n2)
 	if (remainder)
 		remainder->is_negative = n2->is_negative;
 
-	bi_free(result);
+	bi_delete(result);
 	bi_trim(remainder);
 	return (remainder);
 }

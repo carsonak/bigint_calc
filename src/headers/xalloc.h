@@ -12,15 +12,15 @@ void *free_n_null(void *freeable_ptr);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1, 2)
-void *xcalloc(size_t items, size_t sizeof_item);
+void *xcalloc(const size_t items, const size_t sizeof_item);
 ATTR_MALLOC
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(1)
-void *xmalloc(size_t size);
+void *xmalloc(const size_t size);
 ATTR_MALLOC_FREE(free_n_null)
 ATTR_ALLOC_SIZE(2)
-void *xrealloc(void *nullable_ptr, size_t size);
-void *xrealloc_free_on_fail(void *nullable_ptr, size_t size);
+void *xrealloc(void *nullable_ptr, const size_t size);
+void *xrealloc_free_on_fail(void *nullable_ptr, const size_t size);
 ATTR_MALLOC ATTR_MALLOC_FREE(free_n_null)
 char *xstrdup(char const *const str);
 

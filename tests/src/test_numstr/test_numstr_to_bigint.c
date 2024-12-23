@@ -12,7 +12,7 @@ void setup(void) {}
  */
 void teardown(void)
 {
-	output = bi_free(output);
+	output = bi_delete(output);
 }
 
 TestSuite(null_inputs);
