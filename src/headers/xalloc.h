@@ -6,7 +6,6 @@
 #include <stddef.h> /* size_t */
 #include <stdio.h>  /* perror */
 #include <stdlib.h> /* *alloc */
-#include <string.h> /* strdup */
 
 void *free_n_null(void *freeable_ptr);
 ATTR_MALLOC

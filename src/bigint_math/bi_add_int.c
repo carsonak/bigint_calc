@@ -14,6 +14,6 @@ bigint *bi_add_int(bigint *const n1, long long int n2)
 	if (!n1)
 		return (NULL);
 
-	int_to_bni(&num2, n2);
+	int_to_bi(&num2, n2);
 	return (bi_add(n1, &num2));
 }

@@ -1,3 +1,4 @@
+#include "_bigint_struct.h"
 #include "bigint_math.h"
 
 static ATTR_NONNULL bigint *add(bigint *const n1, bigint *const n2);
@@ -44,7 +45,7 @@ static bigint *add(bigint *const n1, bigint *const n2)
 	if (sum && sum_i < sum->len)
 		memset(&sum->num[sum_i], 0, sizeof(*sum->num) * (sum->len - sum_i));
 
-	bi_trim(sum);
+	_bi_trim(sum);
 	return (sum);
 }
 
@@ -76,7 +77,7 @@ static bigint *add_negatives(bigint *const n1, bigint *const n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	bi_trim(result);
+	_bi_trim(result);
 	return (result);
 }
 
@@ -92,8 +93,8 @@ bigint *bi_add(bigint *const n1, bigint *const n2)
 	if (!n1 || !n2)
 		return (NULL);
 
-	bi_trim(n1);
-	bi_trim(n2);
+	_bi_trim(n1);
+	_bi_trim(n2);
 	if (n1->is_negative || n2->is_negative)
 		return (add_negatives(n1, n2));
 

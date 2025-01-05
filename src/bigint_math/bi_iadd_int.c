@@ -17,6 +17,6 @@ bool bi_iadd_int(bigint *const n1, long long int n2)
 	if (!n1)
 		return (false);
 
-	int_to_bni(&num2, n2);
+	int_to_bi(&num2, n2);
 	return (bi_iadd(n1, &num2));
 }

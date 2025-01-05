@@ -17,7 +17,7 @@ bool bi_copy(bigint *src, bigint *dest)
 }
 
 /**
- * bni_deepcopy - deep copies a bigint struct (pointers will be dereferenced).
+ * bi_move - deep copies a bigint struct (pointers will be dereferenced).
  * @src: the bigint to be copied.
  * @dest: where to copy to.
  *
@@ -29,9 +29,8 @@ bool bi_copy(bigint *src, bigint *dest)
  */
 bool bi_move(bigint *src, bigint *dest)
 {
-	if ((!src || !dest) ||
-		(src->len > dest->len) ||
-		(src->len && src->num && !dest->num))
+	if ((!src || !dest) || (src->len > dest->len) ||
+	    (src->len && src->num && !dest->num))
 		return (false);
 
 	dest->len = src->len;

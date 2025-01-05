@@ -3,14 +3,13 @@
 
 #include "macros.h"
 
-#include <limits.h>  /* type_max */
 #include <stdbool.h> /* bool */
 #include <stddef.h>  /* size_t, ptr_diff */
 #include <stdint.h>  /* fixed width types */
 #include <string.h>  /* memset */
 
 #include "bigint.h"
-#include "bigint_utils.h"
+#include "bigint_typedefs.h"
 
 bool int_to_bi(bigint *dest, long long int n);
 bigint *int_to_new_bi(long long int n);

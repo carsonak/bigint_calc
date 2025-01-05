@@ -1,46 +1,16 @@
-#ifndef BIGINT_H
-#define BIGINT_H
+#ifndef BIGINT_STRUCT_H
+#define BIGINT_STRUCT_H
 
-#include <limits.h>	 /* type_max */
+#include "macros.h"
+
 #include <stdbool.h> /* bool */
-#include <stddef.h>	 /* size_t */
-#include <stdint.h>	 /* fixed width types */
+#include <stddef.h>  /* size_t */
 
-#ifdef UINT64_MAX
-
-/*Maximum value of a single bigint "digit".*/
-#define BIGINT_BASE (1000000000)
-
-typedef uint32_t u_int;
-typedef int64_t l_int;
-typedef uint64_t ul_int;
-
-#define U_INT_MAX UINT32_MAX
-#define L_INT_MIN INT64_MIN
-#define L_INT_MAX INT64_MAX
-#define UL_INT_MAX UINT64_MAX
-
-#else
-
-#define BIGINT_BASE (10000)
-
-typedef uint16_t u_int;
-typedef int32_t l_int;
-typedef uint32_t ul_int;
-
-#define U_INT_MAX UINT16_MAX
-#define L_INT_MIN INT32_MIN
-#define L_INT_MAX INT32_MAX
-#define UL_INT_MAX UINT32_MAX
-
-#endif /*UINT64_MAX*/
-
-/*Radix range*/
-#define MINIMUM_BIGINT_RADIX 2
-#define MAXIMUM_BIGINT_RADIX 36
+#include "bigint_typedefs.h"
+#include "xalloc.h"
 
 /**
- * struct BIGINT_i - an arbitrary precision integer representation.
+ * struct bigint - an arbitrary precision integer representation.
  * @len: number of items in the int array.
  * @is_negative: a bool for signedness of the number.
  * @num: pointer to an array of unsigned ints.
@@ -52,6 +22,20 @@ struct bigint
 	u_int *num;
 };
 
-typedef struct bigint bigint;
+/* memory manipulation functions */
 
-#endif /*BIGINT_H*/
+void *bi_delete(bigint *const freeable_ptr);
+
+ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
+bigint *_bi_alloc(const size_t len);
+ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
+bigint *bi_dup(bigint const *const bn);
+bigint *_bi_resize(bigint *bi, const size_t len);
+
+/* utilities */
+
+void _bi_trim(bigint *const arr);
+l_int _cmp_rev_uint32_arr(
+	u_int const *const arr1, u_int const *const arr2, size_t len);
+
+#endif /*BIGINT_STRUCT_H*/

@@ -26,10 +26,8 @@ bigint *bi_resize(bigint *bi, const size_t len);
 
 bool bi_copy(bigint *src, bigint *dest);
 l_int bi_compare(bigint *const a1, bigint *const a2);
-bool bi_deepcopy(bigint *src, bigint *dest);
+bool bi_move(bigint *src, bigint *dest);
 bool bi_swap(bigint *const n1, bigint *const n2);
-bool int_to_bni(bigint *dest, long long int n);
-bigint *int_to_new_bni(long long int n);
 bool bi_is_zero(bigint *const x);
 l_int reverse_cmp_uint32array(
 	u_int const *const arr1, u_int const *const arr2, size_t len);

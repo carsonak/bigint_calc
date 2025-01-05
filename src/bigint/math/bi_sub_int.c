@@ -1,3 +1,4 @@
+#include "_bigint_struct.h"
 #include "bigint_math.h"
 
 /**

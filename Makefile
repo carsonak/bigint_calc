@@ -28,6 +28,11 @@ STACK_CHECKS := -fstack-protector-strong -fstack-clash-protection
 # https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html#index-fcf-protection
 CONTROL_TRANSFER_CHECKS := -fcf-protection=full
 
+ifeq ($(CC),gcc)
+#https://gcc.gnu.org/onlinedocs/gcc-13.3.0/gcc/Warning-Options.html#index-Wstrict-flex-arrays
+	FAM_CHECKS := -fstrict-flex-arrays=3 -Wstrict-flex-arrays
+endif
+
 # Include flags
 INCL_FLAGS = $(addprefix -iquote ,$(INCLUDE_DIRS))
 # Linker flags
@@ -37,7 +42,7 @@ LDFLAGS := -Wl,-z,relro
 CPPFLAGS := -MMD
 OPTIMISATION_FLAGS := -Og
 DEBUG_FLAGS := -g3 -fno-omit-frame-pointer
-WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -Wshadow -Werror
+WARN_FLAGS := --std=c17 -pedantic -Wall -Wextra -Wformat=2 -Wshadow -Werror $(FAM_CHECKS)
 INSTRUMENTATION_FLAGS = $(ADDRESS_SANITISER) $(UNDEFINED_SANITISER) $(STACK_CHECKS) $(CONTROL_TRANSFER_CHECKS) -fsanitize-trap=all
 CFLAGS = $(WARN_FLAGS) $(INCL_FLAGS) $(CPPFLAGS) $(OPTIMISATION_FLAGS) $(DEBUG_FLAGS) $(INSTRUMENTATION_FLAGS) $(HARDENING)
 CXXFLAGS = $(subst -std=c17,-std=c++17,$(CFLAGS))

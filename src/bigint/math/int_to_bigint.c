@@ -23,7 +23,7 @@ bigint *int_to_new_bi(long long int n)
 	if (!n)
 		i = 1;
 
-	num = bi_alloc(i);
+	num = _bi_alloc(i);
 	if (num)
 	{
 		if (n < 0)
