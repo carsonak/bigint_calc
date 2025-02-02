@@ -23,7 +23,7 @@ size_t print_bigint(bigint *arr)
 	else
 		bytes_printed = printf("%s\n", str_arr);
 
-	free_n_null(str_arr);
+	xfree(str_arr);
 	return (bytes_printed);
 }
 
@@ -58,7 +58,7 @@ char *uint_array_to_str(u_int const *const arr, size_t len)
 	{
 		bytes_written = sprintf(&str[s_i], "%d", arr[n]);
 		if (bytes_written < 0)
-			return (free_n_null(str));
+			return (xfree(str));
 
 		s_i += bytes_written;
 		strcpy(&str[s_i], sep);
@@ -66,7 +66,7 @@ char *uint_array_to_str(u_int const *const arr, size_t len)
 	}
 
 	if (sprintf(&str[s_i], "%d}", arr[n]) < 0)
-		return (free_n_null(str));
+		return (xfree(str));
 
 	return (xrealloc_free_on_fail(str, strlen(str) + 1));
 }

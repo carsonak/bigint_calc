@@ -1,5 +1,5 @@
-#include "_bigint_struct.h"
-#include "bigint_math.h"
+#include "_bigint_internals.h"
+#include "bigint.h"
 
 static void ATTR_NONNULL_IDX(1) imultiply(bigint **const n1, bigint *const n2);
 static void ATTR_NONNULL_IDX(1) idivide(bigint **const n1, bigint *const n2);
@@ -51,7 +51,7 @@ static void isubtract(bigint **const n1, bigint *const n2)
 }
 
 /**
- * bni_power - handle exponentiation of a bigint.
+ * bi_power - handle exponentiation of a bigint.
  * @base: the base.
  * @exponent: the exponent.
  *
@@ -68,7 +68,7 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 
 	_bi_trim(base);
 	_bi_trim(exponent);
-	if (bi_is_zero(base) || bi_is_zero(exponent))
+	if (bi_iszero(base) || bi_iszero(exponent))
 	{
 		x = _bi_alloc(1);
 		if (x)

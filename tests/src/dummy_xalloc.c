@@ -6,7 +6,7 @@
  *
  * Return: NULL always.
  */
-void *free_n_null(void *freeable_ptr)
+void *xfree(void *freeable_ptr)
 {
 	(void)freeable_ptr;
 	return (NULL);

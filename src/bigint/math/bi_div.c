@@ -1,5 +1,5 @@
-#include "_bigint_struct.h"
-#include "bigint_math.h"
+#include "_bigint_internals.h"
+#include "bigint.h"
 #include <stdio.h> /* fprintf */
 
 static ATTR_NONNULL bool check_division_by_0(bigint *const n2);
@@ -286,7 +286,7 @@ divide_negatives(bigint *const n1, bigint *const n2, bigint **const remainder)
 	n1->is_negative = false;
 	n2->is_negative = false;
 	/*If n1 == 0; then *remainder == 0*/
-	if (bi_is_zero(n1))
+	if (bi_iszero(n1))
 		*remainder = _bi_alloc(1);
 	else if (check_0_result(n1, n2))
 	{
@@ -334,7 +334,7 @@ clean_exit:
 }
 
 /**
- * bni_divide - handle division of two bigints.
+ * bi_divide - handle division of two bigints.
  * @n1: numerator.
  * @n2: denominator.
  *
@@ -370,7 +370,7 @@ bigint *bi_divide(bigint *const n1, bigint *const n2)
 }
 
 /**
- * bni_modulo - handle modulo of two bigints.
+ * bi_modulo - handle modulo of two bigints.
  * @n1: numerator.
  * @n2: denominator.
  *
@@ -394,7 +394,7 @@ bigint *bi_modulo(bigint *const n1, bigint *const n2)
 	else
 	{
 		/*If n1 == 0; then remainder == 0*/
-		if (bi_is_zero(n1))
+		if (bi_iszero(n1))
 			return (_bi_alloc(1));
 
 		if (check_0_result(n1, n2))

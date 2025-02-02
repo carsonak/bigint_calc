@@ -10,10 +10,7 @@ void setup(void) {}
 /**
  * teardown - cleanup some variables.
  */
-void teardown(void)
-{
-	output = free_n_null(output);
-}
+void teardown(void) { output = xfree(output); }
 
 TestSuite(null_inputs);
 

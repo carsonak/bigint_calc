@@ -7,4 +7,4 @@ then sudo "$0" "$@"
 fi
 
 apt-get update
-apt-get install gcc make libcriterion-dev
+apt-get install cmake

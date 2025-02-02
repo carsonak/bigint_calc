@@ -7,28 +7,46 @@
 #include <stdbool.h> /* bool */
 #include <stddef.h>  /* size_t, ptr_diff */
 #include <stdlib.h>  /* strtoull */
-#include <string.h>  /* strlen, strcpy */
+#include <string.h>  /* memmove */
 
 #include "bigint_typedefs.h"
 
 /* bigint construction */
 
-void *bi_delete(bigint *const freeable_ptr);
+void *bi_delete(bigint *const ptr);
+ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
 bigint *bi_new(
-	char const *const num_str, unsigned short int base,
+	char const *const number, const unsigned short int base,
 	size_t *const processed);
-char *filter_str(
-	char const *const str, size_t *const processed, const mapping_func f,
-	void const *const f_args);
+bool int_to_bi(bigint *dest, const long long int n);
+ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
+bigint *int_to_new_bi(const long long int n);
 
 /* bigint manipulation */
 
-bool bi_copy(bigint *src, bigint *dest);
-l_int bi_compare(bigint *const a1, bigint *const a2);
-bool bi_move(bigint *src, bigint *dest);
-bool bi_swap(bigint *const n1, bigint *const n2);
-char *bi_tostr(bigint *bi, const unsigned int base);
+l_int bi_compare(bigint *const n1, bigint *const n2);
+bigint *bi_dup(bigint *const n);
+char *bi_tostr(bigint const *const n);
 
-bool bi_is_zero(bigint *const x);
+/* bigint math */
+
+bool bi_iszero(bigint const *const x);
+
+bigint *bi_add(bigint *const n1, bigint *const n2);
+bigint *bi_add_int(bigint *const n1, long long int n2);
+bool bi_iadd(bigint *const n1, bigint *const n2);
+bool bi_iadd_int(bigint *const n1, long long int n2);
+
+bool bi_isubtract(bigint *const n1, bigint *const n2);
+bool bi_isubtract_int(bigint *const n1, long long int n2);
+bigint *bi_subtract(bigint *const n1, bigint *const n2);
+bigint *bi_subtract_int(bigint *const n1, long long int n2);
+
+bigint *bi_multiply(bigint *const n1, bigint *const n2);
+
+bigint *bi_divide(bigint *const n1, bigint *const n2);
+bigint *bi_modulo(bigint *const n1, bigint *const n2);
+
+bigint *bi_power(bigint *base, bigint *exponent);
 
 #endif /* BIGINT_H */

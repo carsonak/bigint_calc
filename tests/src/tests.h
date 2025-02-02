@@ -1,11 +1,13 @@
 #ifndef TESTS_H
 #define TESTS_H
 
-#include "infiX.h"
+#include "tau.h"
+
 #include <ctype.h>
-#include <criterion/criterion.h>
-#include <criterion/new/assert.h>
-#include <criterion/redirect.h>
+
+#include "_bigint_internals.h"
+#include "_numstr_internals.h"
+#include "infiX.h"
 
 /*Duplicate of BIGINT_BASE*/
 #define bi_BASE 1000000000

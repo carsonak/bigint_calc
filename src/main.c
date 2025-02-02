@@ -22,6 +22,6 @@ int main(int argc, char *argv[])
 		return (EXIT_FAILURE);
 
 	printf("%s\n", answer);
-	answer = free_n_null(answer);
+	answer = xfree(answer);
 	return (EXIT_SUCCESS);
 }

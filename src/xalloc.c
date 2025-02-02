@@ -62,7 +62,7 @@ void *xrealloc_free_on_fail(void *nullable_ptr, size_t size)
 	void *const ptr = xrealloc(nullable_ptr, size);
 
 	if (!ptr && size)
-		nullable_ptr = free_n_null(nullable_ptr);
+		nullable_ptr = xfree(nullable_ptr);
 
 	return (ptr);
 }
@@ -84,12 +84,12 @@ char *xstrdup(char const *const str)
 }
 
 /**
- * free_n_null - free a pointer, return NULL.
+ * xfree - free a pointer, return NULL.
  * @freeable_ptr: a freeable pointer.
  *
  * Return: NULL always.
  */
-void *free_n_null(void *freeable_ptr)
+void *xfree(void *freeable_ptr)
 {
 	free(freeable_ptr);
 	return (NULL);

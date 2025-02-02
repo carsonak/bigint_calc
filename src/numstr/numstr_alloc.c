@@ -18,7 +18,7 @@ numstr *alloc_numstr(size_t len)
 	{
 		arr->str = xmalloc(len * sizeof(*arr->str));
 		if (!arr->str)
-			arr = free_n_null(arr);
+			arr = xfree(arr);
 	}
 
 	return (arr);
@@ -35,8 +35,8 @@ void *free_numstr(numstr *freeable_ptr)
 	if (freeable_ptr)
 	{
 		freeable_ptr->len = 0;
-		freeable_ptr->str = free_n_null(freeable_ptr->str);
+		freeable_ptr->str = xfree(freeable_ptr->str);
 	}
 
-	return (free_n_null(freeable_ptr));
+	return (xfree(freeable_ptr));
 }

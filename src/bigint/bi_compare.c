@@ -1,7 +1,8 @@
-#include "bigint_utils.h"
+#include "_bigint_internals.h"
+#include "bigint.h"
 
 /**
- * bni_compare - compare 2 bigints.
+ * bi_compare - compare 2 bigints.
  * @n1: the first array.
  * @n2: the second array.
  *
@@ -20,7 +21,7 @@ l_int bi_compare(bigint *const n1, bigint *const n2)
 		if ((l_int)n2->len - n1->len)
 			return ((l_int)n2->len - n1->len);
 
-		return (_cmp_rev_uint32_arr(n2->num, n1->num, n1->len));
+		return (_cmp_rev_uint_arr(n2->num, n1->num, n1->len));
 	}
 	else if (n1->is_negative)
 		return (-1);
@@ -30,18 +31,18 @@ l_int bi_compare(bigint *const n1, bigint *const n2)
 	if ((l_int)n1->len - n2->len)
 		return ((l_int)n1->len - n2->len);
 
-	return (_cmp_rev_uint32_arr(n1->num, n2->num, n1->len));
+	return (_cmp_rev_uint_arr(n1->num, n2->num, n1->len));
 }
 
 /**
- * _cmp_rev_uint32_arr - compare int arrays in reverse.
+ * _cmp_rev_uint_arr - compare int arrays in reverse.
  * @arr1: first array.
  * @arr2: second array.
  * @len: total items to compare.
  *
  * Return: +ve number if arr1 > arr2, -ve number if arr1 < arr2 else 0.
  */
-l_int _cmp_rev_uint32_arr(
+l_int _cmp_rev_uint_arr(
 	u_int const *const arr1, u_int const *const arr2, size_t len)
 {
 	if (!arr1 || !arr2)

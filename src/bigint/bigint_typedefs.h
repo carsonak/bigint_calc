@@ -1,5 +1,5 @@
-#ifndef BI_TYPEDEFS_H
-#define BI_TYPEDEFS_H
+#ifndef BIGINT_TYPEDEFS_H
+#define BIGINT_TYPEDEFS_H
 
 #include <limits.h> /* type_max */
 #include <stdint.h> /* fixed width types */
@@ -37,15 +37,7 @@ typedef uint32_t ul_int;
 #define MINIMUM_BIGINT_RADIX 2
 #define MAXIMUM_BIGINT_RADIX 36
 
-/**
- * mapping_func - a pointer to a function that maps one character to another.
- * @c: the character to be transformed.
- * @args: pointer to more arguments that can be passed to the function.
- *
- * Return: the transformed character.
- */
-typedef char (*mapping_func)(const char c, void const *const args);
-
 typedef struct bigint bigint;
+typedef struct numstr numstr;
 
-#endif /* BI_TYPEDEFS_H */
+#endif /* BIGINT_TYPEDEFS_H */

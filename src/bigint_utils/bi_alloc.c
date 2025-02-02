@@ -92,9 +92,9 @@ void *bi_delete(bigint *const freeable_ptr)
 	if (freeable_ptr)
 	{
 		freeable_ptr->len = 0;
-		// freeable_ptr->num = free_n_null(freeable_ptr->num);
+		// freeable_ptr->num = xfree(freeable_ptr->num);
 		freeable_ptr->num = NULL;
 	}
 
-	return (free_n_null(freeable_ptr));
+	return (xfree(freeable_ptr));
 }

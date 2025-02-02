@@ -1,4 +1,4 @@
-#include "_bigint_struct.h"
+#include "_bigint_internals.h"
 #include "bigint.h"
 
 /**
@@ -7,7 +7,7 @@
  *
  * Return: number of digits calculated.
  */
-unsigned int count_digits(size_t num)
+static unsigned int count_digits(size_t num)
 {
 	unsigned int d = 0;
 
@@ -21,31 +21,36 @@ unsigned int count_digits(size_t num)
 }
 
 /**
- * bi_tostr - convert a bigint to a numstr.
- * @bi: the bigint.
- * @base: an int between 2-36 indicating the base of the number.
+ * bi_tostr - return the number represented by a bigint as a string.
+ * @n: pointer to the bigint.
  *
- * Return: a pointer to a numstr, NULL on failure.
+ * Return: a pointer to a str, NULL on failure.
  */
-char *bi_tostr(bigint *bi, const unsigned int base)
+char *bi_tostr(bigint const *const n)
 {
-	if (!bi || base < 2 || base > 36)
+	if (!n || !n->len || !n->num)
 		return (NULL);
 
 	const size_t str_len =
-		(bi->len * count_digits(BIGINT_BASE - 1)) + bi->is_negative ? 1 : 0;
+		(n->len * count_digits(BIGINT_BASE - 1)) + n->is_negative ? 1 : 0;
 	char *const str = xmalloc(str_len + 1);
+
 	if (!str)
 		return (NULL);
 
 	size_t str_i = 0;
-	if (bi->is_negative)
+	size_t bi_i = n->len - 1;
+
+	if (n->is_negative)
 		str[str_i++] = '-';
 
-	for (size_t bi_i = bi->len; bi_i > 0 && str_i < str_len;)
-	{
+	while (bi_i && !n->num[bi_i])
 		--bi_i;
-		int bytes_written = sprintf(&str[str_i], "%u", bi->num[bi_i]);
+
+	for (; bi_i > 0 && str_i < str_len; --bi_i)
+	{
+		int bytes_written = sprintf(&str[str_i], "%u", n->num[bi_i]);
+
 		str_i += bytes_written - 1;
 	}
 

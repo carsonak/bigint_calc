@@ -61,7 +61,7 @@ char *filter_str(char const *const str, size_t *const processed,
 	if (output && processed)
 		*processed = str_i;
 
-	free_n_null(buffer);
+	xfree(buffer);
 	/*In the case `str = "\0"`, output will be NULL, which is undesirable as*/
 	/*NULL is an error value in this function.*/
 	if (str_i == 0 && !str[str_i])

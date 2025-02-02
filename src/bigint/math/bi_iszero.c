@@ -1,12 +1,13 @@
-#include "bigint_utils.h"
+#include "_bigint_internals.h"
+#include "bigint.h"
 
 /**
- * bni_is_zero - check if a bigint is equal to 0.
+ * bi_iszero - check if a bigint is equal to 0.
  * @n: the bigint to check.
  *
  * Return: true if bigint is NULL or equal to zero, else false.
  */
-bool bi_is_zero(bigint *const n)
+bool bi_iszero(bigint const *const n)
 {
 	size_t i = 0;
 

@@ -1,18 +1,19 @@
-#include "_bigint_struct.h"
-#include "bigint_math.h"
+#include "_bigint_internals.h"
+#include "bigint.h"
 
-static ATTR_NONNULL bigint *subtract(bigint *const n1, bigint *const n2);
+static ATTR_NONNULL bigint *
+subtract(bigint const *const n1, bigint const *const n2);
 static ATTR_NONNULL bigint *
 subtract_negatives(bigint *const n1, bigint *const n2);
 
 /**
  * subtract - subtract two bigints.
  * @n1: first number.
- * @n2: second numbers.
+ * @n2: second number.
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bigint *subtract(bigint *const n1, bigint *const n2)
+static bigint *subtract(bigint const *const n1, bigint const *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
 	l_int n1_is_bigger = 0, byt_diff = 0;
@@ -22,7 +23,7 @@ static bigint *subtract(bigint *const n1, bigint *const n2)
 	result_len = (n1->len > n2->len) ? n1->len : n2->len;
 	/*If both arrays are of the same length then;*/
 	/*result_len = n1->len - */
-	/*(length of continuous matches in n1 and n2 from msd down to lsd).*/
+	/*(length of longest continuos matches of m.s.ds in n1 and n2).*/
 	if (n1->len == n2->len)
 		while (result_len > 1 &&
 		       n1->num[result_len - 1] == n2->num[result_len - 1])
@@ -115,7 +116,7 @@ static bigint *subtract_negatives(bigint *const n1, bigint *const n2)
 }
 
 /**
- * bni_subtract - handle subtraction of two bigints.
+ * bi_subtract - handle subtraction of two bigints.
  * @n1: first number.
  * @n2: second number.
  *
@@ -132,4 +133,22 @@ bigint *bi_subtract(bigint *const n1, bigint *const n2)
 		return (subtract_negatives(n1, n2));
 
 	return (subtract(n1, n2));
+}
+
+/**
+ * bi_subtract_int - subtract an int from a bigint.
+ * @n1: the first number.
+ * @n2: the second number.
+ *
+ * Return: pointer to the answer on success, NULL on failure.
+ */
+bigint *bi_subtract_int(bigint *const n1, long long int n2)
+{
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
+
+	if (!n1)
+		return (NULL);
+
+	int_to_bi(&num2, n2);
+	return (bi_subtract(n1, &num2));
 }

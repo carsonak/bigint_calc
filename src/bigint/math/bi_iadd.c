@@ -1,7 +1,7 @@
-#include "_bigint_struct.h"
-#include "bigint_math.h"
+#include "_bigint_internals.h"
+#include "bigint.h"
 
-static ATTR_NONNULL void add(bigint *const n1, bigint *const n2);
+static ATTR_NONNULL void add(bigint *const n1, bigint const *const n2);
 static ATTR_NONNULL bool add_negatives(bigint *const n1, bigint *const n2);
 
 /**
@@ -9,7 +9,7 @@ static ATTR_NONNULL bool add_negatives(bigint *const n1, bigint *const n2);
  * @n1: the first number, should be large enough to store the results.
  * @n2: the second number.
  */
-static void add(bigint *const n1, bigint *const n2)
+static void add(bigint *const n1, bigint const *const n2)
 {
 	size_t n1_i = 0, n2_i = 0, res_len = 0;
 	l_int byt_sum = 0;
@@ -90,7 +90,7 @@ bool bi_iadd(bigint *const n1, bigint *const n2)
 		return (false);
 
 	_bi_trim(n1);
-	if (!n2) /*This case is treated as +(n1).*/
+	if (!n2) /*This case is treated as: n1 = n1 * 1.*/
 		return (true);
 
 	_bi_trim(n2);
@@ -99,4 +99,25 @@ bool bi_iadd(bigint *const n1, bigint *const n2)
 
 	add(n1, n2);
 	return (true);
+}
+
+/**
+ * bi_iadd_int - add an int to a bigint inplace.
+ * @n1: the first number, must have enough memory allocated to hold the answer.
+ * @n2: the second number.
+ *
+ * The results of the addittion will be stored in n1. No extra memory
+ * will be allocated via calls to *alloc family functions.
+ *
+ * Return: true on success, false on failure.
+ */
+bool bi_iadd_int(bigint *const n1, long long int n2)
+{
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
+
+	if (!n1)
+		return (false);
+
+	int_to_bi(&num2, n2);
+	return (bi_iadd(n1, &num2));
 }

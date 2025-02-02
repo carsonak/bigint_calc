@@ -1,7 +1,8 @@
-#include "_bigint_struct.h"
-#include "bigint_math.h"
+#include "_bigint_internals.h"
+#include "bigint.h"
 
-static ATTR_NONNULL bigint *multiply(bigint *const n1, bigint *const n2);
+static ATTR_NONNULL bigint *
+multiply(bigint const *const n1, bigint const *const n2);
 static ATTR_NONNULL bigint *
 multiply_negatives(bigint *const n1, bigint *const n2);
 
@@ -12,14 +13,14 @@ multiply_negatives(bigint *const n1, bigint *const n2);
  *
  * Return: pointer to result, NULL on failure.
  */
-static bigint *multiply(bigint *const n1, bigint *const n2)
+static bigint *multiply(bigint const *const n1, bigint const *const n2)
 {
 	l_int byt_prod = 0;
 	size_t n1_i = 0, n2_i = 0;
 	bigint *product = NULL, *current_mul = NULL;
 
 	/*Multiplication by zero.*/
-	if (bi_is_zero(n1) || bi_is_zero(n2))
+	if (bi_iszero(n1) || bi_iszero(n2))
 		return (_bi_alloc(1));
 
 	/*Length of product = length of n1 + length of n2*/
@@ -95,7 +96,7 @@ static bigint *multiply_negatives(bigint *const n1, bigint *const n2)
 }
 
 /**
- * bni_multiply - handle multiplication of two bigints.
+ * bi_multiply - handle multiplication of two bigints.
  * @n1: the first number.
  * @n2: the second number.
  *

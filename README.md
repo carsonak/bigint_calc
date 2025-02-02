@@ -1,4 +1,4 @@
-# infiX_math
+# bigint_calc
 
 This is a command line program that behaves as a calculator, evaluating simple
 mathematical expresions on numbers of arbitrary precision while relying solely

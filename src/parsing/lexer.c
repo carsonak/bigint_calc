@@ -44,7 +44,7 @@ static token *match_token(char const *const str, size_t *processed)
 		if (n)
 			*t = (token){.id = NUMBER, .start = str, .op.number = n};
 		else
-			t = free_n_null(t);
+			t = xfree(t);
 	}
 	else
 		*t = (token){.id = INVALID, .start = str, .op = {NULL}};
@@ -107,7 +107,7 @@ void *free_token(token *freeable_token)
 		freeable_token->op.number = free_numstr(freeable_token->op.number);
 
 	freeable_token->id = INVALID;
-	return (free_n_null(freeable_token));
+	return (xfree(freeable_token));
 }
 
 /**
@@ -151,7 +151,7 @@ deque *lex_str(char const *const str)
 	if (str[i])
 	{
 		clear_deque(tokens, (void *(*)(void *))free_token);
-		tokens = free_n_null(tokens);
+		tokens = xfree(tokens);
 	}
 
 	return (tokens);

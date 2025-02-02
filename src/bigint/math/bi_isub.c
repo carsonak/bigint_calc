@@ -1,5 +1,5 @@
-#include "_bigint_struct.h"
-#include "bigint_math.h"
+#include "_bigint_internals.h"
+#include "bigint.h"
 
 static ATTR_NONNULL void subtract(bigint *const n1, bigint *const n2);
 static ATTR_NONNULL bool subtract_negatives(bigint *const n1, bigint *const n2);
@@ -113,7 +113,7 @@ static bool subtract_negatives(bigint *const n1, bigint *const n2)
 }
 
 /**
- * bni_isubtract - handles subtraction of two bigints inplace.
+ * bi_isubtract - handles subtraction of two bigints inplace.
  * @n1: first number, must have enough space to store the result.
  * @n2: second number.
  *
@@ -141,4 +141,25 @@ bool bi_isubtract(bigint *const n1, bigint *const n2)
 
 	subtract(n1, n2);
 	return (true);
+}
+
+/**
+ * bi_isubtract_int - subtract an int from a bigint inplace.
+ * @n1: the first number, must have enough memory allocated to hold the answer.
+ * @n2: the second number.
+ *
+ * The results of the subtraction will be stored in n1. No extra memory
+ * will be allocated via calls to *alloc family functions.
+ *
+ * Return: true on success, false on failure.
+ */
+bool bi_isubtract_int(bigint *const n1, long long int n2)
+{
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
+
+	if (!n1)
+		return (false);
+
+	int_to_bi(&num2, n2);
+	return (bi_isubtract(n1, &num2));
 }
