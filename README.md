@@ -4,6 +4,19 @@ This is a command line program that behaves as a calculator, evaluating simple
 mathematical expresions on numbers of arbitrary precision while relying solely
 on C standard libraries.
 
+## Building the executable
+
+To build the executable you will need [CMake](https://cmake.org/download/).
+While in the project root directory run the following command in a terminal to setup the build system.
+
+`cmake -S . -B build`
+
+Then run the following commands to build the executable and run tests.
+
+`cmake --build build`
+
+`ctest --test-dir build`
+
 ## Usage
 
 Run the [**math**](./math) executable on a terminal as follows:
@@ -20,18 +33,6 @@ Run the [**math**](./math) executable on a terminal as follows:
 | `%` | Modulus |
 
 Metacharacters such as `*` should be quoted to avoid accidental interpretation by the shell.
-
-## Building from source
-
-### Pre-requisites
-
-- GNU Compiler Collection a.k.a [gcc](https://gcc.gnu.org/install/).
-- [GNU make](https://www.gnu.org/software/make/).
-
-Once the pre-requisites have been met run the following command in a terminal
-to build the executable.
-
-`make release`
 
 ## TODO
 
