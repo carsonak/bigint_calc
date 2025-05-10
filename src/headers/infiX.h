@@ -10,4 +10,4 @@
 void panic(char const *const err_type);
 void help_me(char const *const which_help);
 
-#endif /*INFIX_PROJ_API_H*/
+#endif /* INFIX_PROJ_API_H */

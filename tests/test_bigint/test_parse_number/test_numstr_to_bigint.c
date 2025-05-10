@@ -14,9 +14,9 @@ void teardown(void) { output = bi_delete(output); }
 
 TestSuite(null_inputs);
 
-TEST(null_inputs, test_NULL) { cr_assert(zero(ptr, numstr_to_bni(NULL))); }
+TEST_F(null_inputs, test_NULL) { cr_assert(numstr_to_bni(NULL)) /* ?? */; }
 
-TEST(null_inputs, test_null_str)
+TEST_F(null_inputs, test_null_str)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = NULL};
 
@@ -25,14 +25,14 @@ TEST(null_inputs, test_null_str)
 
 TestSuite(invalid_inputs);
 
-TEST(invalid_inputs, test_0_len)
+TEST_F(invalid_inputs, test_0_len)
 {
 	numstr in = {.len = 0, .is_negative = false, .str = "1"};
 
 	EXPECT(numstr_to_bni(&in) == 0, "");
 }
 
-TEST(invalid_inputs, test_all_nonvalid_charbits)
+TEST_F(invalid_inputs, test_all_nonvalid_charbits)
 {
 	char c[2] = {SCHAR_MIN, '\0'};
 	numstr in = {.len = 4, .is_negative = false, .str = c};
@@ -45,7 +45,7 @@ TEST(invalid_inputs, test_all_nonvalid_charbits)
 	}
 }
 
-TEST(invalid_inputs, test_all_nonvalid_charbits2)
+TEST_F(invalid_inputs, test_all_nonvalid_charbits2)
 {
 	char c[3] = {SCHAR_MIN, SCHAR_MIN, '\0'};
 	numstr in = {.len = 4, .is_negative = false, .str = c};
@@ -58,7 +58,7 @@ TEST(invalid_inputs, test_all_nonvalid_charbits2)
 	}
 }
 
-TEST(invalid_inputs, test_all_nonvalid_charbits2alt)
+TEST_F(invalid_inputs, test_all_nonvalid_charbits2alt)
 {
 	char c[3] = {SCHAR_MIN, SCHAR_MAX, '\0'};
 	numstr in = {.len = 4, .is_negative = false, .str = c};
@@ -71,7 +71,7 @@ TEST(invalid_inputs, test_all_nonvalid_charbits2alt)
 	}
 }
 
-TEST(invalid_inputs, test_all_invalid_charbits3)
+TEST_F(invalid_inputs, test_all_invalid_charbits3)
 {
 	char c[] = {'\0', '\0', '\0', '\0'};
 	numstr in = {.len = 4, .is_negative = false, .str = c};
@@ -98,7 +98,7 @@ TEST(invalid_inputs, test_all_invalid_charbits3)
 	}
 }
 
-TEST(invalid_inputs, test_invalid_chars_mixed_with_valid_chars)
+TEST_F(invalid_inputs, test_invalid_chars_mixed_with_valid_chars)
 {
 	numstr in = {.len = 7, .is_negative = false, .str = "123/567"};
 
@@ -127,14 +127,10 @@ struct valid_inputs
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(valid_inputs)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(valid_inputs) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(valid_inputs) {}
 
-TEST(valid_inputs, test_0)
+TEST_F(valid_inputs, test_0)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = "0"};
 	u_int arr[] = {0};
@@ -147,7 +143,7 @@ TEST(valid_inputs, test_0)
 	EXPECT(output->num == out.num, "");
 }
 
-TEST(valid_inputs, test_eight9s)
+TEST_F(valid_inputs, test_eight9s)
 {
 	numstr in = {.len = 8, .is_negative = false, .str = "99999999"};
 	u_int arr[] = {99999999};
@@ -160,7 +156,7 @@ TEST(valid_inputs, test_eight9s)
 	EXPECT(output->num == out.num, "");
 }
 
-TEST(valid_inputs, test_nine9s)
+TEST_F(valid_inputs, test_nine9s)
 {
 	numstr in = {.len = 9, .is_negative = false, .str = "999999999"};
 	u_int arr[] = {999999999};
@@ -173,7 +169,7 @@ TEST(valid_inputs, test_nine9s)
 	EXPECT(output->num == out.num, "");
 }
 
-TEST(valid_inputs, test_ten9s)
+TEST_F(valid_inputs, test_ten9s)
 {
 	numstr in = {.len = 10, .is_negative = false, .str = "9999999999"};
 	u_int arr[] = {999999999, 9};

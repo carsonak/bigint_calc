@@ -1,22 +1,22 @@
 #include "tests.h"
 
-#define TESTS_BIGINT_LENGTH (size_t)10
+#define TESTS_BIGINT_LENGTH (len_type)10
 
 struct bigint_alloc
 {
-	static bigint *n;
+	bigint *n;
 };
 
-TEST_F_SETUP(bigint_alloc) { tau->n = NULL; }
+TEST_F_SETUP(bigint_alloc) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(bigint_alloc) { tau->n = bi_delete(tau->n); }
+TEST_F_TEARDOWN(bigint_alloc) { tau->n = _bi_free(tau->n); }
 
 TEST_F(bigint_alloc, alloc_zero_len_bigint)
 {
 	tau->n = _bi_alloc(0);
 
 	REQUIRE(tau->n, "alloc should return non-null");
-	CHECK(tau->n->len == 0, "length should be %zu", 0);
+	CHECK(tau->n->len == 0, "length should be %zu", (len_type)0);
 	CHECK(tau->n->num == NULL, "array of digits should be NULL");
 }
 
@@ -33,37 +33,30 @@ TEST_F(bigint_alloc, alloc_a_sized_bigint)
 		DUMMY_VALUE;  // memory checkers should not complain.
 }
 
-/*###################################################################*/
-/*###################################################################*/
+/* ################################################################### */
+/* ################################################################### */
 
 struct bigint_resize
 {
-	static bigint *n;
+	bigint *n;
 };
 
-TEST_F_SETUP(bigint_resize)
-{
-	tau->n = _bi_alloc(TESTS_BIGINT_LENGTH);
-	REQUIRE(tau->n, "Failed to create bigint");
+TEST_F_SETUP(bigint_resize) { memset(tau, 0, sizeof(*tau)); }
 
-	tau->n->num[TESTS_BIGINT_LENGTH - 1] = DUMMY_VALUE;
-	tau->n->num[0] = DUMMY_VALUE;
-}
+TEST_F_TEARDOWN(bigint_resize) { tau->n = _bi_free(tau->n); }
 
-TEST_F_TEARDOWN(bigint_resize) { tau->n = bi_delete(tau->n); }
-
-TEST(bigint_resize, resize_NULL_to_zero_len_bigint)
+TEST_F(bigint_resize, resize_NULL_to_zero_len_bigint)
 {
 	bigint *const n = _bi_resize(NULL, 0);
 
 	REQUIRE(n, "resize should return non-null");
-	CHECK(n->len == 0, "length should be %zu", 0);
+	CHECK(n->len == 0, "length should be %zu", (len_type)0);
 	CHECK(n->num == NULL, "array of digits should be NULL");
 
-	bi_delete(n);
+	_bi_free(n);
 }
 
-TEST(bigint_resize, resize_NULL_to_sized_bigint)
+TEST_F(bigint_resize, resize_NULL_to_sized_bigint)
 {
 	bigint *const n = _bi_resize(NULL, TESTS_BIGINT_LENGTH);
 
@@ -75,23 +68,23 @@ TEST(bigint_resize, resize_NULL_to_sized_bigint)
 	n->num[TESTS_BIGINT_LENGTH - 1] =
 		DUMMY_VALUE;  // memory checkers should not complain.
 
-	bi_delete(n);
+	_bi_free(n);
 }
 
-TEST(bigint_resize, resize_zero_len_to_zero_len_bigint)
+TEST_F(bigint_resize, resize_zero_len_to_zero_len_bigint)
 {
 	bigint *n = _bi_alloc(0);
 	bigint *const tmp = _bi_resize(n, 0);
 
 	REQUIRE(tmp, "resize should return non-null");
 	n = tmp;
-	CHECK(n->len == 0, "length should be %zu", 0);
+	CHECK(n->len == 0, "length should be %zu", (len_type)0);
 	CHECK(n->num == NULL, "array of digits should be NULL");
 
-	bi_delete(n);
+	_bi_free(n);
 }
 
-TEST(bigint_resize, resize_zero_len_to_sized_bigint)
+TEST_F(bigint_resize, resize_zero_len_to_sized_bigint)
 {
 	bigint *n = _bi_alloc(0);
 	bigint *const tmp = _bi_resize(n, TESTS_BIGINT_LENGTH);
@@ -105,22 +98,22 @@ TEST(bigint_resize, resize_zero_len_to_sized_bigint)
 	n->num[TESTS_BIGINT_LENGTH - 1] =
 		DUMMY_VALUE;  // memory checkers should not complain.
 
-	bi_delete(n);
+	_bi_free(n);
 }
 
-TEST_F(bigint_resize, resize_to_zero_len_bigint)
+TEST_F(bigint_resize, relen_typeo_zero_len_bigint)
 {
 	bigint *const tmp = _bi_resize(tau->n, 0);
 
 	REQUIRE(tmp, "resize should return non-null");
 	tau->n = tmp;
-	CHECK(tau->n->len == 0, "length should be %zu", 0);
+	CHECK(tau->n->len == 0, "length should be %zu", (len_type)0);
 	CHECK(tau->n->num == NULL, "array of digits should be NULL");
 }
 
-TEST_F(bigint_resize, resize_to_smaller_len_bigint)
+TEST_F(bigint_resize, relen_typeo_smaller_len_bigint)
 {
-	const size_t new_len = TESTS_BIGINT_LENGTH - 3;
+	const len_type new_len = TESTS_BIGINT_LENGTH - 3;
 	bigint *const tmp = _bi_resize(tau->n, new_len);
 
 	REQUIRE(tmp, "resize should return non-null");
@@ -132,9 +125,9 @@ TEST_F(bigint_resize, resize_to_smaller_len_bigint)
 		DUMMY_VALUE;  // memory checkers should not complain.
 }
 
-TEST_F(bigint_resize, resize_to_bigger_len_bigint)
+TEST_F(bigint_resize, relen_typeo_bigger_len_bigint)
 {
-	const size_t new_len = TESTS_BIGINT_LENGTH + 3;
+	const len_type new_len = TESTS_BIGINT_LENGTH + 3;
 	bigint *const tmp = _bi_resize(tau->n, new_len);
 
 	REQUIRE(tmp, "resize should return non-null");
@@ -149,29 +142,29 @@ TEST_F(bigint_resize, resize_to_bigger_len_bigint)
 		DUMMY_VALUE;  // memory checkers should not complain.
 }
 
-#undef BIGINT_LENGTH_TESTS
+#undef TESTS_BIGINT_LENGTH
 
-/*###################################################################*/
-/*###################################################################*/
+/* ################################################################### */
+/* ########################### _bi_trim ############################## */
+/* ################################################################### */
 
-TEST(null_inputs, test_NULL) { bi_trim(NULL); }
+TEST(trim_null_inputs, test_NULL)
+{
+	_bi_trim(NULL); /* should handle NULL safely */
+}
 
-struct null_array
+struct trim_null_array
 {
 	bigint num1, expected;
 };
 
-TEST_F_SETUP(null_array)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(trim_null_array) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(null_array) {}
+TEST_F_TEARDOWN(trim_null_array) {}
 
-TEST_F(null_array, test_nullarray)
+TEST_F(trim_null_array, test_nullarray)
 {
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(tau->num1.len == tau->expected.len, "length should remain 0");
 	CHECK(
@@ -180,11 +173,11 @@ TEST_F(null_array, test_nullarray)
 	CHECK(tau->num1.num == NULL, "int array should remain NULL");
 }
 
-TEST_F(null_array, test_nullarray_neg)
+TEST_F(trim_null_array, test_nullarray_neg)
 {
 	tau->num1.is_negative = true;
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(tau->num1.len == tau->expected.len, "length should remain 0");
 	CHECK(
@@ -193,11 +186,11 @@ TEST_F(null_array, test_nullarray_neg)
 	CHECK(tau->num1.num == NULL, "int array should remain NULL");
 }
 
-TEST_F(null_array, test_nullarray_len5)
+TEST_F(trim_null_array, test_nullarray_len5)
 {
 	tau->num1.len = 5;
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(tau->num1.len == tau->expected.len, "length should be 0");
 	CHECK(
@@ -206,12 +199,12 @@ TEST_F(null_array, test_nullarray_len5)
 	CHECK(tau->num1.num == NULL, "int array should remain NULL");
 }
 
-TEST_F(null_array, test_nullarray_len5_neg)
+TEST_F(trim_null_array, test_nullarray_len5_neg)
 {
 	tau->num1.len = 5;
 	tau->num1.is_negative = true;
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(tau->num1.len == tau->expected.len, "length should be 0");
 	CHECK(
@@ -220,23 +213,19 @@ TEST_F(null_array, test_nullarray_len5_neg)
 	CHECK(tau->num1.num == NULL, "int array should remain NULL");
 }
 
-struct trailing_zeros
+struct trim_trailing_zeros
 {
 	bigint num1;
 	bigint expected;
 };
 
-TEST_F_SETUP(trailing_zeros)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(trim_trailing_zeros) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(trailing_zeros) {}
+TEST_F_TEARDOWN(trim_trailing_zeros) {}
 
-TEST(trailing_zeros, test_one_zero)
+TEST_F(trim_trailing_zeros, test_one_zero)
 {
-	u_int in1[1];
+	u_int in1[] = {0};
 	u_int out[] = {0};
 
 	tau->num1 = (bigint){
@@ -244,7 +233,7 @@ TEST(trailing_zeros, test_one_zero)
 	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
 		tau->num1.len == tau->expected.len, "length should be %zu",
@@ -252,10 +241,10 @@ TEST(trailing_zeros, test_one_zero)
 	CHECK(
 		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
-	CHECK_BUF_EQ(tau->num1.num, tau->expected.num, tau->expected.len, "");
+	CHECK_BUF_EQ(tau->num1.num, tau->expected.num, tau->expected.len);
 }
 
-TEST(trailing_zeros, test_several_zeros)
+TEST_F(trim_trailing_zeros, test_several_zeros)
 {
 	u_int in1[] = {0, 0, 0, 0};
 	u_int out[] = {0};
@@ -265,7 +254,7 @@ TEST(trailing_zeros, test_several_zeros)
 	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
 		tau->num1.len == tau->expected.len, "length should be %zu",
@@ -273,10 +262,10 @@ TEST(trailing_zeros, test_several_zeros)
 	CHECK(
 		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
-	CHECK_BUF_EQ(tau->num1.num, tau->expected.num, tau->expected.len, "");
+	CHECK_BUF_EQ(tau->num1.num, tau->expected.num, tau->expected.len);
 }
 
-TEST(trailing_zeros, test_0001)
+TEST_F(trim_trailing_zeros, test_0001)
 {
 	u_int in1[] = {1, 0, 0, 0};
 	u_int out[] = {1};
@@ -286,7 +275,7 @@ TEST(trailing_zeros, test_0001)
 	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
 		tau->num1.len == tau->expected.len, "length should be %zu",
@@ -296,10 +285,10 @@ TEST(trailing_zeros, test_0001)
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-TEST(trailing_zeros, test_0100)
+TEST_F(trim_trailing_zeros, test_0100)
 {
 	u_int in1[] = {0, 0, 1, 0};
 	u_int out[] = {0, 0, 1};
@@ -309,7 +298,7 @@ TEST(trailing_zeros, test_0100)
 	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
 		tau->num1.len == tau->expected.len, "length should be %zu",
@@ -319,221 +308,215 @@ TEST(trailing_zeros, test_0100)
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-struct trailing_zeros_negative
+struct trim_trailing_zeros_negative
 {
 	bigint num1;
 	bigint expected;
 };
 
-TEST_F_SETUP(trailing_zeros_negative)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(trim_trailing_zeros_negative) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(trailing_zeros_negative) {}
+TEST_F_TEARDOWN(trim_trailing_zeros_negative) {}
 
-TEST(trailing_zeros_negative, test_one_zero)
+TEST_F(trim_trailing_zeros_negative, test_one_zero)
 {
-	u_int in1[1];
+	u_int in1[] = {0};
 	u_int out[] = {0};
 
-	num1 = (bigint){
+	tau->num1 = (bigint){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bigint){
+	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
-		tau->num1->len == tau->expected.len, "length should be %zu",
+		tau->num1.len == tau->expected.len, "length should be %zu",
 		tau->expected.len);
 	CHECK(
-		tau->num1->is_negative == tau->expected.is_negative,
+		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		tau->num1->num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->num1.num, tau->expected.num,
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-TEST(trailing_zeros_negative, test_several_zeros)
+TEST_F(trim_trailing_zeros_negative, test_several_zeros)
 {
 	u_int in1[] = {0, 0, 0, 0};
 	u_int out[] = {0};
 
-	num1 = (bigint){
+	tau->num1 = (bigint){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bigint){
+	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
-		tau->num1->len == tau->expected.len, "length should be %zu",
+		tau->num1.len == tau->expected.len, "length should be %zu",
 		tau->expected.len);
 	CHECK(
-		tau->num1->is_negative == tau->expected.is_negative,
+		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		tau->num1->num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->num1.num, tau->expected.num,
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-TEST(trailing_zeros_negative, test_0001)
+TEST_F(trim_trailing_zeros_negative, test_0001)
 {
 	u_int in1[] = {1, 0, 0, 0};
 	u_int out[] = {1};
 
-	num1 = (bigint){
+	tau->num1 = (bigint){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bigint){
+	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
-		tau->num1->len == tau->expected.len, "length should be %zu",
+		tau->num1.len == tau->expected.len, "length should be %zu",
 		tau->expected.len);
 	CHECK(
-		tau->num1->is_negative == tau->expected.is_negative,
+		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		tau->num1->num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->num1.num, tau->expected.num,
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-TEST(trailing_zeros_negative, test_0100)
+TEST_F(trim_trailing_zeros_negative, test_0100)
 {
 	u_int in1[] = {0, 0, 1, 0};
 	u_int out[] = {0, 0, 1};
 
-	num1 = (bigint){
+	tau->num1 = (bigint){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bigint){
+	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
-		tau->num1->len == tau->expected.len, "length should be %zu",
+		tau->num1.len == tau->expected.len, "length should be %zu",
 		tau->expected.len);
 	CHECK(
-		tau->num1->is_negative == tau->expected.is_negative,
+		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		tau->num1->num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->num1.num, tau->expected.num,
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-struct normal_input
+struct trim_normal_input
 {
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(normal_input)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(normal_input) {}
 
-TEST(normal_input, test_1)
+TEST_F_SETUP(trim_normal_input) { memset(tau, 0, sizeof(*tau)); }
+
+TEST_F_TEARDOWN(trim_normal_input) {}
+
+TEST_F(trim_normal_input, test_1)
 {
 	u_int in1[] = {1};
 	u_int out[] = {1};
 
-	num1 = (bigint){
+	tau->num1 = (bigint){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	expected = (bigint){
+	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
-		tau->num1->len == tau->expected.len, "length should be %zu",
+		tau->num1.len == tau->expected.len, "length should be %zu",
 		tau->expected.len);
 	CHECK(
-		tau->num1->is_negative == tau->expected.is_negative,
+		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		tau->num1->num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->num1.num, tau->expected.num,
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-TEST(normal_input, test_neg1)
+TEST_F(trim_normal_input, test_neg1)
 {
 	u_int in1[] = {1};
 	u_int out[] = {1};
 
-	num1 = (bigint){
+	tau->num1 = (bigint){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bigint){
+	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
-		tau->num1->len == tau->expected.len, "length should be %zu",
+		tau->num1.len == tau->expected.len, "length should be %zu",
 		tau->expected.len);
 	CHECK(
-		tau->num1->is_negative == tau->expected.is_negative,
+		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		tau->num1->num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->num1.num, tau->expected.num,
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-TEST(normal_input, test_100)
+TEST_F(trim_normal_input, test_100)
 {
 	u_int in1[] = {0, 0, 1};
 	u_int out[] = {0, 0, 1};
 
-	num1 = (bigint){
+	tau->num1 = (bigint){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	expected = (bigint){
+	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
-		tau->num1->len == tau->expected.len, "length should be %zu",
+		tau->num1.len == tau->expected.len, "length should be %zu",
 		tau->expected.len);
 	CHECK(
-		tau->num1->is_negative == tau->expected.is_negative,
+		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		tau->num1->num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->num1.num, tau->expected.num,
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-TEST(normal_input, test_neg100)
+TEST_F(trim_normal_input, test_neg100)
 {
 	u_int in1[] = {0, 0, 1};
 	u_int out[] = {0, 0, 1};
 
-	num1 = (bigint){
+	tau->num1 = (bigint){
 		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bigint){
+	tau->expected = (bigint){
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 
-	bi_trim(tau->num1);
+	_bi_trim(&tau->num1);
 
 	CHECK(
-		tau->num1->len == tau->expected.len, "length should be %zu",
+		tau->num1.len == tau->expected.len, "length should be %zu",
 		tau->expected.len);
 	CHECK(
-		tau->num1->is_negative == tau->expected.is_negative,
+		tau->num1.is_negative == tau->expected.is_negative,
 		"negative flag should be %u", tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		tau->num1->num, tau->expected.num,
-		tau->expected.len * sizeof(*tau->expected.num), "");
+		tau->num1.num, tau->expected.num,
+		tau->expected.len * sizeof(*tau->expected.num));
 }
 
-/*###################################################################*/
-/*###################################################################*/
+/* ################################################################### */
+/* ################################################################### */
 
-/*###################################################################*/
-/*###################################################################*/
+/* ################################################################### */
+/* ################################################################### */

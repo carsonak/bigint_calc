@@ -1,7 +1,7 @@
 #include "bigint_math.h"
 
 static ATTR_NONNULL void add(bigint *const n1, bigint *const n2);
-static ATTR_NONNULL bool add_negatives(bigint *const n1, bigint *const n2);
+static ATTR_NONNULL bool iadd_negatives(bigint *const n1, bigint *const n2);
 
 /**
  * add - add two bigints inplace.
@@ -41,26 +41,26 @@ static void add(bigint *const n1, bigint *const n2)
  *
  * Return: true on success, false on failure.
  */
-static bool add_negatives(bigint *const n1, bigint *const n2)
+static bool iadd_negatives(bigint *const n1, bigint *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
-	if (neg1 && neg2) /*-8 + -7 = -(8+7)*/
+	if (neg1 && neg2) /* -8 + -7 = -(8+7) */
 	{
 		add(n1, n2);
 		n1->is_negative = !n1->is_negative;
 		n2->is_negative = true;
 	}
-	else if (neg1) /*-8 + 7 = -(8-7)*/
+	else if (neg1) /* -8 + 7 = -(8-7) */
 	{
 		if (!bi_isubtract(n1, n2))
 			return (false);
 
 		n1->is_negative = !n1->is_negative;
 	}
-	else if (neg2) /*8 + -7 = 8-7*/
+	else if (neg2) /* 8 + -7 = 8-7 */
 	{
 		if (!bi_isubtract(n1, n2))
 			return (false);
@@ -84,17 +84,17 @@ static bool add_negatives(bigint *const n1, bigint *const n2)
  */
 bool bi_iadd(bigint *const n1, bigint *const n2)
 {
-	/*n1.num cannot be NULL as this function does not allocate any memory.*/
+	/* n1.num cannot be NULL as this function does not allocate any memory. */
 	if (!n1 || !n1->num)
 		return (false);
 
 	bi_trim(n1);
-	if (!n2) /*This case is treated as +(n1).*/
+	if (!n2) /* This case is treated as +(n1). */
 		return (true);
 
 	bi_trim(n2);
 	if (n1->is_negative || n2->is_negative)
-		return (add_negatives(n1, n2));
+		return (iadd_negatives(n1, n2));
 
 	add(n1, n2);
 	return (true);

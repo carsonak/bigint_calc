@@ -27,19 +27,15 @@ struct null_inputs
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(null_inputs)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(null_inputs) {}
 
-TEST(null_inputs, test_NULL_cmp_NULL)
+TEST_F(null_inputs, test_NULL_cmp_NULL)
 {
 	EXPECT(bi_compare(NULL, NULL) == 0, "");
 }
 
-TEST(null_inputs, test_0_cmp_NULL)
+TEST_F(null_inputs, test_0_cmp_NULL)
 {
 	u_int in1[1];
 
@@ -48,7 +44,7 @@ TEST(null_inputs, test_0_cmp_NULL)
 	EXPECT(bi_compare(&num1, NULL) == 0, "");
 }
 
-TEST(null_inputs, test_NULL_cmp_0)
+TEST_F(null_inputs, test_NULL_cmp_0)
 {
 	u_int in1[1];
 
@@ -57,7 +53,7 @@ TEST(null_inputs, test_NULL_cmp_0)
 	EXPECT(bi_compare(NULL, &num1) == 0, "");
 }
 
-TEST(null_inputs, test_1_cmp_NULL)
+TEST_F(null_inputs, test_1_cmp_NULL)
 {
 	u_int in1[] = {1};
 
@@ -66,7 +62,7 @@ TEST(null_inputs, test_1_cmp_NULL)
 	EXPECT(bi_compare(&num1, NULL) == 0, "");
 }
 
-TEST(null_inputs, test_NULL_cmp_1)
+TEST_F(null_inputs, test_NULL_cmp_1)
 {
 	u_int in1[] = {1};
 
@@ -75,12 +71,12 @@ TEST(null_inputs, test_NULL_cmp_1)
 	EXPECT(bi_compare(NULL, &num1) == 0, "");
 }
 
-TEST(null_arrays, test_NULL_cmp_nullarray)
+TEST_F(null_arrays, test_NULL_cmp_nullarray)
 {
 	EXPECT(bi_compare(NULL, &num2) == 0, "");
 }
 
-TEST(null_arrays, test_nullarray_cmp_NULL)
+TEST_F(null_arrays, test_nullarray_cmp_NULL)
 {
 	EXPECT(bi_compare(&num1, NULL) == 0, "");
 }
@@ -90,19 +86,15 @@ struct null_arrays
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(null_arrays)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(null_arrays) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(null_arrays) {}
 
-TEST(null_arrays, test_nullarray_cmp_nullarray)
+TEST_F(null_arrays, test_nullarray_cmp_nullarray)
 {
 	EXPECT(bi_compare(&num1, &num2) == 0, "");
 }
 
-TEST(null_arrays, test_0_cmp_nullarray)
+TEST_F(null_arrays, test_0_cmp_nullarray)
 {
 	u_int in1[1];
 
@@ -111,7 +103,7 @@ TEST(null_arrays, test_0_cmp_nullarray)
 	EXPECT(bi_compare(&num1, &num2) == 1, "");
 }
 
-TEST(null_arrays, test_nullarray_cmp_0)
+TEST_F(null_arrays, test_nullarray_cmp_0)
 {
 	u_int in2[1];
 
@@ -120,7 +112,7 @@ TEST(null_arrays, test_nullarray_cmp_0)
 	EXPECT(bi_compare(&num1, &num2), -1 ==, "");
 }
 
-TEST(null_arrays, test_1_cmp_nullarray)
+TEST_F(null_arrays, test_1_cmp_nullarray)
 {
 	u_int in1[] = {1};
 
@@ -129,7 +121,7 @@ TEST(null_arrays, test_1_cmp_nullarray)
 	EXPECT(bi_compare(&num1, &num2) == 1, "");
 }
 
-TEST(null_arrays, test_nullarray_cmp_1)
+TEST_F(null_arrays, test_nullarray_cmp_1)
 {
 	u_int in2[] = {1};
 
@@ -143,14 +135,10 @@ struct trailing_zeros
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(trailing_zeros)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(trailing_zeros) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(trailing_zeros) {}
 
-TEST(trailing_zeros, test_long0_cmp_short0)
+TEST_F(trailing_zeros, test_long0_cmp_short0)
 {
 	/* clang-format off */
 	u_int in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476, 0, 0, 0, 0, 0, 0};
@@ -165,7 +153,7 @@ TEST(trailing_zeros, test_long0_cmp_short0)
 	EXPECT(bi_compare(&num1, &num2) > 0, "");
 }
 
-TEST(trailing_zeros, test_long_cmp_short0)
+TEST_F(trailing_zeros, test_long_cmp_short0)
 {
 	/* clang-format off */
 	u_int in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476};
@@ -180,7 +168,7 @@ TEST(trailing_zeros, test_long_cmp_short0)
 	EXPECT(bi_compare(&num1, &num2) > 0, "");
 }
 
-TEST(trailing_zeros, test_long0_cmp_short)
+TEST_F(trailing_zeros, test_long0_cmp_short)
 {
 	/* clang-format off */
 	u_int in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476, 0, 0, 0, 0, 0, 0};
@@ -200,14 +188,10 @@ struct compare_arrays
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(compare_arrays)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(compare_arrays) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(compare_arrays) {}
 
-TEST(compare_arrays, test_0_cmp_0)
+TEST_F(compare_arrays, test_0_cmp_0)
 {
 	u_int in1[1];
 	u_int in2[1];
@@ -220,7 +204,7 @@ TEST(compare_arrays, test_0_cmp_0)
 	EXPECT(bi_compare(&num1, &num2) == 0, "");
 }
 
-TEST(compare_arrays, test_1_cmp_1)
+TEST_F(compare_arrays, test_1_cmp_1)
 {
 	u_int in1[] = {1};
 	u_int in2[] = {1};
@@ -233,7 +217,7 @@ TEST(compare_arrays, test_1_cmp_1)
 	EXPECT(bi_compare(&num1, &num2) == 0, "");
 }
 
-TEST(compare_arrays, test_1_cmp_0)
+TEST_F(compare_arrays, test_1_cmp_0)
 {
 	u_int in1[] = {1};
 	u_int in2[1];
@@ -246,7 +230,7 @@ TEST(compare_arrays, test_1_cmp_0)
 	EXPECT(bi_compare(&num1, &num2) > 0, "");
 }
 
-TEST(compare_arrays, test_0_cmp_1)
+TEST_F(compare_arrays, test_0_cmp_1)
 {
 	u_int in1[1];
 	u_int in2[] = {1};
@@ -259,7 +243,7 @@ TEST(compare_arrays, test_0_cmp_1)
 	EXPECT(bi_compare(&num1, &num2) < 0, "");
 }
 
-TEST(compare_arrays, test_2000000001_cmp_1000000002)
+TEST_F(compare_arrays, test_2000000001_cmp_1000000002)
 {
 	u_int in1[] = {1, 2};
 	u_int in2[] = {2, 1};
@@ -272,7 +256,7 @@ TEST(compare_arrays, test_2000000001_cmp_1000000002)
 	EXPECT(bi_compare(&num1, &num2) > 0, "");
 }
 
-TEST(compare_arrays, test_1000000002_cmp_2000000001)
+TEST_F(compare_arrays, test_1000000002_cmp_2000000001)
 {
 	u_int in1[] = {2, 1};
 	u_int in2[] = {1, 2};
@@ -290,14 +274,10 @@ struct compare_long_arrays
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(compare_long_arrays)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(compare_long_arrays) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(compare_long_arrays) {}
 
-TEST(compare_long_arrays, test_eqlong_cmp_eqlong)
+TEST_F(compare_long_arrays, test_eqlong_cmp_eqlong)
 {
 	u_int in1[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
 	u_int in2[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
@@ -310,7 +290,7 @@ TEST(compare_long_arrays, test_eqlong_cmp_eqlong)
 	EXPECT(bi_compare(&num1, &num2) == 0, "");
 }
 
-TEST(compare_long_arrays, test_biglong_cmp_smalllong)
+TEST_F(compare_long_arrays, test_biglong_cmp_smalllong)
 {
 	u_int in1[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
 	u_int in2[] = {9, 8, 7, 6, 5, 5, 4, 3, 2, 1};
@@ -323,7 +303,7 @@ TEST(compare_long_arrays, test_biglong_cmp_smalllong)
 	EXPECT(bi_compare(&num1, &num2) > 0, "");
 }
 
-TEST(compare_long_arrays, test_smalllong_cmp_biglong)
+TEST_F(compare_long_arrays, test_smalllong_cmp_biglong)
 {
 	u_int in1[] = {9, 8, 7, 6, 5, 5, 4, 3, 2, 1};
 	u_int in2[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
@@ -341,14 +321,10 @@ struct compare_different_len_arrays
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(compare_different_len_arrays)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(compare_different_len_arrays) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(compare_different_len_arrays) {}
 
-TEST(compare_different_len_arrays, test_long_cmp_short)
+TEST_F(compare_different_len_arrays, test_long_cmp_short)
 {
 	u_int in1[] = {1, 2, 3, 4, 5, 5, 6, 9, 7, 8};
 	u_int in2[] = {9, 8, 4, 3, 2, 9};
@@ -361,7 +337,7 @@ TEST(compare_different_len_arrays, test_long_cmp_short)
 	EXPECT(bi_compare(&num1, &num2) > 0, "");
 }
 
-TEST(compare_different_len_arrays, test_short_cmp_long)
+TEST_F(compare_different_len_arrays, test_short_cmp_long)
 {
 	u_int in1[] = {9, 8, 4, 3, 2, 9};
 	u_int in2[] = {1, 2, 3, 4, 5, 5, 6, 9, 7, 8};
@@ -379,14 +355,10 @@ struct negative_numbers
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(negative_numbers)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(negative_numbers) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(negative_numbers) {}
 
-TEST(negative_numbers, test_minus1_cmp_minus1)
+TEST_F(negative_numbers, test_minus1_cmp_minus1)
 {
 	u_int in1[] = {1};
 	u_int in2[] = {1};
@@ -399,7 +371,7 @@ TEST(negative_numbers, test_minus1_cmp_minus1)
 	EXPECT(bi_compare(&num1, &num2) == 0, "");
 }
 
-TEST(negative_numbers, test_1_cmp_minus1)
+TEST_F(negative_numbers, test_1_cmp_minus1)
 {
 	u_int in1[] = {1};
 	u_int in2[] = {1};
@@ -412,7 +384,7 @@ TEST(negative_numbers, test_1_cmp_minus1)
 	EXPECT(bi_compare(&num1, &num2) > 0, "");
 }
 
-TEST(negative_numbers, test_minus1_cmp_1)
+TEST_F(negative_numbers, test_minus1_cmp_1)
 {
 	u_int in1[] = {1};
 	u_int in2[] = {1};

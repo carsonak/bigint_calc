@@ -57,13 +57,13 @@ char *filter_str(char const *const str, size_t *const processed,
 			break;
 	}
 
-	/*processed should not change in case of alloc fail.*/
+	/* processed should not change in case of alloc fail. */
 	if (output && processed)
 		*processed = str_i;
 
 	xfree(buffer);
-	/*In the case `str = "\0"`, output will be NULL, which is undesirable as*/
-	/*NULL is an error value in this function.*/
+	/* In the case `str = "\0"`, output will be NULL, which is undesirable as */
+	/* NULL is an error value in this function. */
 	if (str_i == 0 && !str[str_i])
 		return (xcalloc(1, sizeof(*output)));
 

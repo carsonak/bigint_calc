@@ -278,7 +278,7 @@ Test(simple_multiplications, test_long_times_0,
 	output = bi_delete(output);
 }
 
-/*INVERSE*/
+/* INVERSE */
 
 Test(simple_multiplications, test_0_times_long,
 	 .description = "0 * 938736,0,3,197812382,472346283,691273964 = 0",
@@ -325,7 +325,7 @@ Test(simple_multiplications, test_u100c_times_u100d,
 	output = bi_delete(output);
 }
 
-/*INVERSE*/
+/* INVERSE */
 
 Test(simple_multiplications, test_u100d_times_u100c,
 	 .description = "1230,998777777,777777774,376573322,300000000 "
@@ -377,7 +377,7 @@ Test(negative_multiplications, test_minus_u100a_times_minus_u100c,
 	output = bi_delete(output);
 }
 
-/*INVERSE*/
+/* INVERSE */
 Test(negative_multiplications, test_minus_u100c_times_minus_u100a,
 	 .description = "-106998112,639854667,188839999,908562372,840000000,948,320000000 "
 					"* -1000,0,0,0,0,0,0,0,1 "
@@ -426,7 +426,7 @@ Test(negative_multiplications, test_u100a_times_minus_u100c,
 	output = bi_delete(output);
 }
 
-/*INVERSE*/
+/* INVERSE */
 Test(negative_multiplications, test_minus_u100c_times_u100a,
 	 .description = "-106998112,639854667,188839999,908562372,840000000,948,320000000 "
 					"* 1000,0,0,0,0,0,0,0,1 "
@@ -475,7 +475,7 @@ Test(negative_multiplications, test_minus_u100a_times_u100c,
 	output = bi_delete(output);
 }
 
-/*INVERSE*/
+/* INVERSE */
 Test(negative_multiplications, test_u100c_times_minus_u100a,
 	 .description = "106998112,639854667,188839999,908562372,840000000,948,320000000 "
 					"* -1000,0,0,0,0,0,0,0,1 "
@@ -523,7 +523,7 @@ Test(large_multiplications, test_o1kb_times_o1kc,
 	output = bi_delete(output);
 }
 
-/*INVERSE*/
+/* INVERSE */
 
 Test(large_multiplications, test_o1kc_times_o1kb,
 	 .description = "o_1k.c * o_1k.b = large", .timeout = 1.0)
@@ -568,7 +568,7 @@ Test(large_multiplications, test_o500c_times_o500d,
 	output = bi_delete(output);
 }
 
-/*INVERSE*/
+/* INVERSE */
 
 Test(large_multiplications, test_o500d_times_o500c,
 	 .description = "o_500.d * o_500.c = medium_large",
@@ -614,7 +614,7 @@ Test(large_multiplications, test_01ka_times_o500d,
 	output = bi_delete(output);
 }
 
-/*INVERSE*/
+/* INVERSE */
 
 Test(large_multiplications, test_o500d_times_o1ka,
 	 .description = "o_500.d * o_1k.a = medium_large2",

@@ -27,7 +27,7 @@ size_t print_bigint(bigint *arr)
 	return (bytes_printed);
 }
 
-/*INFO: The following function should ideally be static but that hinders easy testing.*/
+/* INFO: The following function should ideally be static but that hinders easy testing. */
 /**
  * uint_array_to_str - represent an uint array as a string.
  * @arr: the uint array.
@@ -45,8 +45,8 @@ char *uint_array_to_str(u_int const *const arr, size_t len)
 		return (xstrdup("{NULL}"));
 
 	len_sep = strlen(sep);
-	/*sizeof(str) == (max "digits" in U_INT_MAX * len) + */
-	/*total sizeof(separators) + sizeof("{}") + 1*/
+	/* sizeof(str) == (max "digits" in U_INT_MAX * len) + */
+	/* total sizeof(separators) + sizeof("{}") + 1 */
 	len_str = ((count_digits(U_INT_MAX) - 1) * len) +
 			  (len_sep * (len - 1)) + 2 + 1;
 	str = xmalloc(len_str * sizeof(*str));

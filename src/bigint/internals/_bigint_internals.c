@@ -6,11 +6,11 @@
  *
  * Return: a pointer to a bigint struct, NULL on failure.
  */
-bigint *_bi_alloc(const size_t len)
+bigint *_bi_alloc(const len_type len)
 {
 	bigint *arr = xmalloc(sizeof(*arr) + (sizeof(*arr->num) * len));
 
-	if (!arr)
+	if (!arr || len < 0)
 		return (NULL);
 
 	*arr = (bigint){0};
@@ -37,20 +37,23 @@ bigint *_bi_alloc(const size_t len)
  *
  * Return: pointer to the resized bigint, NULL on failure.
  */
-bigint *_bi_resize(bigint *bi, const size_t len)
+bigint *_bi_resize(bigint *bi, const len_type len)
 {
-	const size_t actual_size = sizeof(*bi) + (sizeof(*bi->num) * len);
+	if (len < 0)
+		return (NULL);
+
+	const len_type actual_size = sizeof(*bi) + (sizeof(*bi->num) * len);
 
 	bi = xrealloc_free_on_fail(bi, actual_size);
 	if (!bi)
 		return (NULL);
 
-	if (len)
+	if (len > 0)
 		bi->num = (u_int *)(bi + 1);
 	else
 		bi->num = NULL;
 
-	/* If the `bigint` is being enlarged, set the added memory to 0.*/
+	/* If the `bigint` is being enlarged, set the added memory to 0. */
 	if (len > bi->len)
 		memset(&(bi->num[bi->len]), 0, sizeof(*bi->num) * (len - bi->len));
 
@@ -115,7 +118,7 @@ bigint *_bi_dup(bigint const *const bi)
 		return (NULL);
 
 	dup->is_negative = bi->is_negative;
-	if (bi->len)
+	if (bi->len > 0)
 		memcpy(dup->num, bi->num, sizeof(*bi->num) * bi->len);
 
 	return (dup);

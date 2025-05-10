@@ -3,31 +3,39 @@
 #include "bigint.h"
 #include "parse_number.h"
 
+static ATTR_NONNULL len_type uint_to_array(u_int *const dest, uintmax_t num);
+
+/**
+ * uint_to_array - convert an unsigned int to a bigint array.
+ * @dest: pointer to the array to store the number.
+ * @num: the unsigned int to convert.
+ *
+ * Return: final length of the array.
+ */
+static len_type uint_to_array(u_int *const dest, uintmax_t num)
+{
+	len_type i = 0;
+
+	while (num)
+	{
+		dest[i] = num % BIGINT_BASE;
+		num /= BIGINT_BASE;
+		++i;
+	}
+
+	return (i);
+}
+
 /**
  * int_to_new_bi - convert an integer to a bigint representation.
  * @n: the int to convert.
  *
  * Return: a pointer to the bigint, NULL on failure.
  */
-bigint *int_to_new_bi(const long long int n)
+bigint *int_to_new_bi(const intmax_t n)
 {
 	u_int tmp[4] = {0};
-	unsigned int i = 0;
-
-	if (!n)
-		i = 1;
-	else
-	{
-		unsigned long long int un = llabs(n);
-
-		while (un)
-		{
-			tmp[i] = un % BIGINT_BASE;
-			un /= BIGINT_BASE;
-			++i;
-		}
-	}
-
+	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, llabs(n));
 	bigint *const num = _bi_alloc(i);
 
 	if (num)
@@ -51,27 +59,13 @@ bigint *int_to_new_bi(const long long int n)
  *
  * Return: true on success, false on failure.
  */
-bool int_to_bi(bigint *const dest, const long long int n)
+bool int_to_bi(bigint *const dest, const intmax_t n)
 {
-	u_int tmp[4] = {0};
-	unsigned int i = 0;
-
 	if (!dest || !dest->num)
 		return (false);
 
-	if (!n)
-		i = 1;
-	else
-	{
-		unsigned long long int un = llabs(n);
-
-		while (un)
-		{
-			tmp[i] = un % BIGINT_BASE;
-			un /= BIGINT_BASE;
-			++i;
-		}
-	}
+	u_int tmp[4] = {0};
+	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, llabs(n));
 
 	if (n < 0)
 		dest->is_negative = true;
@@ -91,8 +85,9 @@ bool int_to_bi(bigint *const dest, const long long int n)
  * Return: pointer to the bigint, NULL on failure.
  */
 bigint *bi_new(
-	char const *const number, const unsigned short int base,
-	size_t *const processed)
+	char const *const restrict number, const unsigned short int base,
+	len_type *const restrict processed
+)
 {
 	numstr *const ns = str_to_numstr(number, base, processed);
 

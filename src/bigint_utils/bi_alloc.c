@@ -50,7 +50,7 @@ bigint *bi_resize(bigint *bi, const size_t len)
 	else
 		bi->num = NULL;
 
-	/*Initialise memory to 0 only when expanding the bigint.*/
+	/* Initialise memory to 0 only when expanding the bigint. */
 	if (len > bi->len)
 		memset(&(bi->num[bi->len]), 0, sizeof(*bi->num) * (len - bi->len));
 

@@ -3,10 +3,11 @@
 
 #include "macros.h"
 
-#include <stddef.h> /* size_t */
+#include <ctype.h> /* isalnum */
 #include <string.h> /* strlen */
 
 #include "bigint_typedefs.h"
+#include "types.h"
 
 /**
  * mapping_func - a pointer to a function that maps one character to another.
@@ -18,13 +19,15 @@
 typedef char (*mapping_func)(const char c, void *args);
 
 char *filter_str(
-	char const *const str, size_t *const processed, const mapping_func f,
-	void *const f_args);
-size_t leading_chars_span(char const *const str, char const *const ch);
+	char const *const restrict str, len_type *const restrict processed,
+	const mapping_func map, void *const restrict map_args
+);
 numstr *str_to_numstr(
 	char const *const num_str, const unsigned short int base,
-	size_t *const processed);
+	len_type *const processed
+);
 bigint *numstr_to_bi(numstr *nstr);
 bigint *anybase_to_bi(numstr *num, const unsigned short int base);
+char *bi_tostr(bigint const *const n);
 
-#endif /*PARSE_NUMBER_H*/
+#endif /* PARSE_NUMBER_H */

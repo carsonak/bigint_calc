@@ -6,8 +6,11 @@
  *
  * Return: a pointer to a numstr struct, NULL on failure.
  */
-numstr *_numstr_alloc(size_t len)
+numstr *_numstr_alloc(len_type len)
 {
+	if (len < 0)
+		return (NULL);
+
 	numstr *arr = xcalloc(1, sizeof(*arr));
 
 	if (!arr)

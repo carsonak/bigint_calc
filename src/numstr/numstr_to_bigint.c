@@ -16,10 +16,10 @@ bigint *numstr_to_bni(numstr *nstr)
     if (!nstr || !nstr->len || !nstr->str || !isalnum(nstr->str[0]))
         return (NULL);
 
-    /*sizeof(bigint_i) == */
-    /*ceil(numstr.len / no. of digits that can represent BIGINT_BASE)*/
-    digits = count_digits(BIGINT_BASE - 1);
-    bi_i = (nstr->len / digits);
+	/* sizeof(bigint_i) == */
+	/* ceil(numstr.len / no. of digits that can represent BIGINT_BASE) */
+	digits = count_digits(BIGINT_BASE - 1);
+	bi_i = (nstr->len / digits);
     if (nstr->len % digits)
         ++bi_i;
 

@@ -1,48 +1,51 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
-static void ATTR_NONNULL_IDX(1) imultiply(bigint **const n1, bigint *const n2);
-static void ATTR_NONNULL_IDX(1) idivide(bigint **const n1, bigint *const n2);
-static void ATTR_NONNULL_IDX(1) isubtract(bigint **const n1, bigint *const n2);
+static void ATTR_NONNULL_IDX(1)
+	multiply_inplace(bigint **const n1, bigint *const n2);
+static void ATTR_NONNULL_IDX(1)
+	divide_inplace(bigint **const n1, bigint *const n2);
+static void ATTR_NONNULL_IDX(1)
+	subtract_inplace(bigint **const n1, bigint *const n2);
 
 /**
- * imultiply - "inplace" bigint multiplication.
+ * multiply_inplace - "inplace" bigint multiplication.
  * @n1: address of the first bigint pointer.
  * @n2: pointer to the second bigint.
  */
-static void imultiply(bigint **const n1, bigint *const n2)
+static void multiply_inplace(bigint **const n1, bigint *const n2)
 {
 	bigint *cpy = *n1;
 
 	*n1 = bi_multiply(cpy, n2);
-	bi_delete(cpy);
+	_bi_free(cpy);
 }
 
 /**
- * idivide - "inplace" bigint division.
+ * divide_inplace - "inplace" bigint division.
  * @n1: address of the first bigint pointer.
  * @n2: pointer to the second bigint.
  */
-static void idivide(bigint **const n1, bigint *const n2)
+static void divide_inplace(bigint **const n1, bigint *const n2)
 {
 	bigint *cpy = *n1;
 
 	*n1 = bi_divide(cpy, n2);
-	bi_delete(cpy);
+	_bi_free(cpy);
 }
 
 /**
- * isubtract - "inplace" bigint subtraction.
+ * subtract_inplace - "inplace" bigint subtraction.
  * @n1: address of the first bigint pointer.
  * @n2: pointer to the second bigint.
  */
-static void isubtract(bigint **const n1, bigint *const n2)
+static void subtract_inplace(bigint **const n1, bigint *const n2)
 {
 	if ((*n1)->len < n2->len)
 	{
 		bigint *tmp = _bi_resize(*n1, n2->len);
 		if (!tmp)
-			*n1 = bi_delete(*n1);
+			*n1 = _bi_free(*n1);
 
 		*n1 = tmp;
 	}
@@ -63,7 +66,7 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 	bigint tmp = {.len = 1, .is_negative = false, .num = (u_int[1]){1}};
 	bigint *x = NULL, *y = NULL, *exp = NULL;
 
-	if (!base || !exponent)
+	if ((!base || !exponent) || (base->len < 0 || exponent->len < 0))
 		return (NULL);
 
 	_bi_trim(base);
@@ -87,36 +90,36 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 	x->is_negative = false;
 	y->num[0] = 1;
 	tmp.num[0] = 2;
-	/*https://en.wikipedia.org/wiki/Exponentiation_by_squaring*/
-	/*x^n can be written as: */
-	/*(x^2) ^ n/2 if n is even, x(x^2) ^ (n-1)/2 if n is odd.*/
-	/*This can be computed recursively, keeping in mind the special case */
-	/*x^0==1 and base case as x^1==x.*/
-	/*Another form can be written as: */
-	/*yx^n = y(x^2) ^ n/2 if n is even, (yx)(x^2) ^ (n-1)/2 if n is odd.*/
-	/*With y starting at 0.*/
+	/* https://en.wikipedia.org/wiki/Exponentiation_by_squaring */
+	/* x^n can be written as: */
+	/* (x^2) ^ n/2 if n is even, x(x^2) ^ (n-1)/2 if n is odd. */
+	/* This can be computed recursively, keeping in mind the special case */
+	/* x^0==1 and base case as x^1==x. */
+	/* Another form can be written as: */
+	/* yx^n = y(x^2) ^ n/2 if n is even, (yx)(x^2) ^ (n-1)/2 if n is odd. */
+	/* With y starting at 0. */
 	while (x && y && exp && (exp->len > 1 || exp->num[0] > 1))
 	{
 		if (exp->num[0] % 2)
 		{
-			imultiply(&y, x);
+			multiply_inplace(&y, x);
 			tmp.num[0] = 1;
-			isubtract(&exp, &tmp);
+			subtract_inplace(&exp, &tmp);
 			tmp.num[0] = 2;
 		}
 
-		imultiply(&x, x);
+		multiply_inplace(&x, x);
 		if (!exp || !x || !y)
 			goto clean_up;
 
-		idivide(&exp, &tmp);
+		divide_inplace(&exp, &tmp);
 	}
 
-	imultiply(&x, y);
+	multiply_inplace(&x, y);
 	if (exponent->is_negative && x)
 	{
 		tmp.num[0] = 1;
-		idivide(&x, &tmp);
+		divide_inplace(&x, &tmp);
 	}
 
 	if (x && base->is_negative && exponent->num[0] % 2)
@@ -125,10 +128,10 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 	if (false)
 	{
 clean_up:
-		x = bi_delete(x);
+		x = _bi_free(x);
 	}
 
-	bi_delete(exp);
-	bi_delete(y);
+	_bi_free(exp);
+	_bi_free(y);
 	return (x);
 }

@@ -1,7 +1,7 @@
 #include "tests.h"
 
 static struct numstr *output;
-static size_t processed;
+static len_typeprocessed;
 
 /**
  * setup - setup some variables.
@@ -19,13 +19,13 @@ void teardown(void) { output = free_numstr(output); }
 
 TestSuite(null_inputs);
 
-TEST(null_inputs, test_NULL)
+TEST_F(null_inputs, test_NULL)
 {
 	EXPECT(str_to_numstr(NULL, 10, &processed) == 0, "");
 	EXPECT(processed == 0, "");
 }
 
-TEST(null_inputs, test_null)
+TEST_F(null_inputs, test_null)
 {
 	EXPECT(str_to_numstr("\0001", 10, &processed) == 0, "");
 	EXPECT(processed == 0, "");
@@ -33,7 +33,7 @@ TEST(null_inputs, test_null)
 
 TestSuite(invalid_inputs);
 
-TEST(invalid_inputs, test_all_nonvalid_chars)
+TEST_F(invalid_inputs, test_all_nonvalid_chars)
 {
 	char c[2] = {SCHAR_MIN, '\0'};
 
@@ -45,7 +45,7 @@ TEST(invalid_inputs, test_all_nonvalid_chars)
 	}
 }
 
-TEST(invalid_inputs, test_all_nonvalid_chars2)
+TEST_F(invalid_inputs, test_all_nonvalid_chars2)
 {
 	char c[3] = {SCHAR_MIN, SCHAR_MAX, '\0'};
 
@@ -59,7 +59,7 @@ TEST(invalid_inputs, test_all_nonvalid_chars2)
 	}
 }
 
-TEST(invalid_inputs, test_leading_separators_signs)
+TEST_F(invalid_inputs, test_leading_separators_signs)
 {
 	cr_redirect_stderr();
 	/* Leading Separator. */
@@ -79,26 +79,26 @@ TEST(invalid_inputs, test_leading_separators_signs)
 	EXPECT(str_to_numstr("+++", 10, NULL) == 0, "");
 }
 
-TEST(invalid_inputs, test_leading_underscore)
+TEST_F(invalid_inputs, test_leading_underscore)
 {
 	EXPECT(str_to_numstr("_20", 10, &processed) == 0, "");
 	EXPECT(processed == 0, "");
 }
 
-TEST(invalid_inputs, test_trailing_underscore)
+TEST_F(invalid_inputs, test_trailing_underscore)
 {
 	EXPECT(str_to_numstr("20_", 10, &processed) == 0, "");
 	EXPECT(processed == 2, "");
 }
 
-TEST(invalid_inputs, test_neg_leading_underscore)
+TEST_F(invalid_inputs, test_neg_leading_underscore)
 {
 	cr_redirect_stderr();
 	EXPECT(str_to_numstr("-_20", 10, &processed) == 0, "");
 	EXPECT(processed == 1, "");
 }
 
-TEST(invalid_inputs, test_pos_leading_underscore)
+TEST_F(invalid_inputs, test_pos_leading_underscore)
 {
 	cr_redirect_stderr();
 	EXPECT(str_to_numstr("+_20", 10, &processed) == 0, "");
@@ -110,14 +110,10 @@ struct invalid_chars_in_str
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(invalid_chars_in_str)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(invalid_chars_in_str) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(invalid_chars_in_str) {}
 
-TEST(invalid_chars_in_str, test_valid_chars_with_dash_in_middle)
+TEST_F(invalid_chars_in_str, test_valid_chars_with_dash_in_middle)
 {
 	cr_redirect_stderr();
 
@@ -131,7 +127,7 @@ TEST(invalid_chars_in_str, test_valid_chars_with_dash_in_middle)
 	EXPECT(output->str == expected, "");
 }
 
-TEST(invalid_chars_in_str, test_valid_chars_with_space_in_middle)
+TEST_F(invalid_chars_in_str, test_valid_chars_with_space_in_middle)
 {
 
 	const char in[] = "123 567";
@@ -144,7 +140,7 @@ TEST(invalid_chars_in_str, test_valid_chars_with_space_in_middle)
 	EXPECT(output->str == expected, "");
 }
 
-TEST(invalid_chars_in_str, test_valid_chars_with_bracket_in_middle)
+TEST_F(invalid_chars_in_str, test_valid_chars_with_bracket_in_middle)
 {
 
 	const char in[] = "123(567)";
@@ -163,14 +159,10 @@ struct valid_inputs
 	bigint num1;
 	bigint expected;
 };
-TEST_F_SETUP(valid_inputs)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
+TEST_F_SETUP(valid_inputs) { memset(tau, 0, sizeof(*tau)); }
 TEST_F_TEARDOWN(valid_inputs) {}
 
-TEST(valid_inputs, test_decimals1)
+TEST_F(valid_inputs, test_decimals1)
 {
 	char c[2] = {'0', '\0'};
 
@@ -186,7 +178,7 @@ TEST(valid_inputs, test_decimals1)
 	}
 }
 
-TEST(valid_inputs, test_uppercase_letters1)
+TEST_F(valid_inputs, test_uppercase_letters1)
 {
 	char c[2] = {'A', '\0'};
 
@@ -202,7 +194,7 @@ TEST(valid_inputs, test_uppercase_letters1)
 	}
 }
 
-TEST(valid_inputs, test_lowercase_letters1)
+TEST_F(valid_inputs, test_lowercase_letters1)
 {
 	char c[2] = {'a', '\0'}, out[2] = {'A', '\0'};
 
@@ -218,7 +210,7 @@ TEST(valid_inputs, test_lowercase_letters1)
 	}
 }
 
-TEST(valid_inputs, test_decimals2)
+TEST_F(valid_inputs, test_decimals2)
 {
 	char c[3] = {'1', '0', '\0'};
 
@@ -237,7 +229,7 @@ TEST(valid_inputs, test_decimals2)
 	}
 }
 
-TEST(valid_inputs, test_uppercase_letters2)
+TEST_F(valid_inputs, test_uppercase_letters2)
 {
 	char c[3] = {'A', 'A', '\0'};
 
@@ -256,7 +248,7 @@ TEST(valid_inputs, test_uppercase_letters2)
 	}
 }
 
-TEST(valid_inputs, test_lowercase_letters2)
+TEST_F(valid_inputs, test_lowercase_letters2)
 {
 	char c[3] = {'a', 'a', '\0'}, out[3] = {'A', 'A', '\0'};
 
@@ -276,7 +268,7 @@ TEST(valid_inputs, test_lowercase_letters2)
 	}
 }
 
-TEST(valid_inputs, test_0000000000000)
+TEST_F(valid_inputs, test_0000000000000)
 {
 
 	const char in[] = "0000000000000";
@@ -290,7 +282,7 @@ TEST(valid_inputs, test_0000000000000)
 	EXPECT(output->str == expected, "");
 }
 
-TEST(valid_inputs, test_neg0000000000000)
+TEST_F(valid_inputs, test_neg0000000000000)
 {
 
 	const char in[] = "-0000000000000";
@@ -304,7 +296,7 @@ TEST(valid_inputs, test_neg0000000000000)
 	EXPECT(output->str == expected, "");
 }
 
-TEST(valid_inputs, test_00000000000001)
+TEST_F(valid_inputs, test_00000000000001)
 {
 
 	const char in[] = "00000000000001";
@@ -318,7 +310,7 @@ TEST(valid_inputs, test_00000000000001)
 	EXPECT(output->str == expected, "");
 }
 
-TEST(valid_inputs, test_neg00000000000001)
+TEST_F(valid_inputs, test_neg00000000000001)
 {
 
 	const char in[] = "-00000000000001";
@@ -332,7 +324,7 @@ TEST(valid_inputs, test_neg00000000000001)
 	EXPECT(output->str == expected, "");
 }
 
-TEST(valid_inputs, test_mmneg10_000_000_000)
+TEST_F(valid_inputs, test_mmneg10_000_000_000)
 {
 
 	const char in[] = "---10_000_000_000";
@@ -346,7 +338,7 @@ TEST(valid_inputs, test_mmneg10_000_000_000)
 	EXPECT(output->str == expected, "");
 }
 
-TEST(valid_inputs, test_neg1)
+TEST_F(valid_inputs, test_neg1)
 {
 
 	const char in[] = "--ZZZ_4Ar_YU8_012_qa9";

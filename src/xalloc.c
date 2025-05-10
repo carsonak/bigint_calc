@@ -1,4 +1,5 @@
 #include "xalloc.h"
+#include "string.h"
 
 /**
  * xmalloc - allocate memory with malloc and report errors.
@@ -6,11 +7,14 @@
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xmalloc(const size_t size)
+void *xmalloc(const intmax_t size)
 {
+	if (size < 0)
+		return (NULL);
+
 	void *const ptr = malloc(size);
 
-	if (!ptr && size)
+	if (!ptr && size > 0)
 		perror("Memory allocation error");
 
 	return (ptr);
@@ -23,7 +27,7 @@ void *xmalloc(const size_t size)
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xcalloc(const size_t items, const size_t sizeof_item)
+void *xcalloc(const intmax_t items, const intmax_t sizeof_item)
 {
 	void *const ptr = calloc(items, sizeof_item);
 
@@ -40,7 +44,7 @@ void *xcalloc(const size_t items, const size_t sizeof_item)
  *
  * Return: pointer to the resized memory area, NULL on failure.
  */
-void *xrealloc(void *nullable_ptr, size_t size)
+void *xrealloc(void *nullable_ptr, intmax_t size)
 {
 	nullable_ptr = realloc(nullable_ptr, size);
 	if (!nullable_ptr && size)
@@ -57,7 +61,7 @@ void *xrealloc(void *nullable_ptr, size_t size)
  * Return: pointer to the resized memory area, NULL on failure.
  *
  */
-void *xrealloc_free_on_fail(void *nullable_ptr, size_t size)
+void *xrealloc_free_on_fail(void *nullable_ptr, intmax_t size)
 {
 	void *const ptr = xrealloc(nullable_ptr, size);
 

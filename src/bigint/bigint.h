@@ -5,7 +5,6 @@
 
 #include <ctype.h>   /* isdigit */
 #include <stdbool.h> /* bool */
-#include <stddef.h>  /* size_t, ptr_diff */
 #include <stdlib.h>  /* strtoull */
 #include <string.h>  /* memmove */
 
@@ -16,33 +15,34 @@
 void *bi_delete(bigint *const ptr);
 ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
 bigint *bi_new(
-	char const *const number, const unsigned short int base,
-	size_t *const processed);
-bool int_to_bi(bigint *dest, const long long int n);
+	char const *const restrict number, const unsigned short int base,
+	len_type *const restrict processed
+);
+bool int_to_bi(bigint *const dest, const intmax_t n);
 ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
-bigint *int_to_new_bi(const long long int n);
+bigint *int_to_new_bi(const intmax_t n);
 
 /* bigint manipulation */
 
-l_int bi_compare(bigint *const n1, bigint *const n2);
+intmax_t bi_compare(bigint *const n1, bigint *const n2);
 bigint *bi_dup(bigint *const n);
-char *bi_tostr(bigint const *const n);
 
 /* bigint math */
 
 bool bi_iszero(bigint const *const x);
 
 bigint *bi_add(bigint *const n1, bigint *const n2);
-bigint *bi_add_int(bigint *const n1, long long int n2);
-bool bi_iadd(bigint *const n1, bigint *const n2);
-bool bi_iadd_int(bigint *const n1, long long int n2);
+bigint *bi_add_int(bigint *const n1, const intmax_t n2);
+bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2);
+bool bi_iadd_int(bigint *const n1, const intmax_t n2);
 
-bool bi_isubtract(bigint *const n1, bigint *const n2);
-bool bi_isubtract_int(bigint *const n1, long long int n2);
+bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2);
+bool bi_isubtract_int(bigint *const n1, const intmax_t n2);
 bigint *bi_subtract(bigint *const n1, bigint *const n2);
-bigint *bi_subtract_int(bigint *const n1, long long int n2);
+bigint *bi_subtract_int(bigint *const n1, const intmax_t n2);
 
 bigint *bi_multiply(bigint *const n1, bigint *const n2);
+bigint *bi_multiply_int(bigint *const n1, const intmax_t n2);
 
 bigint *bi_divide(bigint *const n1, bigint *const n2);
 bigint *bi_modulo(bigint *const n1, bigint *const n2);

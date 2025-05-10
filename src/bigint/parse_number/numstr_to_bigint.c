@@ -1,6 +1,10 @@
 #include "_bigint_internals.h"
 #include "_numstr_internals.h"
+#include "bigint.h"
 #include "parse_number.h"
+
+#include "char_int_conversion.c"
+#include "count_digits.c"
 
 /**
  * numstr_to_bi - convert a numstr to a bigint.
@@ -10,27 +14,24 @@
  */
 bigint *numstr_to_bi(numstr *nstr)
 {
-	size_t bi_i = 0, nstr_i = 0, tmp = 0;
-	unsigned int digits = 0;
-	bigint *bi_arr = NULL;
-	char num_buf[16], *end = NULL;
-
-	if (!nstr || !nstr->len || !nstr->str || !isalnum(nstr->str[0]))
+	if (!nstr || nstr->len < 1 || !nstr->str || !isalnum(nstr->str[0]))
 		return (NULL);
 
-	/*sizeof(bigint_i) == */
-	/*ceil(numstr.len / no. of digits that can represent BIGINT_BASE)*/
-	digits = count_digits(BIGINT_BASE - 1);
-	bi_i = (nstr->len / digits);
-	if (nstr->len % digits)
-		++bi_i;
+	len_type nstr_i = 0;
+	uintmax_t carry = 0;
+	/* sizeof(bigint_i) == */
+	/* ceil(numstr.len / no. of digits that can represent BIGINT_BASE) */
+	unsigned int digits = count_digits(BIGINT_BASE - 1);
+	len_type bi_i = (nstr->len / digits) + (nstr->len % digits ? 1 : 0);
+	bigint *const bi = _bi_alloc(bi_i);
 
-	bi_arr = _bi_alloc(bi_i);
-	if (!bi_arr)
+	if (!bi)
 		return (NULL);
 
-	for (bi_i = 0, nstr_i = nstr->len; bi_i < bi_arr->len && nstr_i; ++bi_i)
+	for (bi_i = 0, nstr_i = nstr->len; bi_i < bi->len && nstr_i > 0; ++bi_i)
 	{
+		char num_buf[16], *end = NULL;
+
 		if (nstr_i >= digits)
 			nstr_i -= digits;
 		else
@@ -41,26 +42,26 @@ bigint *numstr_to_bi(numstr *nstr)
 
 		strncpy(num_buf, &nstr->str[nstr_i], digits);
 		num_buf[digits] = '\0';
-		tmp += strtoull(num_buf, &end, 10);
+		carry += strtoull(num_buf, &end, 10);
 		if (*end)
 		{
 			fprintf(stderr, "ParsingError: Invalid character '%c'\n", *end);
-			return (bi_delete(bi_arr));
+			return (_bi_free(bi));
 		}
 
-		bi_arr->num[bi_i] = tmp % BIGINT_BASE;
-		tmp /= BIGINT_BASE;
+		bi->num[bi_i] = carry % BIGINT_BASE;
+		carry /= BIGINT_BASE;
 	}
 
-	while (bi_i < bi_arr->len && tmp)
+	while (bi_i < bi->len && carry)
 	{
-		bi_arr->num[bi_i] = tmp % BIGINT_BASE;
-		tmp /= BIGINT_BASE;
+		bi->num[bi_i] = carry % BIGINT_BASE;
+		carry /= BIGINT_BASE;
 		++bi_i;
 	}
 
-	_bi_trim(bi_arr);
-	return (bi_arr);
+	_bi_trim(bi);
+	return (bi);
 }
 
 /**
@@ -70,40 +71,36 @@ bigint *numstr_to_bi(numstr *nstr)
  *
  * Return: a pointer to a bigint struct, NULL on failure.
  */
-bigint *anybase_to_bi(numstr *num, const unsigned short int base)
+bigint *anybase_to_bi(numstr *const num, const unsigned short int base)
 {
-	size_t i = 0;
-	int cval = 0;
-	bigint *bigint_final = NULL, *tmp = NULL;
-	bigint base_bn = {.len = 1, .is_negative = false, .num = (u_int[1]){base}};
-	bigint char_bn = {.len = 1, .is_negative = false, .num = (u_int[1]){0}};
-
-	if (!num || !num->str || base < 2 || base > 36)
+	if (!num || num->len < 0 || !num->str || !is_valid_radix(base))
 		return (NULL);
 
-	bigint_final = _bi_alloc(1);
+	len_type i = 0;
+	bigint *bigint_final = _bi_alloc(1);
+
 	if (!bigint_final)
 		return (NULL);
 
 	/* while str[i]; num = base * num + str[i]; ++i; */
 	for (i = 0; i < num->len && bigint_final; ++i)
 	{
-		tmp = bigint_final;
-		bigint_final = bi_multiply(&base_bn, bigint_final);
-		tmp = bi_delete(tmp);
-		cval = char_to_int(num->str[i]);
+		bigint *tmp = bigint_final;
+
+		bigint_final = bi_multiply_int(bigint_final, base);
+		tmp = _bi_free(tmp);
+		int cval = numchar_to_int(num->str[i]);
 		if (cval < 0 || (u_int)cval >= base)
 		{
 			fprintf(
 				stderr, "ParsingError: Invalid character '%c' for base%u\n",
 				num->str[i], base);
-			return (bi_delete(bigint_final));
+			return (_bi_free(bigint_final));
 		}
 
-		char_bn.num[0] = cval;
 		tmp = bigint_final;
-		bigint_final = bi_add(bigint_final, &char_bn);
-		tmp = bi_delete(tmp);
+		bigint_final = bi_add_int(bigint_final, cval);
+		tmp = _bi_free(tmp);
 	}
 
 	return (bigint_final);

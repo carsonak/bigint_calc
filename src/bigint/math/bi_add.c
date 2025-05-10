@@ -13,17 +13,20 @@ static ATTR_NONNULL bigint *add_negatives(bigint *const n1, bigint *const n2);
  */
 static bigint *add(bigint const *const n1, bigint const *const n2)
 {
-	size_t n1_i = 0, n2_i = 0, sum_i = 0, result_len = 0;
+	len_type n1_i = 0, n2_i = 0, sum_i = 0;
+	/* sum->len = (larger of n1->len or n2->len, +1 for a carry) */
+	const len_type result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	l_int byt_sum = 0;
 	bigint *sum = NULL;
 
-	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
-	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	if (result_len <= 1)
 		return (_bi_alloc(0));
 
 	sum = _bi_alloc(result_len);
-	while (sum && (n1_i < n1->len || n2_i < n2->len || byt_sum > 0))
+	if (!sum)
+		return (NULL);
+
+	while (n1_i < n1->len || n2_i < n2->len || byt_sum > 0)
 	{
 		if (n1_i < n1->len)
 		{
@@ -42,7 +45,7 @@ static bigint *add(bigint const *const n1, bigint const *const n2)
 		++sum_i;
 	}
 
-	if (sum && sum_i < sum->len)
+	if (sum_i < sum->len)
 		memset(&sum->num[sum_i], 0, sizeof(*sum->num) * (sum->len - sum_i));
 
 	_bi_trim(sum);
@@ -65,14 +68,14 @@ static bigint *add_negatives(bigint *const n1, bigint *const n2)
 	n2->is_negative = false;
 	if (neg1 && neg2)
 	{
-		/*-8 + -7 = -(8+7)*/
+		/* -8 + -7 = -(8+7) */
 		result = add(n1, n2);
 		if (result)
 			result->is_negative = !result->is_negative;
 	}
-	else if (neg1) /*-8 + 7 = 7-8*/
+	else if (neg1) /* -8 + 7 = 7-8 */
 		result = bi_subtract(n2, n1);
-	else if (neg2) /*8 + -7 = 8-7*/
+	else if (neg2) /* 8 + -7 = 8-7 */
 		result = bi_subtract(n1, n2);
 
 	n1->is_negative = neg1;
@@ -90,7 +93,7 @@ static bigint *add_negatives(bigint *const n1, bigint *const n2)
  */
 bigint *bi_add(bigint *const n1, bigint *const n2)
 {
-	if (!n1 || !n2)
+	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
 	_bi_trim(n1);
@@ -108,12 +111,12 @@ bigint *bi_add(bigint *const n1, bigint *const n2)
  *
  * Return: pointer to the answer on success, NULL on failure.
  */
-bigint *bi_add_int(bigint *const n1, long long int n2)
+bigint *bi_add_int(bigint *const n1, const intmax_t n2)
 {
-	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
-
-	if (!n1)
+	if (!n1 || n1->len < 0)
 		return (NULL);
+
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[4]){0}};
 
 	int_to_bi(&num2, n2);
 	return (bi_add(n1, &num2));

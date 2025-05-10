@@ -29,24 +29,19 @@ void teardown(void)
 
 struct null_inputs
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(null_inputs)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(null_inputs) {}
+TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
 
-TEST(null_inputs, test_null_over_null)
+TEST_F(null_inputs, test_null_over_null)
 {
 	bigint *output = bi_divide(NULL, NULL);
 
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_1_over_null)
+TEST_F(null_inputs, test_1_over_null)
 {
 	u_int in1[] = {1};
 
@@ -57,7 +52,7 @@ TEST(null_inputs, test_1_over_null)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_null_over_1)
+TEST_F(null_inputs, test_null_over_1)
 {
 	u_int in2[] = {1};
 
@@ -68,7 +63,7 @@ TEST(null_inputs, test_null_over_1)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_0_over_null)
+TEST_F(null_inputs, test_0_over_null)
 {
 	u_int in1[1] = {0};
 
@@ -79,7 +74,7 @@ TEST(null_inputs, test_0_over_null)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_null_over_0)
+TEST_F(null_inputs, test_null_over_0)
 {
 	u_int in2[1] = {0};
 
@@ -90,7 +85,7 @@ TEST(null_inputs, test_null_over_0)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_minus1_over_null)
+TEST_F(null_inputs, test_minus1_over_null)
 {
 	u_int in1[] = {1};
 
@@ -102,7 +97,7 @@ TEST(null_inputs, test_minus1_over_null)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_null_over_minus1)
+TEST_F(null_inputs, test_null_over_minus1)
 {
 	u_int in2[] = {1};
 
@@ -116,17 +111,12 @@ TEST(null_inputs, test_null_over_minus1)
 
 struct zero_len_arrays
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(zero_len_arrays)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(zero_len_arrays) {}
+TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
 
-TEST(zero_len_arrays, test_nullarray_over_nullarray)
+TEST_F(zero_len_arrays, test_nullarray_over_nullarray)
 {
 	cr_redirect_stderr();
 	bigint *output = bi_divide(&num1, &num2);
@@ -134,7 +124,7 @@ TEST(zero_len_arrays, test_nullarray_over_nullarray)
 	CHECK(output == 0, "");
 }
 
-TEST(zero_len_arrays, test_4490998_over_nullarray)
+TEST_F(zero_len_arrays, test_4490998_over_nullarray)
 {
 	u_int in1[] = {4490998};
 
@@ -146,7 +136,7 @@ TEST(zero_len_arrays, test_4490998_over_nullarray)
 	CHECK(output == 0, "");
 }
 
-TEST(zero_len_arrays, test_null_over_largenum)
+TEST_F(zero_len_arrays, test_null_over_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 	u_int out[1] = {0};
@@ -169,17 +159,12 @@ TEST(zero_len_arrays, test_null_over_largenum)
 
 struct division_by_zero
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(division_by_zero)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(division_by_zero) {}
+TEST_F_SETUP(division_by_zero) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(division_by_zero) { tau->output = bi_delete(tau->output); }
 
-TEST(division_by_zero, test_0_over_0)
+TEST_F(division_by_zero, test_0_over_0)
 {
 	u_int in1[1] = {0}, in2[1] = {0};
 
@@ -193,7 +178,7 @@ TEST(division_by_zero, test_0_over_0)
 	CHECK(output == 0, "");
 }
 
-TEST(division_by_zero, test_1_over_0)
+TEST_F(division_by_zero, test_1_over_0)
 {
 	u_int in1[] = {1}, in2[1] = {0};
 
@@ -209,17 +194,12 @@ TEST(division_by_zero, test_1_over_0)
 
 struct simple_divisions
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(simple_divisions)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(simple_divisions) {}
+TEST_F_SETUP(simple_divisions) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(simple_divisions) { tau->output = bi_delete(tau->output); }
 
-TEST(simple_divisions, test_0_over_1)
+TEST_F(simple_divisions, test_0_over_1)
 {
 	u_int in1[1] = {0}, in2[] = {1}, out[1] = {0};
 
@@ -241,7 +221,7 @@ TEST(simple_divisions, test_0_over_1)
 	output = bi_delete(output);
 }
 
-TEST(simple_divisions, test_1_over_1)
+TEST_F(simple_divisions, test_1_over_1)
 {
 	u_int in1[] = {1}, in2[] = {1}, out[] = {1};
 
@@ -263,7 +243,7 @@ TEST(simple_divisions, test_1_over_1)
 	output = bi_delete(output);
 }
 
-TEST(simple_divisions, test_9723746_over_2938487)
+TEST_F(simple_divisions, test_9723746_over_2938487)
 {
 	u_int in1[] = {9723746}, in2[] = {2938487}, out[] = {3};
 
@@ -285,7 +265,7 @@ TEST(simple_divisions, test_9723746_over_2938487)
 	output = bi_delete(output);
 }
 
-TEST(simple_divisions, test_1000000000_over_50000)
+TEST_F(simple_divisions, test_1000000000_over_50000)
 {
 	u_int in1[] = {0, 1}, in2[] = {50000}, out[] = {20000};
 
@@ -307,7 +287,7 @@ TEST(simple_divisions, test_1000000000_over_50000)
 	output = bi_delete(output);
 }
 
-TEST(simple_divisions, test_50000_over_100000000)
+TEST_F(simple_divisions, test_50000_over_100000000)
 {
 	u_int in1[] = {50000}, in2[] = {0, 1}, out[1] = {0};
 
@@ -329,7 +309,7 @@ TEST(simple_divisions, test_50000_over_100000000)
 	output = bi_delete(output);
 }
 
-TEST(simple_divisions, test_longnum1_over_longnum2)
+TEST_F(simple_divisions, test_longnum1_over_longnum2)
 {
 	u_int in1[] = {65000, 5, 45000, 0, 550005550, 2100};
 	u_int in2[] = {0, 75006};
@@ -350,7 +330,7 @@ TEST(simple_divisions, test_longnum1_over_longnum2)
 	output = bi_delete(output);
 }
 
-TEST(simple_divisions, test_equal_over_equal)
+TEST_F(simple_divisions, test_equal_over_equal)
 {
 	u_int in1[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
@@ -376,17 +356,12 @@ TEST(simple_divisions, test_equal_over_equal)
 
 struct negative_divisions
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(negative_divisions)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(negative_divisions) {}
+TEST_F_SETUP(negative_divisions) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(negative_divisions) { tau->output = bi_delete(tau->output); }
 
-TEST(negative_divisions, test_minus9107428777003_over_minus809754437)
+TEST_F(negative_divisions, test_minus9107428777003_over_minus809754437)
 {
 	u_int in1[] = {428777003, 9107}, in2[] = {809754437}, out[] = {11247};
 
@@ -408,7 +383,7 @@ TEST(negative_divisions, test_minus9107428777003_over_minus809754437)
 	output = bi_delete(output);
 }
 
-TEST(negative_divisions, test_minus9107428777003_over_809754437)
+TEST_F(negative_divisions, test_minus9107428777003_over_809754437)
 {
 	u_int in1[] = {428777003, 9107}, in2[] = {809754437}, out[] = {11248};
 
@@ -430,7 +405,7 @@ TEST(negative_divisions, test_minus9107428777003_over_809754437)
 	output = bi_delete(output);
 }
 
-TEST(negative_divisions, test_9107428777003_over_minus809754437)
+TEST_F(negative_divisions, test_9107428777003_over_minus809754437)
 {
 	u_int in1[] = {428777003, 9107}, in2[] = {809754437}, out[] = {11248};
 
@@ -454,17 +429,12 @@ TEST(negative_divisions, test_9107428777003_over_minus809754437)
 
 struct large_divisions
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(large_divisions)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(large_divisions) {}
+TEST_F_SETUP(large_divisions) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(large_divisions) { tau->output = bi_delete(tau->output); }
 
-TEST(large_divisions, test_o1kb_over_o1kc)
+TEST_F(large_divisions, test_o1kb_over_o1kc)
 {
 	/* clang-format off */
 	u_int in1[] = {645836236, 108893430, 836208119, 270771001, 537613755, 373039867, 833294108, 898839418, 608485063, 546188873, 452231917, 687296422, 111111152, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 476411111, 5669047, 700035645, 893473278, 4493, 543630640, 324000, 568376700, 1394, 300000000, 378345892, 8, 734194700, 423768, 0, 445197384, 518101037, 109617878, 558156514, 983336821, 690076644, 693516675, 143226629, 76588580, 210759419, 973911560, 497333540, 14322213, 555048869, 815323758, 539167661, 458688023, 612425259, 624332483, 419554373, 679371075, 393235000, 236728315, 664373133, 150410609, 518660305, 359239326, 307363945, 571210805, 347785534, 563445710, 660409386, 228008317, 804462179, 233074148, 591937180, 160409198, 950235053, 962974549, 171857157, 523072994, 395079814, 321058488, 203652900, 126072395, 363107953, 630915068, 973080517, 612433363, 734409773, 377726669, 707225937, 627074076, 918808553, 941285428, 110569912, 430944738, 394600177, 990968620, 4498198, 265970467, 594659210, 881718792, 749254660, 489225907, 417635079, 182995180, 494838468, 16834009, 911110449, 948701330, 831191398, 792151714, 70940218, 627665839, 410612359, 202045867, 935804051, 937850141, 227018012, 991791152, 506752363, 406483698, 355792683, 47491630, 22359011, 919962818, 955165934, 399211808, 673319428, 319818160, 662785141, 175882430, 630322415, 735383534, 687650610, 46582669, 496678148, 491637987, 871575195, 116330034, 723314187, 385420689, 325094262, 12829142, 208703866, 120005690, 899921757, 77002169, 359486189, 753454258, 278911354, 694037307, 578519296, 494600786, 470779501, 768446187, 472669563, 716361937, 389127515, 976446119, 593192334, 617083917, 272976737, 418747631, 855714255, 226105187, 605917499, 696971445, 573117854, 99153257, 956645492, 728520292, 946389174, 245482697, 655465609, 470307816, 135416351, 729216591, 866144546, 888959338, 809402688, 527131609, 866613186, 419167460, 916600904, 633154349, 747140489, 315862951, 238759183, 148584074, 652667824, 161606397, 677427537, 590777629, 825244648, 835356427, 366982335, 748040826, 852122159, 4896, 900000000, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 385820199, 167580321, 134092496, 277075937, 872169008, 64325722, 827080282, 277960712, 655352740, 163131699, 448213684, 277128786, 514326330, 933871396, 63154105, 745922799, 490015860, 252229607, 711956623, 591788040, 954758766, 467124003, 644524713, 690634208, 510828673, 629041620, 704066384, 468512842, 590156377, 509105852, 101803594, 777808979, 519622805, 972925209, 333284887, 366099858, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
@@ -487,7 +457,7 @@ TEST(large_divisions, test_o1kb_over_o1kc)
 	output = bi_delete(output);
 }
 
-TEST(large_divisions, test_o500d_over_o500e)
+TEST_F(large_divisions, test_o500d_over_o500e)
 {
 	/* clang-format off */
 	u_int in1[] = {555555555, 55555555, 0, 0, 0, 0, 222222, 0, 0, 0, 0, 0, 0, 0, 0, 888888888, 888888888, 888888888, 888888888, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110000000, 111111111, 111111111, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 770000000, 777777777, 777777777, 777777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 999000000, 99999999};
@@ -510,7 +480,7 @@ TEST(large_divisions, test_o500d_over_o500e)
 	output = bi_delete(output);
 }
 
-TEST(large_divisions, test_o100a_over_o100f)
+TEST_F(large_divisions, test_o100a_over_o100f)
 {
 	/* clang-format off */
 	u_int in1[] = {502884197, 643383279, 62, 0, 0, 0, 0, 222550000, 972222222, 999999999, 338499999, 112000333, 111111111, 28347111, 0, 0, 0, 289104938, 487298347, 832000092, 94, 284000000, 576231637, 28, 0, 57349857, 0, 0, 698750000};
@@ -536,7 +506,7 @@ TEST(large_divisions, test_o100a_over_o100f)
 	output = bi_delete(output);
 }
 
-TEST(large_divisions, test_o100f_over_o100a)
+TEST_F(large_divisions, test_o100f_over_o100a)
 {
 	/* clang-format off */
 	u_int in1[] = {0, 101000000, 555555555, 295555555, 9574, 0, 0, 684800000, 252449427, 2, 0, 94930300, 13103309, 99070958, 766};

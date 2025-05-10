@@ -1,24 +1,7 @@
 #include "_bigint_internals.h"
-#include "bigint.h"
+#include "parse_number.h"
 
-/**
- * count_digits - calculate how many digits can represent a number.
- * @num: the decimal number.
- *
- * Return: number of digits calculated.
- */
-static unsigned int count_digits(size_t num)
-{
-	unsigned int d = 0;
-
-	while (num)
-	{
-		++d;
-		num /= 10;
-	}
-
-	return (d);
-}
+#include "count_digits.c"
 
 /**
  * bi_tostr - return the number represented by a bigint as a string.
@@ -28,18 +11,16 @@ static unsigned int count_digits(size_t num)
  */
 char *bi_tostr(bigint const *const n)
 {
-	if (!n || !n->len || !n->num)
+	if (!n || n->len < 1 || !n->num)
 		return (NULL);
 
-	const size_t str_len =
+	len_type str_i = 0, bi_i = n->len - 1;
+	const len_type str_len =
 		(n->len * count_digits(BIGINT_BASE - 1)) + n->is_negative ? 1 : 0;
 	char *const str = xmalloc(str_len + 1);
 
 	if (!str)
 		return (NULL);
-
-	size_t str_i = 0;
-	size_t bi_i = n->len - 1;
 
 	if (n->is_negative)
 		str[str_i++] = '-';

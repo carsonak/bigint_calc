@@ -30,8 +30,6 @@ require-plugins =
     flake8-mock-spec
     # Check noqa comments
     flake8-noqa
-    # Check shadowing of builtin names
-    flake8-builtins
 
 # Enable PyFlakes syntax checking of doctests in docstrings
 doctests = True

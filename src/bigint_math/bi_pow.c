@@ -86,14 +86,14 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 	x->is_negative = false;
 	y->num[0] = 1;
 	tmp.num = two;
-	/*https://en.wikipedia.org/wiki/Exponentiation_by_squaring*/
-	/*x^n can be written as: */
-	/*(x^2) ^ n/2 if n is even, x(x^2) ^ (n-1)/2 if n is odd.*/
-	/*This can be computed recursively, keeping in mind the special case */
-	/*x^0==1 and base case as x^1==x.*/
-	/*Another form can be written as: */
-	/*yx^n = y(x^2) ^ n/2 if n is even, (yx)(x^2) ^ (n-1)/2 if n is odd.*/
-	/*With y starting at 0.*/
+	/* https://en.wikipedia.org/wiki/Exponentiation_by_squaring */
+	/* x^n can be written as: */
+	/* (x^2) ^ n/2 if n is even, x(x^2) ^ (n-1)/2 if n is odd. */
+	/* This can be computed recursively, keeping in mind the special case */
+	/* x^0==1 and base case as x^1==x. */
+	/* Another form can be written as: */
+	/* yx^n = y(x^2) ^ n/2 if n is even, (yx)(x^2) ^ (n-1)/2 if n is odd. */
+	/* With y starting at 0. */
 	while (x && y && exp && (exp->len > 1 || exp->num[0] > 1))
 	{
 		if (exp->num[0] % 2)

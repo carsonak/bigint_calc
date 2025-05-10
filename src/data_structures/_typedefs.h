@@ -33,4 +33,4 @@ typedef struct queue queue;
 typedef struct deque deque;
 typedef struct stack stack;
 
-#endif /*TYPEDEFS_H*/
+#endif /* TYPEDEFS_H */

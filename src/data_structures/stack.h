@@ -1,14 +1,14 @@
 #ifndef STACK_H
 #define STACK_H
 
-#include <stddef.h> /* size_t */
 #include <stdio.h>	/* *printf */
 #include <stdlib.h> /* *alloc */
 
 #include "_typedefs.h"
+#include "types.h"
 
 stack *stk_new(void);
-size_t stk_len(stack const *const s);
+len_type stk_len(stack const *const s);
 void *stk_peek(stack const *const s);
 single_link_node *stk_push(
 	stack *const s, void *const data, dup_func *copy_data);

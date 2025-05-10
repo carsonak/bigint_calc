@@ -16,7 +16,7 @@ static bigint *add(bigint *const n1, bigint *const n2)
 	l_int byt_sum = 0;
 	bigint *sum = NULL;
 
-	/*sum->len = (larger of n1->len or n2->len, +1 for a carry)*/
+	/* sum->len = (larger of n1->len or n2->len, +1 for a carry) */
 	result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	if (result_len <= 1)
 		return (_bi_alloc(0));
@@ -64,14 +64,14 @@ static bigint *add_negatives(bigint *const n1, bigint *const n2)
 	n2->is_negative = false;
 	if (neg1 && neg2)
 	{
-		/*-8 + -7 = -(8+7)*/
+		/* -8 + -7 = -(8+7) */
 		result = add(n1, n2);
 		if (result)
 			result->is_negative = !result->is_negative;
 	}
-	else if (neg1) /*-8 + 7 = 7-8*/
+	else if (neg1) /* -8 + 7 = 7-8 */
 		result = bi_subtract(n2, n1);
-	else if (neg2) /*8 + -7 = 8-7*/
+	else if (neg2) /* 8 + -7 = 8-7 */
 		result = bi_subtract(n1, n2);
 
 	n1->is_negative = neg1;

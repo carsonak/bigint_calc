@@ -8,7 +8,7 @@
  */
 struct stack
 {
-	size_t len;
+	len_type len;
 	single_link_node *top;
 };
 
@@ -25,7 +25,7 @@ stack *stk_new(void) { return (calloc(1, sizeof(stack))); }
  *
  * Return: number of nodes in the stack.
  */
-size_t stk_len(stack const *const s)
+len_type stk_len(stack const *const s)
 {
 	if (!s)
 		return (0);
@@ -87,7 +87,7 @@ void *stk_pop(stack *const s)
 	s->top = sln_get_next(old_top);
 	void *data = sln_remove(old_top);
 
-	if (s->len)
+	if (s->len > 0)
 		--(s->len);
 
 	return (data);

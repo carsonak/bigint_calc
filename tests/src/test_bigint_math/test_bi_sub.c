@@ -201,7 +201,7 @@ Test(zero_len_arrays, test_neg_4490998_minus_nullarray,
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 	bigint *output = bi_subtract(&num1, &num2);
 
-	/*Mocked out!*/
+	/* Mocked out! */
 	/* cr_expect(eq(sz, output->len, expected.len)); */
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	/* cr_expect(eq(u32[expected.len], output->num, expected.num)); */
@@ -238,7 +238,7 @@ Test(zero_len_arrays, test_neg_4490998_minus_neg_nullarray,
 		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
 	bigint *output = bi_subtract(&num1, &num2);
 
-	/*Mocked out!*/
+	/* Mocked out! */
 	/* cr_expect(eq(sz, output->len, expected.len)); */
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	/* cr_expect(eq(u32[expected.len], output->num, expected.num)); */
@@ -297,7 +297,7 @@ Test(zero_len_arrays, test_nullarray_minus_neg_largenum,
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 	bigint *output = bi_subtract(&num1, &num2);
 
-	/*Mocked out!*/
+	/* Mocked out! */
 	/* cr_expect(eq(sz, output->len, expected.len)); */
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	/* cr_expect(eq(u32[expected.len], output->num, expected.num)); */
@@ -318,7 +318,7 @@ Test(zero_len_arrays, test_neg_nullarray_minus_neg_largenum,
 		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
 	bigint *output = bi_subtract(&num1, &num2);
 
-	/*Mocked out!*/
+	/* Mocked out! */
 	/* cr_expect(eq(sz, output->len, expected.len)); */
 	cr_expect(eq(chr, output->is_negative, expected.is_negative));
 	/* cr_expect(eq(u32[expected.len], output->num, expected.num)); */

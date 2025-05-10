@@ -4,8 +4,8 @@
 #include "macros.h"
 
 #include <stdbool.h> /* bool */
-#include <stddef.h>  /* size_t */
 
+#include "types.h"
 #include "xalloc.h"
 
 /**
@@ -16,7 +16,7 @@
  */
 struct numstr
 {
-	size_t len;
+	len_type len;
 	char *str;
 	bool is_negative;
 };
@@ -25,6 +25,6 @@ typedef struct numstr numstr;
 
 ATTR_NONNULL void *_numstr_free(numstr *freeable_ptr);
 ATTR_MALLOC ATTR_MALLOC_FREE(_numstr_free)
-numstr *_numstr_alloc(size_t len);
+numstr *_numstr_alloc(len_type len);
 
 #endif /* NUMSTR_INTERNALS_H */

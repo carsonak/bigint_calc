@@ -17,35 +17,33 @@ void teardown(void) {}
 
 TestSuite(null_inputs);
 
-TEST(null_inputs, test_NULL) { cr_assert(zero(chr, bi_is_zero(NULL))); }
+TEST_F(null_inputs, test_NULL) { cr_assert(bi_is_zero(NULL)) /* ?? */; }
 
 struct null_array
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(null_array)
+TEST_F_SETUP(null_array) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(null_array) { tau->output = bi_delete(tau->output); }
+
+TEST_F(null_array, test_nullarray_len0)
 {
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
+	EXPECT(bi_is_zero(&num1) == true, "");
 }
-TEST_F_TEARDOWN(null_array) {}
 
-TEST(null_array, test_nullarray_len0) { EXPECT(bi_is_zero(&num1) == true, ""); }
-
-TEST(null_array, test_nullarray_len0_neg)
+TEST_F(null_array, test_nullarray_len0_neg)
 {
 	num1.is_negative = true;
 	EXPECT(bi_is_zero(&num1) == true, "");
 }
 
-TEST(null_array, test_nullarray_len1)
+TEST_F(null_array, test_nullarray_len1)
 {
 	num1.len = 1;
 	EXPECT(bi_is_zero(&num1) == true, "");
 }
 
-TEST(null_array, test_nullarray_len1_neg)
+TEST_F(null_array, test_nullarray_len1_neg)
 {
 	num1.len = 1;
 	num1.is_negative = true;
@@ -54,17 +52,12 @@ TEST(null_array, test_nullarray_len1_neg)
 
 struct incorrect_length
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(incorrect_length)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(incorrect_length) {}
+TEST_F_SETUP(incorrect_length) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(incorrect_length) { tau->output = bi_delete(tau->output); }
 
-TEST(incorrect_length, test_all_zeros)
+TEST_F(incorrect_length, test_all_zeros)
 {
 	u_int in1[] = {0, 0, 0, 0, 0};
 
@@ -74,7 +67,7 @@ TEST(incorrect_length, test_all_zeros)
 	EXPECT(bi_is_zero(&num1) == true, "");
 }
 
-TEST(incorrect_length, test_lsd_is1)
+TEST_F(incorrect_length, test_lsd_is1)
 {
 	u_int in1[] = {1, 0, 0, 0, 0};
 
@@ -84,7 +77,7 @@ TEST(incorrect_length, test_lsd_is1)
 	EXPECT(bi_is_zero(&num1) == false, "");
 }
 
-TEST(incorrect_length, test_middle_is1)
+TEST_F(incorrect_length, test_middle_is1)
 {
 	u_int in1[] = {0, 0, 1, 0, 0};
 
@@ -96,17 +89,15 @@ TEST(incorrect_length, test_middle_is1)
 
 struct incorrect_length_and_negative
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(incorrect_length_and_negative)
+TEST_F_SETUP(incorrect_length_and_negative) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(incorrect_length_and_negative)
 {
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
+	tau->output = bi_delete(tau->output);
 }
-TEST_F_TEARDOWN(incorrect_length_and_negative) {}
 
-TEST(incorrect_length_and_negative, test_all_zeros)
+TEST_F(incorrect_length_and_negative, test_all_zeros)
 {
 	u_int in1[] = {0, 0, 0, 0, 0};
 
@@ -116,7 +107,7 @@ TEST(incorrect_length_and_negative, test_all_zeros)
 	EXPECT(bi_is_zero(&num1) == true, "");
 }
 
-TEST(incorrect_length_and_negative, test_lsd_is1)
+TEST_F(incorrect_length_and_negative, test_lsd_is1)
 {
 	u_int in1[] = {1, 0, 0, 0, 0};
 
@@ -126,7 +117,7 @@ TEST(incorrect_length_and_negative, test_lsd_is1)
 	EXPECT(bi_is_zero(&num1) == false, "");
 }
 
-TEST(incorrect_length_and_negative, test_middle_is1)
+TEST_F(incorrect_length_and_negative, test_middle_is1)
 {
 	u_int in1[] = {0, 0, 1, 0, 0};
 
@@ -138,45 +129,40 @@ TEST(incorrect_length_and_negative, test_middle_is1)
 
 struct normal_input
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(normal_input)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(normal_input) {}
+TEST_F_SETUP(normal_input) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(normal_input) { tau->output = bi_delete(tau->output); }
 
-TEST(normal_input, test_0)
+TEST_F(normal_input, test_0)
 {
 	num1 = (bigint){.len = 1, .is_negative = false, .num = (u_int[1]){0}};
 
 	EXPECT(bi_is_zero(&num1) == true, "");
 }
 
-TEST(normal_input, test_neg0)
+TEST_F(normal_input, test_neg0)
 {
 	num1 = (bigint){.len = 1, .is_negative = true, .num = (u_int[1]){0}};
 
 	EXPECT(bi_is_zero(&num1) == true, "");
 }
 
-TEST(normal_input, test_1)
+TEST_F(normal_input, test_1)
 {
 	num1 = (bigint){.len = 1, .is_negative = false, .num = (u_int[1]){1}};
 
 	EXPECT(bi_is_zero(&num1) == false, "");
 }
 
-TEST(normal_input, test_neg1)
+TEST_F(normal_input, test_neg1)
 {
 	num1 = (bigint){.len = 1, .is_negative = true, .num = (u_int[1]){1}};
 
 	EXPECT(bi_is_zero(&num1) == false, "");
 }
 
-TEST(normal_input, test_msd_is1)
+TEST_F(normal_input, test_msd_is1)
 {
 	u_int in1[] = {0, 0, 0, 0, 1};
 
@@ -186,7 +172,7 @@ TEST(normal_input, test_msd_is1)
 	EXPECT(bi_is_zero(&num1) == false, "");
 }
 
-TEST(normal_input, test_msd_is_neg1)
+TEST_F(normal_input, test_msd_is_neg1)
 {
 	u_int in1[] = {0, 0, 0, 0, 1};
 

@@ -6,7 +6,7 @@
 
 #include "_typedefs.h"
 
-/*singly linked list*/
+/* singly linked list */
 
 single_link_node *sln_new(void *const data, dup_func *duplicate_data);
 single_link_node *sln_insert_after(
@@ -22,7 +22,7 @@ void *sll_clear(single_link_node *const head, delete_func *free_data);
 long int sll_print(
 	FILE *stream, single_link_node const *const head, print_func *print_data);
 
-/*doubly linked list*/
+/* doubly linked list */
 
 double_link_node *dln_new(void *const data, dup_func *duplicate_data);
 double_link_node *dln_insert_after(

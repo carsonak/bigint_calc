@@ -9,18 +9,18 @@
  */
 bool bi_iszero(bigint const *const n)
 {
-	size_t i = 0;
+	len_type i = 0;
 
-	if (!n)
+	if (!n || n->len < 0)
 		return (false);
 
-	if (n->len)
+	if (n->len > 0)
 		i = n->len - 1;
 
 	while (n->num && i && !n->num[i])
 		i--;
 
-	if (!n->len || !n->num || !n->num[i])
+	if (n->len < 1 || !n->num || !n->num[i])
 		return (true);
 
 	return (false);

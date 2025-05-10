@@ -10,7 +10,7 @@ struct single_link_node
 {
 	void *data;
 	struct single_link_node *next;
-	/*This second pointer makes insertions and deletions easier.*/
+	/* This second pointer makes insertions and deletions easier. */
 	struct single_link_node *previous;
 };
 

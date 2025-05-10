@@ -1,0 +1,21 @@
+{
+    "version": 3,
+    "cmakeMinimumRequired": {
+        "major": 3,
+        "minor": 21
+    },
+    "configurePresets": [
+        {
+            "name": "dev-build",
+            "displayName": "Developer Build",
+            "description": "Code-Compile-Debug-Build",
+            "binaryDir": "build",
+            "cacheVariables": {},
+            "warnings": {
+                "dev": true
+            }
+        }
+    ],
+    "buildPresets": [],
+    "testPresets": []
+}

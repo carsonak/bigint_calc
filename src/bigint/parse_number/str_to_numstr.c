@@ -2,45 +2,14 @@
 #include "_numstr_internals.h"
 #include "parse_number.h"
 
-static ATTR_NONNULL bool
-check_is_negative(char const *const number, size_t *str_i);
-static int char_to_int(const char c);
-static char int_to_char(const unsigned int num);
+static ATTR_NONNULL bool check_is_negative(
+	char const *const restrict number, len_type *const restrict str_i
+);
 static ATTR_NONNULL_IDX(2) char map_digits(const char c, void *radix);
+static len_type
+leading_chars_span(char const *const str, char const *const ch);
 
-/**
- * char_to_int - map a base36 ascii symbol to a decimal.
- * @c: an alphanumeric symbol.
- *
- * Return: decimal value of the symbol, -1 if invalid symbol.
- */
-static int char_to_int(const char c)
-{
-	if (!isalnum(c))
-		return (-1);
-
-	if (isdigit(c))
-		return (c - '0');
-
-	return (toupper(c) - 'A' + 10);
-}
-
-/**
- * int_to_char - map a decimal between 0-35 to a base36 ascii symbol.
- * @num: the number to convert.
- *
- * Return: the ascii symbol, '\0' on error.
- */
-static char int_to_char(const unsigned int num)
-{
-	if (num > 35)
-		return ('\0');
-
-	if (num < 10)
-		return ('0' + num);
-
-	return ('A' + (num - 10));
-}
+#include "char_int_conversion.c"
 
 /**
  * map_digits - validates that characters are acceptable digits.
@@ -51,14 +20,14 @@ static char int_to_char(const unsigned int num)
  */
 static char map_digits(const char c, void *radix)
 {
-	int a = char_to_int(c);
+	int a = numchar_to_int(c);
 	const unsigned int base = *((const unsigned int *)radix);
 
 	if (c == '_')
-		return (0); /*underscores should be ignored.*/
+		return (0); /* underscores should be ignored. */
 
 	if (a < 0 || (unsigned int)a >= base)
-		return (-1); /*invalid character.*/
+		return (-1); /* invalid character. */
 
 	return (int_to_char(a));
 }
@@ -83,11 +52,12 @@ static char map_digits(const char c, void *radix)
  * Return: pointer to the filtered string, NULL on failure.
  */
 char *filter_str(
-	char const *const str, size_t *const processed, const mapping_func map,
-	void *const map_args)
+	char const *const restrict str, len_type *const restrict processed,
+	const mapping_func map, void *const restrict map_args
+)
 {
 	char *output = NULL, c = 0;
-	size_t buf_i = 0, str_i = 0, out_len = 0;
+	len_type buf_i = 0, str_i = 0, out_len = 0;
 
 	if (!str || !map)
 		return (NULL);
@@ -122,12 +92,12 @@ char *filter_str(
 			break;
 	}
 
-	/*processed should not change in case of alloc fail.*/
+	/* processed should not change in case of alloc fail. */
 	if (output && processed)
 		*processed = str_i;
 
-	/*In the case `str = "\0"`, output will be NULL, which is undesirable as*/
-	/*NULL is an error value in this function.*/
+	/* In the case `str = "\0"`, output will be NULL, which is undesirable as */
+	/* NULL is an error value in this function. */
 	if (str_i == 0 && !str[str_i])
 		return (xcalloc(1, sizeof(*output)));
 
@@ -146,9 +116,9 @@ char *filter_str(
  *
  * Return: number of leading characters.
  */
-size_t leading_chars_span(char const *const str, char const *const ch)
+static len_type leading_chars_span(char const *const str, char const *const ch)
 {
-	size_t count = 0;
+	len_type count = 0;
 
 	if (str && ch && *ch)
 	{
@@ -167,7 +137,9 @@ size_t leading_chars_span(char const *const str, char const *const ch)
  *
  * Return: true if the sign is negative, false otherwise.
  */
-static bool check_is_negative(char const *const number, size_t *str_i)
+static bool check_is_negative(
+	char const *const restrict number, len_type *const restrict str_i
+)
 {
 	bool is_neg = false;
 
@@ -191,12 +163,13 @@ static bool check_is_negative(char const *const number, size_t *str_i)
  */
 numstr *str_to_numstr(
 	char const *const number, const unsigned short int base,
-	size_t *const processed)
+	len_type *const processed
+)
 {
 	numstr *ns = NULL;
-	size_t str_i = 0, p = 0;
+	len_type str_i = 0, p = 0;
 
-	if (!number || base < 2 || base > 36)
+	if (!number || !is_valid_radix(base))
 		return (NULL);
 
 	ns = _numstr_alloc(0);
@@ -211,13 +184,17 @@ numstr *str_to_numstr(
 	}
 
 	str_i += leading_chars_span(&number[str_i], "0");
-	ns->str = filter_str(&number[str_i], &p, map_digits, &base);
+	{
+		unsigned short int b = base;  // Avoiding UB and silencing warnings
+		ns->str = filter_str(&number[str_i], &p, map_digits, &b);
+	}
+
 	if (!ns->str)
 		goto critical_failure;
 
 	str_i += p;
 	ns->len = strlen(ns->str);
-	if (!ns->len)
+	if (ns->len < 1)
 	{
 		fprintf(
 			stderr, "ParsingError: string did not contain any valid digits.\n");

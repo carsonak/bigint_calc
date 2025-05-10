@@ -3,10 +3,10 @@
 
 #include "macros.h"
 
-#include <stdio.h>   /* *printf */
 #include <stdbool.h> /* bool */
 #include <stddef.h>  /* size_t, ptr_diff */
-#include <stdlib.h>  /*strtoull*/
+#include <stdio.h>   /* *printf */
+#include <stdlib.h>  /* strtoull */
 #include <string.h>  /* strlen, strcpy */
 
 #include "xalloc.h"
@@ -41,4 +41,4 @@ bigint *numstr_to_bni(numstr *num);
 numstr *bi_to_numstr(bigint *bi_arr, const unsigned int base);
 bigint *anybase_to_bni(numstr *nstr, const unsigned int base);
 
-#endif /*NUMSTR_H*/
+#endif /* NUMSTR_H */

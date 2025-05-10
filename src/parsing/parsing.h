@@ -9,11 +9,10 @@
 #include <stddef.h>	 /* size_t, ptr_diff */
 #include <string.h>	 /* strlen, strcpy */
 
-#include "xalloc.h"
 #include "bigint_math.h"
-#include "data_structures.h"
-#include "string_utils.h"
 #include "numstr.h"
+#include "string_utils.h"
+#include "xalloc.h"
 
 #define ANSI_RED "\x1b[31m"
 #define ANSI_NORMAL "\x1b[m"

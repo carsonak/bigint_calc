@@ -9,7 +9,7 @@
  */
 struct deque
 {
-	size_t length;
+	len_type length;
 	double_link_node *head;
 	double_link_node *tail;
 };
@@ -27,7 +27,7 @@ deque *dq_new(void) { return (calloc(1, sizeof(deque))); }
  *
  * Return: total items in the deque.
  */
-size_t dq_len(deque const *const dq)
+len_type dq_len(deque const *const dq)
 {
 	if (!dq)
 		return (0);
@@ -111,7 +111,7 @@ void *dq_pop_tail(deque *dq)
 	if (!dq->tail)
 		dq->head = NULL;
 
-	if (dq->length)
+	if (dq->length > 0)
 		--(dq->length);
 
 	return (d);
@@ -163,7 +163,7 @@ void *dq_pop_head(deque *const dq)
 	if (!dq->head)
 		dq->tail = NULL;
 
-	if (dq->length)
+	if (dq->length > 0)
 		--(dq->length);
 
 	return (d);
@@ -227,15 +227,16 @@ void *dq_delete(deque *const nullable_ptr, delete_func *free_data)
  * Return: pointer to the new deque, NULL on failure.
  */
 deque *dq_from_array(
-	void *const data_array, const size_t len, const size_t type_size,
-	dup_func *copy_data, delete_func *delete_data)
+	void *const data_array, const len_type len, const len_type type_size,
+	dup_func *copy_data, delete_func *delete_data
+)
 {
 	deque *new_q = NULL;
 
 	if (!data_array || len == 0 || type_size == 0)
 		return (NULL);
 
-	/*Avoid memory leaks by rejecting imbalanced allocation deallocation.*/
+	/* Avoid memory leaks by rejecting imbalanced allocation deallocation. */
 	if (copy_data && !delete_data)
 		return (NULL);
 
@@ -243,7 +244,7 @@ deque *dq_from_array(
 	if (!new_q)
 		return (NULL);
 
-	for (size_t i = 0; i < len; ++i)
+	for (len_type i = 0; i < len; ++i)
 	{
 		void *data = (char *)data_array + (type_size * i);
 

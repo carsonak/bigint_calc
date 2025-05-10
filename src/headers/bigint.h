@@ -3,13 +3,14 @@
 
 #include <limits.h>	 /* type_max */
 #include <stdbool.h> /* bool */
-#include <stddef.h>	 /* size_t */
 #include <stdint.h>	 /* fixed width types */
+
+#include "types.h"
 
 #ifdef UINT64_MAX
 
-/*Maximum value of a single bigint "digit".*/
-#define BIGINT_BASE (1000000000)
+	/* Maximum value of a single bigint "digit". */
+	#define BIGINT_BASE (1000000000)
 
 typedef uint32_t u_int;
 typedef int64_t l_int;
@@ -33,9 +34,9 @@ typedef uint32_t ul_int;
 #define L_INT_MAX INT32_MAX
 #define UL_INT_MAX UINT32_MAX
 
-#endif /*UINT64_MAX*/
+#endif /* UINT64_MAX */
 
-/*Radix range*/
+/* Radix range */
 #define MINIMUM_BIGINT_RADIX 2
 #define MAXIMUM_BIGINT_RADIX 36
 
@@ -47,11 +48,11 @@ typedef uint32_t ul_int;
  */
 struct bigint
 {
-	size_t len;
+	len_type len;
 	bool is_negative;
 	u_int *num;
 };
 
 typedef struct bigint bigint;
 
-#endif /*BIGINT_H*/
+#endif /* BIGINT_H */

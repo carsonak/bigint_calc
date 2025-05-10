@@ -17,11 +17,11 @@ static bigint *subtract(bigint *const n1, bigint *const n2)
 	l_int n1_is_bigger = 0, byt_diff = 0;
 	bigint *diff = NULL;
 
-	/*result_len = max(n1->len, n2->len)*/
+	/* result_len = max(n1->len, n2->len) */
 	result_len = (n1->len > n2->len) ? n1->len : n2->len;
-	/*If both arrays are of the same length then;*/
-	/*result_len = n1->len - */
-	/*(length of continuous matches in n1 and n2 from msd down to lsd).*/
+	/* If both arrays are of the same length then; */
+	/* result_len = n1->len - */
+	/* (length of continuous matches in n1 and n2 from msd down to lsd). */
 	if (n1->len == n2->len)
 		while (result_len > 1 && n1->num[result_len - 1] == n2->num[result_len - 1])
 			result_len--;
@@ -36,14 +36,14 @@ static bigint *subtract(bigint *const n1, bigint *const n2)
 
 	while ((n1_i < n1->len || n2_i < n2->len) && diff_i < diff->len)
 	{
-		if (n1_is_bigger > 0) /*then; n1 - n2*/
+		if (n1_is_bigger > 0) /* then; n1 - n2 */
 		{
 			if (n2_i < n2->len)
 				byt_diff += (l_int)n1->num[n1_i] - n2->num[n2_i];
 			else
 				byt_diff += n1->num[n1_i];
 		}
-		else /*n2 - n1*/
+		else /* n2 - n1 */
 		{
 			if (n1_i < n1->len)
 				byt_diff += (l_int)n2->num[n2_i] - n1->num[n1_i];
@@ -51,7 +51,7 @@ static bigint *subtract(bigint *const n1, bigint *const n2)
 				byt_diff += n2->num[n2_i];
 		}
 
-		if (byt_diff < 0) /*borrow 1 from next.*/
+		if (byt_diff < 0) /* borrow 1 from next. */
 		{
 			byt_diff += BIGINT_BASE;
 			diff->num[diff_i] = byt_diff % BIGINT_BASE;
@@ -89,17 +89,17 @@ static bigint *subtract_negatives(bigint *const n1, bigint *const n2)
 
 	n1->is_negative = false;
 	n2->is_negative = false;
-	if (neg1 && neg2) /*-8 - -5 = -(8-5)*/
+	if (neg1 && neg2) /* -8 - -5 = -(8-5) */
 	{
 		result = subtract(n1, n2);
 		if (result)
 			result->is_negative = !result->is_negative;
 	}
-	else if (neg2) /*8 - -5 = 8+5*/
+	else if (neg2) /* 8 - -5 = 8+5 */
 		result = bi_add(n1, n2);
 	else if (neg1)
 	{
-		/*-8 - 5 = -(8+5)*/
+		/* -8 - 5 = -(8+5) */
 		result = bi_add(n1, n2);
 		if (result)
 			result->is_negative = !result->is_negative;

@@ -81,8 +81,8 @@ TEST(deque_creation, new_returns_empty_q)
 	free(q);
 }
 
-/*######################################################################*/
-/*######################################################################*/
+/* ###################################################################### */
+/* ###################################################################### */
 
 struct adding_items
 {
@@ -348,8 +348,8 @@ TEST_F(adding_items, pshtail_pshtail_pshhead)
 	CHECK(dq_peek_tail(tau->q) == n2d, "tail should be n2");
 }
 
-/*######################################################################*/
-/*######################################################################*/
+/* ###################################################################### */
+/* ###################################################################### */
 
 struct removing_items
 {
@@ -427,8 +427,8 @@ TEST_F(removing_items, poptail_1_node_from_3)
 	CHECK(dq_peek_tail(tau->q) == n2d, "tail should be unchanged");
 }
 
-/*######################################################################*/
-/*######################################################################*/
+/* ###################################################################### */
+/* ###################################################################### */
 
 struct add_and_remove_pshtail
 {
@@ -558,8 +558,8 @@ TEST_F(add_and_remove_pshtail, pophead_pushtail)
 	CHECK(dq_peek_tail(tau->q) == n3d, "tail should be updated to n3.");
 }
 
-/*######################################################################*/
-/*######################################################################*/
+/* ###################################################################### */
+/* ###################################################################### */
 
 struct add_and_remove_pshhead
 {
@@ -689,8 +689,8 @@ TEST_F(add_and_remove_pshhead, pophead_pushtail)
 	CHECK(dq_peek_tail(tau->q) == n3d, "tail should be updated to n3.");
 }
 
-/*######################################################################*/
-/*######################################################################*/
+/* ###################################################################### */
+/* ###################################################################### */
 
 TEST(deleting_deque, delete_should_clear_all_items)
 {
@@ -723,7 +723,7 @@ TEST(deleting_deque, delete_f_should_clear_all_items)
 	{
 		free(dq_peek_head(q));
 		free(n1);
-		/*WARNING: data in n2 might not be freed.*/
+		/* WARNING: data in n2 might not be freed. */
 		free(n2);
 		free(dq_peek_tail(q));
 		free(n3);
@@ -735,13 +735,13 @@ TEST(deleting_deque, delete_f_should_clear_all_items)
 	q = dq_delete(q, free);
 }
 
-/*######################################################################*/
-/*######################################################################*/
+/* ###################################################################### */
+/* ###################################################################### */
 
 TEST(dqfa, dqfa_invalid_args)
 {
 	long long int arr[] = {1, 2, 3, 4, 5};
-	const size_t arr_len = (sizeof(arr) / sizeof(*arr));
+	const len_type arr_len = (sizeof(arr) / sizeof(*arr));
 
 	CHECK(dq_from_array(NULL, 0, 0, NULL, NULL) == NULL,
 		  "data_array, len and type_size are required");
@@ -767,7 +767,7 @@ TEST(dqfa, dqfa_invalid_args)
 TEST(dqfa, deque_from_array)
 {
 	long long int arr[] = {1, 2, 3, 4, 5};
-	const size_t arr_len = (sizeof(arr) / sizeof(*arr));
+	const len_type arr_len = (sizeof(arr) / sizeof(*arr));
 	deque *q = dq_from_array(arr, arr_len, sizeof(*arr), NULL, NULL);
 
 	REQUIRE(q, "dq_from_array() should return non-null pointer");

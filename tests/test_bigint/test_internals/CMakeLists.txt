@@ -1,0 +1,7 @@
+add_executable(test__bigint_internals test__bigint_internals.c test_main.c)
+target_link_libraries(test__bigint_internals PRIVATE bigint)
+add_test(NAME test__bigint_internals COMMAND test__bigint_internals)
+
+add_executable(test__numstr_internals test__numstr_internals.c test_main.c)
+target_link_libraries(test__numstr_internals PRIVATE bigint)
+add_test(NAME test__numstr_internals COMMAND test__numstr_internals)

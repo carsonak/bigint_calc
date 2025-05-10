@@ -38,10 +38,10 @@ static char map_digits(const char c, void const *const radix)
 	const unsigned int base = *((const unsigned int *)radix);
 
 	if (c == '_')
-		return (0); /*underscores should be ignored.*/
+		return (0); /* underscores should be ignored. */
 
 	if (a < 0 || (unsigned int)a >= base)
-		return (-1); /*invalid character.*/
+		return (-1); /* invalid character. */
 
 	return (int_to_char(a));
 }

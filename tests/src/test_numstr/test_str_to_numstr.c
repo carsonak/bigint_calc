@@ -1,7 +1,7 @@
 #include "tests.h"
 
 static struct numstr *output;
-static size_t processed;
+static len_type processed;
 
 /**
  * setup - setup some variables.

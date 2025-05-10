@@ -1,17 +1,18 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
-static ATTR_NONNULL void add(bigint *const n1, bigint const *const n2);
-static ATTR_NONNULL bool add_negatives(bigint *const n1, bigint *const n2);
+static ATTR_NONNULL void
+iadd(bigint *const restrict n1, bigint const *const restrict n2);
+static ATTR_NONNULL bool iadd_negatives(bigint *const n1, bigint *const n2);
 
 /**
- * add - add two bigints inplace.
+ * iadd - add two bigints inplace.
  * @n1: the first number, should be large enough to store the results.
  * @n2: the second number.
  */
-static void add(bigint *const n1, bigint const *const n2)
+static void iadd(bigint *const restrict n1, bigint const *const restrict n2)
 {
-	size_t n1_i = 0, n2_i = 0, res_len = 0;
+	len_type n1_i = 0, n2_i = 0, res_len = 0;
 	l_int byt_sum = 0;
 
 	while (n1_i < n1->len || n2_i < n2->len || byt_sum > 0)
@@ -36,32 +37,32 @@ static void add(bigint *const n1, bigint const *const n2)
 }
 
 /**
- * add_negatives - handle inplace addition of signed bigints.
+ * iadd_negatives - handle inplace addition of signed bigints.
  * @n1: first number.
  * @n2: second number.
  *
  * Return: true on success, false on failure.
  */
-static bool add_negatives(bigint *const n1, bigint *const n2)
+static bool iadd_negatives(bigint *const n1, bigint *const n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
-	if (neg1 && neg2) /*-8 + -7 = -(8+7)*/
+	if (neg1 && neg2) /* -8 + -7 = -(8+7) */
 	{
-		add(n1, n2);
+		iadd(n1, n2);
 		n1->is_negative = !n1->is_negative;
 		n2->is_negative = true;
 	}
-	else if (neg1) /*-8 + 7 = -(8-7)*/
+	else if (neg1) /* -8 + 7 = -(8-7) */
 	{
 		if (!bi_isubtract(n1, n2))
 			return (false);
 
 		n1->is_negative = !n1->is_negative;
 	}
-	else if (neg2) /*8 + -7 = 8-7*/
+	else if (neg2) /* 8 + -7 = 8-7 */
 	{
 		if (!bi_isubtract(n1, n2))
 			return (false);
@@ -83,21 +84,21 @@ static bool add_negatives(bigint *const n1, bigint *const n2)
  *
  * Return: 1 on success, 0 on failure (if n1 is NULL).
  */
-bool bi_iadd(bigint *const n1, bigint *const n2)
+bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
 {
-	/*n1.num cannot be NULL as this function does not allocate any memory.*/
-	if (!n1 || !n1->num)
+	/* n1.num cannot be NULL as this function does not allocate any memory. */
+	if (!n1 || !n1->num || n1->len < 0)
 		return (false);
 
 	_bi_trim(n1);
-	if (!n2) /*This case is treated as: n1 = n1 * 1.*/
+	if (!n2) /* This case is treated as: n1 = n1 * 1. */
 		return (true);
 
 	_bi_trim(n2);
 	if (n1->is_negative || n2->is_negative)
-		return (add_negatives(n1, n2));
+		return (iadd_negatives(n1, n2));
 
-	add(n1, n2);
+	iadd(n1, n2);
 	return (true);
 }
 
@@ -111,11 +112,11 @@ bool bi_iadd(bigint *const n1, bigint *const n2)
  *
  * Return: true on success, false on failure.
  */
-bool bi_iadd_int(bigint *const n1, long long int n2)
+bool bi_iadd_int(bigint *const n1, const intmax_t n2)
 {
 	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
 
-	if (!n1)
+	if (!n1 || n1->len < 0)
 		return (false);
 
 	int_to_bi(&num2, n2);

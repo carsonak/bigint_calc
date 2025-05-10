@@ -1,16 +1,7 @@
-# Ignore vscode configurations
-.vscode
-
-# replit stuff
-.cache
-.ccls-cache
-.replit
-.local
-replit.nix
-
 # python caches
 __pycache__
 .mypy_cache
 
 # Object files
 obj/*
+build/*

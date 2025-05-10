@@ -1,10 +1,10 @@
 #include "infiX.h"
 
-/*ERRORS:*/
-/*"base" - unrecognised base*/
-/*"ops" - unrecognised operand*/
-/*"division by zero" - ...*/
-/*"unrecognised characters" - ...*/
+/* ERRORS: */
+/* "base" - unrecognised base */
+/* "ops" - unrecognised operand */
+/* "division by zero" - ... */
+/* "unrecognised characters" - ... */
 
 /**
  * panic - app misuse error handler.

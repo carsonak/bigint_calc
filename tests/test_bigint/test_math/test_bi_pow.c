@@ -29,24 +29,19 @@ void teardown(void)
 
 struct null_inputs
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(null_inputs)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(null_inputs) {}
+TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
 
-TEST(null_inputs, test_null_pow_null)
+TEST_F(null_inputs, test_null_pow_null)
 {
 	bigint *output = bi_power(NULL, NULL);
 
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_1_pow_null)
+TEST_F(null_inputs, test_1_pow_null)
 {
 	u_int bs[] = {1};
 
@@ -57,7 +52,7 @@ TEST(null_inputs, test_1_pow_null)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_null_pow_1)
+TEST_F(null_inputs, test_null_pow_1)
 {
 	u_int exp[] = {1};
 
@@ -68,7 +63,7 @@ TEST(null_inputs, test_null_pow_1)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_0_pow_null)
+TEST_F(null_inputs, test_0_pow_null)
 {
 	u_int bs[1] = {0};
 
@@ -79,7 +74,7 @@ TEST(null_inputs, test_0_pow_null)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_null_pow_0)
+TEST_F(null_inputs, test_null_pow_0)
 {
 	u_int exp[1] = {0};
 
@@ -90,7 +85,7 @@ TEST(null_inputs, test_null_pow_0)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_minus1_pow_null)
+TEST_F(null_inputs, test_minus1_pow_null)
 {
 	u_int bs[] = {1};
 
@@ -102,7 +97,7 @@ TEST(null_inputs, test_minus1_pow_null)
 	CHECK(output == 0, "");
 }
 
-TEST(null_inputs, test_null_pow_minus1)
+TEST_F(null_inputs, test_null_pow_minus1)
 {
 	u_int exp[] = {1};
 
@@ -116,17 +111,12 @@ TEST(null_inputs, test_null_pow_minus1)
 
 struct zero_len_arrays
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(zero_len_arrays)
-{
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
-}
-TEST_F_TEARDOWN(zero_len_arrays) {}
+TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
 
-TEST(zero_len_arrays, test_nullarray_pow_nullarray)
+TEST_F(zero_len_arrays, test_nullarray_pow_nullarray)
 {
 	u_int out[1] = {1};
 
@@ -141,7 +131,7 @@ TEST(zero_len_arrays, test_nullarray_pow_nullarray)
 	output = bi_delete(output);
 }
 
-TEST(zero_len_arrays, test_4490998_pow_nullarray)
+TEST_F(zero_len_arrays, test_4490998_pow_nullarray)
 {
 	u_int bs[] = {4490998}, out[1] = {1};
 
@@ -158,7 +148,7 @@ TEST(zero_len_arrays, test_4490998_pow_nullarray)
 	output = bi_delete(output);
 }
 
-TEST(zero_len_arrays, test_nullarray_pow_largenum)
+TEST_F(zero_len_arrays, test_nullarray_pow_largenum)
 {
 	u_int exp[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175},
 		  out[1] = {1};
@@ -178,17 +168,15 @@ TEST(zero_len_arrays, test_nullarray_pow_largenum)
 
 struct simple_exponentiations
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(simple_exponentiations)
+TEST_F_SETUP(simple_exponentiations) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(simple_exponentiations)
 {
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
+	tau->output = bi_delete(tau->output);
 }
-TEST_F_TEARDOWN(simple_exponentiations) {}
 
-TEST(simple_exponentiations, test_123_pow_0)
+TEST_F(simple_exponentiations, test_123_pow_0)
 {
 	u_int bs[] = {123}, exp[] = {0}, out[] = {1};
 
@@ -209,7 +197,7 @@ TEST(simple_exponentiations, test_123_pow_0)
 	output = bi_delete(output);
 }
 
-TEST(simple_exponentiations, test_123_pow_1)
+TEST_F(simple_exponentiations, test_123_pow_1)
 {
 	u_int bs[] = {123}, exp[] = {1}, out[] = {123};
 
@@ -230,7 +218,7 @@ TEST(simple_exponentiations, test_123_pow_1)
 	output = bi_delete(output);
 }
 
-TEST(simple_exponentiations, test_123_pow_2)
+TEST_F(simple_exponentiations, test_123_pow_2)
 {
 	u_int bs[] = {123}, exp[] = {2}, out[] = {15129};
 
@@ -251,7 +239,7 @@ TEST(simple_exponentiations, test_123_pow_2)
 	output = bi_delete(output);
 }
 
-TEST(simple_exponentiations, test_123_pow_3)
+TEST_F(simple_exponentiations, test_123_pow_3)
 {
 	u_int bs[] = {123}, exp[] = {3}, out[] = {1860867};
 
@@ -272,7 +260,7 @@ TEST(simple_exponentiations, test_123_pow_3)
 	output = bi_delete(output);
 }
 
-TEST(simple_exponentiations, test_123_pow_4)
+TEST_F(simple_exponentiations, test_123_pow_4)
 {
 	u_int bs[] = {123}, exp[] = {4}, out[] = {228886641};
 
@@ -293,7 +281,7 @@ TEST(simple_exponentiations, test_123_pow_4)
 	output = bi_delete(output);
 }
 
-TEST(simple_exponentiations, test_123_pow_5)
+TEST_F(simple_exponentiations, test_123_pow_5)
 {
 	u_int bs[] = {123}, exp[] = {5}, out[] = {153056843, 28};
 
@@ -314,7 +302,7 @@ TEST(simple_exponentiations, test_123_pow_5)
 	output = bi_delete(output);
 }
 
-TEST(simple_exponentiations, test_234_pow_477)
+TEST_F(simple_exponentiations, test_234_pow_477)
 {
 	/* clang-format off */
 	u_int bs[] = {234}, exp[] = {477};
@@ -338,7 +326,7 @@ TEST(simple_exponentiations, test_234_pow_477)
 	output = bi_delete(output);
 }
 
-TEST(simple_exponentiations, test_234_pow_266)
+TEST_F(simple_exponentiations, test_234_pow_266)
 {
 	/* clang-format off */
 	u_int bs[] = {234}, exp[] = {266};
@@ -364,17 +352,15 @@ TEST(simple_exponentiations, test_234_pow_266)
 
 struct negative_exponentiations
 {
-	bigint num1;
-	bigint expected;
+	bigint num1, num2, expected, *output;
 };
-TEST_F_SETUP(negative_exponentiations)
+TEST_F_SETUP(negative_exponentiations) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_TEARDOWN(negative_exponentiations)
 {
-	tau->num1 = (bigint){0};
-	tau->expected = (bigint){0};
+	tau->output = bi_delete(tau->output);
 }
-TEST_F_TEARDOWN(negative_exponentiations) {}
 
-TEST(negative_exponentiations, test_minus123_pow_2)
+TEST_F(negative_exponentiations, test_minus123_pow_2)
 {
 	u_int bs[] = {123}, exp[] = {2}, out[] = {15129};
 
@@ -395,7 +381,7 @@ TEST(negative_exponentiations, test_minus123_pow_2)
 	output = bi_delete(output);
 }
 
-TEST(negative_exponentiations, test_minus123_pow_3)
+TEST_F(negative_exponentiations, test_minus123_pow_3)
 {
 	u_int bs[] = {123}, exp[] = {3}, out[] = {1860867};
 

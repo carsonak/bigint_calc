@@ -16,7 +16,7 @@ l_int bi_compare(bigint *const n1, bigint *const n2)
 	bi_trim(n2);
 	if (n1->is_negative && n2->is_negative)
 	{
-		/*CAUTION: possible case => len truncated when casting to l_int.*/
+		/* CAUTION: possible case => len truncated when casting to l_int. */
 		if ((l_int)n2->len - n1->len)
 			return ((l_int)n2->len - n1->len);
 

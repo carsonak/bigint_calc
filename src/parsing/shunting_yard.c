@@ -60,12 +60,12 @@ static bool syntax_is_valid(token *left, token *right)
 	if (!left &&
 		!is_starter(right->id) &&
 		!is_unary_prefix_operator(right->id))
-	{ /*Expression must begin with a: 'number', '(', '+' or '-'.*/
+	{ /* Expression must begin with a: 'number', '(', '+' or '-'. */
 		return (false);
 	}
 
 	if (left && left->id == NUMBER && right->id == NUMBER)
-	{ /*There cannot be two consecutive numbers.*/
+	{ /* There cannot be two consecutive numbers. */
 		return (false);
 	}
 
@@ -73,7 +73,7 @@ static bool syntax_is_valid(token *left, token *right)
 		!is_unary_prefix_operator(left->id) &&
 		is_binary_operator(left->id) &&
 		!is_starter(right->id))
-	{ /*Binary operators must be followed by a: 'number' or '('.*/
+	{ /* Binary operators must be followed by a: 'number' or '('. */
 		return (false);
 	}
 
@@ -124,9 +124,9 @@ deque *parse_tokens(deque *tokens)
 	token *current = NULL, *prev = NULL;
 	size_t exp_i = 0, processed = 0;
 
-	/*TODO: Update parse_tokens to iterate over tokens from lexer.*/
-	/*TODO: Finish the shunting yard algorithm.*/
-	/*TODO: Handle syntax errors.*/
+	/* TODO: Update parse_tokens to iterate over tokens from lexer. */
+	/* TODO: Finish the shunting yard algorithm. */
+	/* TODO: Handle syntax errors. */
 	while (expression[exp_i] && expression[exp_i] != '\n')
 	{
 		while (expression[exp_i] &&
@@ -141,7 +141,7 @@ deque *parse_tokens(deque *tokens)
 			format_syntax_error(expression, exp_i + processed, "invalid syntax");
 			break;
 		}
-		/*Identifying unary prefix operators.*/
+		/* Identifying unary prefix operators. */
 		if ((!prev || !is_ender(prev->id)) && is_unary_prefix_operator(current->id))
 			current->op.operator= NULL;
 

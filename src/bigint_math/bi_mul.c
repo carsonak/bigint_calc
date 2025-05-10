@@ -17,28 +17,28 @@ static bigint *multiply(bigint *const n1, bigint *const n2)
 	size_t n1_i = 0, n2_i = 0;
 	bigint *product = NULL, *current_mul = NULL;
 
-	/*Multiplication by zero.*/
+	/* Multiplication by zero. */
 	if (bi_is_zero(n1) || bi_is_zero(n2))
 		return (bi_alloc(1));
 
-	/*Length of product = length of n1 + length of n2*/
+	/* Length of product = length of n1 + length of n2 */
 	product = bi_alloc(n1->len + n2->len);
 	current_mul = bi_alloc(n1->len + n2->len);
 	if (!product || !current_mul)
 		goto clean_up;
 
 	product->len = 1;
-	/*For every "digit" in n2, multiply with every "digit" in n1.*/
+	/* For every "digit" in n2, multiply with every "digit" in n1. */
 	for (n2_i = 0; n2_i < n2->len; ++n2_i)
 	{
-		/*Skip multiplication by zero*/
+		/* Skip multiplication by zero */
 		if (n2->num[n2_i] == 0)
 			continue;
 
-		/*Length of current_mul = */
-		/*length of n1 + (number of "digits" upto n2_i)*/
+		/* Length of current_mul = */
+		/* length of n1 + (number of "digits" upto n2_i) */
 		current_mul->len = n1->len + (n2_i + 1);
-		/*The least significant n2_i "digits" will be 0 for every iteration.*/
+		/* The least significant n2_i "digits" will be 0 for every iteration. */
 		memset(current_mul->num, 0, sizeof(*current_mul->num) * n2_i);
 		byt_prod = 0;
 		for (n1_i = 0; n1_i < n1->len; ++n1_i)

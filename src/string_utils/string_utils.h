@@ -24,4 +24,4 @@ char int_to_char(const unsigned int num);
 int char_to_int(const char c);
 size_t leading_chars_span(char const *const str, char const *const ch);
 
-#endif /*STRING_UTILS*/
+#endif /* STRING_UTILS */

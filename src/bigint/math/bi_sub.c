@@ -15,15 +15,15 @@ subtract_negatives(bigint *const n1, bigint *const n2);
  */
 static bigint *subtract(bigint const *const n1, bigint const *const n2)
 {
-	size_t n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
+	len_type n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
 	l_int n1_is_bigger = 0, byt_diff = 0;
 	bigint *diff = NULL;
 
-	/*result_len = max(n1->len, n2->len)*/
+	/* result_len = max(n1->len, n2->len) */
 	result_len = (n1->len > n2->len) ? n1->len : n2->len;
-	/*If both arrays are of the same length then;*/
-	/*result_len = n1->len - */
-	/*(length of longest continuos matches of m.s.ds in n1 and n2).*/
+	/* If both arrays are of the same length then; */
+	/* result_len = n1->len - */
+	/* (length of longest continuos matches of m.s.ds in n1 and n2). */
 	if (n1->len == n2->len)
 		while (result_len > 1 &&
 		       n1->num[result_len - 1] == n2->num[result_len - 1])
@@ -33,20 +33,26 @@ static bigint *subtract(bigint const *const n1, bigint const *const n2)
 	if (!diff)
 		return (NULL);
 
-	n1_is_bigger = bi_compare(n1, n2);
+	/* `bi_compare` should not modify the arguments */
+	n1_is_bigger = bi_compare(
+		&(bigint){
+			.is_negative = n1->is_negative, .len = n1->len, .num = n1->num},
+		&(bigint){
+			.is_negative = n2->is_negative, .len = n2->len, .num = n2->num});
+
 	if (n1_is_bigger <= 0)
 		diff->is_negative = true;
 
 	while ((n1_i < n1->len || n2_i < n2->len) && diff_i < diff->len)
 	{
-		if (n1_is_bigger > 0) /*then; n1 - n2*/
+		if (n1_is_bigger > 0) /* then; n1 - n2 */
 		{
 			if (n2_i < n2->len)
 				byt_diff += (l_int)n1->num[n1_i] - n2->num[n2_i];
 			else
 				byt_diff += n1->num[n1_i];
 		}
-		else /*n2 - n1*/
+		else /* n2 - n1 */
 		{
 			if (n1_i < n1->len)
 				byt_diff += (l_int)n2->num[n2_i] - n1->num[n1_i];
@@ -54,7 +60,7 @@ static bigint *subtract(bigint const *const n1, bigint const *const n2)
 				byt_diff += n2->num[n2_i];
 		}
 
-		if (byt_diff < 0) /*borrow 1 from next.*/
+		if (byt_diff < 0) /* borrow 1 from next. */
 		{
 			byt_diff += BIGINT_BASE;
 			diff->num[diff_i] = byt_diff % BIGINT_BASE;
@@ -88,22 +94,22 @@ static bigint *subtract(bigint const *const n1, bigint const *const n2)
  */
 static bigint *subtract_negatives(bigint *const n1, bigint *const n2)
 {
-	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
+	const bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bigint *result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;
-	if (neg1 && neg2) /*-8 - -5 = -(8-5)*/
+	if (neg1 && neg2) /* -8 - -5 = -(8-5) */
 	{
 		result = subtract(n1, n2);
 		if (result)
 			result->is_negative = !result->is_negative;
 	}
-	else if (neg2) /*8 - -5 = 8+5*/
+	else if (neg2) /* 8 - -5 = 8+5 */
 		result = bi_add(n1, n2);
 	else if (neg1)
 	{
-		/*-8 - 5 = -(8+5)*/
+		/* -8 - 5 = -(8+5) */
 		result = bi_add(n1, n2);
 		if (result)
 			result->is_negative = !result->is_negative;
@@ -124,7 +130,7 @@ static bigint *subtract_negatives(bigint *const n1, bigint *const n2)
  */
 bigint *bi_subtract(bigint *const n1, bigint *const n2)
 {
-	if (!n1 || !n2)
+	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
 	_bi_trim(n1);
@@ -142,11 +148,11 @@ bigint *bi_subtract(bigint *const n1, bigint *const n2)
  *
  * Return: pointer to the answer on success, NULL on failure.
  */
-bigint *bi_subtract_int(bigint *const n1, long long int n2)
+bigint *bi_subtract_int(bigint *const n1, const intmax_t n2)
 {
-	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[4]){0}};
 
-	if (!n1)
+	if (!n1 || n1->len < 0)
 		return (NULL);
 
 	int_to_bi(&num2, n2);

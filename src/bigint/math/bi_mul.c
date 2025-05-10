@@ -15,34 +15,34 @@ multiply_negatives(bigint *const n1, bigint *const n2);
  */
 static bigint *multiply(bigint const *const n1, bigint const *const n2)
 {
-	l_int byt_prod = 0;
-	size_t n1_i = 0, n2_i = 0;
-	bigint *product = NULL, *current_mul = NULL;
-
-	/*Multiplication by zero.*/
+	/* Multiplication by zero. */
 	if (bi_iszero(n1) || bi_iszero(n2))
 		return (_bi_alloc(1));
 
-	/*Length of product = length of n1 + length of n2*/
-	product = _bi_alloc(n1->len + n2->len);
-	current_mul = _bi_alloc(n1->len + n2->len);
+	len_type n2_i = 0;
+	/* Length of product = length of n1 + length of n2 */
+	bigint *product = _bi_alloc(n1->len + n2->len);
+	bigint *const current_mul = _bi_alloc(n1->len + n2->len);
+
 	if (!product || !current_mul)
 		goto clean_up;
 
 	product->len = 1;
-	/*For every "digit" in n2, multiply with every "digit" in n1.*/
+	/* For every "digit" in n2, multiply with every "digit" in n1. */
 	for (n2_i = 0; n2_i < n2->len; ++n2_i)
 	{
-		/*Skip multiplication by zero*/
+		len_type n1_i = 0;
+		l_int byt_prod = 0;
+
+		/* Skip multiplication by zero */
 		if (n2->num[n2_i] == 0)
 			continue;
 
-		/*Length of current_mul = */
-		/*length of n1 + (number of "digits" upto n2_i)*/
+		/* Length of current_mul = */
+		/* length of n1 + (number of "digits" upto n2_i) */
 		current_mul->len = n1->len + (n2_i + 1);
-		/*The least significant n2_i "digits" will be 0 for every iteration.*/
+		/* The least significant n2_i "digits" will be 0 for every iteration. */
 		memset(current_mul->num, 0, sizeof(*current_mul->num) * n2_i);
-		byt_prod = 0;
 		for (n1_i = 0; n1_i < n1->len; ++n1_i)
 		{
 			byt_prod += (l_int)n2->num[n2_i] * n1->num[n1_i];
@@ -56,9 +56,9 @@ static bigint *multiply(bigint const *const n1, bigint const *const n2)
 	}
 
 clean_up:
-	current_mul = bi_delete(current_mul);
+	_bi_free(current_mul);
 	if (n2_i < n2->len)
-		product = bi_delete(product);
+		product = _bi_free(product);
 
 	_bi_trim(product);
 	return (product);
@@ -104,7 +104,7 @@ static bigint *multiply_negatives(bigint *const n1, bigint *const n2)
  */
 bigint *bi_multiply(bigint *const n1, bigint *const n2)
 {
-	if (!n1 || !n2)
+	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
 	_bi_trim(n1);
@@ -113,4 +113,22 @@ bigint *bi_multiply(bigint *const n1, bigint *const n2)
 		return (multiply_negatives(n1, n2));
 
 	return (multiply(n1, n2));
+}
+
+/**
+ * bi_multiply_int - multiply a bigint with an int.
+ * @n1: pointer to the bigint.
+ * @n2: the int to multiply with.
+ *
+ * Return: pointer to the result.
+ */
+bigint *bi_multiply_int(bigint *const n1, const intmax_t n2)
+{
+	if (!n1 || n1->len < 0)
+		return (NULL);
+
+	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (u_int[4]){0}};
+
+	int_to_bi(&num2, n2);
+	return (bi_multiply(n1, &num2));
 }

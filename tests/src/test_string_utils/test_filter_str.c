@@ -22,7 +22,7 @@ static char capitalise(const char c, void const *const args)
 	return (-1);
 }
 
-static size_t processed;
+static len_type processed;
 
 /**
  * setup - setup some variables.
