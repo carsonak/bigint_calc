@@ -2,10 +2,14 @@
 #include "bigint.h"
 
 /**
- * bi_iszero - check if a bigint is equal to 0.
- * @n: the bigint to check.
+ * bi_iszero - check if a `bigint` is equal to 0.
+ * @n: pointer to the `bigint` to check.
  *
- * Return: true if bigint is NULL or equal to zero, else false.
+ * Return: true if the `bigint`:
+ * a) has a NULL array.
+ * b) has len == 0.
+ * c) is equal to 0.
+ * else false.
  */
 bool bi_iszero(bigint const *const n)
 {
@@ -14,13 +18,13 @@ bool bi_iszero(bigint const *const n)
 	if (!n || n->len < 0)
 		return (false);
 
-	if (n->len > 0)
-		i = n->len - 1;
+	if (!n->num || n->len == 0)
+		return (true);
 
-	while (n->num && i && !n->num[i])
-		i--;
+	for (i = n->len - 1; i > 0 && n->num[i] == 0; --i)
+		;
 
-	if (n->len < 1 || !n->num || !n->num[i])
+	if (n->num[i] == 0)
 		return (true);
 
 	return (false);

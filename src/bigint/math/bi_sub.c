@@ -142,7 +142,7 @@ bigint *bi_subtract(bigint *const n1, bigint *const n2)
 }
 
 /**
- * bi_subtract_int - subtract an int from a bigint.
+ * bi_subtract_int - subtract an int from a `bigint`.
  * @n1: the first number.
  * @n2: the second number.
  *

@@ -2,8 +2,8 @@
 #include "bigint.h"
 
 /**
- * bi_delete - free a bigint, return NULL.
- * @ptr: a pointer to a bigint.
+ * bi_delete - free a `bigint`, return NULL.
+ * @ptr: a pointer to a `bigint`.
  *
  * Return: NULL always.
  */

@@ -20,13 +20,13 @@ leading_chars_span(char const *const str, char const *const ch);
  */
 static char map_digits(const char c, void *radix)
 {
-	int a = numchar_to_int(c);
-	const unsigned int base = *((const unsigned int *)radix);
+	short int a = char_to_int(c);
+	const unsigned short int base = *((const unsigned short int *)radix);
 
 	if (c == '_')
 		return (0); /* underscores should be ignored. */
 
-	if (a < 0 || (unsigned int)a >= base)
+	if (a < 0 || (unsigned short int)a >= base)
 		return (-1); /* invalid character. */
 
 	return (int_to_char(a));
@@ -36,18 +36,18 @@ static char map_digits(const char c, void *radix)
 
 /**
  * filter_str - filter characters of a string.
- * @str: the string to process.
+ * @str: the string to filter.
  * @processed: address to store number of characters processed in the string.
- * @map: pointer to a function that transforms/maps characters onto others.
- * @map_args: pointer to more arguments to pass to the map function.
+ * @map: pointer to a function that maps characters onto other characters.
+ * @map_args: pointer to arguments that will be passed onto the map function.
  *
- * If map returns a negative char, processing is finalised and the processed
- * string returned.
- * If map returns 0, the character will be ignored, essentially deleting the
- * character from the output string.
+ * If the `map` function returns a negative int, processing of the string is
+ * finalised and the filtered string returned.
+ * If the `map` function returns 0, the character will be will be skipped,
+ * effectively deleting the character from the output string.
  *
- * If the function fails due to a memory allocation issue,
- * the value in `processed` will be unchanged.
+ * If the function fails due to a memory allocation issue, the original value
+ * in `processed` will be unchanged.
  *
  * Return: pointer to the filtered string, NULL on failure.
  */
@@ -56,18 +56,19 @@ char *filter_str(
 	const mapping_func map, void *const restrict map_args
 )
 {
-	char *output = NULL, c = 0;
-	len_type buf_i = 0, str_i = 0, out_len = 0;
-
 	if (!str || !map)
 		return (NULL);
 
+	char *output = NULL, c = 0;
+	len_type str_i = 0, out_len = 0;
 	char buffer[FILTER_STR_BUFFER_SIZE];
 
 	while (str[str_i])
 	{
+		len_type buf_i = 0;
+
 		for (buf_i = 0; buf_i < FILTER_STR_BUFFER_SIZE - 1 && str[str_i];
-		     ++str_i)
+			 ++str_i)
 		{
 			c = map(str[str_i], map_args);
 			if (c < 0)
@@ -153,7 +154,7 @@ static bool check_is_negative(
 /**
  * str_to_numstr - parse a string of digits.
  * @number: a string with a number.
- * @base: an int between 2-36 indicating the base of the number.
+ * @base: an int between 2-36 indicating the radix of the number.
  * @processed: address to store number of characters processed in the string.
  *
  * If the function fails due to a memory allocation issue,
@@ -162,8 +163,8 @@ static bool check_is_negative(
  * Return: pointer to a numstr struct, NULL on failure.
  */
 numstr *str_to_numstr(
-	char const *const number, const unsigned short int base,
-	len_type *const processed
+	char const *const restrict number, const unsigned short int base,
+	len_type *const restrict processed
 )
 {
 	numstr *ns = NULL;
@@ -180,17 +181,17 @@ numstr *str_to_numstr(
 	if (number[str_i] == '_')
 	{
 		fprintf(stderr, "ParsingError: Leading underscores not allowed.\n");
-		goto cleanup_numstr;
+		goto input_error;
 	}
 
 	str_i += leading_chars_span(&number[str_i], "0");
 	{
-		unsigned short int b = base;  // Avoiding UB and silencing warnings
+		unsigned short int b = base;  // Avoiding Undefined Behaviour.
 		ns->str = filter_str(&number[str_i], &p, map_digits, &b);
 	}
 
 	if (!ns->str)
-		goto critical_failure;
+		goto malloc_error;
 
 	str_i += p;
 	ns->len = strlen(ns->str);
@@ -198,14 +199,14 @@ numstr *str_to_numstr(
 	{
 		fprintf(
 			stderr, "ParsingError: string did not contain any valid digits.\n");
-		goto cleanup_numstr;
+		goto input_error;
 	}
 
 	if (str_i && number[str_i - 1] == '_')
 	{
 		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
 		--str_i;
-cleanup_numstr:
+input_error:
 		ns = _numstr_free(ns);
 	}
 
@@ -214,6 +215,6 @@ cleanup_numstr:
 
 	return (ns);
 
-critical_failure:
+malloc_error:
 	return (_numstr_free(ns));
 }

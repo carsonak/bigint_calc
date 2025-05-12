@@ -1,16 +1,16 @@
 #ifndef BIGINT_CHAR_INT_CONVERSION
 #define BIGINT_CHAR_INT_CONVERSION
 
-static int numchar_to_int(const char c);
-static char int_to_char(const unsigned int num);
+static short int char_to_int(const char c);
+static char int_to_char(const unsigned short int num);
 
 /**
- * numchar_to_int - map a base36 ascii symbol to a decimal.
- * @c: an alphanumeric symbol.
+ * char_to_int - map an ascii symbol for base36 to a decimal number in the range 0-35.
+ * @c: an alphanumeric character.
  *
- * Return: decimal value of the symbol, -1 if invalid symbol.
+ * Return: decimal value of the symbol, -1 on error.
  */
-static int numchar_to_int(const char c)
+static short int char_to_int(const char c)
 {
 	if (!isalnum(c))
 		return (-1);
@@ -22,12 +22,12 @@ static int numchar_to_int(const char c)
 }
 
 /**
- * int_to_char - map a decimal between 0-35 to a base36 ascii symbol.
+ * int_to_char - map a decimal number in the range 0-35 to an ascii symbol for base36.
  * @num: the number to convert.
  *
- * Return: the ascii symbol, '\0' on error.
+ * Return: ascii symbol of the number, '\0' on error.
  */
-static char int_to_char(const unsigned int num)
+static char int_to_char(const unsigned short int num)
 {
 	if (num > 35)
 		return ('\0');

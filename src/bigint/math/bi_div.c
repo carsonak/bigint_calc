@@ -3,19 +3,21 @@
 #include <stdio.h> /* fprintf */
 
 static ATTR_NONNULL bool check_division_by_0(const bigint *const n2);
-static ATTR_NONNULL bool check_0_result(bigint *const n1, bigint *const n2);
+static ATTR_NONNULL bool
+quotient_is_less_than_1(const bigint *const n1, const bigint *const n2);
 static ATTR_NONNULL bigint *
 get_remainder(bigint *const n1, bigint *const n2, bigint *quotient);
 static ATTR_NONNULL l_int get_current_quotient(
-	bigint *const slice, bigint *const n2, bigint **const remainder);
-static len_type drop_next(
-	bigint *const slice, bigint *const remainder, bigint *const n1,
-	len_type n1_i, bigint *const n2
+	bigint *const restrict slice, bigint *const restrict n2,
+	bigint *restrict *const restrict remainder
 );
-static ATTR_NONNULL bigint *
-divide(bigint *const n1, bigint *const n2, bigint **const remainder);
-static ATTR_NONNULL bigint *
-divide_negatives(bigint *const n1, bigint *const n2, bigint **const remainder);
+static ATTR_NONNULL_IDX(1, 3, 5) len_type drop_next(
+	bigint *const restrict slice, const bigint *const restrict remainder,
+	const bigint *const n1, len_type n1_i, const bigint *const n2
+);
+static ATTR_NONNULL bi_div_res divide(bigint *const n1, bigint *const n2);
+static ATTR_NONNULL bi_div_res
+divide_negatives(bigint *const n1, bigint *const n2);
 
 /**
  * check_division_by_0 - checks if the denominator is zero.
@@ -35,18 +37,16 @@ static bool check_division_by_0(const bigint *const n2)
 }
 
 /**
- * check_0_result - checks if numerator < denominator.
+ * quotient_is_less_than_1 - checks if numerator < denominator.
  * @n1: numerator/divisor.
  * @n2: denominator/dividend.
  *
  * Return: true if numerator < denominator, false if not.
  */
-static bool check_0_result(bigint *const n1, bigint *const n2)
+static bool
+quotient_is_less_than_1(const bigint *const n1, const bigint *const n2)
 {
-	if (bi_compare(n1, n2) < 0)
-		return (true);
-
-	return (false);
+	return (_bi_compare_const(n1, n2) < 0);
 }
 
 /**
@@ -59,10 +59,12 @@ static bool check_0_result(bigint *const n1, bigint *const n2)
  *
  * Return: pointer to the remainder on success, NULL on failure.
  */
-static bigint *
-get_remainder(bigint *const n1, bigint *const n2, bigint *const quotient)
+static bigint *get_remainder(
+	bigint *const restrict n1, bigint *const restrict n2,
+	bigint *const restrict quotient
+)
 {
-	bigint *multiple = bi_multiply(n2, quotient);
+	bigint *const multiple = bi_multiply(n2, quotient);
 	bigint *rem = NULL;
 
 	if (multiple)
@@ -76,12 +78,13 @@ get_remainder(bigint *const n1, bigint *const n2, bigint *const quotient)
  * get_current_quotient - calculate the current quotient.
  * @slice: the current number being divided.
  * @n2: the denominator.
- * @remainder: Address of a bigint pointer to store the remainder.
+ * @remainder: Address of a `bigint` pointer to store the remainder.
  *
  * Return: an int representing current quotient, -1 on error.
  */
 static l_int get_current_quotient(
-	bigint *const slice, bigint *const n2, bigint **const remainder
+	bigint *const restrict slice, bigint *const restrict n2,
+	bigint *restrict *const restrict remainder
 )
 {
 	bigint q_estimate = {.len = 1, .is_negative = false, .num = (u_int[3]){0}};
@@ -146,8 +149,8 @@ static l_int get_current_quotient(
  * Return: number of "digits" dropped from n1.
  */
 static len_type drop_next(
-	bigint *const slice, bigint *const remainder, bigint *const n1,
-	len_type n1_i, bigint *const n2
+	bigint *const restrict slice, const bigint *const restrict remainder,
+	const bigint *const n1, len_type n1_i, const bigint *const n2
 )
 {
 	len_type due = n2->len, offset = 1;
@@ -195,30 +198,29 @@ static len_type drop_next(
  * divide - divides two bigints.
  * @n1: numerator/divisor.
  * @n2: denominator/dividend.
- * @remainder: Address of a bigint pointer to store the remainder.
  *
- * Return: pointer ro the result, NULL on failure.
+ * Return: a struct with pointers to the results,
+ * struct with NULL pointers on error.
  */
-static bigint *
-divide(bigint *const n1, bigint *const n2, bigint **const remainder)
+static bi_div_res divide(bigint *const n1, bigint *const n2)
 {
 	bigint *current_slice = NULL;
 	len_type slice_offset = 1, q_i = 0, n1_i = 0, dropped = 0;
 	l_int current_q = 0;
-	bigint *quotient = NULL;
+	bi_div_res res = {0};
 
 	/* Since division is reverse of multiplication then; */
-	/* quotient "digits" = numerator "digits" - denominator "digits" + (0 or
-	 * 1). */
+	/* quotient "digits" = numerator "digits" - denominator "digits" + */
+	/* (0 or 1). */
 	if (n1->num[n1->len - 1] < n2->num[n2->len - 1])
 		/* If m.s.d of numerator < m.s.d denominator. */
-		quotient = _bi_alloc((n1->len - n2->len ? n1->len - n2->len : 1));
+		res.quotient = _bi_alloc((n1->len - n2->len ? n1->len - n2->len : 1));
 	else
-		quotient = _bi_alloc(n1->len - n2->len + 1);
+		res.quotient = _bi_alloc(n1->len - n2->len + 1);
 
 	/* len_slice = len of n2, +1 for an extra dropdown. */
 	current_slice = _bi_alloc(n2->len + 1);
-	if (!current_slice || !quotient)
+	if (!current_slice || !res.quotient)
 		goto error_cleanup;
 
 	n1_i = n1->len - 1;
@@ -229,113 +231,171 @@ divide(bigint *const n1, bigint *const n2, bigint **const remainder)
 		n1_i -= dropped;
 
 	slice_offset = current_slice->len - dropped;
-	q_i = quotient->len;
+	q_i = res.quotient->len;
 	while (q_i > 0)
 	{
 		q_i--;
 		current_slice->num += slice_offset;
 		current_slice->len -= slice_offset;
-		current_q = get_current_quotient(current_slice, n2, remainder);
+		current_q = get_current_quotient(current_slice, n2, &(res.remainder));
 		current_slice->num -= slice_offset;
 		current_slice->len += slice_offset;
 		if (current_q < 0)
 			goto error_cleanup;
 
-		quotient->num[q_i] = current_q;
-		dropped = drop_next(current_slice, *remainder, n1, n1_i, n2);
+		res.quotient->num[q_i] = current_q;
+		dropped = drop_next(current_slice, res.remainder, n1, n1_i, n2);
 		if (n1_i < dropped)
 			n1_i = 0;
 		else
 			n1_i -= dropped;
 
-		if (dropped)
+		if (dropped > 0)
 		{
-			slice_offset = current_slice->len - (dropped + (*remainder)->len);
+			slice_offset = current_slice->len - (dropped + res.remainder->len);
 			q_i -=
 				dropped - 1; /* One drop is discounted after every division. */
 			/* For every index "i" dropped into current_slice set quotient[i] to
 			 * 0. */
 			memset(
-				&quotient->num[q_i], 0, sizeof(*quotient->num) * (dropped - 1));
+				&(res.quotient->num[q_i]), 0,
+				sizeof(*(res.quotient->num)) * (dropped - 1)
+			);
 		}
 	}
 
 	if (0)
 	{
 error_cleanup:
-		quotient = _bi_free(quotient);
-		*remainder = _bi_free(*remainder);
+		res.quotient = _bi_free(res.quotient);
+		res.remainder = _bi_free(res.remainder);
 	}
 
 	current_slice = _bi_free(current_slice);
-	_bi_trim(quotient);
-	_bi_trim(*remainder);
-	return (quotient);
+	_bi_trim(res.quotient);
+	_bi_trim(res.remainder);
+	return (res);
 }
 
 /**
- * divide_negatives - handle division of two signed bigints.
- * @n1: numerator.
- * @n2: denominator.
- * @remainder: Address of a bigint pointer to store the remainder.
+ * divide_negatives - handle division of signed bigints.
+ * @n1: numerator/divisor.
+ * @n2: denominator/dividend.
  *
- * Return: pointer to the result, NULL on failure.
+ * Return: a struct with pointers to the results,
+ * struct with NULL pointers on error.
  */
-static bigint *
-divide_negatives(bigint *const n1, bigint *const n2, bigint **const remainder)
+static bi_div_res divide_negatives(bigint *const n1, bigint *const n2)
 {
 	const bool neg1 = n1->is_negative, neg2 = n2->is_negative;
-	bigint *result = NULL;
-	bigint one = {.len = 1, .is_negative = false, .num = (u_int[1]){1}};
+	bi_div_res res = {0};
 
 	n1->is_negative = false;
 	n2->is_negative = false;
-	/* If n1 == 0; then *remainder == 0 */
-	if (bi_iszero(n1))
-		*remainder = _bi_alloc(1);
-	else if (check_0_result(n1, n2))
-	{
-		result = _bi_alloc(1);
-		*remainder = _bi_alloc(n1->len);
-		if (!(*remainder) || !result)
-			goto error_cleanup;
+	res = bi_divide_with_remainder(n1, n2);
+	if (!res.quotient || !res.remainder)
+		goto cleanup;
 
-		memmove((*remainder)->num, n1->num, sizeof(*n1->num) * n1->len);
-		goto clean_exit;
+	if (neg1 && neg2) /* -8 / -5 = 8 / 5 */
+		goto cleanup;
+
+	if (neg1 || neg2)
+	{
+		/* -8 / 5 = -((8 / 5) + 1) */
+		/* 8 / -5 = -((8 / 5) + 1) */
+		bigint one = {.len = 1, .is_negative = false, .num = (u_int[1]){1}};
+
+		res.quotient = _bi_resize(res.quotient, res.quotient->len + 1);
+		if (!res.quotient)
+		{
+			res.remainder = _bi_free(res.remainder);
+			goto cleanup;
+		}
+
+		bi_iadd(res.quotient, &one);
+		res.quotient->is_negative = true;
 	}
 
-	if (neg1 && neg2) /* -8 // -5 = 8//5 */
-		result = divide(n1, n2, remainder);
-	else if (neg1 || neg2)
-	{
-		/* -8 // 5 = -((8 // 5) + 1) */
-		/* 8 // -5 = -((8 // 5) + 1) */
-		result = divide(n1, n2, remainder);
-		if (!result)
-			goto error_cleanup;
-
-		bigint *tmp = _bi_resize(result, result->len + 1);
-		if (!tmp)
-			goto error_cleanup;
-
-		result = tmp;
-		bi_iadd(result, &one);
-		result->is_negative = true;
-	}
-
-	if (!result)
-	{
-error_cleanup:
-		*remainder = _bi_free(*remainder);
-		result = _bi_free(result);
-	}
-
-clean_exit:
+cleanup:
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	_bi_trim(result);
-	_bi_trim(*remainder);
-	return (result);
+	_bi_trim(res.quotient);
+	_bi_trim(res.remainder);
+	return (res);
+}
+
+/**
+ * bi_divide_with_remainder - handle division of two bigints, returns reminder too.
+ * @n1: numerator/divisor.
+ * @n2: denominator/dividend.
+ *
+ * Return: a struct with pointers to the results,
+ * struct with NULL pointers on error.
+ */
+bi_div_res bi_divide_with_remainder(bigint *const n1, bigint *const n2)
+{
+	bi_div_res res = {0};
+
+	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
+		return (res);
+
+	_bi_trim(n1);
+	_bi_trim(n2);
+	if (check_division_by_0(n2))
+		return (res);
+
+	if (n1->is_negative || n2->is_negative)
+		res = divide_negatives(n1, n2);
+	else
+	{
+		if (bi_iszero(n1)) /* then quotient and remainder == 0 */
+		{
+			res.quotient = _bi_alloc(1);
+			res.remainder = _bi_alloc(1);
+			if (!res.quotient || !res.remainder)
+				goto error_cleanup;
+
+			return (res);
+		}
+		else if (quotient_is_less_than_1(n1, n2)) /* then remainder == n1 */
+		{
+			res.quotient = _bi_alloc(1);
+			res.remainder = _bi_alloc(n1->len);
+			if (!res.quotient || !res.remainder)
+				goto error_cleanup;
+
+			memcpy(res.remainder->num, n1->num, sizeof(*n1->num) * n1->len);
+			return (res);
+		}
+
+		res = divide(n1, n2);
+	}
+
+	if (!res.quotient || !res.remainder)
+	{
+error_cleanup:
+		res.quotient = _bi_free(res.quotient);
+		res.remainder = _bi_free(res.remainder);
+		return (res);
+	}
+
+	if (res.quotient->is_negative)
+	{
+		/* for case: -7 // 4 == -2 or 7 // -4 == -2 then; */
+		/* -7 % 4 = 1 and 7 % -4 = -1 */
+		bool neg2 = n2->is_negative;
+		bigint *old_rem = res.remainder;
+
+		n2->is_negative = false;
+		res.remainder = bi_subtract(n2, old_rem);
+		n2->is_negative = neg2;
+		_bi_free(old_rem);
+	}
+
+	res.remainder->is_negative = n2->is_negative;
+	_bi_trim(res.quotient);
+	_bi_trim(res.remainder);
+	return (res);
 }
 
 /**
@@ -347,31 +407,14 @@ clean_exit:
  */
 bigint *bi_divide(bigint *const n1, bigint *const n2)
 {
-	bigint *result = NULL, *remainder = NULL;
-
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
-	_bi_trim(n1);
-	_bi_trim(n2);
-	if (check_division_by_0(n2))
-		return (NULL);
+	bi_div_res result = bi_divide_with_remainder(n1, n2);
 
-	if (n1->is_negative || n2->is_negative)
-		result = divide_negatives(n1, n2, &remainder);
-	else
-	{
-		/* If n1 == 0; then remainder == 0 */
-		/* No need for this check as remainder is not needed here. */
-		if (check_0_result(n1, n2))
-			result = _bi_alloc(1);
-		else
-			result = divide(n1, n2, &remainder);
-	}
-
-	_bi_free(remainder);
-	_bi_trim(result);
-	return (result);
+	result.remainder = _bi_free(result.remainder);
+	_bi_trim(result.quotient);
+	return (result.quotient);
 }
 
 /**
@@ -383,61 +426,12 @@ bigint *bi_divide(bigint *const n1, bigint *const n2)
  */
 bigint *bi_modulo(bigint *const n1, bigint *const n2)
 {
-	bool is_negative = 0;
-	bigint *result = NULL, *remainder = NULL;
-
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
-	_bi_trim(n1);
-	_bi_trim(n2);
-	if (check_division_by_0(n2))
-		return (NULL);
+	bi_div_res result = bi_divide_with_remainder(n1, n2);
 
-	if (n1->is_negative || n2->is_negative)
-		result = divide_negatives(n1, n2, &remainder);
-	else
-	{
-		/* If n1 == 0; then remainder == 0 */
-		if (bi_iszero(n1))
-			return (_bi_alloc(1));
-
-		if (check_0_result(n1, n2))
-		{
-			/* No need to allocate for the quotient */
-			/* result = _bi_alloc(1); */
-			remainder = _bi_alloc(n1->len);
-			if (remainder)
-				memmove(remainder->num, n1->num, sizeof(*n1->num) * n1->len);
-
-			return (remainder);
-		}
-
-		result = divide(n1, n2, &remainder);
-	}
-
-	if (!result)
-		return (_bi_free(remainder));
-
-	if (remainder && result->is_negative)
-	{
-		/* for case: -7 // 4 == -2 or 7 // -4 == -2 then; */
-		/* -7 % 4 = 1 and 7 % -4 = -1 */
-		is_negative = n2->is_negative;
-		n2->is_negative = false;
-		_bi_free(result);
-
-		result = bi_subtract(n2, remainder);
-		n2->is_negative = is_negative;
-		_bi_free(remainder);
-		remainder = result;
-		result = NULL;
-	}
-
-	if (remainder)
-		remainder->is_negative = n2->is_negative;
-
-	_bi_free(result);
-	_bi_trim(remainder);
-	return (remainder);
+	result.quotient = _bi_free(result.quotient);
+	_bi_trim(result.remainder);
+	return (result.remainder);
 }

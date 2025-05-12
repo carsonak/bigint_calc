@@ -35,8 +35,11 @@ numstr *_numstr_alloc(len_type len)
  */
 void *_numstr_free(numstr *freeable_ptr)
 {
-	freeable_ptr->len = 0;
-	freeable_ptr->str = xfree(freeable_ptr->str);
+	if (freeable_ptr)
+	{
+		freeable_ptr->len = 0;
+		freeable_ptr->str = xfree(freeable_ptr->str);
+	}
 
 	return (xfree(freeable_ptr));
 }

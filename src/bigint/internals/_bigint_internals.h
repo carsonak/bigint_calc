@@ -6,11 +6,11 @@
 #include <stdbool.h> /* bool */
 #include <string.h>  /* memset, memcpy */
 
-#include "bigint_typedefs.h"
+#include "bigint_types.h"
 #include "xalloc.h"
 
 /**
- * struct bigint - an arbitrary precision integer representation.
+ * struct `bigint` - an arbitrary precision integer representation.
  * @len: number of items in the int array.
  * @num: pointer to an array of unsigned ints.
  * @is_negative: a bool for signedness of the number.
@@ -35,6 +35,7 @@ bigint *_bi_resize(bigint *bi, const len_type len);
 /* utilities */
 
 void _bi_trim(bigint *const arr);
+intmax_t _bi_compare_const(const bigint *const n1, const bigint *const n2);
 intmax_t _cmp_rev_uint_arr(
 	u_int const *const arr1, u_int const *const arr2, len_type len
 );

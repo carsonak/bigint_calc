@@ -2,8 +2,8 @@
 #include "bigint.h"
 
 /**
- * bi_dup - duplicates a bigint.
- * @n: pointer to the bigint to duplicate.
+ * bi_dup - duplicates a `bigint`.
+ * @n: pointer to the `bigint` to duplicate.
  *
  * Return: pointer to the duplicated int, NULL on failure.
  */

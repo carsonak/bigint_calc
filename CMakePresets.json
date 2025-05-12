@@ -1,21 +1,39 @@
 {
-    "version": 3,
+    "version": 7,
     "cmakeMinimumRequired": {
         "major": 3,
-        "minor": 21
+        "minor": 27
     },
     "configurePresets": [
         {
-            "name": "dev-build",
-            "displayName": "Developer Build",
-            "description": "Code-Compile-Debug-Build",
-            "binaryDir": "build",
-            "cacheVariables": {},
+            "name": "default-debug",
+            "binaryDir": "debug",
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" },
             "warnings": {
                 "dev": true
             }
         }
     ],
-    "buildPresets": [],
-    "testPresets": []
+    "buildPresets": [
+        {
+            "name": "default-debug",
+            "description": "Code-Compile-Debug",
+            "configurePreset": "default-debug",
+            "jobs": 8,
+            "configuration": "Debug"
+        }
+    ],
+    "testPresets": [
+        {
+            "name": "default",
+            "configurePreset": "default-debug",
+            "output": { "outputOnFailure": true },
+            "execution": {
+                "jobs": 8,
+                "stopOnFailure": true,
+                "scheduleRandom": true,
+                "timeout": 2
+            }
+        }
+    ]
 }

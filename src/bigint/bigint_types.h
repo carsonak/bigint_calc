@@ -2,12 +2,13 @@
 #define BIGINT_TYPEDEFS_H
 
 #include <limits.h>
+#include <stdbool.h>
 #include <stdint.h> /* fixed width types */
 
 #ifdef UINT64_MAX
 
-	/* Maximum value of a single bigint "digit". */
-	#define BIGINT_BASE (1000000000)
+	/* Maximum value of a single `bigint` "digit". */
+	#define BIGINT_BASE 1000000000U
 
 typedef uint32_t u_int;
 typedef int64_t l_int;
@@ -20,7 +21,7 @@ typedef uint64_t ul_int;
 
 #else
 
-	#define BIGINT_BASE (10000)
+	#define BIGINT_BASE 10000U
 
 typedef uint16_t u_int;
 typedef int32_t l_int;
@@ -61,5 +62,16 @@ static bool is_valid_radix(const unsigned short int base)
 
 typedef struct bigint bigint;
 typedef struct numstr numstr;
+
+/**
+ * struct bigint_division_result - container that holds the quotient and
+ * remainder of a `bigint` division.
+ * @quotient: pointer to the quotient.
+ * @remainder: pointer to the remainder.
+ */
+typedef struct bigint_division_result
+{
+	bigint *quotient, *remainder;
+} bi_div_res;
 
 #endif /* BIGINT_TYPEDEFS_H */

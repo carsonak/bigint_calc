@@ -1,6 +1,6 @@
 #include "tests.h"
 
-bigint *output = NULL;
+tau->output = NULL;
 
 /**
  * setup - setup some variables.
@@ -10,9 +10,16 @@ void setup(void) {}
 /**
  * teardown - cleanup after tests.
  */
-void teardown(void) { output = bi_delete(output); }
+void teardown(void) { tau->output = bi_delete(tau->output); }
 
-TestSuite(null_inputs);
+struct null_inputs
+{
+	bigint num1, num2, expected, *output;
+};
+
+TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+
+TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); };
 
 TEST_F(null_inputs, test_NULL) { cr_assert(numstr_to_bni(NULL)) /* ?? */; }
 
@@ -20,16 +27,23 @@ TEST_F(null_inputs, test_null_str)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = NULL};
 
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 }
 
-TestSuite(invalid_inputs);
+struct invalid_inputs
+{
+	bigint num1, num2, expected, *output;
+};
+
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
+
+TEST_F_TEARDOWN(invalid_inputs) { tau->output = bi_delete(tau->output); };
 
 TEST_F(invalid_inputs, test_0_len)
 {
 	numstr in = {.len = 0, .is_negative = false, .str = "1"};
 
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 }
 
 TEST_F(invalid_inputs, test_all_nonvalid_charbits)
@@ -41,7 +55,7 @@ TEST_F(invalid_inputs, test_all_nonvalid_charbits)
 	for (; c[0] < SCHAR_MAX; c[0]++)
 	{
 		if (!isalnum(c[0]))
-			EXPECT(numstr_to_bni(&in) == 0, "");
+			EXPECT(numstr_to_bni(&in) == 0);
 	}
 }
 
@@ -54,7 +68,7 @@ TEST_F(invalid_inputs, test_all_nonvalid_charbits2)
 	for (; c[0] < SCHAR_MAX; c[0]++, c[1]++)
 	{
 		if (!isalnum(c[0]))
-			EXPECT(numstr_to_bni(&in) == 0, "");
+			EXPECT(numstr_to_bni(&in) == 0);
 	}
 }
 
@@ -67,7 +81,7 @@ TEST_F(invalid_inputs, test_all_nonvalid_charbits2alt)
 	for (; c[0] < SCHAR_MAX && c[1] > SCHAR_MIN; c[0]++, c[1]--)
 	{
 		if (!isalnum(c[0]) || !isalnum(c[1]))
-			EXPECT(numstr_to_bni(&in) == 0, "");
+			EXPECT(numstr_to_bni(&in) == 0);
 	}
 }
 
@@ -83,7 +97,7 @@ TEST_F(invalid_inputs, test_all_invalid_charbits3)
 		for (c[2] = SCHAR_MIN; c[2] < SCHAR_MAX; c[2]++)
 		{
 			if (!isalnum(c[2]) && c[2] != '\0' && c[2] != '.')
-				EXPECT(numstr_to_bni(&in) == 0, "");
+				EXPECT(numstr_to_bni(&in) == 0);
 		}
 	}
 
@@ -93,7 +107,7 @@ TEST_F(invalid_inputs, test_all_invalid_charbits3)
 		for (c[2] = SCHAR_MIN; c[2] < SCHAR_MAX; c[2]++)
 		{
 			if (!isalnum(c[2]) && c[2] != '\0' && c[2] != '.')
-				EXPECT(numstr_to_bni(&in) == 0, "");
+				EXPECT(numstr_to_bni(&in) == 0);
 		}
 	}
 }
@@ -102,33 +116,35 @@ TEST_F(invalid_inputs, test_invalid_chars_mixed_with_valid_chars)
 {
 	numstr in = {.len = 7, .is_negative = false, .str = "123/567"};
 
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 	in.str = "123 567";
 	cr_redirect_stderr();
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 	in.str = "123\"567\"";
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 	in.str = "123+567";
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 	in.str = "123-567";
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 	in.str = "123*567";
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 	in.str = "123^567";
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 	in.str = "123(567)";
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 	in.str = "123>567";
-	EXPECT(numstr_to_bni(&in) == 0, "");
+	EXPECT(numstr_to_bni(&in) == 0);
 }
 
 struct valid_inputs
 {
-	bigint num1;
-	bigint expected;
+	bigint tau->num1;
+	bigint tau->expected;
 };
+
 TEST_F_SETUP(valid_inputs) { memset(tau, 0, sizeof(*tau)); }
-TEST_F_TEARDOWN(valid_inputs) {}
+
+TEST_F_TEARDOWN(valid_inputs) { tau->output = bi_delete(tau->output); }
 
 TEST_F(valid_inputs, test_0)
 {
@@ -137,10 +153,10 @@ TEST_F(valid_inputs, test_0)
 	bigint out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
-	output = numstr_to_bni(&in);
-	EXPECT(output->len == out.len, "");
-	EXPECT(output->is_negative == out.is_negative, "");
-	EXPECT(output->num == out.num, "");
+	tau->output = numstr_to_bni(&in);
+	EXPECT(tau->output->len == out.len);
+	EXPECT(tau->output->is_negative == out.is_negative);
+	EXPECT(tau->output->num == out.num);
 }
 
 TEST_F(valid_inputs, test_eight9s)
@@ -150,10 +166,10 @@ TEST_F(valid_inputs, test_eight9s)
 	bigint out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
-	output = numstr_to_bni(&in);
-	EXPECT(output->len == out.len, "");
-	EXPECT(output->is_negative == out.is_negative, "");
-	EXPECT(output->num == out.num, "");
+	tau->output = numstr_to_bni(&in);
+	EXPECT(tau->output->len == out.len);
+	EXPECT(tau->output->is_negative == out.is_negative);
+	EXPECT(tau->output->num == out.num);
 }
 
 TEST_F(valid_inputs, test_nine9s)
@@ -163,10 +179,10 @@ TEST_F(valid_inputs, test_nine9s)
 	bigint out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
-	output = numstr_to_bni(&in);
-	EXPECT(output->len == out.len, "");
-	EXPECT(output->is_negative == out.is_negative, "");
-	EXPECT(output->num == out.num, "");
+	tau->output = numstr_to_bni(&in);
+	EXPECT(tau->output->len == out.len);
+	EXPECT(tau->output->is_negative == out.is_negative);
+	EXPECT(tau->output->num == out.num);
 }
 
 TEST_F(valid_inputs, test_ten9s)
@@ -176,8 +192,8 @@ TEST_F(valid_inputs, test_ten9s)
 	bigint out = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = false, .num = arr};
 
-	output = numstr_to_bni(&in);
-	EXPECT(output->len == out.len, "");
-	EXPECT(output->is_negative == out.is_negative, "");
-	EXPECT(output->num == out.num, "");
+	tau->output = numstr_to_bni(&in);
+	EXPECT(tau->output->len == out.len);
+	EXPECT(tau->output->is_negative == out.is_negative);
+	EXPECT(tau->output->num == out.num);
 }

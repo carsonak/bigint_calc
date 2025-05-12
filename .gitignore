@@ -2,6 +2,7 @@
 __pycache__
 .mypy_cache
 
-# Object files
+# Build files
 obj/*
 build/*
+debug/*

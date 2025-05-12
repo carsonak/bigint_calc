@@ -6,7 +6,7 @@
 static ATTR_NONNULL len_type uint_to_array(u_int *const dest, uintmax_t num);
 
 /**
- * uint_to_array - convert an unsigned int to a bigint array.
+ * uint_to_array - convert an unsigned int to a `bigint` array.
  * @dest: pointer to the array to store the number.
  * @num: the unsigned int to convert.
  *
@@ -27,10 +27,10 @@ static len_type uint_to_array(u_int *const dest, uintmax_t num)
 }
 
 /**
- * int_to_new_bi - convert an integer to a bigint representation.
+ * int_to_new_bi - convert an integer to a `bigint` representation.
  * @n: the int to convert.
  *
- * Return: a pointer to the bigint, NULL on failure.
+ * Return: a pointer to the `bigint`, NULL on failure.
  */
 bigint *int_to_new_bi(const intmax_t n)
 {
@@ -50,12 +50,12 @@ bigint *int_to_new_bi(const intmax_t n)
 }
 
 /**
- * int_to_bigint - convert an integer to a bigint representation.
- * @dest: a pointer to a bigint struct to store the number.
+ * int_to_bigint - convert an integer to a `bigint` representation.
+ * @dest: a pointer to a `bigint` struct to store the number.
  * @n: the int to convert.
  *
  * `dest` must be large enough to store the number, otherwise memory
- * might be corrupted when writing to the bigint.
+ * might be corrupted when writing to the `bigint`.
  *
  * Return: true on success, false on failure.
  */
@@ -76,13 +76,13 @@ bool int_to_bi(bigint *const dest, const intmax_t n)
 }
 
 /**
- * bi_new - returns a pointer to a new bigint type representing a number.
- * @number: number to initialise the bigint with.
+ * bi_new - returns a pointer to a new `bigint` type representing a number.
+ * @number: number to initialise the `bigint` with.
  * @base: radix of the number in `number`.
  * @processed: pointer to a variable to store index of the last character to be
  * processed.
  *
- * Return: pointer to the bigint, NULL on failure.
+ * Return: pointer to the `bigint`, NULL on failure.
  */
 bigint *bi_new(
 	char const *const restrict number, const unsigned short int base,

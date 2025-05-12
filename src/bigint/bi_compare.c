@@ -3,8 +3,8 @@
 
 /**
  * bi_compare - compare 2 bigints.
- * @n1: the first array.
- * @n2: the second array.
+ * @n1: the first `bigint`.
+ * @n2: the second `bigint`.
  *
  * Return: +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
@@ -15,17 +15,33 @@ intmax_t bi_compare(bigint *const n1, bigint *const n2)
 
 	_bi_trim(n1);
 	_bi_trim(n2);
+	return (_bi_compare_const(n1, n2));
+}
+
+/**
+ * bi_compare_const - compare 2 const bigints.
+ * @n1: the first `bigint`.
+ * @n2: the second `bigint`.
+ *
+ * Return: +ve number if n1 > n2, -ve number if n1 < n2 else 0.
+ */
+intmax_t _bi_compare_const(const bigint *const n1, const bigint *const n2)
+{
+	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
+		return (0);
+
 	if (n1->is_negative && n2->is_negative)
 	{
-		/* WARNING: len might truncated when casted to l_int. */
 		if (n2->len - n1->len)
 			return (n2->len - n1->len);
 
 		return (_cmp_rev_uint_arr(n2->num, n1->num, n1->len));
 	}
-	else if (n1->is_negative)
+
+	if (n1->is_negative)
 		return (-1);
-	else if (n2->is_negative)
+
+	if (n2->is_negative)
 		return (1);
 
 	if (n1->len - n2->len)
@@ -43,13 +59,19 @@ intmax_t bi_compare(bigint *const n1, bigint *const n2)
  * Return: +ve number if arr1 > arr2, -ve number if arr1 < arr2 else 0.
  */
 intmax_t _cmp_rev_uint_arr(
-	u_int const *const arr1, u_int const *const arr2, intmax_t len
+	u_int const *const arr1, u_int const *const arr2, len_type len
 )
 {
-	if (!arr1 || !arr2 || len < 0)
+	if ((!arr1 && !arr2) || len < 0)
 		return (0);
 
-	intmax_t i = len ? len - 1 : 0;
+	len_type i = len > 0 ? len - 1 : 0;
+
+	if (!arr1)
+		return ((intmax_t)0 - arr2[i]);
+
+	if (!arr2)
+		return (arr1[i]);
 
 	for (; i > 0; i--)
 	{

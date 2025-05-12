@@ -103,7 +103,7 @@ bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
 }
 
 /**
- * bi_iadd_int - add an int to a bigint inplace.
+ * bi_iadd_int - add an int to a `bigint` inplace.
  * @n1: the first number, must have enough memory allocated to hold the answer.
  * @n2: the second number.
  *

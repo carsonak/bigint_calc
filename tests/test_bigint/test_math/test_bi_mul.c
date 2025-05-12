@@ -1,150 +1,113 @@
 #include "tests.h"
 
-bigint num1 = {.len = 0, .is_negative = false, .num = NULL};
-bigint num2 = {.len = 0, .is_negative = false, .num = NULL};
-bigint expected = {.len = 0, .is_negative = false, .num = NULL};
-
-/**
- * bni_isubtract - dummy.
- * @n1: unused.
- * @n2: unused.
- *
- * Return: true always.
- */
-bool bi_isubtract(bigint *const n1, bigint *const n2)
-{
-	n1->num[0] = 10;
-	n2->num[0] = 10;
-	return (true);
-}
-
-/**
- * setup - initialises variables for tests.
- */
-void setup(void) {}
-
-/**
- * teardown - resets variables for tests.
- */
-void teardown(void)
-{
-	num1.len = 0;
-	num1.is_negative = false;
-	num1.num = NULL;
-
-	num2.len = 0;
-	num2.is_negative = false;
-	num2.num = NULL;
-
-	expected.len = 0;
-	expected.is_negative = false;
-	expected.num = NULL;
-}
-
 struct null_inputs
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
 
 TEST_F(null_inputs, test_null_times_null)
 {
-	bigint *output = bi_multiply(NULL, NULL);
+	tau->output = bi_multiply(NULL, NULL);
 
-	CHECK(output == 0, "");
+	CHECK_PTR_EQ(tau->output, NULL);
 }
 
 TEST_F(null_inputs, test_1_times_null)
 {
 	u_int in1[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	bigint *output = bi_multiply(&num1, NULL);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->output = bi_multiply(&(tau->num1), NULL);
 
-	CHECK(output == 0, "");
+	CHECK_PTR_EQ(tau->output, NULL);
 }
 
 TEST_F(null_inputs, test_null_times_1)
 {
 	u_int in2[] = {1};
 
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	bigint *output = bi_multiply(NULL, &num2);
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->output = bi_multiply(NULL, &(tau->num2));
 
-	CHECK(output == 0, "");
+	CHECK_PTR_EQ(tau->output, NULL);
 }
 
 TEST_F(null_inputs, test_0_times_null)
 {
 	u_int in1[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	bigint *output = bi_multiply(&num1, NULL);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->output = bi_multiply(&(tau->num1), NULL);
 
-	CHECK(output == 0, "");
+	CHECK_PTR_EQ(tau->output, NULL);
 }
 
 TEST_F(null_inputs, test_null_times_0)
 {
 	u_int in2[1] = {0};
 
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	bigint *output = bi_multiply(NULL, &num2);
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->output = bi_multiply(NULL, &(tau->num2));
 
-	CHECK(output == 0, "");
+	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-TEST_F(null_inputs, test_minus1_times_null)
+TEST_F(null_inputs, test_neg1_times_null)
 {
 	u_int in1[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num1.is_negative = true;
-	bigint *output = bi_multiply(&num1, NULL);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num1.is_negative = true;
+	tau->output = bi_multiply(&(tau->num1), NULL);
 
-	CHECK(output == 0, "");
+	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-TEST_F(null_inputs, test_null_times_minus1)
+TEST_F(null_inputs, test_null_times_neg1)
 {
 	u_int in2[] = {1};
 
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	num2.is_negative = true;
-	bigint *output = bi_multiply(NULL, &num2);
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->num2.is_negative = true;
+	tau->output = bi_multiply(NULL, &(tau->num2));
 
-	CHECK(output == 0, "");
+	CHECK_PTR_EQ(tau->output, NULL);
 }
 
 struct zero_len_arrays
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
 
 TEST_F(zero_len_arrays, test_null_times_null)
 {
 	u_int out[] = {0};
 
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(zero_len_arrays, test_4490998_times_null)
@@ -152,19 +115,20 @@ TEST_F(zero_len_arrays, test_4490998_times_null)
 	u_int in1[] = {4490998};
 	u_int out[] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(zero_len_arrays, test_null_times_largenum)
@@ -172,26 +136,29 @@ TEST_F(zero_len_arrays, test_null_times_largenum)
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 	u_int out[] = {0};
 
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 struct simple_multiplications
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(simple_multiplications) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(simple_multiplications)
 {
 	tau->output = bi_delete(tau->output);
@@ -201,76 +168,80 @@ TEST_F(simple_multiplications, test_0_times_0)
 {
 	u_int in1[1] = {0}, in2[1] = {0}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(simple_multiplications, test_1_times_0)
 {
 	u_int in1[] = {1}, in2[1] = {0}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(simple_multiplications, test_0_times_1)
 {
 	u_int in1[1] = {0}, in2[] = {1}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(simple_multiplications, test_1_times_1)
 {
 	u_int in1[] = {1}, in2[] = {1}, out[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(simple_multiplications, test_long_times_0)
@@ -278,41 +249,43 @@ TEST_F(simple_multiplications, test_long_times_0)
 	u_int in1[] = {691273964, 472346283, 197812382, 3, 0, 938736};
 	u_int in2[1] = {0}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-/* INVERSE */
+/******************** REVERSE OF PREVIOUS ********************/
 
 TEST_F(simple_multiplications, test_0_times_long)
 {
 	u_int in1[1] = {0}, out[1] = {0};
 	u_int in2[] = {691273964, 472346283, 197812382, 3, 0, 938736};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(simple_multiplications, test_u100c_times_u100d)
@@ -323,22 +296,23 @@ TEST_F(simple_multiplications, test_u100c_times_u100d)
 	u_int out[] = {0, 536000000, 792013003, 554218996, 878072308, 817519667, 394484502, 335339231, 282664403, 190091042, 714545884, 131};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-/* INVERSE */
+/******************** REVERSE OF PREVIOUS ********************/
 
 TEST_F(simple_multiplications, test_u100d_times_u100c)
 {
@@ -348,26 +322,29 @@ TEST_F(simple_multiplications, test_u100d_times_u100c)
 	u_int out[] = {0, 536000000, 792013003, 554218996, 878072308, 817519667, 394484502, 335339231, 282664403, 190091042, 714545884, 131};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 struct negative_multiplications
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(negative_multiplications) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(negative_multiplications)
 {
 	tau->output = bi_delete(tau->output);
@@ -381,22 +358,26 @@ TEST_F(negative_multiplications, test_minus_u100a_times_minus_u100c)
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 	/* clang-format on */
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = true,
+						 .num = in2};
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-/* INVERSE */
+/******************** REVERSE OF PREVIOUS ********************/
+
 TEST_F(negative_multiplications, test_minus_u100c_times_minus_u100a)
 {
 	/* clang-format off */
@@ -405,19 +386,22 @@ TEST_F(negative_multiplications, test_minus_u100c_times_minus_u100a)
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 	/* clang-format on */
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = true,
+						 .num = in2};
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(negative_multiplications, test_u100a_times_minus_u100c)
@@ -428,24 +412,26 @@ TEST_F(negative_multiplications, test_u100a_times_minus_u100c)
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = true,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-/* INVERSE */
+/******************** REVERSE OF PREVIOUS ********************/
+
 TEST_F(negative_multiplications, test_minus_u100c_times_u100a)
 {
 	/* clang-format off */
@@ -454,21 +440,22 @@ TEST_F(negative_multiplications, test_minus_u100c_times_u100a)
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 	/* clang-format on */
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(negative_multiplications, test_minus_u100a_times_u100c)
@@ -479,24 +466,26 @@ TEST_F(negative_multiplications, test_minus_u100a_times_u100c)
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 	/* clang-format on */
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-/* INVERSE */
+/******************** REVERSE OF PREVIOUS ********************/
+
 TEST_F(negative_multiplications, test_u100c_times_minus_u100a)
 {
 	/* clang-format off */
@@ -505,28 +494,31 @@ TEST_F(negative_multiplications, test_u100c_times_minus_u100a)
 	u_int out[] = {320000000, 948, 840000000, 908562372, 188839999, 639854667, 106998112, 0, 0, 948320, 0, 562372840, 839999908, 854667188, 998112639, 106};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = true,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 struct large_multiplications
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(large_multiplications) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(large_multiplications)
 {
 	tau->output = bi_delete(tau->output);
@@ -540,22 +532,23 @@ TEST_F(large_multiplications, test_o1kb_times_o1kc)
 	u_int out[] = {973456252, 412698082, 156854265, 231236880, 474358034, 679091949, 447758531, 493377411, 637994538, 575462518, 915755352, 555293881, 482859668, 676700950, 334034557, 28408988, 482628258, 579259594, 738872206, 871197308, 702265474, 735864594, 157512557, 926743357, 882048537, 11150613, 523219675, 755874332, 581977406, 211329093, 984017167, 57567319, 514051826, 791772321, 792638993, 760554402, 43145462, 193551802, 565360348, 17126266, 472717017, 346875411, 481924938, 7117958, 479017028, 247605729, 209278489, 840696239, 392147532, 53495250, 504210065, 502046351, 714511625, 881956908, 62941673, 916753945, 486652595, 412929118, 54954346, 869595157, 382728091, 722988513, 335328409, 634858740, 256572717, 674203563, 11600175, 418581840, 405046569, 423979357, 951659798, 727308504, 147846721, 768544058, 903047950, 295815064, 868897303, 158285362, 949970028, 326721887, 96356142, 812585111, 896931597, 284906965, 874823497, 905386578, 874287653, 607465176, 624185734, 560032461, 392420655, 8741201, 570521627, 187892696, 989242173, 79457270, 461279755, 178329389, 863762415, 784766683, 31200121, 235831641, 266812872, 199500139, 41723628, 544094501, 857075377, 728444420, 941631074, 404474606, 554179674, 578222996, 797987054, 818738326, 750114941, 50103196, 702184938, 613585960, 665317743, 89904246, 998763247, 339029123, 612595234, 311369789, 959610269, 256630824, 806914657, 793679993, 773620201, 656505563, 994393849, 83683155, 683539241, 804011207, 814146601, 718972641, 845237219, 821538729, 996169319, 35360267, 188778355, 171516559, 708660738, 675157272, 476122012, 900085612, 674772993, 833334730, 10283515, 479131685, 598115734, 369471312, 457491682, 743913010, 156425832, 522883672, 386468073, 772647334, 565053022, 562706849, 445012977, 493314535, 615502660, 322329933, 81383481, 271443191, 643358277, 165941717, 986778798, 752550196, 909173766, 375154039, 511109692, 394859628, 384146192, 507157613, 158454506, 791999371, 324651095, 711961205, 468979783, 254824501, 616886879, 746634373, 489181536, 506140156, 444347759, 634431730, 273551361, 375807327, 502322677, 292149421, 966534332, 57901320, 450439429, 695626107, 163249440, 694453265, 334196451, 109269266, 681332690, 861225219, 7573952, 23684526, 911385340, 921755065, 545439132, 830528350, 584344913, 907999009, 155084801, 713641398, 208952730, 997477963, 408430834, 23929822, 704162858, 155645295, 13570028, 595968323, 792853920, 717155113, 60375533, 875568440, 84416889, 283735593, 613303615, 323997640, 158793785, 806776977, 343428972, 60189921, 693181877, 450069176, 969912778, 533925309, 635186714, 178044482, 417746812, 389330418, 40064830, 116884312, 695388930, 630170261, 336660214, 215980765, 916786927, 748054826, 485554673, 134452359, 308228183, 478022556, 966390076, 439246974, 229665139, 858393286, 978296503, 371719426, 629798177, 679786960, 402143518, 283524678, 451155328, 473585934, 548242332, 584125220, 673950073, 260484559, 739354747, 881533924, 26361124, 116924967, 555237505, 99529654, 896048195, 61934823, 160601585, 68047935, 745268295, 416848656, 869553347, 26234477, 692261965, 808106330, 368939608, 849358439, 670595250, 644257130, 596214304, 463399078, 275448545, 727776118, 587712963, 357837625, 164679319, 951643847, 563042657, 830792179, 898451375, 696965900, 208643746, 981614459, 707936773, 495532392, 636082905, 46998285, 998285197, 667305176, 626063933, 533179955, 852260195, 663445217, 529155749, 115445158, 577011797, 25167443, 204047256, 528091432, 119995549, 195632980, 244146639, 739403804, 941838780, 398481977, 483670969, 492958219, 666322530, 527176054, 986460574, 719557393, 674996087, 382550968, 16803867, 173650919, 740280510, 231187964, 754874386, 950555752, 780118606, 101946412, 535080386, 174433453, 334398158, 115832425, 825054471, 389454401, 725668657, 818920111, 172048484, 655057164, 865548808, 488417742, 543910662, 836247751, 666824852, 156780165, 860772084, 143283360, 58418781, 563326303, 435594916, 229167653, 32831233, 652408171, 839839122, 321889398, 821805902, 551017937, 34299250, 878004560, 944623782, 708591772, 214464763, 277627044, 906269682, 610260566, 767915418, 728864978, 834927805, 999929693, 500994779, 535375840, 23423948, 902176013, 648632566, 128840743, 301398950, 553163152, 323527568, 638326068, 658944113, 60443061, 668747641, 113060422, 448574319, 592719878, 2176602, 388104636, 11280977, 577457862, 728759188, 519861282, 964856560, 142865932, 928150663, 430600900, 668499938, 799275115, 263903, 85263396, 510302143, 959387652, 932233414, 760434309, 877255999, 573782281, 520481225, 652841903, 482562292, 903603164, 723593546, 76083784, 136573214, 967418740, 349005310, 81834840, 683948859, 860511074, 370207012, 424903007, 901105805, 754764642, 849934405, 512138206, 837848485, 87432107, 417398926, 471026245, 599294466, 577945852, 86657339, 407494833, 604849411, 966944988, 801330989, 451971306, 609232888, 47659834, 896809512, 994536587, 989839281, 951417795, 603854645, 785913529, 768187002, 306378440, 226203351, 952896790, 910078814, 601852748, 468277671, 569904482, 520109000, 443092900, 237917827, 251315171, 895081352, 177233379, 232447676, 215448790, 917264511, 11583959, 592106742, 199303169, 135876151, 571557807, 882365864, 104982756, 935904656, 417654677, 426751352, 627318519, 766403211, 892041049, 881508720, 607642765, 172673071, 803070934, 227347972, 909313199, 157721361, 535054181, 672603138, 349791820, 141494560, 994784732, 789999905, 892146519, 16980279, 134625955, 687523403, 681010849, 518770241, 719253947, 580477776, 435291970, 486362767, 418331810, 20718479, 464165537, 966564556, 407470630, 572686995, 26282610, 618861478, 625082406, 432892546, 640034560, 862007197, 414071410, 913610433, 920560543, 456160460, 762876589, 255937081, 736179553, 369907390, 60441261, 932243728, 314282262, 179199393, 790480747, 400957046, 646058176, 332997666, 509055242, 753760358, 133152612, 397022623, 228550, 802407198, 493029134, 36573414, 571614603, 319764046, 509983754, 493996015, 675406418, 438125701, 107327858, 964655814, 725049626, 35504121, 78510303, 936704532, 635504588, 884899156, 270193834, 736313759, 364005708, 335726402, 57871891, 125811761, 20979223, 145350869, 169344764, 832087925, 473947957, 420470955, 665579758, 396006552, 668386204, 585089701, 184075882, 787512919, 854795440, 123600449, 865901675, 581215748, 424799045, 934853430, 941417173, 343291745, 918614827, 552525207, 793319466, 12};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-/* INVERSE */
+/******************** REVERSE OF PREVIOUS ********************/
 
 TEST_F(large_multiplications, test_o1kc_times_o1kb)
 {
@@ -565,19 +558,20 @@ TEST_F(large_multiplications, test_o1kc_times_o1kb)
 	u_int out[] = {973456252, 412698082, 156854265, 231236880, 474358034, 679091949, 447758531, 493377411, 637994538, 575462518, 915755352, 555293881, 482859668, 676700950, 334034557, 28408988, 482628258, 579259594, 738872206, 871197308, 702265474, 735864594, 157512557, 926743357, 882048537, 11150613, 523219675, 755874332, 581977406, 211329093, 984017167, 57567319, 514051826, 791772321, 792638993, 760554402, 43145462, 193551802, 565360348, 17126266, 472717017, 346875411, 481924938, 7117958, 479017028, 247605729, 209278489, 840696239, 392147532, 53495250, 504210065, 502046351, 714511625, 881956908, 62941673, 916753945, 486652595, 412929118, 54954346, 869595157, 382728091, 722988513, 335328409, 634858740, 256572717, 674203563, 11600175, 418581840, 405046569, 423979357, 951659798, 727308504, 147846721, 768544058, 903047950, 295815064, 868897303, 158285362, 949970028, 326721887, 96356142, 812585111, 896931597, 284906965, 874823497, 905386578, 874287653, 607465176, 624185734, 560032461, 392420655, 8741201, 570521627, 187892696, 989242173, 79457270, 461279755, 178329389, 863762415, 784766683, 31200121, 235831641, 266812872, 199500139, 41723628, 544094501, 857075377, 728444420, 941631074, 404474606, 554179674, 578222996, 797987054, 818738326, 750114941, 50103196, 702184938, 613585960, 665317743, 89904246, 998763247, 339029123, 612595234, 311369789, 959610269, 256630824, 806914657, 793679993, 773620201, 656505563, 994393849, 83683155, 683539241, 804011207, 814146601, 718972641, 845237219, 821538729, 996169319, 35360267, 188778355, 171516559, 708660738, 675157272, 476122012, 900085612, 674772993, 833334730, 10283515, 479131685, 598115734, 369471312, 457491682, 743913010, 156425832, 522883672, 386468073, 772647334, 565053022, 562706849, 445012977, 493314535, 615502660, 322329933, 81383481, 271443191, 643358277, 165941717, 986778798, 752550196, 909173766, 375154039, 511109692, 394859628, 384146192, 507157613, 158454506, 791999371, 324651095, 711961205, 468979783, 254824501, 616886879, 746634373, 489181536, 506140156, 444347759, 634431730, 273551361, 375807327, 502322677, 292149421, 966534332, 57901320, 450439429, 695626107, 163249440, 694453265, 334196451, 109269266, 681332690, 861225219, 7573952, 23684526, 911385340, 921755065, 545439132, 830528350, 584344913, 907999009, 155084801, 713641398, 208952730, 997477963, 408430834, 23929822, 704162858, 155645295, 13570028, 595968323, 792853920, 717155113, 60375533, 875568440, 84416889, 283735593, 613303615, 323997640, 158793785, 806776977, 343428972, 60189921, 693181877, 450069176, 969912778, 533925309, 635186714, 178044482, 417746812, 389330418, 40064830, 116884312, 695388930, 630170261, 336660214, 215980765, 916786927, 748054826, 485554673, 134452359, 308228183, 478022556, 966390076, 439246974, 229665139, 858393286, 978296503, 371719426, 629798177, 679786960, 402143518, 283524678, 451155328, 473585934, 548242332, 584125220, 673950073, 260484559, 739354747, 881533924, 26361124, 116924967, 555237505, 99529654, 896048195, 61934823, 160601585, 68047935, 745268295, 416848656, 869553347, 26234477, 692261965, 808106330, 368939608, 849358439, 670595250, 644257130, 596214304, 463399078, 275448545, 727776118, 587712963, 357837625, 164679319, 951643847, 563042657, 830792179, 898451375, 696965900, 208643746, 981614459, 707936773, 495532392, 636082905, 46998285, 998285197, 667305176, 626063933, 533179955, 852260195, 663445217, 529155749, 115445158, 577011797, 25167443, 204047256, 528091432, 119995549, 195632980, 244146639, 739403804, 941838780, 398481977, 483670969, 492958219, 666322530, 527176054, 986460574, 719557393, 674996087, 382550968, 16803867, 173650919, 740280510, 231187964, 754874386, 950555752, 780118606, 101946412, 535080386, 174433453, 334398158, 115832425, 825054471, 389454401, 725668657, 818920111, 172048484, 655057164, 865548808, 488417742, 543910662, 836247751, 666824852, 156780165, 860772084, 143283360, 58418781, 563326303, 435594916, 229167653, 32831233, 652408171, 839839122, 321889398, 821805902, 551017937, 34299250, 878004560, 944623782, 708591772, 214464763, 277627044, 906269682, 610260566, 767915418, 728864978, 834927805, 999929693, 500994779, 535375840, 23423948, 902176013, 648632566, 128840743, 301398950, 553163152, 323527568, 638326068, 658944113, 60443061, 668747641, 113060422, 448574319, 592719878, 2176602, 388104636, 11280977, 577457862, 728759188, 519861282, 964856560, 142865932, 928150663, 430600900, 668499938, 799275115, 263903, 85263396, 510302143, 959387652, 932233414, 760434309, 877255999, 573782281, 520481225, 652841903, 482562292, 903603164, 723593546, 76083784, 136573214, 967418740, 349005310, 81834840, 683948859, 860511074, 370207012, 424903007, 901105805, 754764642, 849934405, 512138206, 837848485, 87432107, 417398926, 471026245, 599294466, 577945852, 86657339, 407494833, 604849411, 966944988, 801330989, 451971306, 609232888, 47659834, 896809512, 994536587, 989839281, 951417795, 603854645, 785913529, 768187002, 306378440, 226203351, 952896790, 910078814, 601852748, 468277671, 569904482, 520109000, 443092900, 237917827, 251315171, 895081352, 177233379, 232447676, 215448790, 917264511, 11583959, 592106742, 199303169, 135876151, 571557807, 882365864, 104982756, 935904656, 417654677, 426751352, 627318519, 766403211, 892041049, 881508720, 607642765, 172673071, 803070934, 227347972, 909313199, 157721361, 535054181, 672603138, 349791820, 141494560, 994784732, 789999905, 892146519, 16980279, 134625955, 687523403, 681010849, 518770241, 719253947, 580477776, 435291970, 486362767, 418331810, 20718479, 464165537, 966564556, 407470630, 572686995, 26282610, 618861478, 625082406, 432892546, 640034560, 862007197, 414071410, 913610433, 920560543, 456160460, 762876589, 255937081, 736179553, 369907390, 60441261, 932243728, 314282262, 179199393, 790480747, 400957046, 646058176, 332997666, 509055242, 753760358, 133152612, 397022623, 228550, 802407198, 493029134, 36573414, 571614603, 319764046, 509983754, 493996015, 675406418, 438125701, 107327858, 964655814, 725049626, 35504121, 78510303, 936704532, 635504588, 884899156, 270193834, 736313759, 364005708, 335726402, 57871891, 125811761, 20979223, 145350869, 169344764, 832087925, 473947957, 420470955, 665579758, 396006552, 668386204, 585089701, 184075882, 787512919, 854795440, 123600449, 865901675, 581215748, 424799045, 934853430, 941417173, 343291745, 918614827, 552525207, 793319466, 12};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(large_multiplications, test_o500c_times_o500d)
@@ -588,84 +582,46 @@ TEST_F(large_multiplications, test_o500c_times_o500d)
 	u_int out[] = {294287415, 75831780, 177026101, 971593276, 542021713, 458643016, 288781579, 323392264, 745551604, 709987999, 386893910, 59687728, 880490600, 730012872, 52169114, 775827449, 304211339, 140784554, 917261839, 726744766, 627381880, 176393466, 753107174, 225257039, 312755502, 774591122, 391444733, 794137115, 787601054, 497815650, 904572367, 346034109, 789225580, 818484928, 472769027, 459700755, 234944313, 9474951, 66396813, 798295697, 537282204, 385560987, 178114501, 667730617, 309887172, 648486165, 738014897, 465723711, 103389190, 245592126, 321855010, 135634073, 321521982, 385060287, 751325279, 966726173, 898710961, 766861711, 519317447, 355790927, 651476935, 6864796, 107185658, 944506593, 215150947, 245106082, 487662514, 893360024, 766354313, 931665299, 465119474, 166619448, 687943327, 281739217, 664296560, 844889875, 19611252, 79785981, 794177827, 231331982, 906088858, 566537931, 510016717, 342556251, 797501561, 934483127, 256933446, 796722724, 870732331, 946698310, 697978514, 324031829, 359006057, 466459059, 313138659, 379270869, 636354070, 860271637, 678566913, 658638656, 717948827, 82426983, 525815414, 858680557, 398227583, 737007306, 398970894, 579839622, 553031848, 588313222, 295388040, 462978914, 381042495, 694117647, 597846615, 629201539, 172301553, 370598693, 996753719, 999999999, 999999999, 999999999, 999999999, 439999999, 444444444};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-/* INVERSE */
+/******************** REVERSE OF PREVIOUS ********************/
 
 TEST_F(large_multiplications, test_o500d_times_o500c)
 {
-	/* clang-format on */
-	u_int in1[] = {
-		470282653, 363502795, 428381283, 187482382, 467199043, 93190808,
-		0,         0,         0,         400000000, 133986336, 818672645,
-		328552829, 467844093, 238950876, 737842756, 975675668, 665546560,
-		147030781, 113541635, 672921659, 886614454, 888895933, 888888888,
-		888888888, 888888888, 268888888, 160980940, 318652713, 746086661,
-		442022266, 249623720, 646946071, 524660960, 229717732, 571794052,
-		616061544, 679629263, 171257724, 787077498, 157233507, 209246165,
-		541784240, 146575444, 344321901, 44149526,  436038339, 561338441,
-		16196762,  773060562, 104516603, 150106748, 411981638, 444444444,
-		444444444, 444444444, 444444444, 444444444, 444444444, 4};
-	u_int in2[] = {
-		555555555, 55555555,  0,         0, 0, 0,         222222,    0,
-		0,         0,         0,         0, 0, 0,         0,         888888888,
-		888888888, 888888888, 888888888, 0, 0, 0,         0,         0,
-		0,         0,         0,         0, 0, 110000000, 111111111, 111111111,
-		111,       0,         0,         0, 0, 0,         0,         0,
-		0,         0,         0,         0, 0, 770000000, 777777777, 777777777,
-		777777,    0,         0,         0, 0, 0,         0,         0,
-		0,         0,         0,         0, 0, 0,         0,         0,
-		999000000, 99999999};
-	u_int out[] = {
-		294287415, 75831780,  177026101, 971593276, 542021713, 458643016,
-		288781579, 323392264, 745551604, 709987999, 386893910, 59687728,
-		880490600, 730012872, 52169114,  775827449, 304211339, 140784554,
-		917261839, 726744766, 627381880, 176393466, 753107174, 225257039,
-		312755502, 774591122, 391444733, 794137115, 787601054, 497815650,
-		904572367, 346034109, 789225580, 818484928, 472769027, 459700755,
-		234944313, 9474951,   66396813,  798295697, 537282204, 385560987,
-		178114501, 667730617, 309887172, 648486165, 738014897, 465723711,
-		103389190, 245592126, 321855010, 135634073, 321521982, 385060287,
-		751325279, 966726173, 898710961, 766861711, 519317447, 355790927,
-		651476935, 6864796,   107185658, 944506593, 215150947, 245106082,
-		487662514, 893360024, 766354313, 931665299, 465119474, 166619448,
-		687943327, 281739217, 664296560, 844889875, 19611252,  79785981,
-		794177827, 231331982, 906088858, 566537931, 510016717, 342556251,
-		797501561, 934483127, 256933446, 796722724, 870732331, 946698310,
-		697978514, 324031829, 359006057, 466459059, 313138659, 379270869,
-		636354070, 860271637, 678566913, 658638656, 717948827, 82426983,
-		525815414, 858680557, 398227583, 737007306, 398970894, 579839622,
-		553031848, 588313222, 295388040, 462978914, 381042495, 694117647,
-		597846615, 629201539, 172301553, 370598693, 996753719, 999999999,
-		999999999, 999999999, 999999999, 439999999, 444444444};
+	/* clang-format off */
+	u_int in1[] = {470282653, 363502795, 428381283, 187482382, 467199043, 93190808, 0, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 737842756, 975675668, 665546560, 147030781, 113541635, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 746086661, 442022266, 249623720, 646946071, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 44149526, 436038339, 561338441, 16196762, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4};
+	u_int in2[] = {555555555, 55555555, 0, 0, 0, 0, 222222, 0, 0, 0, 0, 0, 0, 0, 0, 888888888, 888888888, 888888888, 888888888, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110000000, 111111111, 111111111, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 770000000, 777777777, 777777777, 777777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 999000000, 99999999};
+	u_int out[] = {294287415, 75831780, 177026101, 971593276, 542021713, 458643016, 288781579, 323392264, 745551604, 709987999, 386893910, 59687728, 880490600, 730012872, 52169114, 775827449, 304211339, 140784554, 917261839, 726744766, 627381880, 176393466, 753107174, 225257039, 312755502, 774591122, 391444733, 794137115, 787601054, 497815650, 904572367, 346034109, 789225580, 818484928, 472769027, 459700755, 234944313, 9474951, 66396813, 798295697, 537282204, 385560987, 178114501, 667730617, 309887172, 648486165, 738014897, 465723711, 103389190, 245592126, 321855010, 135634073, 321521982, 385060287, 751325279, 966726173, 898710961, 766861711, 519317447, 355790927, 651476935, 6864796, 107185658, 944506593, 215150947, 245106082, 487662514, 893360024, 766354313, 931665299, 465119474, 166619448, 687943327, 281739217, 664296560, 844889875, 19611252, 79785981, 794177827, 231331982, 906088858, 566537931, 510016717, 342556251, 797501561, 934483127, 256933446, 796722724, 870732331, 946698310, 697978514, 324031829, 359006057, 466459059, 313138659, 379270869, 636354070, 860271637, 678566913, 658638656, 717948827, 82426983, 525815414, 858680557, 398227583, 737007306, 398970894, 579839622, 553031848, 588313222, 295388040, 462978914, 381042495, 694117647, 597846615, 629201539, 172301553, 370598693, 996753719, 999999999, 999999999, 999999999, 999999999, 439999999, 444444444};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 TEST_F(large_multiplications, test_01ka_times_o500d)
@@ -676,22 +632,23 @@ TEST_F(large_multiplications, test_01ka_times_o500d)
 	u_int out[] = {482376460, 887404805, 44842336, 71042406, 13337710, 489653928, 275019334, 433539083, 644077032, 189275922, 385714370, 643583828, 4803075, 0, 0, 771802336, 619847688, 548927972, 625652618, 151344377, 473077438, 759713983, 957989356, 657100199, 312321786, 666665451, 566666666, 1234, 0, 920000000, 610964752, 965774809, 297894159, 335758469, 212410442, 681135674, 137524994, 140223332, 604940673, 4938271, 0, 0, 0, 0, 0, 604063000, 780185595, 821080184, 377263377, 788173076, 347027625, 382359546, 319060563, 819910682, 231867136, 955482985, 418864677, 731949179, 610959068, 559253595, 564792744, 687600541, 154615416, 533621631, 329737047, 349483491, 879386909, 473949928, 795248962, 568482649, 963485777, 217299755, 12725319, 767936732, 68842253, 64524512, 514726442, 502172156, 424488691, 807113014, 811391909, 481129, 315868296, 169328903, 124907534, 571077125, 752722728, 367911356, 953478637, 907448545, 231843416, 174513817, 91633108, 83613833, 762470362, 266069537, 904786899, 533574207, 190952010, 431117726, 952680951, 893531249, 886231423, 285389935, 705870827, 619211423, 461674747, 997120784, 808309994, 151567114, 489324982, 285367300, 774396201, 593781847, 375197103, 124293758, 932776887, 509767352, 512761519, 350927487, 329374485, 893570474, 646590428, 3084618, 29544800, 403859399, 745109843, 133845285, 757332214, 305083909, 649351210, 7079290, 256619086, 34372417, 700328382, 539044515, 309956545, 636798647, 473605936, 586753562, 234778207, 776102340, 836130424, 867673754, 193914275, 726929714, 566596853, 839254486, 837770876, 928559917, 83178284, 260985640, 229411226, 221519941, 224967510, 454175882, 5608737, 977994346, 646799625, 447856669, 301761745, 668640006, 953005395, 200239564, 82868051, 146265337, 570432041, 126164180, 737601746, 271948694, 830290830, 95925803, 191538832, 435743767, 76519849, 899963882, 109819064, 572874668, 561205545, 375138552, 836650833, 162823123, 681315643, 8208370, 202755776, 184893841, 663398535, 448192645, 803003669, 215641617, 139659870, 861890295, 211531847, 175801412, 800119462, 357640315, 862514267, 989556360, 965551483, 960396339, 34298165, 838469703, 17427311, 205861249, 577662589, 171001878, 194944876, 239145608, 333758359, 6583137, 607779473, 339937909, 443507068, 821478619, 711258154, 389417574, 152635396, 193997969, 142153652, 824808827, 603110773, 950222077, 762356915, 383591573, 255148713, 788779891, 60854506, 239576878, 395973366, 718127717, 254645865, 911733837, 31119134, 474894619, 27328498, 459139022, 756661066, 134454068, 389357055, 50677097, 859418938, 826031295, 364741900, 651008154, 444631273, 108640567, 2155479, 381707213, 880213915, 986111454, 433236125, 236231242, 143922210, 542248704, 408574040, 207159364, 575726432, 939385384, 711637484, 807330580, 883610354, 441046150, 47677447, 441506702, 456258418, 470753750, 316823814, 221929425, 180118892, 786280657, 137350928, 548054183, 201906138, 348805516, 648358202, 103281998, 835654656, 973002229, 879745385, 83116112, 358634576, 359730845, 160830823, 513472140, 178056058, 20982158, 4024625, 12923563, 570704680, 867677257, 336032785, 748910963, 124720914, 585743679, 328751184, 739351668, 792226065, 500063009, 407827887, 157815511, 859067639, 787228710, 819195644, 508718590, 144269645, 849953657, 268570017, 582696372, 411121093, 795205928, 680577816, 368840225, 986835658, 34518749, 547406736, 414913364, 383885788, 644759940, 88415342, 430868176, 349792321, 601919060, 579684795, 996855038, 869274911, 674581224, 322666608, 651898, 171546527, 206363934, 306675636, 6277655, 559380198, 126049693, 633841398, 965790604, 89276765, 377676175, 276013263, 38008542, 418707634, 649872018, 871255660, 148447590, 583267419, 649015632, 971149188, 897637263, 415554746, 870016153, 590028170, 681206226, 900849719, 857368850, 786335297, 312318130, 775512163, 998093576, 98006694, 935718322, 894096546, 396265855, 184558726, 430509891, 951050940, 8368021, 14283872, 349254753, 476333155, 509857482, 906268782, 476655264, 974019481, 444644815, 320502878, 47024523, 624032118, 369200537, 118158656, 129372748, 153529390, 347202305, 260781117, 744628122, 690108736, 819800714, 471368555, 312019908, 417644356, 364288495, 140309305, 306702742, 341309211, 126499166, 142079806, 406233578, 149686050, 448724731, 811644398, 303601213, 498711511, 385971623, 956901989, 356873122, 777108752, 556550702, 867708198, 35581411, 5905625, 298635502, 312876814, 720575542, 803478761, 169473059, 694249908, 512754497, 677096690, 398284768, 249645311, 679131816, 653021359, 533693952, 154611495, 175963591, 247888614, 770953645, 888977220, 38943755, 212015367, 876907691, 232668044, 411688612, 573964066, 421464368, 13126580, 918362819, 262949292, 354997302, 216807838, 190549040, 674563352, 654311382, 379902124, 744786392, 236806533, 420838257, 612629752, 719092923, 984337160, 144304430, 817285663, 574176710, 770747516, 985400975, 773889352, 519208182, 160618305, 988491657, 304686349, 423606113, 814943815, 961269944, 252589083, 165156268, 800849422, 679203128, 311257145, 897607443, 165785615, 556378809, 30774586, 735906498, 741525902, 289080448, 308542052, 784233171, 778846715, 720037375, 797542036, 656791096, 323601478, 557417691, 548751749, 866629775, 60039757, 253940766, 94854879, 264194922, 538057046, 495231289, 287047801, 313651667, 447754427, 577470295, 251168700, 807321013, 776365039, 614571030, 879074205, 521637446, 621570893, 966869074, 2243463, 280558486, 540127929, 92424028, 985428185, 17691758, 582534592, 725649650, 118944992, 465833494, 289082973, 852573470, 40500095, 152728081, 444536445, 531649996, 858217933, 315443821, 8891415, 342013575, 849626556, 550819903, 536044522, 227758842, 550089268, 728964787, 389049464, 977562650, 944237988, 753454334, 383499073, 927520049, 192308815, 490236039, 34979079, 541714586, 402822419, 248816055, 654431389, 476642721, 998525550, 448866409, 7395122, 457902301, 696079652, 684261099, 565891721, 376454364, 355174126, 273417272, 598355449, 909370162, 686095681, 246238244, 953774478, 220495816, 61300449, 966339763, 29999, 287176503, 186868852, 102766040, 319696087, 337465683, 366929729, 203785073, 380805125, 201790307, 506751139, 176302848, 513859156, 339964694, 711788059, 99820069, 889231347, 39767473, 579136184, 733640502, 746203135, 256334430, 143886736, 224985813, 511486242, 569610279, 306194578, 4549283, 307030505, 357321833, 398460088, 562024913, 489433989, 772987764, 742405227, 21574000, 368025482, 524052964, 709464832, 196436206, 677558244, 238707037, 714288707, 797158808, 831743655, 598334984, 688573246, 731888603, 965432178, 936815556, 210596468, 669903920, 361726638, 374120870, 622908895, 91996338, 432526052, 359348977, 108007478, 714359727, 200541689, 157374763, 373234128, 115917833, 237677439, 565278704, 597050733, 97377448, 60392675, 837455156, 57820973, 968071946, 108340154, 525723893, 508276353, 427540104, 468459662, 199578471, 979555274, 176779641, 2981825, 759209750, 824753775, 809078204, 899877699, 511274322, 141735473, 303986766, 491712611, 39485204, 461937744, 793401328, 526006841, 814206020, 954169432, 812453849, 474175579, 881380155, 557609511, 730030651, 276808165, 183756910, 304974502, 329302229, 272137958, 325965129, 341947852, 738065773, 82534713, 429911184, 705547566, 628034741, 875422591, 662700437, 337965362, 11747162, 804093955, 876766635, 730003712, 634318167, 736645003, 672135043, 713157126, 691745698, 473734701, 830511751, 588366947, 891325485, 923773159, 455670277, 61756582, 667222672, 288281138, 533659968, 245451482, 433315028, 201314767, 215682374, 272834418, 935146854, 963435652, 461236461, 749584449, 961307816, 110865104, 144541865, 654384925, 422919471, 110919513, 752453889, 480662502, 253782455, 241058124, 616216496, 944306640, 650550146, 921302707, 577585145, 291579573, 650974727, 914073126, 257196451, 291820169, 689414920, 147464351, 644170410, 78352262, 207467986, 810547657, 58368740, 799912787, 762329775, 246820881, 210040116, 560639495, 384703183, 767888466, 100500788, 709071624, 795687627, 373567609, 302451146, 281151014, 102094615, 805669211, 725223598, 825240903, 450074631, 205180400, 863311805, 248084390, 349881917, 923116792, 117467508, 794634726, 298018556, 790918327, 743560524, 572611327, 808275816, 373593701, 256602883, 757452094, 888246691, 591427801, 254167438, 77522152, 219096800, 614483897, 317221824, 842484478, 498079693, 662784903, 897406410, 800403947, 835030161, 350406612, 818607699, 746140093, 251887054, 458120585, 684792301, 431870805, 11993338, 62942236, 629875212, 457990608, 259056692, 50052118, 822746298, 543213120, 912033053, 460077539, 952114686, 478858711, 211412880, 885871195, 141288047, 587119521, 128804788, 711952114, 185527858, 227277404, 81822984, 500901043, 177270195, 977161474, 229082320, 709176790, 908232097, 917679022, 823209770, 767902290, 320977091, 790229082, 97709176, 22908232, 906260679, 515285148, 629327693, 221018496, 754248013, 501524171, 864197531, 358024689, 419753101, 802468986, 975310135, 246898641, 531013580, 689864197, 101358024, 986419753, 135802468, 641975310, 580246898, 372075113, 299139256, 807705542, 735647480, 62};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-/* INVERSE */
+/******************** REVERSE OF PREVIOUS ********************/
 
 TEST_F(large_multiplications, test_o500d_times_o1ka)
 {
@@ -701,17 +658,338 @@ TEST_F(large_multiplications, test_o500d_times_o1ka)
 	u_int out[] = {482376460, 887404805, 44842336, 71042406, 13337710, 489653928, 275019334, 433539083, 644077032, 189275922, 385714370, 643583828, 4803075, 0, 0, 771802336, 619847688, 548927972, 625652618, 151344377, 473077438, 759713983, 957989356, 657100199, 312321786, 666665451, 566666666, 1234, 0, 920000000, 610964752, 965774809, 297894159, 335758469, 212410442, 681135674, 137524994, 140223332, 604940673, 4938271, 0, 0, 0, 0, 0, 604063000, 780185595, 821080184, 377263377, 788173076, 347027625, 382359546, 319060563, 819910682, 231867136, 955482985, 418864677, 731949179, 610959068, 559253595, 564792744, 687600541, 154615416, 533621631, 329737047, 349483491, 879386909, 473949928, 795248962, 568482649, 963485777, 217299755, 12725319, 767936732, 68842253, 64524512, 514726442, 502172156, 424488691, 807113014, 811391909, 481129, 315868296, 169328903, 124907534, 571077125, 752722728, 367911356, 953478637, 907448545, 231843416, 174513817, 91633108, 83613833, 762470362, 266069537, 904786899, 533574207, 190952010, 431117726, 952680951, 893531249, 886231423, 285389935, 705870827, 619211423, 461674747, 997120784, 808309994, 151567114, 489324982, 285367300, 774396201, 593781847, 375197103, 124293758, 932776887, 509767352, 512761519, 350927487, 329374485, 893570474, 646590428, 3084618, 29544800, 403859399, 745109843, 133845285, 757332214, 305083909, 649351210, 7079290, 256619086, 34372417, 700328382, 539044515, 309956545, 636798647, 473605936, 586753562, 234778207, 776102340, 836130424, 867673754, 193914275, 726929714, 566596853, 839254486, 837770876, 928559917, 83178284, 260985640, 229411226, 221519941, 224967510, 454175882, 5608737, 977994346, 646799625, 447856669, 301761745, 668640006, 953005395, 200239564, 82868051, 146265337, 570432041, 126164180, 737601746, 271948694, 830290830, 95925803, 191538832, 435743767, 76519849, 899963882, 109819064, 572874668, 561205545, 375138552, 836650833, 162823123, 681315643, 8208370, 202755776, 184893841, 663398535, 448192645, 803003669, 215641617, 139659870, 861890295, 211531847, 175801412, 800119462, 357640315, 862514267, 989556360, 965551483, 960396339, 34298165, 838469703, 17427311, 205861249, 577662589, 171001878, 194944876, 239145608, 333758359, 6583137, 607779473, 339937909, 443507068, 821478619, 711258154, 389417574, 152635396, 193997969, 142153652, 824808827, 603110773, 950222077, 762356915, 383591573, 255148713, 788779891, 60854506, 239576878, 395973366, 718127717, 254645865, 911733837, 31119134, 474894619, 27328498, 459139022, 756661066, 134454068, 389357055, 50677097, 859418938, 826031295, 364741900, 651008154, 444631273, 108640567, 2155479, 381707213, 880213915, 986111454, 433236125, 236231242, 143922210, 542248704, 408574040, 207159364, 575726432, 939385384, 711637484, 807330580, 883610354, 441046150, 47677447, 441506702, 456258418, 470753750, 316823814, 221929425, 180118892, 786280657, 137350928, 548054183, 201906138, 348805516, 648358202, 103281998, 835654656, 973002229, 879745385, 83116112, 358634576, 359730845, 160830823, 513472140, 178056058, 20982158, 4024625, 12923563, 570704680, 867677257, 336032785, 748910963, 124720914, 585743679, 328751184, 739351668, 792226065, 500063009, 407827887, 157815511, 859067639, 787228710, 819195644, 508718590, 144269645, 849953657, 268570017, 582696372, 411121093, 795205928, 680577816, 368840225, 986835658, 34518749, 547406736, 414913364, 383885788, 644759940, 88415342, 430868176, 349792321, 601919060, 579684795, 996855038, 869274911, 674581224, 322666608, 651898, 171546527, 206363934, 306675636, 6277655, 559380198, 126049693, 633841398, 965790604, 89276765, 377676175, 276013263, 38008542, 418707634, 649872018, 871255660, 148447590, 583267419, 649015632, 971149188, 897637263, 415554746, 870016153, 590028170, 681206226, 900849719, 857368850, 786335297, 312318130, 775512163, 998093576, 98006694, 935718322, 894096546, 396265855, 184558726, 430509891, 951050940, 8368021, 14283872, 349254753, 476333155, 509857482, 906268782, 476655264, 974019481, 444644815, 320502878, 47024523, 624032118, 369200537, 118158656, 129372748, 153529390, 347202305, 260781117, 744628122, 690108736, 819800714, 471368555, 312019908, 417644356, 364288495, 140309305, 306702742, 341309211, 126499166, 142079806, 406233578, 149686050, 448724731, 811644398, 303601213, 498711511, 385971623, 956901989, 356873122, 777108752, 556550702, 867708198, 35581411, 5905625, 298635502, 312876814, 720575542, 803478761, 169473059, 694249908, 512754497, 677096690, 398284768, 249645311, 679131816, 653021359, 533693952, 154611495, 175963591, 247888614, 770953645, 888977220, 38943755, 212015367, 876907691, 232668044, 411688612, 573964066, 421464368, 13126580, 918362819, 262949292, 354997302, 216807838, 190549040, 674563352, 654311382, 379902124, 744786392, 236806533, 420838257, 612629752, 719092923, 984337160, 144304430, 817285663, 574176710, 770747516, 985400975, 773889352, 519208182, 160618305, 988491657, 304686349, 423606113, 814943815, 961269944, 252589083, 165156268, 800849422, 679203128, 311257145, 897607443, 165785615, 556378809, 30774586, 735906498, 741525902, 289080448, 308542052, 784233171, 778846715, 720037375, 797542036, 656791096, 323601478, 557417691, 548751749, 866629775, 60039757, 253940766, 94854879, 264194922, 538057046, 495231289, 287047801, 313651667, 447754427, 577470295, 251168700, 807321013, 776365039, 614571030, 879074205, 521637446, 621570893, 966869074, 2243463, 280558486, 540127929, 92424028, 985428185, 17691758, 582534592, 725649650, 118944992, 465833494, 289082973, 852573470, 40500095, 152728081, 444536445, 531649996, 858217933, 315443821, 8891415, 342013575, 849626556, 550819903, 536044522, 227758842, 550089268, 728964787, 389049464, 977562650, 944237988, 753454334, 383499073, 927520049, 192308815, 490236039, 34979079, 541714586, 402822419, 248816055, 654431389, 476642721, 998525550, 448866409, 7395122, 457902301, 696079652, 684261099, 565891721, 376454364, 355174126, 273417272, 598355449, 909370162, 686095681, 246238244, 953774478, 220495816, 61300449, 966339763, 29999, 287176503, 186868852, 102766040, 319696087, 337465683, 366929729, 203785073, 380805125, 201790307, 506751139, 176302848, 513859156, 339964694, 711788059, 99820069, 889231347, 39767473, 579136184, 733640502, 746203135, 256334430, 143886736, 224985813, 511486242, 569610279, 306194578, 4549283, 307030505, 357321833, 398460088, 562024913, 489433989, 772987764, 742405227, 21574000, 368025482, 524052964, 709464832, 196436206, 677558244, 238707037, 714288707, 797158808, 831743655, 598334984, 688573246, 731888603, 965432178, 936815556, 210596468, 669903920, 361726638, 374120870, 622908895, 91996338, 432526052, 359348977, 108007478, 714359727, 200541689, 157374763, 373234128, 115917833, 237677439, 565278704, 597050733, 97377448, 60392675, 837455156, 57820973, 968071946, 108340154, 525723893, 508276353, 427540104, 468459662, 199578471, 979555274, 176779641, 2981825, 759209750, 824753775, 809078204, 899877699, 511274322, 141735473, 303986766, 491712611, 39485204, 461937744, 793401328, 526006841, 814206020, 954169432, 812453849, 474175579, 881380155, 557609511, 730030651, 276808165, 183756910, 304974502, 329302229, 272137958, 325965129, 341947852, 738065773, 82534713, 429911184, 705547566, 628034741, 875422591, 662700437, 337965362, 11747162, 804093955, 876766635, 730003712, 634318167, 736645003, 672135043, 713157126, 691745698, 473734701, 830511751, 588366947, 891325485, 923773159, 455670277, 61756582, 667222672, 288281138, 533659968, 245451482, 433315028, 201314767, 215682374, 272834418, 935146854, 963435652, 461236461, 749584449, 961307816, 110865104, 144541865, 654384925, 422919471, 110919513, 752453889, 480662502, 253782455, 241058124, 616216496, 944306640, 650550146, 921302707, 577585145, 291579573, 650974727, 914073126, 257196451, 291820169, 689414920, 147464351, 644170410, 78352262, 207467986, 810547657, 58368740, 799912787, 762329775, 246820881, 210040116, 560639495, 384703183, 767888466, 100500788, 709071624, 795687627, 373567609, 302451146, 281151014, 102094615, 805669211, 725223598, 825240903, 450074631, 205180400, 863311805, 248084390, 349881917, 923116792, 117467508, 794634726, 298018556, 790918327, 743560524, 572611327, 808275816, 373593701, 256602883, 757452094, 888246691, 591427801, 254167438, 77522152, 219096800, 614483897, 317221824, 842484478, 498079693, 662784903, 897406410, 800403947, 835030161, 350406612, 818607699, 746140093, 251887054, 458120585, 684792301, 431870805, 11993338, 62942236, 629875212, 457990608, 259056692, 50052118, 822746298, 543213120, 912033053, 460077539, 952114686, 478858711, 211412880, 885871195, 141288047, 587119521, 128804788, 711952114, 185527858, 227277404, 81822984, 500901043, 177270195, 977161474, 229082320, 709176790, 908232097, 917679022, 823209770, 767902290, 320977091, 790229082, 97709176, 22908232, 906260679, 515285148, 629327693, 221018496, 754248013, 501524171, 864197531, 358024689, 419753101, 802468986, 975310135, 246898641, 531013580, 689864197, 101358024, 986419753, 135802468, 641975310, 580246898, 372075113, 299139256, 807705542, 735647480, 62};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_multiply(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == false);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+/* ################################################################### */
+/* ###################### bi_multiply_int ############################ */
+/* ################################################################### */
+
+/* null_inputs */
+
+TEST(null_inputs, test_null_times_0i)
+{
+	CHECK_PTR_EQ(bi_multiply_int(NULL, 0), NULL);
+}
+
+TEST(null_inputs, test_null_times_4490998i)
+{
+	CHECK_PTR_EQ(bi_multiply_int(NULL, 4490998), NULL);
+}
+
+TEST(null_inputs, test_null_times_neg4490998i)
+{
+	CHECK_PTR_EQ(bi_multiply_int(NULL, -4490998), NULL);
+}
+
+TEST_F(zero_len_arrays, test_null_times_0i)
+{
+	u_int out[] = {0};
+
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+
+	tau->output = bi_multiply_int(&tau->num1, 0);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(zero_len_arrays, test_negnull_times_0i)
+{
+	u_int out[] = {0};
+
+	tau->num1.is_negative = true;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+
+	tau->output = bi_multiply_int(&tau->num1, 0);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(zero_len_arrays, test_null_times_4490998i)
+{
+	u_int out[] = {0};
+
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+
+	tau->output = bi_multiply_int(&tau->num1, 4490998);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(zero_len_arrays, test_negnull_times_4490998i)
+{
+	u_int out[] = {0};
+
+	tau->num1.is_negative = true;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+
+	tau->output = bi_multiply_int(&tau->num1, 4490998);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(zero_len_arrays, test_null_times_neg4490998i)
+{
+	u_int out[] = {0};
+
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+
+	tau->output = bi_multiply_int(&tau->num1, -4490998);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(zero_len_arrays, test_negnull_times_neg4490998i)
+{
+	u_int out[] = {0};
+
+	tau->num1.is_negative = true;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+
+	tau->output = bi_multiply_int(&tau->num1, -4490998);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+/* simple_multiplications */
+
+TEST_F(simple_multiplications, test_0_times_0i)
+{
+	u_int in1[1] = {0}, out[1] = {0};
+
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply_int(&(tau->num1), 0);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(simple_multiplications, test_1_times_0i)
+{
+	u_int in1[1] = {1}, out[1] = {0};
+
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply_int(&(tau->num1), 0);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(simple_multiplications, test_0_times_1i)
+{
+	u_int in1[1] = {0}, out[1] = {0};
+
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply_int(&(tau->num1), 1);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(simple_multiplications, test_1_times_1i)
+{
+	u_int in1[1] = {1}, out[1] = {1};
+
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply_int(&(tau->num1), 1);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(simple_multiplications, test_long_times_0i)
+{
+	u_int in1[] = {691273964, 472346283, 197812382, 3, 0, 938736};
+	u_int out[1] = {0};
+
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply_int(&(tau->num1), 0);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(simple_multiplications, test_0_times_intmaxi)
+{
+	u_int in1[1] = {0}, out[1] = {0};
+
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_multiply_int(&(tau->num1), INTMAX_MAX);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+/* negative_multiplications */
+
+TEST_F(negative_multiplications, test_neg_o100f_times_4490998i)
+{
+	/* clang-format off */
+	u_int in1[] = {0, 101000000, 555555555, 295555555, 9574, 0, 0, 684800000, 252449427, 2, 0, 94930300, 13103309, 99070958, 766};
+	u_int out[] = {0, 798000000, 886847480, 408888888, 998142191, 42, 0, 430400000, 874833581, 10115745, 0, 787439400, 934938713, 474294930, 440549395, 3};
+	/* clang-format on */
+
+	tau->num1 = (bigint){
+		.len = sizeof(in1) / sizeof(*in1),
+		.is_negative = true,
+		.num = in1,
+	};
+	tau->expected = (bigint){
+		.len = sizeof(out) / sizeof(*out),
+		.is_negative = true,
+		.num = out,
+	};
+	tau->output = bi_multiply_int(&(tau->num1), 4490998);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(negative_multiplications, test__o100f_times_neg4490998i)
+{
+	/* clang-format off */
+	u_int in1[] = {0, 101000000, 555555555, 295555555, 9574, 0, 0, 684800000, 252449427, 2, 0, 94930300, 13103309, 99070958, 766};
+	u_int out[] = {0, 798000000, 886847480, 408888888, 998142191, 42, 0, 430400000, 874833581, 10115745, 0, 787439400, 934938713, 474294930, 440549395, 3};
+	/* clang-format on */
+
+	tau->num1 = (bigint){
+		.len = sizeof(in1) / sizeof(*in1),
+		.is_negative = false,
+		.num = in1,
+	};
+	tau->expected = (bigint){
+		.len = sizeof(out) / sizeof(*out),
+		.is_negative = true,
+		.num = out,
+	};
+	tau->output = bi_multiply_int(&(tau->num1), -4490998);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+}
+
+TEST_F(negative_multiplications, test_neg_o100f_times_neg4490998i)
+{
+	/* clang-format off */
+	u_int in1[] = {0, 101000000, 555555555, 295555555, 9574, 0, 0, 684800000, 252449427, 2, 0, 94930300, 13103309, 99070958, 766};
+	u_int out[] = {0, 798000000, 886847480, 408888888, 998142191, 42, 0, 430400000, 874833581, 10115745, 0, 787439400, 934938713, 474294930, 440549395, 3};
+	/* clang-format on */
+
+	tau->num1 = (bigint){
+		.len = sizeof(in1) / sizeof(*in1),
+		.is_negative = true,
+		.num = in1,
+	};
+	tau->expected = (bigint){
+		.len = sizeof(out) / sizeof(*out),
+		.is_negative = false,
+		.num = out,
+	};
+	tau->output = bi_multiply_int(&(tau->num1), -4490998);
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }

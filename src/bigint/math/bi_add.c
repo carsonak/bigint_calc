@@ -105,7 +105,7 @@ bigint *bi_add(bigint *const n1, bigint *const n2)
 }
 
 /**
- * bi_add_int - add an int to a bigint.
+ * bi_add_int - add an int to a `bigint`.
  * @n1: the first number.
  * @n2: the second number.
  *

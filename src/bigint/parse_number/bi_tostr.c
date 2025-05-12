@@ -4,8 +4,8 @@
 #include "count_digits.c"
 
 /**
- * bi_tostr - return the number represented by a bigint as a string.
- * @n: pointer to the bigint.
+ * bi_tostr - return the number represented by a `bigint` as a string.
+ * @n: pointer to the `bigint`.
  *
  * Return: a pointer to a str, NULL on failure.
  */

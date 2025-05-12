@@ -1,10 +1,10 @@
 #include "_bigint_internals.h"
 
 /**
- * _bi_alloc - allocate memory for a bigint of given length.
+ * _bi_alloc - allocate memory for a `bigint` of given length.
  * @len: length of the array, length 0 returns the struct with a NULL array.
  *
- * Return: a pointer to a bigint struct, NULL on failure.
+ * Return: a pointer to a `bigint` struct, NULL on failure.
  */
 bigint *_bi_alloc(const len_type len)
 {
@@ -26,25 +26,26 @@ bigint *_bi_alloc(const len_type len)
 }
 
 /**
- * _bi_resize - resizes memory of a bigint array.
- * @bi: pointer to the bigint.
+ * _bi_resize - resizes memory of a `bigint` array.
+ * @bi: pointer to the `bigint`.
  * @len: length to resize the array to.
  *
- * If `bi` is NULL, returns pointer to a new bigint, otherwise
- * resize to len. If len is 0 the resized bigint will not be able
+ * If `bi` is NULL, returns pointer to a new `bigint`, otherwise
+ * resize to len. If len is 0 the resized `bigint` will not be able
  * to store any numbers.
  * On failure `bi` is freed.
  *
- * Return: pointer to the resized bigint, NULL on failure.
+ * Return: pointer to the resized `bigint`, NULL on failure.
  */
 bigint *_bi_resize(bigint *bi, const len_type len)
 {
 	if (len < 0)
 		return (NULL);
 
-	const len_type actual_size = sizeof(*bi) + (sizeof(*bi->num) * len);
+	const len_type actual_size =
+		sizeof(*bi) + (sizeof((bigint){0}.num[0]) * len);
 
-	bi = xrealloc_free_on_fail(bi, actual_size);
+	bi = bi ? xrealloc_free_on_fail(bi, actual_size) : _bi_alloc(len);
 	if (!bi)
 		return (NULL);
 
@@ -62,8 +63,8 @@ bigint *_bi_resize(bigint *bi, const len_type len)
 }
 
 /**
- * _bi_free - frees memory of a bigint.
- * @freeable_ptr: pointer to the bigint to free.
+ * _bi_free - frees memory of a `bigint`.
+ * @freeable_ptr: pointer to the `bigint` to free.
  *
  * Return: NULL always.
  */
@@ -72,7 +73,7 @@ void *_bi_free(bigint *const freeable_ptr)
 	if (freeable_ptr)
 	{
 		freeable_ptr->len = 0;
-		// freeable_ptr->num = xfree(freeable_ptr->num);
+		/* freeable_ptr->num = xfree(freeable_ptr->num); */
 		freeable_ptr->num = NULL;
 	}
 
@@ -80,10 +81,10 @@ void *_bi_free(bigint *const freeable_ptr)
 }
 
 /**
- * _bi_trim - truncate length of a bigint to ignore trailing zeros.
- * @n: pointer to a bigint struct.
+ * _bi_trim - truncate length of a `bigint` to ignore trailing zeros.
+ * @n: pointer to a `bigint` struct.
  *
- * If the value of the bigint is 0 or the length is 0,
+ * If the value of the `bigint` is 0 or the length is 0,
  * the is_negative flag will be set to false.
  */
 void _bi_trim(bigint *const n)
@@ -102,8 +103,8 @@ void _bi_trim(bigint *const n)
 }
 
 /**
- * _bi_dup - duplicate a bigint as is.
- * @bi: pointer to the bigint to duplicate.
+ * _bi_dup - duplicate a `bigint` as is.
+ * @bi: pointer to the `bigint` to duplicate.
  *
  * Return: a pointer to duplicated bi, NULL on failure.
  */
@@ -125,9 +126,9 @@ bigint *_bi_dup(bigint const *const bi)
 }
 
 /**
- * _bi_move - copies contents of a bigint to another bigint.
+ * _bi_move - copies contents of a `bigint` to another `bigint`.
  * @dest: where to copy to.
- * @src: the bigint to be copied.
+ * @src: the `bigint` to be copied.
  *
  * All pointers in dest should reference memory areas large enough to hold
  * the corresponding data in src.

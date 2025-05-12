@@ -25,7 +25,7 @@ static bigint *multiply(bigint const *const n1, bigint const *const n2)
 	bigint *const current_mul = _bi_alloc(n1->len + n2->len);
 
 	if (!product || !current_mul)
-		goto clean_up;
+		goto cleanup;
 
 	product->len = 1;
 	/* For every "digit" in n2, multiply with every "digit" in n1. */
@@ -55,7 +55,7 @@ static bigint *multiply(bigint const *const n1, bigint const *const n2)
 			break;
 	}
 
-clean_up:
+cleanup:
 	_bi_free(current_mul);
 	if (n2_i < n2->len)
 		product = _bi_free(product);
@@ -116,8 +116,8 @@ bigint *bi_multiply(bigint *const n1, bigint *const n2)
 }
 
 /**
- * bi_multiply_int - multiply a bigint with an int.
- * @n1: pointer to the bigint.
+ * bi_multiply_int - multiply a `bigint` with an int.
+ * @n1: pointer to the `bigint`.
  * @n2: the int to multiply with.
  *
  * Return: pointer to the result.

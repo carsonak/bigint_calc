@@ -1,21 +1,26 @@
 #include "xalloc.h"
 #include "string.h"
 
+#include <inttypes.h> /* printf macros for variable stdint types. */
+
 /**
  * xmalloc - allocate memory with malloc and report errors.
  * @size: size in bytes to allocate.
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xmalloc(const intmax_t size)
+void *xmalloc(const len_type size)
 {
 	if (size < 0)
+	{
+		fprintf(stderr, "xmalloc error: negative size %" PRIdMAX, size);
 		return (NULL);
+	}
 
 	void *const ptr = malloc(size);
 
 	if (!ptr && size > 0)
-		perror("Memory allocation error");
+		perror("xmalloc error");
 
 	return (ptr);
 }
@@ -27,12 +32,26 @@ void *xmalloc(const intmax_t size)
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xcalloc(const intmax_t items, const intmax_t sizeof_item)
+void *xcalloc(const len_type items, const len_type sizeof_item)
 {
+	if (items < 0)
+	{
+		fprintf(stderr, "xcalloc error: negative parameter %" PRIdMAX, items);
+		return (NULL);
+	}
+
+	if (sizeof_item < 0)
+	{
+		fprintf(
+			stderr, "xcalloc error: negative parameter %" PRIdMAX, sizeof_item
+		);
+		return (NULL);
+	}
+
 	void *const ptr = calloc(items, sizeof_item);
 
 	if (!ptr && (items * sizeof_item) > 0)
-		perror("Memory allocation error");
+		perror("xcalloc error");
 
 	return (ptr);
 }
@@ -44,10 +63,16 @@ void *xcalloc(const intmax_t items, const intmax_t sizeof_item)
  *
  * Return: pointer to the resized memory area, NULL on failure.
  */
-void *xrealloc(void *nullable_ptr, intmax_t size)
+void *xrealloc(void *nullable_ptr, len_type size)
 {
+	if (size < 0)
+	{
+		fprintf(stderr, "xrealloc error: negative size %" PRIdMAX, size);
+		return (NULL);
+	}
+
 	nullable_ptr = realloc(nullable_ptr, size);
-	if (!nullable_ptr && size)
+	if (!nullable_ptr && size > 0)
 		perror("Memory resizing error");
 
 	return (nullable_ptr);
@@ -61,7 +86,7 @@ void *xrealloc(void *nullable_ptr, intmax_t size)
  * Return: pointer to the resized memory area, NULL on failure.
  *
  */
-void *xrealloc_free_on_fail(void *nullable_ptr, intmax_t size)
+void *xrealloc_free_on_fail(void *nullable_ptr, len_type size)
 {
 	void *const ptr = xrealloc(nullable_ptr, size);
 

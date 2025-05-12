@@ -23,7 +23,7 @@ struct numstr
 
 typedef struct numstr numstr;
 
-ATTR_NONNULL void *_numstr_free(numstr *freeable_ptr);
+void *_numstr_free(numstr *freeable_ptr);
 ATTR_MALLOC ATTR_MALLOC_FREE(_numstr_free)
 numstr *_numstr_alloc(len_type len);
 

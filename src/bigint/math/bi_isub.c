@@ -147,7 +147,7 @@ bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2)
 }
 
 /**
- * bi_isubtract_int - subtract an int from a bigint inplace.
+ * bi_isubtract_int - subtract an int from a `bigint` inplace.
  * @n1: the first number, must have enough memory allocated to hold the answer.
  * @n2: the second number.
  *

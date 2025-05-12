@@ -3,10 +3,10 @@
 
 #include "macros.h"
 
-#include <ctype.h> /* isalnum */
+#include <ctype.h> /* isalnum, isdigit, toupper */
 #include <string.h> /* strlen */
 
-#include "bigint_typedefs.h"
+#include "bigint_types.h"
 #include "types.h"
 
 /**
@@ -23,8 +23,8 @@ char *filter_str(
 	const mapping_func map, void *const restrict map_args
 );
 numstr *str_to_numstr(
-	char const *const num_str, const unsigned short int base,
-	len_type *const processed
+	char const *const restrict num_str, const unsigned short int base,
+	len_type *const restrict processed
 );
 bigint *numstr_to_bi(numstr *nstr);
 bigint *anybase_to_bi(numstr *num, const unsigned short int base);

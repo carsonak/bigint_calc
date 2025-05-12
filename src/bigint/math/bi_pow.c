@@ -9,9 +9,9 @@ static void ATTR_NONNULL_IDX(1)
 	subtract_inplace(bigint **const n1, bigint *const n2);
 
 /**
- * multiply_inplace - "inplace" bigint multiplication.
- * @n1: address of the first bigint pointer.
- * @n2: pointer to the second bigint.
+ * multiply_inplace - "inplace" `bigint` multiplication.
+ * @n1: address of the first `bigint` pointer.
+ * @n2: pointer to the second `bigint`.
  */
 static void multiply_inplace(bigint **const n1, bigint *const n2)
 {
@@ -22,9 +22,9 @@ static void multiply_inplace(bigint **const n1, bigint *const n2)
 }
 
 /**
- * divide_inplace - "inplace" bigint division.
- * @n1: address of the first bigint pointer.
- * @n2: pointer to the second bigint.
+ * divide_inplace - "inplace" `bigint` division.
+ * @n1: address of the first `bigint` pointer.
+ * @n2: pointer to the second `bigint`.
  */
 static void divide_inplace(bigint **const n1, bigint *const n2)
 {
@@ -35,26 +35,20 @@ static void divide_inplace(bigint **const n1, bigint *const n2)
 }
 
 /**
- * subtract_inplace - "inplace" bigint subtraction.
- * @n1: address of the first bigint pointer.
- * @n2: pointer to the second bigint.
+ * subtract_inplace - "inplace" `bigint` subtraction.
+ * @n1: address of the first `bigint` pointer.
+ * @n2: pointer to the second `bigint`.
  */
 static void subtract_inplace(bigint **const n1, bigint *const n2)
 {
 	if ((*n1)->len < n2->len)
-	{
-		bigint *tmp = _bi_resize(*n1, n2->len);
-		if (!tmp)
-			*n1 = _bi_free(*n1);
-
-		*n1 = tmp;
-	}
+		*n1 = _bi_resize(*n1, n2->len);
 
 	bi_isubtract(*n1, n2);
 }
 
 /**
- * bi_power - handle exponentiation of a bigint.
+ * bi_power - handle exponentiation of a `bigint`.
  * @base: the base.
  * @exponent: the exponent.
  *
@@ -84,7 +78,7 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 	x = bi_dup(base);
 	y = _bi_alloc(1);
 	if (!exp || !x || !y)
-		goto clean_up;
+		goto cleanup;
 
 	exp->is_negative = false;
 	x->is_negative = false;
@@ -110,7 +104,7 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 
 		multiply_inplace(&x, x);
 		if (!exp || !x || !y)
-			goto clean_up;
+			goto cleanup;
 
 		divide_inplace(&exp, &tmp);
 	}
@@ -127,7 +121,7 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 
 	if (false)
 	{
-clean_up:
+cleanup:
 		x = _bi_free(x);
 	}
 

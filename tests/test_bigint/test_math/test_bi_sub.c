@@ -1,251 +1,224 @@
 #include "tests.h"
 
-bigint num1;
-bigint num2;
-bigint expected;
-
-/**
- * bni_add - Dummy.
- * @n1: unused.
- * @n2: unused.
- *
- * Return: DUMMY_VALUE, NULL on failure.
- */
-bigint *bi_add(bigint *const n1, bigint *const n2)
-{
-	bigint *res = bi_alloc(1);
-
-	(void)n1;
-	(void)n2;
-	if (res)
-		res->num[0] = DUMMY_VALUE;
-
-	return (res);
-}
-
-/**
- * setup - initialises variables for tests.
- */
-void setup(void)
-{
-	num1 = (bigint){.len = 0, .is_negative = false, .num = NULL};
-	num2 = (bigint){.len = 0, .is_negative = false, .num = NULL};
-	expected = (bigint){.len = 0, .is_negative = false, .num = NULL};
-}
-
-/**
- * teardown - resets variables for tests.
- */
-void teardown(void) {}
-
 struct null_inputs
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
 
 TEST_F(null_inputs, test_null_minus_null)
 {
-	bigint *output = bi_subtract(NULL, NULL);
+	tau->output = bi_subtract(NULL, NULL);
 
-	CHECK(output == 0, "");
+	CHECK(tau->output == 0);
 }
 
 TEST_F(null_inputs, test_1_minus_null)
 {
 	u_int in1[] = {1};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	bigint *output = bi_subtract(&num1, NULL);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->output = bi_subtract(&(tau->num1), NULL);
 
-	CHECK(output == 0, "");
+	CHECK(tau->output == 0);
 }
 
 TEST_F(null_inputs, test_null_minus_1)
 {
 	u_int in2[] = {1};
 
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	bigint *output = bi_subtract(NULL, &num2);
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->output = bi_subtract(NULL, &(tau->num2));
 
-	CHECK(output == 0, "");
+	CHECK(tau->output == 0);
 }
 
 TEST_F(null_inputs, test_0_minus_null)
 {
 	u_int in1[1] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	bigint *output = bi_subtract(&num1, NULL);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->output = bi_subtract(&(tau->num1), NULL);
 
-	CHECK(output == 0, "");
+	CHECK(tau->output == 0);
 }
 
 TEST_F(null_inputs, test_null_minus_0)
 {
 	u_int in2[1] = {0};
 
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	bigint *output = bi_subtract(NULL, &num2);
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->output = bi_subtract(NULL, &(tau->num2));
 
-	CHECK(output == 0, "");
+	CHECK(tau->output == 0);
 }
 
-TEST_F(null_inputs, test_minus1_minus_null)
+TEST_F(null_inputs, test_neg1_minus_null)
 {
 	u_int in1[] = {1};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	bigint *output = bi_subtract(&num1, NULL);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->output = bi_subtract(&(tau->num1), NULL);
 
-	CHECK(output == 0, "");
+	CHECK(tau->output == 0);
 }
 
-TEST_F(null_inputs, test_null_minus_minus1)
+TEST_F(null_inputs, test_null_minus_neg1)
 {
 	u_int in2[] = {1};
 
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	num2.is_negative = true;
-	bigint *output = bi_subtract(NULL, &num2);
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->num2.is_negative = true;
+	tau->output = bi_subtract(NULL, &(tau->num2));
 
-	CHECK(output == 0, "");
+	CHECK(tau->output == 0);
 }
 
 struct zero_len_arrays
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
 
 TEST_F(zero_len_arrays, test_nullarray_minus_nullarray)
 {
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == 0, "");
-	CHECK(output->is_negative == 0, "");
-	CHECK(output->num == 0, "");
-	output = bi_delete(output);
+	CHECK(tau->output->len == 0);
+	CHECK(tau->output->is_negative == 0);
+	CHECK(tau->output->num == 0);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_neg_nullarray_minus_nullarray)
 {
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	num1.is_negative = true;
-	CHECK(output->len == 0, "");
-	CHECK(output->is_negative == 0, "");
-	CHECK(output->num == 0, "");
-	output = bi_delete(output);
+	tau->num1.is_negative = true;
+	CHECK(tau->output->len == 0);
+	CHECK(tau->output->is_negative == 0);
+	CHECK(tau->output->num == 0);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_nullarray_minus_neg_nullarray)
 {
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	num2.is_negative = true;
-	CHECK(output->len == 0, "");
-	CHECK(output->is_negative == 0, "");
-	CHECK(output->num == 0, "");
-	output = bi_delete(output);
+	tau->num2.is_negative = true;
+	CHECK(tau->output->len == 0);
+	CHECK(tau->output->is_negative == 0);
+	CHECK(tau->output->num == 0);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_neg_nullarray_minus_neg_nullarray)
 {
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	num1.is_negative = true;
-	num2.is_negative = true;
-	CHECK(output->len == 0, "");
-	CHECK(output->is_negative == 0, "");
-	CHECK(output->num == 0, "");
-	output = bi_delete(output);
+	tau->num1.is_negative = true;
+	tau->num2.is_negative = true;
+	CHECK(tau->output->len == 0);
+	CHECK(tau->output->is_negative == 0);
+	CHECK(tau->output->num == 0);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_4490998_minus_nullarray)
 {
 	u_int in1[] = {4490998}, out[] = {4490998};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_neg_4490998_minus_nullarray)
 {
 	u_int in1[] = {4490998}, out[] = {4490998};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	/* Mocked out! */
-	/* cr_expect(eq(sz, output->len, expected.len)); */
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
-	/* cr_expect(eq(u32[expected.len], output->num, expected.num)); */
-	output = bi_delete(output);
+	/* cr_expect(eq(sz, tau->output->len, tau->expected.len)); */
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	/* cr_expect(eq(u32[tau->expected.len], tau->output->num, tau->expected.num)); */
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_4490998_minus_neg_nullarray)
 {
 	u_int in1[] = {4490998}, out[] = {4490998};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2.is_negative = true;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->num2.is_negative = true;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_neg_4490998_minus_neg_nullarray)
 {
 	u_int in1[] = {4490998}, out[] = {4490998};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	num2.is_negative = true;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->num2.is_negative = true;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	/* Mocked out! */
-	/* cr_expect(eq(sz, output->len, expected.len)); */
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
-	/* cr_expect(eq(u32[expected.len], output->num, expected.num)); */
-	output = bi_delete(output);
+	/* cr_expect(eq(sz, tau->output->len, tau->expected.len)); */
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	/* cr_expect(eq(u32[tau->expected.len], tau->output->num, tau->expected.num)); */
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_nullarray_minus_largenum)
@@ -253,19 +226,21 @@ TEST_F(zero_len_arrays, test_nullarray_minus_largenum)
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_neg_nullarray_minus_largenum)
@@ -273,20 +248,22 @@ TEST_F(zero_len_arrays, test_neg_nullarray_minus_largenum)
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
-	num1.is_negative = true;
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.is_negative = true;
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_nullarray_minus_neg_largenum)
@@ -294,19 +271,19 @@ TEST_F(zero_len_arrays, test_nullarray_minus_neg_largenum)
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = true,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	/* Mocked out! */
-	/* cr_expect(eq(sz, output->len, expected.len)); */
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
-	/* cr_expect(eq(u32[expected.len], output->num, expected.num)); */
-	output = bi_delete(output);
+	/* cr_expect(eq(sz, tau->output->len, tau->expected.len)); */
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	/* cr_expect(eq(u32[tau->expected.len], tau->output->num, tau->expected.num)); */
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(zero_len_arrays, test_neg_nullarray_minus_neg_largenum)
@@ -314,166 +291,172 @@ TEST_F(zero_len_arrays, test_neg_nullarray_minus_neg_largenum)
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
-	num1.is_negative = true;
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.is_negative = true;
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = true,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	/* Mocked out! */
-	/* cr_expect(eq(sz, output->len, expected.len)); */
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
-	/* cr_expect(eq(u32[expected.len], output->num, expected.num)); */
-	output = bi_delete(output);
+	/* cr_expect(eq(sz, tau->output->len, tau->expected.len)); */
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	/* cr_expect(eq(u32[tau->expected.len], tau->output->num, tau->expected.num)); */
+	tau->output = bi_delete(tau->output);
 }
 
 struct simple_subtractions
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(simple_subtractions) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(simple_subtractions) { tau->output = bi_delete(tau->output); }
 
 TEST_F(simple_subtractions, test_0_minus_0)
 {
 	u_int in1[1] = {0}, in2[1] = {0}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_1_minus_0)
 {
 	u_int in1[] = {1}, in2[1] = {0}, out[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_0_minus_1)
 {
 	u_int in1[1] = {0}, in2[] = {1}, out[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_1_minus_1)
 {
 	u_int in1[] = {1}, in2[] = {1}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
-TEST_F(simple_subtractions, test_MAX_VAL_u4b_minus_minus50000)
+TEST_F(simple_subtractions, test_MAX_VAL_u4b_minus_neg50000)
 {
 	u_int in1[] = {0, 1}, in2[] = {50000}, out[] = {999950000};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_50000_minus_100000000)
 {
 	u_int in1[] = {50000}, in2[] = {0, 1}, out[] = {999950000};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 struct same_number_subtractions
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(same_number_subtractions) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(same_number_subtractions)
 {
 	tau->output = bi_delete(tau->output);
@@ -483,66 +466,75 @@ TEST_F(same_number_subtractions, test_1_minus_1)
 {
 	u_int in1[] = {1}, in2[] = {1}, out[] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_1000000001_minus_1000000001)
 {
 	u_int in1[] = {1, 1}, in2[] = {1, 1}, out[] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_longnum_minus_longnum)
 {
 	u_int in1[] = {1, 1, 1}, in2[] = {1, 1, 1}, out[] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_largenum_minus_largenum)
@@ -551,22 +543,25 @@ TEST_F(same_number_subtractions, test_largenum_minus_largenum)
 	u_int in2[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	u_int out[] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_almostsame_minus_almostsame)
@@ -575,22 +570,25 @@ TEST_F(same_number_subtractions, test_almostsame_minus_almostsame)
 	u_int in2[] = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	u_int out[] = {1};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_almostsame_minus_almostsame_reverse)
@@ -599,29 +597,34 @@ TEST_F(same_number_subtractions, test_almostsame_minus_almostsame_reverse)
 	u_int in2[] = {0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 	u_int out[] = {1};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = false, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 struct long_subtractions
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(long_subtractions) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(long_subtractions) { tau->output = bi_delete(tau->output); }
 
 TEST_F(long_subtractions, test_long9s_minus_1)
@@ -632,21 +635,21 @@ TEST_F(long_subtractions, test_long9s_minus_1)
 	u_int out[] = {
 		bi_BASE - 2, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_1_minus_long9s)
@@ -657,21 +660,22 @@ TEST_F(long_subtractions, test_1_minus_long9s)
 	u_int out[] = {
 		bi_BASE - 2, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_long_sparse_num1_minus_long_sparse_num2)
@@ -681,21 +685,22 @@ TEST_F(long_subtractions, test_long_sparse_num1_minus_long_sparse_num2)
 	u_int out[] = {0,         0,         0,         0,         111111112,
 	               999999999, 999999999, 999999999, 999999999, 41975};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_long_sparse_num2_minus_long_sparse_num1)
@@ -705,145 +710,158 @@ TEST_F(long_subtractions, test_long_sparse_num2_minus_long_sparse_num1)
 	u_int out[] = {0,         0,         0,         0,         111111112,
 	               999999999, 999999999, 999999999, 999999999, 41975};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == 0);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_4000000000678_minus_999999000)
 {
 	u_int in1[] = {678, 4000}, in2[] = {999999000}, out[] = {1678, 3999};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_999999000_minus_4000000000678)
 {
 	u_int in1[] = {999999000}, in2[] = {678, 4000}, out[] = {1678, 3999};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 struct negative_subtractions
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(negative_subtractions) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(negative_subtractions)
 {
 	tau->output = bi_delete(tau->output);
 }
 
-TEST_F(negative_subtractions, test_minus1_minus_minus1)
+TEST_F(negative_subtractions, test_neg1_minus_neg1)
 {
 	u_int in1[] = {1}, in2[] = {1}, out[1] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = true,
+						 .num = in2};
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
-TEST_F(negative_subtractions, test_1_minus_minus1)
+TEST_F(negative_subtractions, test_1_minus_neg1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[1] = {DUMMY_VALUE};
+	u_int in1[] = {1}, in2[] = {1}, out[1] = {2};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2 = (bigint){
-		.len = sizeof(in2) / sizeof(*in2), .is_negative = true, .num = in2};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = true,
+						 .num = in2};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
-TEST_F(negative_subtractions, test_minus1_minus_1)
+TEST_F(negative_subtractions, test_neg1_minus_1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[1] = {DUMMY_VALUE};
+	u_int in1[] = {1}, in2[] = {1}, out[1] = {2};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 struct large_subtractions
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(large_subtractions) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(large_subtractions) { tau->output = bi_delete(tau->output); }
 
 TEST_F(large_subtractions, test_o1kb_minus_o1kc)
@@ -854,19 +872,21 @@ TEST_F(large_subtractions, test_o1kb_minus_o1kc)
 	u_int out[] = {525115879, 711770608, 444996108, 892134437, 10231803, 927675844, 933409067, 67401250, 318572909, 159832500, 984268991, 870170649, 332403402, 595387760, 90186494, 656932687, 996453566, 476678920, 206696158, 967507277, 854977266, 909491434, 99105054, 195217387, 885024970, 612275114, 415180669, 803696403, 225876079, 144989515, 956424596, 158134537, 741086807, 817577574, 864207150, 368141551, 484827345, 326451262, 826283842, 8975419, 156359085, 234528393, 592746185, 834420975, 65613249, 251897415, 835744447, 703649663, 525915193, 726545477, 867656061, 742478765, 730678541, 282503520, 313866110, 109250294, 128913124, 894964157, 374709119, 641172051, 2352425, 12574566, 486632528, 77113122, 908792516, 387970756, 454291507, 654970052, 450084190, 186640224, 236967509, 154524961, 762069198, 220797466, 393788881, 702503932, 783671794, 624504251, 810152981, 390372623, 229393152, 929537718, 814575138, 870393672, 796290367, 617150385, 219840709, 248066251, 833602329, 757334741, 802509536, 9759536, 508487576, 588715005, 311659057, 406688400, 266427519, 716673609, 39976940, 751788503, 397166593, 642940333, 610601970, 258375191, 84319813, 492057631, 700383595, 610376557, 596820167, 446553497, 855026365, 587540653, 240952542, 587588723, 672373453, 98297178, 869324027, 632879923, 475193183, 432510673, 826283596, 917225922, 119587441, 980957598, 45551522, 918074137, 219563900, 4741238, 472296756, 316901581, 715571559, 841891076, 642717971, 508941971, 664772278, 805094215, 706606909, 83635379, 174307602, 478289978, 387340520, 539667380, 148544438, 926218336, 409311050, 99225409, 666878494, 746723116, 176832432, 334620742, 602626717, 831185040, 984226812, 267381184, 71306602, 422814066, 435097200, 259223669, 421388133, 683837339, 644316363, 30739219, 309646434, 907554462, 615235243, 204907105, 925684575, 961768035, 253542894, 625684909, 662474154, 293889638, 47778082, 633372414, 450764631, 705303883, 516411360, 987527117, 953897801, 345599233, 512696420, 473298658, 555358378, 270721101, 205185052, 247925844, 699435683, 824911242, 686230510, 646565336, 25561506, 54853697, 294508254, 378235347, 332203782, 91696255, 86081221, 77204065, 19553782, 976692585, 140806281, 683959080, 4976494, 203702545, 582814284, 547692700, 160492018, 967894151, 479634709, 73212960, 331269526, 371000989, 879767885, 510925671, 90884745, 89307615, 607238119, 292645332, 271250844, 154085141, 466071795, 771231856, 894411378, 164057243, 45472979, 463418814, 992763686, 623784743, 816862574, 5836175, 425360496, 826225195, 741150361, 609145272, 537930575, 809196251, 985393702, 710941205, 602011830, 139037010, 36747743, 399418219, 779344804, 39499873, 365398057, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == 0);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(large_subtractions, test_o1kb_minus_o1ka)
@@ -877,21 +897,22 @@ TEST_F(large_subtractions, test_o1kb_minus_o1ka)
 	u_int out[] = {525115879, 711770608, 444996108, 892134437, 10231803, 927675844, 933409067, 67401250, 318572909, 159832500, 984268991, 870170649, 332403402, 595387760, 90186494, 656932687, 996453566, 476678920, 206696158, 967507277, 854977266, 909491434, 99105054, 195217387, 885024970, 612275114, 415180669, 803696403, 225876079, 144989515, 956424596, 158134537, 741086807, 817577574, 864207150, 368141551, 484827345, 326451262, 826283842, 8975419, 156359085, 234528393, 592746185, 834420975, 65613249, 251897415, 835744447, 703649663, 525915193, 726545477, 867656061, 742478765, 730678541, 282503520, 313866110, 109250294, 128913124, 894964157, 374709119, 641172051, 2352425, 12574566, 486632528, 77113122, 908792516, 387970756, 454291507, 654970052, 450084190, 186640224, 236967509, 154524961, 762069198, 220797466, 393788881, 702503932, 783671794, 624504251, 810152981, 390372623, 229393152, 929537718, 814575138, 870393672, 796290367, 617150385, 219840709, 248066251, 833602329, 757334741, 802509536, 9759536, 508487576, 588715005, 311659057, 406688400, 266427519, 716673609, 39976940, 751788503, 397166593, 642940333, 610601970, 258375191, 84319813, 492057631, 700383595, 610376557, 596820167, 446553497, 855026365, 587540653, 240952542, 587588723, 672373453, 98297178, 869324027, 632879923, 475193183, 432510673, 826283596, 917225922, 119587441, 980957598, 45551522, 918074137, 219563900, 4741238, 472296756, 316901581, 715571559, 841891076, 642717971, 508941971, 664772278, 805094215, 706606909, 83635379, 174307602, 478289978, 387340520, 539667380, 148544438, 926218336, 409311050, 99225409, 666878494, 746723116, 176832432, 334620742, 602626717, 831185040, 984226812, 267381184, 71306602, 422814066, 435097200, 259223669, 421388133, 683837339, 644316363, 30739219, 309646434, 907554462, 615235243, 204907105, 925684575, 961768035, 253542894, 625684909, 662474154, 293889638, 47778082, 633372414, 450764631, 705303883, 516411360, 987527117, 953897801, 345599233, 512696420, 473298658, 555358378, 270721101, 205185052, 247925844, 699435683, 824911242, 686230510, 646565336, 25561506, 54853697, 294508254, 378235347, 332203782, 91696255, 86081221, 77204065, 19553782, 976692585, 140806281, 683959080, 4976494, 203702545, 582814284, 547692700, 160492018, 967894151, 479634709, 73212960, 331269526, 371000989, 879767885, 510925671, 90884745, 89307615, 607238119, 292645332, 271250844, 154085141, 466071795, 771231856, 894411378, 164057243, 45472979, 463418814, 992763686, 623784743, 816862574, 5836175, 425360496, 826225195, 741150361, 609145272, 537930575, 809196251, 985393702, 710941205, 602011830, 139037010, 36747743, 399418219, 779344804, 39499873, 365398057, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(large_subtractions, test_o500c_minus_o500d)
@@ -902,19 +923,21 @@ TEST_F(large_subtractions, test_o500c_minus_o500d)
 	u_int out[] = {85272902, 692052760, 571618716, 812517617, 532800956, 906809191, 222221, 0, 0, 600000000, 866013663, 181327354, 671447170, 532155906, 761049123, 151046131, 913213220, 223342327, 741858107, 886458365, 327078340, 113385545, 111104066, 111111111, 111111111, 111111111, 731111111, 839019059, 681347286, 363913338, 669088844, 861487390, 353054039, 475339039, 770282267, 428205947, 383938455, 320370736, 828742275, 212922501, 842766492, 790753834, 458215759, 853424555, 655678098, 725850473, 341739438, 216439336, 984581015, 226939437, 895483396, 849893251, 588018361, 555555555, 555555555, 555555555, 555555555, 555555555, 555555555, 999999995, 999999999, 999999999, 999999999, 999999999, 998999999, 99999999};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == 0);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(large_subtractions, test_o500d_minus_o500c)
@@ -925,21 +948,22 @@ TEST_F(large_subtractions, test_o500d_minus_o500c)
 	u_int out[] = {85272902, 692052760, 571618716, 812517617, 532800956, 906809191, 222221, 0, 0, 600000000, 866013663, 181327354, 671447170, 532155906, 761049123, 151046131, 913213220, 223342327, 741858107, 886458365, 327078340, 113385545, 111104066, 111111111, 111111111, 111111111, 731111111, 839019059, 681347286, 363913338, 669088844, 861487390, 353054039, 475339039, 770282267, 428205947, 383938455, 320370736, 828742275, 212922501, 842766492, 790753834, 458215759, 853424555, 655678098, 725850473, 341739438, 216439336, 984581015, 226939437, 895483396, 849893251, 588018361, 555555555, 555555555, 555555555, 555555555, 555555555, 555555555, 999999995, 999999999, 999999999, 999999999, 999999999, 998999999, 99999999};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	num2.len = sizeof(in2) / sizeof(*in2);
-	num2.num = in2;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract(&num1, &num2);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	output = bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
+	tau->output = bi_delete(tau->output);
 }
 
 /* ################################################################### */
@@ -948,384 +972,383 @@ TEST_F(large_subtractions, test_o500d_minus_o500c)
 
 /* null_inputs */
 
-TEST_F(null_inputs, test_null_minus_null)
+TEST(null_inputs, test_null_minus_0i)
 {
-	CHECK(bi_subtract_int(NULL, 0) == 0, "");
+	CHECK_PTR_EQ(bi_subtract_int(NULL, 0), NULL);
 }
 
-TEST_F(null_inputs, test_null_minus_1)
+TEST(null_inputs, test_null_minus_1i)
 {
-	CHECK(bi_subtract_int(NULL, 1) == 0, "");
+	CHECK_PTR_EQ(bi_subtract_int(NULL, 1), NULL);
 }
 
-TEST_F(null_inputs, test_null_minus_minus1)
+TEST(null_inputs, test_null_minus_neg1i)
 {
-	CHECK(bi_subtract_int(NULL, -1) == 0, "");
+	CHECK_PTR_EQ(bi_subtract_int(NULL, -1), NULL);
 }
 
 /* zero_len_arrays */
 
-TEST_F(zero_len_arrays, test_nullarray_minus_0)
+TEST_F(zero_len_arrays, test_nullarray_minus_0i)
 {
 	u_int out[1] = {0};
 
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
-	bigint *output = bi_subtract_int(&num1, 0);
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
+	tau->output = bi_subtract_int(&(tau->num1), 0);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_minus_490998)
+TEST_F(zero_len_arrays, test_nullarray_minus_490998i)
 {
 	u_int out[1] = {490998};
 
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract_int(&num1, 490998);
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract_int(&(tau->num1), 490998);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 /* simple_subtractions */
 
-TEST_F(simple_subtractions, test_0_minus_0)
+TEST_F(simple_subtractions, test_0_minus_0i)
 {
 	u_int in1[1] = {0}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract_int(&num1, 0);
+	tau->output = bi_subtract_int(&(tau->num1), 0);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(simple_subtractions, test_1_minus_0)
+TEST_F(simple_subtractions, test_1_minus_0i)
 {
 	u_int in1[] = {1}, out[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract_int(&num1, 0);
+	tau->output = bi_subtract_int(&(tau->num1), 0);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(simple_subtractions, test_0_minus_1)
+TEST_F(simple_subtractions, test_0_minus_1i)
 {
 	u_int in1[1] = {0}, out[] = {1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract_int(&num1, 1);
+	tau->output = bi_subtract_int(&(tau->num1), 1);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(simple_subtractions, test_1_minus_1)
+TEST_F(simple_subtractions, test_1_minus_1i)
 {
 	u_int in1[] = {1}, out[1] = {0};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract_int(&num1, 1);
+	tau->output = bi_subtract_int(&(tau->num1), 1);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(simple_subtractions, test_MAX_VAL_u4b_minus_minus50000)
+TEST_F(simple_subtractions, test_MAX_VAL_u4b_minus_neg50000i)
 {
 	u_int in1[] = {0, 1}, out[] = {999950000};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract_int(&num1, 50000);
+	tau->output = bi_subtract_int(&(tau->num1), 50000);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(simple_subtractions, test_50000_minus_100000000)
+TEST_F(simple_subtractions, test_50000_minus_100000000i)
 {
 	u_int in1[] = {50000}, out[] = {999950000};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract_int(&num1, 1000000000);
+	tau->output = bi_subtract_int(&(tau->num1), 1000000000);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 /* same_number_subtractions */
 
-TEST_F(same_number_subtractions, test_1000000001_minus_1000000001)
+TEST_F(same_number_subtractions, test_1000000001_minus_1000000001i)
 {
 	u_int in1[] = {1, 1}, out[] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
-	bigint *output = bi_subtract_int(&num1, 1000000001);
+	tau->output = bi_subtract_int(&(tau->num1), 1000000001);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(same_number_subtractions, test_longnum_minus_longnum)
+TEST_F(same_number_subtractions, test_longnum_minus_longi)
 {
 	u_int in1[] = {1, 1, 1}, out[] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = false, .num = in1};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
-	bigint *output = bi_subtract_int(&num1, 1000000001000000001);
+	tau->output = bi_subtract_int(&(tau->num1), 1000000001000000001);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 /* long_subtractions */
 
-TEST_F(long_subtractions, test_long9s_minus_1)
+TEST_F(long_subtractions, test_long9s_minus_1i)
 {
 	u_int in1[] = {
 		bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
 	u_int out[] = {
 		bi_BASE - 2, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract_int(&num1, 1);
+	tau->output = bi_subtract_int(&(tau->num1), 1);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == 0);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(long_subtractions, test_1_minus_long9s)
+TEST_F(long_subtractions, test_1_minus_long9si)
 {
 	u_int in1[2] = {1};
 	u_int out[2] = {bi_BASE - 2, bi_BASE - 1};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract_int(&num1, 999999999999999999);
+	tau->output = bi_subtract_int(&(tau->num1), 999999999999999999);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(long_subtractions, test_4000000000678_minus_999999000)
+TEST_F(long_subtractions, test_4000000000678_minus_999999000i)
 {
 	u_int in1[] = {678, 4000}, out[] = {1678, 3999};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract_int(&num1, 999999000);
+	tau->output = bi_subtract_int(&(tau->num1), 999999000);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(long_subtractions, test_999999000_minus_4000000000678)
+TEST_F(long_subtractions, test_999999000_minus_4000000000678i)
 {
 	u_int in1[2] = {999999000}, out[] = {1678, 3999};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
-	bigint *output = bi_subtract_int(&num1, 4000000000678);
+	tau->output = bi_subtract_int(&(tau->num1), 4000000000678);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 /* negative_subtractions */
 
-TEST_F(negative_subtractions, test_minus1_minus_minus1)
+TEST_F(negative_subtractions, test_neg1_minus_neg1i)
 {
 	u_int in1[] = {1}, out[1] = {0};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract_int(&num1, -1);
+	tau->output = bi_subtract_int(&(tau->num1), -1);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(negative_subtractions, test_1_minus_minus1)
+TEST_F(negative_subtractions, test_1_minus_neg1i)
 {
-	u_int in1[] = {1}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {1}, out[] = {2};
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
-	bigint *output = bi_subtract_int(&num1, -1);
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
+	tau->output = bi_subtract_int(&(tau->num1), -1);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
-TEST_F(negative_subtractions, test_minus1_minus_1)
+TEST_F(negative_subtractions, test_neg1_minus_1i)
 {
-	u_int in1[] = {1}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {1}, out[] = {2};
 
-	num1 = (bigint){
-		.len = sizeof(in1) / sizeof(*in1), .is_negative = true, .num = in1};
-	expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
-	bigint *output = bi_subtract_int(&num1, 1);
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = true,
+						 .num = in1};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
+	tau->output = bi_subtract_int(&(tau->num1), 1);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(
-		output->is_negative == expected.is_negative,
-		"negative flag should be %u", expected.is_negative);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }
 
 /* large_subtractions */
 
-TEST_F(large_subtractions, test_o1kb_minus_o1kc)
+TEST_F(large_subtractions, test_o1kb_minus_longmax)
 {
 	/* clang-format off */
 	u_int in1[342] = {645836236, 108893430, 836208119, 270771001, 537613755, 373039867, 833294108, 898839418, 608485063, 546188873, 452231917, 687296422, 111111152, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 476411111, 5669047, 700035645, 893473278, 4493, 543630640, 324000, 568376700, 1394, 300000000, 378345892, 8, 734194700, 423768, 0, 445197384, 518101037, 109617878, 558156514, 983336821, 690076644, 693516675, 143226629, 76588580, 210759419, 973911560, 497333540, 14322213, 555048869, 815323758, 539167661, 458688023, 612425259, 624332483, 419554373, 679371075, 393235000, 236728315, 664373133, 150410609, 518660305, 359239326, 307363945, 571210805, 347785534, 563445710, 660409386, 228008317, 804462179, 233074148, 591937180, 160409198, 950235053, 962974549, 171857157, 523072994, 395079814, 321058488, 203652900, 126072395, 363107953, 630915068, 973080517, 612433363, 734409773, 377726669, 707225937, 627074076, 918808553, 941285428, 110569912, 430944738, 394600177, 990968620, 4498198, 265970467, 594659210, 881718792, 749254660, 489225907, 417635079, 182995180, 494838468, 16834009, 911110449, 948701330, 831191398, 792151714, 70940218, 627665839, 410612359, 202045867, 935804051, 937850141, 227018012, 991791152, 506752363, 406483698, 355792683, 47491630, 22359011, 919962818, 955165934, 399211808, 673319428, 319818160, 662785141, 175882430, 630322415, 735383534, 687650610, 46582669, 496678148, 491637987, 871575195, 116330034, 723314187, 385420689, 325094262, 12829142, 208703866, 120005690, 899921757, 77002169, 359486189, 753454258, 278911354, 694037307, 578519296, 494600786, 470779501, 768446187, 472669563, 716361937, 389127515, 976446119, 593192334, 617083917, 272976737, 418747631, 855714255, 226105187, 605917499, 696971445, 573117854, 99153257, 956645492, 728520292, 946389174, 245482697, 655465609, 470307816, 135416351, 729216591, 866144546, 888959338, 809402688, 527131609, 866613186, 419167460, 916600904, 633154349, 747140489, 315862951, 238759183, 148584074, 652667824, 161606397, 677427537, 590777629, 825244648, 835356427, 366982335, 748040826, 852122159, 4896, 900000000, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 385820199, 167580321, 134092496, 277075937, 872169008, 64325722, 827080282, 277960712, 655352740, 163131699, 448213684, 277128786, 514326330, 933871396, 63154105, 745922799, 490015860, 252229607, 711956623, 591788040, 954758766, 467124003, 644524713, 690634208, 510828673, 629041620, 704066384, 468512842, 590156377, 509105852, 101803594, 777808979, 519622805, 972925209, 333284887, 366099858, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
 	u_int out[342] = {791060429, 885521393, 836208109, 270771001, 537613755, 373039867, 833294108, 898839418, 608485063, 546188873, 452231917, 687296422, 111111152, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 476411111, 5669047, 700035645, 893473278, 4493, 543630640, 324000, 568376700, 1394, 300000000, 378345892, 8, 734194700, 423768, 0, 445197384, 518101037, 109617878, 558156514, 983336821, 690076644, 693516675, 143226629, 76588580, 210759419, 973911560, 497333540, 14322213, 555048869, 815323758, 539167661, 458688023, 612425259, 624332483, 419554373, 679371075, 393235000, 236728315, 664373133, 150410609, 518660305, 359239326, 307363945, 571210805, 347785534, 563445710, 660409386, 228008317, 804462179, 233074148, 591937180, 160409198, 950235053, 962974549, 171857157, 523072994, 395079814, 321058488, 203652900, 126072395, 363107953, 630915068, 973080517, 612433363, 734409773, 377726669, 707225937, 627074076, 918808553, 941285428, 110569912, 430944738, 394600177, 990968620, 4498198, 265970467, 594659210, 881718792, 749254660, 489225907, 417635079, 182995180, 494838468, 16834009, 911110449, 948701330, 831191398, 792151714, 70940218, 627665839, 410612359, 202045867, 935804051, 937850141, 227018012, 991791152, 506752363, 406483698, 355792683, 47491630, 22359011, 919962818, 955165934, 399211808, 673319428, 319818160, 662785141, 175882430, 630322415, 735383534, 687650610, 46582669, 496678148, 491637987, 871575195, 116330034, 723314187, 385420689, 325094262, 12829142, 208703866, 120005690, 899921757, 77002169, 359486189, 753454258, 278911354, 694037307, 578519296, 494600786, 470779501, 768446187, 472669563, 716361937, 389127515, 976446119, 593192334, 617083917, 272976737, 418747631, 855714255, 226105187, 605917499, 696971445, 573117854, 99153257, 956645492, 728520292, 946389174, 245482697, 655465609, 470307816, 135416351, 729216591, 866144546, 888959338, 809402688, 527131609, 866613186, 419167460, 916600904, 633154349, 747140489, 315862951, 238759183, 148584074, 652667824, 161606397, 677427537, 590777629, 825244648, 835356427, 366982335, 748040826, 852122159, 4896, 900000000, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 385820199, 167580321, 134092496, 277075937, 872169008, 64325722, 827080282, 277960712, 655352740, 163131699, 448213684, 277128786, 514326330, 933871396, 63154105, 745922799, 490015860, 252229607, 711956623, 591788040, 954758766, 467124003, 644524713, 690634208, 510828673, 629041620, 704066384, 468512842, 590156377, 509105852, 101803594, 777808979, 519622805, 972925209, 333284887, 366099858, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
 	/* clang-format on */
 
-	num1.len = sizeof(in1) / sizeof(*in1);
-	num1.num = in1;
-	expected.len = sizeof(out) / sizeof(*out);
-	expected.num = out;
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = in1;
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 
-	bigint *output = bi_subtract_int(&num1, LLONG_MAX);
+	tau->output = bi_subtract_int(&(tau->num1), LLONG_MAX);
 
-	CHECK(output->len == expected.len, "length should be %zu", expected.len);
-	CHECK(output->is_negative == 0, "");
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == 0);
 	CHECK_BUF_EQ(
-		output->num, expected.num, expected.len * sizeof(*expected.num), "");
-	bi_delete(output);
+		tau->output->num, tau->expected.num,
+		tau->expected.len * sizeof(*(tau->expected.num))
+	);
 }

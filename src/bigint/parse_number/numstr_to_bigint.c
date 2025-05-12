@@ -7,7 +7,7 @@
 #include "count_digits.c"
 
 /**
- * numstr_to_bi - convert a numstr to a bigint.
+ * numstr_to_bi - convert a numstr to a `bigint`.
  * @nstr: the numstr.
  *
  * Return: a pointer to a bigint_i struct, NULL on failure.
@@ -17,13 +17,13 @@ bigint *numstr_to_bi(numstr *nstr)
 	if (!nstr || nstr->len < 1 || !nstr->str || !isalnum(nstr->str[0]))
 		return (NULL);
 
-	len_type nstr_i = 0;
+	len_type nstr_i = 0, bi_i = 0;
 	uintmax_t carry = 0;
 	/* sizeof(bigint_i) == */
 	/* ceil(numstr.len / no. of digits that can represent BIGINT_BASE) */
 	unsigned int digits = count_digits(BIGINT_BASE - 1);
-	len_type bi_i = (nstr->len / digits) + (nstr->len % digits ? 1 : 0);
-	bigint *const bi = _bi_alloc(bi_i);
+	bigint *const bi =
+		_bi_alloc((nstr->len / digits) + (nstr->len % digits ? 1 : 0));
 
 	if (!bi)
 		return (NULL);
@@ -65,11 +65,11 @@ bigint *numstr_to_bi(numstr *nstr)
 }
 
 /**
- * anybase_to_bi - convert a numstr in any base to a bigint.
+ * anybase_to_bi - convert a numstr in any base to a `bigint`.
  * @num: the numstr.
  * @base: an int between 2-36 indicating the base of the number.
  *
- * Return: a pointer to a bigint struct, NULL on failure.
+ * Return: a pointer to a `bigint` struct, NULL on failure.
  */
 bigint *anybase_to_bi(numstr *const num, const unsigned short int base)
 {
@@ -82,14 +82,14 @@ bigint *anybase_to_bi(numstr *const num, const unsigned short int base)
 	if (!bigint_final)
 		return (NULL);
 
-	/* while str[i]; num = base * num + str[i]; ++i; */
+	/* while str[i]; num = (base * num) + str[i]; ++i; */
 	for (i = 0; i < num->len && bigint_final; ++i)
 	{
 		bigint *tmp = bigint_final;
 
 		bigint_final = bi_multiply_int(bigint_final, base);
 		tmp = _bi_free(tmp);
-		int cval = numchar_to_int(num->str[i]);
+		int cval = char_to_int(num->str[i]);
 		if (cval < 0 || (u_int)cval >= base)
 		{
 			fprintf(

@@ -11,9 +11,7 @@ TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
 
 TEST_F(null_inputs, test_null_plus_null)
 {
-	bigint *output = bi_add(NULL, NULL);
-
-	CHECK(output == NULL);
+	CHECK_PTR_EQ(bi_add(NULL, NULL), NULL);
 }
 
 TEST_F(null_inputs, test_1_plus_null)
@@ -23,9 +21,8 @@ TEST_F(null_inputs, test_1_plus_null)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->output = bi_add(&(tau->num1), NULL);
 
-	CHECK(tau->output == NULL);
+	CHECK_PTR_EQ(bi_add(&(tau->num1), NULL), NULL);
 }
 
 TEST_F(null_inputs, test_null_plus_1)
@@ -34,9 +31,8 @@ TEST_F(null_inputs, test_null_plus_1)
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
-	tau->output = bi_add(NULL, &(tau->num2));
 
-	CHECK(tau->output == NULL);
+	CHECK_PTR_EQ(bi_add(NULL, &(tau->num2)), NULL);
 }
 
 TEST_F(null_inputs, test_0_plus_null)
@@ -46,9 +42,8 @@ TEST_F(null_inputs, test_0_plus_null)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->output = bi_add(&(tau->num1), NULL);
 
-	CHECK(tau->output == NULL);
+	CHECK_PTR_EQ(bi_add(&(tau->num1), NULL), NULL);
 }
 
 TEST_F(null_inputs, test_null_plus_0)
@@ -57,9 +52,8 @@ TEST_F(null_inputs, test_null_plus_0)
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
-	tau->output = bi_add(NULL, &(tau->num2));
 
-	CHECK(tau->output == NULL);
+	CHECK_PTR_EQ(bi_add(NULL, &(tau->num2)), NULL);
 }
 
 TEST_F(null_inputs, test_neg1_plus_null)
@@ -69,9 +63,8 @@ TEST_F(null_inputs, test_neg1_plus_null)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->output = bi_add(&(tau->num1), NULL);
 
-	CHECK(tau->output == NULL);
+	CHECK_PTR_EQ(bi_add(&(tau->num1), NULL), NULL);
 }
 
 TEST_F(null_inputs, test_null_plus_neg1)
@@ -81,9 +74,8 @@ TEST_F(null_inputs, test_null_plus_neg1)
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = true,
 						 .num = in2};
-	tau->output = bi_add(NULL, &(tau->num2));
 
-	CHECK(tau->output == NULL);
+	CHECK_PTR_EQ(bi_add(NULL, &(tau->num2)), NULL);
 }
 
 struct zero_len_arrays
@@ -101,7 +93,7 @@ TEST_F(zero_len_arrays, test_nullarray_plus_nullarray)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 TEST_F(zero_len_arrays, test_neg_nullarray_plus_nullarray)
@@ -111,7 +103,7 @@ TEST_F(zero_len_arrays, test_neg_nullarray_plus_nullarray)
 	tau->num1.is_negative = true;
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 TEST_F(zero_len_arrays, test_nullarray_plus_neg_nullarray)
@@ -121,7 +113,7 @@ TEST_F(zero_len_arrays, test_nullarray_plus_neg_nullarray)
 	tau->num2.is_negative = true;
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 TEST_F(zero_len_arrays, test_neg_nullarray_plus_neg_nullarray)
@@ -132,7 +124,7 @@ TEST_F(zero_len_arrays, test_neg_nullarray_plus_neg_nullarray)
 	tau->num2.is_negative = true;
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 TEST_F(zero_len_arrays, test_4490998_plus_nullarray)
@@ -149,7 +141,10 @@ TEST_F(zero_len_arrays, test_4490998_plus_nullarray)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(zero_len_arrays, test_neg_4490998_plus_nullarray)
@@ -166,7 +161,10 @@ TEST_F(zero_len_arrays, test_neg_4490998_plus_nullarray)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(zero_len_arrays, test_4490998_plus_neg_nullarray)
@@ -184,7 +182,10 @@ TEST_F(zero_len_arrays, test_4490998_plus_neg_nullarray)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(zero_len_arrays, test_neg_4490998_plus_neg_nullarray)
@@ -202,7 +203,10 @@ TEST_F(zero_len_arrays, test_neg_4490998_plus_neg_nullarray)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(zero_len_arrays, test_nullarray_plus_largenum)
@@ -220,7 +224,10 @@ TEST_F(zero_len_arrays, test_nullarray_plus_largenum)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(zero_len_arrays, test_neg_nullarray_plus_largenum)
@@ -239,7 +246,10 @@ TEST_F(zero_len_arrays, test_neg_nullarray_plus_largenum)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(zero_len_arrays, test_nullarray_plus_neg_largenum)
@@ -257,7 +267,10 @@ TEST_F(zero_len_arrays, test_nullarray_plus_neg_largenum)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(zero_len_arrays, test_neg_nullarray_plus_neg_largenum)
@@ -276,7 +289,10 @@ TEST_F(zero_len_arrays, test_neg_nullarray_plus_neg_largenum)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 struct simple_additions
@@ -300,7 +316,10 @@ TEST_F(simple_additions, test_0_plus_0)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_1_plus_0)
@@ -317,7 +336,10 @@ TEST_F(simple_additions, test_1_plus_0)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_0_plus_1)
@@ -334,7 +356,10 @@ TEST_F(simple_additions, test_0_plus_1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_1_plus_1)
@@ -349,7 +374,10 @@ TEST_F(simple_additions, test_1_plus_1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_12345_plus_54321)
@@ -366,7 +394,10 @@ TEST_F(simple_additions, test_12345_plus_54321)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_54321_plus_12345)
@@ -383,7 +414,10 @@ TEST_F(simple_additions, test_54321_plus_12345)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 struct long_additions
@@ -409,7 +443,10 @@ TEST_F(long_additions, test_999999999_plus_1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(long_additions, test_999999999999999999_plus_999999999)
@@ -427,7 +464,10 @@ TEST_F(long_additions, test_999999999999999999_plus_999999999)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(long_additions, test_long9s_plus_1)
@@ -448,7 +488,10 @@ TEST_F(long_additions, test_long9s_plus_1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(long_additions, test_1_plus_long9s)
@@ -469,7 +512,10 @@ TEST_F(long_additions, test_1_plus_long9s)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(long_additions, test_long_sparse_num1_plus_long_sparse_num2)
@@ -488,7 +534,10 @@ TEST_F(long_additions, test_long_sparse_num1_plus_long_sparse_num2)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(long_additions, test_long_sparse_num2_plus_long_sparse_num1)
@@ -507,7 +556,10 @@ TEST_F(long_additions, test_long_sparse_num2_plus_long_sparse_num1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 struct negative_additions
@@ -515,7 +567,9 @@ struct negative_additions
 {
 	bigint num1, num2, expected, *output;
 };
+
 TEST_F_SETUP(negative_additions) { memset(tau, 0, sizeof(*tau)); }
+
 TEST_F_TEARDOWN(negative_additions) { tau->output = bi_delete(tau->output); }
 
 TEST_F(negative_additions, test_neg1_plus_neg1)
@@ -535,12 +589,15 @@ TEST_F(negative_additions, test_neg1_plus_neg1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(negative_additions, test_1_plus_neg1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {1}, in2[] = {1}, out[] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -554,12 +611,15 @@ TEST_F(negative_additions, test_1_plus_neg1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(negative_additions, test_neg1_plus_1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {1}, in2[] = {1}, out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -573,12 +633,15 @@ TEST_F(negative_additions, test_neg1_plus_1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(negative_additions, test_5_plus_neg1)
 {
-	u_int in1[] = {5}, in2[] = {1}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {5}, in2[] = {1}, out[] = {4};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -592,12 +655,15 @@ TEST_F(negative_additions, test_5_plus_neg1)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
-TEST_F(negative_additions, test_minus5_plus_1)
+TEST_F(negative_additions, test_neg5_plus_1)
 {
-	u_int in1[] = {5}, in2[] = {1}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {5}, in2[] = {1}, out[] = {4};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -605,13 +671,16 @@ TEST_F(negative_additions, test_minus5_plus_1)
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
 	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
+							 .is_negative = true,
 							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 struct large_additions
@@ -641,7 +710,10 @@ TEST_F(large_additions, test_o1kb_plus_o1kc)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(large_additions, test_o1kb_plus_o1ka)
@@ -662,7 +734,10 @@ TEST_F(large_additions, test_o1kb_plus_o1ka)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(large_additions, test_o500c_plus_o500d)
@@ -683,7 +758,10 @@ TEST_F(large_additions, test_o500c_plus_o500d)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(large_additions, test_o500d_plus_o500c)
@@ -704,7 +782,10 @@ TEST_F(large_additions, test_o500d_plus_o500c)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 /* ################################################################### */
@@ -727,7 +808,10 @@ TEST_F(zero_len_arrays, test_nullarray_plus_0i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(zero_len_arrays, test_nullarray_plus_490998i)
@@ -741,7 +825,10 @@ TEST_F(zero_len_arrays, test_nullarray_plus_490998i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 /* simple_additions */
@@ -758,7 +845,10 @@ TEST_F(simple_additions, test_0_plus_0i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_1_plus_0i)
@@ -773,7 +863,10 @@ TEST_F(simple_additions, test_1_plus_0i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_0_plus_1i)
@@ -788,7 +881,10 @@ TEST_F(simple_additions, test_0_plus_1i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_1_plus_1i)
@@ -803,7 +899,10 @@ TEST_F(simple_additions, test_1_plus_1i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_12345_plus_54321i)
@@ -818,7 +917,10 @@ TEST_F(simple_additions, test_12345_plus_54321i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(simple_additions, test_54321_plus_12345i)
@@ -833,7 +935,10 @@ TEST_F(simple_additions, test_54321_plus_12345i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 /* long_additions */
@@ -852,7 +957,10 @@ TEST_F(long_additions, test_1_plus_longi)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(long_additions, test_999999999_plus_1i)
@@ -867,7 +975,10 @@ TEST_F(long_additions, test_999999999_plus_1i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(long_additions, test_999999999999999999_plus_999999999i)
@@ -882,7 +993,10 @@ TEST_F(long_additions, test_999999999999999999_plus_999999999i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(long_additions, test_long9s_plus_1i)
@@ -900,7 +1014,10 @@ TEST_F(long_additions, test_long9s_plus_1i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 /* negative_additions */
@@ -919,12 +1036,15 @@ TEST_F(negative_additions, test_neg1_plus_neg1i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(negative_additions, test_1_plus_neg1i)
 {
-	u_int in1[] = {1}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {1}, out[] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -935,12 +1055,15 @@ TEST_F(negative_additions, test_1_plus_neg1i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(negative_additions, test_neg1_plus_1i)
 {
-	u_int in1[] = {1}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {1}, out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -952,12 +1075,15 @@ TEST_F(negative_additions, test_neg1_plus_1i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 TEST_F(negative_additions, test_5_plus_neg1i)
 {
-	u_int in1[] = {5}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {5}, out[] = {4};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -968,12 +1094,15 @@ TEST_F(negative_additions, test_5_plus_neg1i)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
-TEST_F(negative_additions, test_minus5_plus_1i)
+TEST_F(negative_additions, test_neg5_plus_1i)
 {
-	u_int in1[] = {5}, out[] = {DUMMY_VALUE};
+	u_int in1[] = {5}, out[] = {4};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -983,7 +1112,10 @@ TEST_F(negative_additions, test_minus5_plus_1i)
 							 .num = out};
 	tau->output = bi_add_int(&(tau->num1), 1);
 
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
 
 /* large_additions */
@@ -1003,5 +1135,8 @@ TEST_F(large_additions, test_o1kb_plus_longmaxi)
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK(tau->output->num == tau->expected.num);
+	CHECK_BUF_EQ(
+		tau->output->num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
 }
