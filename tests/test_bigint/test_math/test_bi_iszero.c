@@ -1,14 +1,5 @@
 #include "tests.h"
 
-struct null_inputs
-{
-	bigint num1, num2, expected, *output;
-};
-
-TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
-
-TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
-
 TEST(null_inputs, test_NULL) { CHECK(bi_iszero(NULL) == false); }
 
 struct null_array

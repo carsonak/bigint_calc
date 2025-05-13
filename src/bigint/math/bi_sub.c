@@ -4,7 +4,7 @@
 static ATTR_NONNULL bigint *
 subtract(bigint const *const n1, bigint const *const n2);
 static ATTR_NONNULL bigint *
-subtract_negatives(bigint *const n1, bigint *const n2);
+subtract_negatives(bigint *const restrict n1, bigint *const restrict n2);
 
 /**
  * subtract - subtract two bigints.
@@ -92,7 +92,8 @@ static bigint *subtract(bigint const *const n1, bigint const *const n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-static bigint *subtract_negatives(bigint *const n1, bigint *const n2)
+static bigint *
+subtract_negatives(bigint *const restrict n1, bigint *const restrict n2)
 {
 	const bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bigint *result = NULL;
@@ -128,7 +129,7 @@ static bigint *subtract_negatives(bigint *const n1, bigint *const n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-bigint *bi_subtract(bigint *const n1, bigint *const n2)
+bigint *bi_subtract(bigint *const restrict n1, bigint *const restrict n2)
 {
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);

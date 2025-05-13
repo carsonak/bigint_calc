@@ -849,17 +849,17 @@ TEST_F(large_subtractions, test_o500d_minus_o500c)
 
 /* null_inputs */
 
-TEST_F(null_inputs, test_null_minus_0i)
+TEST(null_inputs, test_null_minus_0i)
 {
 	CHECK_PTR_EQ(bi_isubtract_int(NULL, 0), NULL);
 }
 
-TEST_F(null_inputs, test_null_minus_1i)
+TEST(null_inputs, test_null_minus_1i)
 {
 	CHECK_PTR_EQ(bi_isubtract_int(NULL, 1), NULL);
 }
 
-TEST_F(null_inputs, test_null_minus_neg1i)
+TEST(null_inputs, test_null_minus_neg1i)
 {
 	CHECK_PTR_EQ(bi_isubtract_int(NULL, -1), NULL);
 }

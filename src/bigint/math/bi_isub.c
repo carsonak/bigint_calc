@@ -4,7 +4,7 @@
 static ATTR_NONNULL void
 isubtract(bigint *const restrict n1, bigint *const restrict n2);
 static ATTR_NONNULL bool
-isubtract_negatives(bigint *const n1, bigint *const n2);
+isubtract_negatives(bigint *const restrict n1, bigint *const restrict n2);
 
 /**
  * isubtract - subtract two bigints inplace.

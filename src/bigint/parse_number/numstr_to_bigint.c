@@ -3,8 +3,9 @@
 #include "bigint.h"
 #include "parse_number.h"
 
-#include "char_int_conversion.c"
+#include "char_to_int.c"
 #include "count_digits.c"
+#include "is_valid_radix.c"
 
 /**
  * numstr_to_bi - convert a numstr to a `bigint`.

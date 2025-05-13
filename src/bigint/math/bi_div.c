@@ -5,8 +5,9 @@
 static ATTR_NONNULL bool check_division_by_0(const bigint *const n2);
 static ATTR_NONNULL bool
 quotient_is_less_than_1(const bigint *const n1, const bigint *const n2);
-static ATTR_NONNULL bigint *
-get_remainder(bigint *const n1, bigint *const n2, bigint *quotient);
+static ATTR_NONNULL bigint *get_remainder(
+	bigint *const restrict n1, bigint *const restrict n2, bigint *quotient
+);
 static ATTR_NONNULL l_int get_current_quotient(
 	bigint *const restrict slice, bigint *const restrict n2,
 	bigint *restrict *const restrict remainder
@@ -15,9 +16,10 @@ static ATTR_NONNULL_IDX(1, 3, 5) len_type drop_next(
 	bigint *const restrict slice, const bigint *const restrict remainder,
 	const bigint *const n1, len_type n1_i, const bigint *const n2
 );
-static ATTR_NONNULL bi_div_res divide(bigint *const n1, bigint *const n2);
 static ATTR_NONNULL bi_div_res
-divide_negatives(bigint *const n1, bigint *const n2);
+divide(bigint *const restrict n1, bigint *const restrict n2);
+static ATTR_NONNULL bi_div_res
+divide_negatives(bigint *const restrict n1, bigint *const restrict n2);
 
 /**
  * check_division_by_0 - checks if the denominator is zero.
@@ -29,7 +31,7 @@ static bool check_division_by_0(const bigint *const n2)
 {
 	if (n2->len < 1 || (n2->len == 1 && !n2->num[0]))
 	{
-		fprintf(stderr, "Division by zero error.\n");
+		fprintf(stderr, "Error: division by zero.\n");
 		return (true);
 	}
 
@@ -202,7 +204,7 @@ static len_type drop_next(
  * Return: a struct with pointers to the results,
  * struct with NULL pointers on error.
  */
-static bi_div_res divide(bigint *const n1, bigint *const n2)
+static bi_div_res divide(bigint *const restrict n1, bigint *const restrict n2)
 {
 	bigint *current_slice = NULL;
 	len_type slice_offset = 1, q_i = 0, n1_i = 0, dropped = 0;
@@ -285,7 +287,8 @@ error_cleanup:
  * Return: a struct with pointers to the results,
  * struct with NULL pointers on error.
  */
-static bi_div_res divide_negatives(bigint *const n1, bigint *const n2)
+static bi_div_res
+divide_negatives(bigint *const restrict n1, bigint *const restrict n2)
 {
 	const bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 	bi_div_res res = {0};
@@ -332,7 +335,8 @@ cleanup:
  * Return: a struct with pointers to the results,
  * struct with NULL pointers on error.
  */
-bi_div_res bi_divide_with_remainder(bigint *const n1, bigint *const n2)
+bi_div_res
+bi_divide_with_remainder(bigint *const restrict n1, bigint *const restrict n2)
 {
 	bi_div_res res = {0};
 
@@ -405,7 +409,7 @@ error_cleanup:
  *
  * Return: pointer to the result, NULL on failure.
  */
-bigint *bi_divide(bigint *const n1, bigint *const n2)
+bigint *bi_divide(bigint *const restrict n1, bigint *const restrict n2)
 {
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
@@ -424,7 +428,7 @@ bigint *bi_divide(bigint *const n1, bigint *const n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-bigint *bi_modulo(bigint *const n1, bigint *const n2)
+bigint *bi_modulo(bigint *const restrict n1, bigint *const restrict n2)
 {
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);

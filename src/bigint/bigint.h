@@ -31,13 +31,14 @@ bigint *bi_dup(bigint *const n);
 
 bool bi_iszero(bigint const *const x);
 
-bi_div_res bi_divide_with_remainder(bigint *const n1, bigint *const n2);
-bigint *bi_add(bigint *const n1, bigint *const n2);
-bigint *bi_divide(bigint *const n1, bigint *const n2);
-bigint *bi_modulo(bigint *const n1, bigint *const n2);
-bigint *bi_multiply(bigint *const n1, bigint *const n2);
+bi_div_res
+bi_divide_with_remainder(bigint *const restrict n1, bigint *const restrict n2);
+bigint *bi_add(bigint *const restrict n1, bigint *const restrict n2);
+bigint *bi_divide(bigint *const restrict n1, bigint *const restrict n2);
+bigint *bi_modulo(bigint *const restrict n1, bigint *const restrict n2);
+bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_power(bigint *base, bigint *exponent);
-bigint *bi_subtract(bigint *const n1, bigint *const n2);
+bigint *bi_subtract(bigint *const restrict n1, bigint *const restrict n2);
 
 bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2);
 bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2);

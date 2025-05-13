@@ -9,7 +9,9 @@ static ATTR_NONNULL_IDX(2) char map_digits(const char c, void *radix);
 static len_type
 leading_chars_span(char const *const str, char const *const ch);
 
-#include "char_int_conversion.c"
+#include "char_to_int.c"
+#include "int_to_char.c"
+#include "is_valid_radix.c"
 
 /**
  * map_digits - validates that characters are acceptable digits.

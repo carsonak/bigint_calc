@@ -9,7 +9,7 @@ TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
 
-TEST_F(null_inputs, test_null_plus_null)
+TEST(null_inputs, test_null_plus_null)
 {
 	CHECK_PTR_EQ(bi_add(NULL, NULL), NULL);
 }
@@ -306,13 +306,15 @@ TEST_F_TEARDOWN(simple_additions) { tau->output = bi_delete(tau->output); }
 
 TEST_F(simple_additions, test_0_plus_0)
 {
-	u_int in1[1] = {0}, out[1] = {0};
+	u_int in1[1] = {0}, in2[1] = {0}, out[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
-	tau->output = bi_add(&(tau->num1), &(tau->num1));
+	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
@@ -364,13 +366,15 @@ TEST_F(simple_additions, test_0_plus_1)
 
 TEST_F(simple_additions, test_1_plus_1)
 {
-	u_int in1[] = {1}, out[] = {2};
+	u_int in1[] = {1}, in2[1] = {1}, out[] = {2};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = in2;
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
-	tau->output = bi_add(&(tau->num1), &(tau->num1));
+	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
@@ -792,9 +796,9 @@ TEST_F(large_additions, test_o500d_plus_o500c)
 /* ######################## bi_add_int ############################### */
 /* ################################################################### */
 
-TEST_F(null_inputs, test_null_plus_0i) { CHECK(bi_add_int(NULL, 0) == NULL); }
+TEST(null_inputs, test_null_plus_0i) { CHECK(bi_add_int(NULL, 0) == NULL); }
 
-TEST_F(null_inputs, test_null_plus_1i) { CHECK(bi_add_int(NULL, 1) == NULL); }
+TEST(null_inputs, test_null_plus_1i) { CHECK(bi_add_int(NULL, 1) == NULL); }
 
 /* zero_len_arrays */
 

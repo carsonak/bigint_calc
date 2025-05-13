@@ -19,7 +19,7 @@
             "name": "default-debug",
             "description": "Code-Compile-Debug",
             "configurePreset": "default-debug",
-            "jobs": 8,
+            "jobs": 4,
             "configuration": "Debug"
         }
     ],

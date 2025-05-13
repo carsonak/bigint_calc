@@ -56,7 +56,6 @@ static void subtract_inplace(bigint **const n1, bigint *const n2)
  */
 bigint *bi_power(bigint *const base, bigint *const exponent)
 {
-	u_int one[1] = {1}, two[1] = {2};
 	bigint tmp = {.len = 1, .is_negative = false, .num = (u_int[1]){1}};
 	bigint *x = NULL, *y = NULL, *exp = NULL;
 
@@ -74,13 +73,18 @@ bigint *bi_power(bigint *const base, bigint *const exponent)
 		return (x);
 	}
 
+	if (exponent->is_negative)
+	{
+		fprintf(stderr, "Negative exponents not implemented.\n");
+		exit(EXIT_FAILURE);
+	}
+
 	exp = bi_dup(exponent);
 	x = bi_dup(base);
 	y = _bi_alloc(1);
 	if (!exp || !x || !y)
 		goto cleanup;
 
-	exp->is_negative = false;
 	x->is_negative = false;
 	y->num[0] = 1;
 	tmp.num[0] = 2;

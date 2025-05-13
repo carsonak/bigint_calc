@@ -3,11 +3,21 @@ cmake_minimum_required(VERSION 3.27)
 project(
     bigint_calc
     DESCRIPTION "Simple arbitrary precision calculator"
-    LANGUAGES C
-)
+    LANGUAGES C)
 
-add_compile_options(-fsanitize=address -fsanitize=undefined)
-add_link_options(-fsanitize=address -fsanitize=undefined)
+# Compiler warnings
+set(CMAKE_C_STANDARD 17)
+add_compile_options(
+    -Wall
+    -Wextra
+    -pedantic
+    -Wformat=2
+    -Wshadow
+    -Wduplicated-branches
+    -Wduplicated-cond
+    -Werror
+    "$<$<CONFIG:Debug>:-fsanitize=address,undefined>")
+add_link_options("$<$<CONFIG:Debug>:-fsanitize=address,undefined>")
 
 add_subdirectory(src)
 

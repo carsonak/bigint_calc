@@ -3,7 +3,8 @@
 
 static ATTR_NONNULL void
 iadd(bigint *const restrict n1, bigint const *const restrict n2);
-static ATTR_NONNULL bool iadd_negatives(bigint *const n1, bigint *const n2);
+static ATTR_NONNULL bool
+iadd_negatives(bigint *const restrict n1, bigint *const restrict n2);
 
 /**
  * iadd - add two bigints inplace.
@@ -43,7 +44,8 @@ static void iadd(bigint *const restrict n1, bigint const *const restrict n2)
  *
  * Return: true on success, false on failure.
  */
-static bool iadd_negatives(bigint *const n1, bigint *const n2)
+static bool
+iadd_negatives(bigint *const restrict n1, bigint *const restrict n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
 
