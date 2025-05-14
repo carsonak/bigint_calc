@@ -2,6 +2,7 @@ target_sources(bigint
     PUBLIC bi_add.c
            bi_iadd.c
            bi_sub.c
+           bi_isNaN.c
            bi_isub.c
            bi_iszero.c
            bi_mul.c

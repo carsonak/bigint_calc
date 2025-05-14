@@ -116,12 +116,12 @@ TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
 
-TEST_F(zero_len_arrays, test_nullarray_minus_nullarray)
+TEST_F(zero_len_arrays, test_NaN_minus_NaN)
 {
 	CHECK_PTR_EQ(bi_isubtract(&(tau->num1), &(tau->num2)), NULL);
 }
 
-TEST_F(zero_len_arrays, test_4490998_minus_nullarray)
+TEST_F(zero_len_arrays, test_4490998_minus_NaN)
 {
 	u_int in1[] = {4490998}, out[] = {4490998};
 
@@ -141,7 +141,7 @@ TEST_F(zero_len_arrays, test_4490998_minus_nullarray)
 	);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_minus_largenum)
+TEST_F(zero_len_arrays, test_NaN_minus_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
@@ -866,12 +866,12 @@ TEST(null_inputs, test_null_minus_neg1i)
 
 /* zero_len_arrays */
 
-TEST_F(zero_len_arrays, test_nullarray_minus_0i)
+TEST_F(zero_len_arrays, test_NaN_minus_0i)
 {
 	CHECK_PTR_EQ(bi_isubtract_int(&(tau->num1), 0), NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_minus_490998i)
+TEST_F(zero_len_arrays, test_NaN_minus_490998i)
 {
 	CHECK_PTR_EQ(bi_isubtract_int(&(tau->num1), 490998), NULL);
 }

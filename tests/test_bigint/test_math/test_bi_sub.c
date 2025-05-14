@@ -9,11 +9,9 @@ TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
 
-TEST_F(null_inputs, test_null_minus_null)
+TEST(null_inputs, test_null_minus_null)
 {
-	tau->output = bi_subtract(NULL, NULL);
-
-	CHECK(tau->output == 0);
+	CHECK_PTR_EQ(bi_subtract(NULL, NULL), NULL);
 }
 
 TEST_F(null_inputs, test_1_minus_null)
@@ -23,9 +21,8 @@ TEST_F(null_inputs, test_1_minus_null)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->output = bi_subtract(&(tau->num1), NULL);
 
-	CHECK(tau->output == 0);
+	CHECK_PTR_EQ(bi_subtract(&(tau->num1), NULL), NULL);
 }
 
 TEST_F(null_inputs, test_null_minus_1)
@@ -34,9 +31,8 @@ TEST_F(null_inputs, test_null_minus_1)
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
-	tau->output = bi_subtract(NULL, &(tau->num2));
 
-	CHECK(tau->output == 0);
+	CHECK_PTR_EQ(bi_subtract(NULL, &(tau->num2)), NULL);
 }
 
 TEST_F(null_inputs, test_0_minus_null)
@@ -46,9 +42,8 @@ TEST_F(null_inputs, test_0_minus_null)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->output = bi_subtract(&(tau->num1), NULL);
 
-	CHECK(tau->output == 0);
+	CHECK_PTR_EQ(bi_subtract(&(tau->num1), NULL), NULL);
 }
 
 TEST_F(null_inputs, test_null_minus_0)
@@ -57,9 +52,8 @@ TEST_F(null_inputs, test_null_minus_0)
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
-	tau->output = bi_subtract(NULL, &(tau->num2));
 
-	CHECK(tau->output == 0);
+	CHECK_PTR_EQ(bi_subtract(NULL, &(tau->num2)), NULL);
 }
 
 TEST_F(null_inputs, test_neg1_minus_null)
@@ -69,9 +63,8 @@ TEST_F(null_inputs, test_neg1_minus_null)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->output = bi_subtract(&(tau->num1), NULL);
 
-	CHECK(tau->output == 0);
+	CHECK_PTR_EQ(bi_subtract(&(tau->num1), NULL), NULL);
 }
 
 TEST_F(null_inputs, test_null_minus_neg1)
@@ -81,53 +74,49 @@ TEST_F(null_inputs, test_null_minus_neg1)
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
 	tau->num2.is_negative = true;
-	tau->output = bi_subtract(NULL, &(tau->num2));
 
-	CHECK(tau->output == 0);
+	CHECK_PTR_EQ(bi_subtract(NULL, &(tau->num2)), NULL);
 }
 
-struct zero_len_arrays
+struct not_a_number
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(not_a_number) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(not_a_number) { tau->output = bi_delete(tau->output); }
 
-TEST_F(zero_len_arrays, test_nullarray_minus_nullarray)
+TEST_F(not_a_number, test_NaN_minus_NaN)
 {
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == 0);
 	CHECK(tau->output->is_negative == 0);
-	CHECK(tau->output->num == 0);
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_nullarray_minus_nullarray)
+TEST_F(not_a_number, test_neg_NaN_minus_NaN)
 {
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	tau->num1.is_negative = true;
 	CHECK(tau->output->len == 0);
 	CHECK(tau->output->is_negative == 0);
-	CHECK(tau->output->num == 0);
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_minus_neg_nullarray)
+TEST_F(not_a_number, test_NaN_minus_neg_NaN)
 {
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	tau->num2.is_negative = true;
 	CHECK(tau->output->len == 0);
 	CHECK(tau->output->is_negative == 0);
-	CHECK(tau->output->num == 0);
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_nullarray_minus_neg_nullarray)
+TEST_F(not_a_number, test_neg_NaN_minus_neg_NaN)
 {
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
@@ -135,176 +124,123 @@ TEST_F(zero_len_arrays, test_neg_nullarray_minus_neg_nullarray)
 	tau->num2.is_negative = true;
 	CHECK(tau->output->len == 0);
 	CHECK(tau->output->is_negative == 0);
-	CHECK(tau->output->num == 0);
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_4490998_minus_nullarray)
+TEST_F(not_a_number, test_4490998_minus_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	u_int in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
-	);
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_4490998_minus_nullarray)
+TEST_F(not_a_number, test_neg_4490998_minus_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	u_int in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	/* Mocked out! */
-	/* cr_expect(eq(sz, tau->output->len, tau->expected.len)); */
+	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	/* cr_expect(eq(u32[tau->expected.len], tau->output->num, tau->expected.num)); */
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_4490998_minus_neg_nullarray)
+TEST_F(not_a_number, test_4490998_minus_neg_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	u_int in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
 	tau->num2.is_negative = true;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
-	);
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_4490998_minus_neg_nullarray)
+TEST_F(not_a_number, test_neg_4490998_minus_neg_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	u_int in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
 	tau->num2.is_negative = true;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
-	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
-
-	/* Mocked out! */
-	/* cr_expect(eq(sz, tau->output->len, tau->expected.len)); */
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	/* cr_expect(eq(u32[tau->expected.len], tau->output->num, tau->expected.num)); */
-	tau->output = bi_delete(tau->output);
-}
-
-TEST_F(zero_len_arrays, test_nullarray_minus_largenum)
-{
-	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
-	);
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_nullarray_minus_largenum)
+TEST_F(not_a_number, test_NaN_minus_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+
+	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
+						 .is_negative = false,
+						 .num = in2};
+	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
+
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_PTR_EQ(tau->output->num, NULL);
+}
+
+TEST_F(not_a_number, test_neg_NaN_minus_largenum)
+{
+	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num1.is_negative = true;
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = false,
 						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
-	);
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_minus_neg_largenum)
+TEST_F(not_a_number, test_NaN_minus_neg_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = true,
 						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	/* Mocked out! */
-	/* cr_expect(eq(sz, tau->output->len, tau->expected.len)); */
+	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	/* cr_expect(eq(u32[tau->expected.len], tau->output->num, tau->expected.num)); */
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_nullarray_minus_neg_largenum)
+TEST_F(not_a_number, test_neg_NaN_minus_neg_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num1.is_negative = true;
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = true,
 						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
-	/* Mocked out! */
-	/* cr_expect(eq(sz, tau->output->len, tau->expected.len)); */
+	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	/* cr_expect(eq(u32[tau->expected.len], tau->output->num, tau->expected.num)); */
-	tau->output = bi_delete(tau->output);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 struct simple_subtractions
@@ -335,7 +271,6 @@ TEST_F(simple_subtractions, test_0_minus_0)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_1_minus_0)
@@ -357,7 +292,6 @@ TEST_F(simple_subtractions, test_1_minus_0)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_0_minus_1)
@@ -380,7 +314,6 @@ TEST_F(simple_subtractions, test_0_minus_1)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_1_minus_1)
@@ -402,7 +335,6 @@ TEST_F(simple_subtractions, test_1_minus_1)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_MAX_VAL_u4b_minus_neg50000)
@@ -424,7 +356,6 @@ TEST_F(simple_subtractions, test_MAX_VAL_u4b_minus_neg50000)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(simple_subtractions, test_50000_minus_100000000)
@@ -447,7 +378,6 @@ TEST_F(simple_subtractions, test_50000_minus_100000000)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 struct same_number_subtractions
@@ -484,7 +414,6 @@ TEST_F(same_number_subtractions, test_1_minus_1)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_1000000001_minus_1000000001)
@@ -509,7 +438,6 @@ TEST_F(same_number_subtractions, test_1000000001_minus_1000000001)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_longnum_minus_longnum)
@@ -534,7 +462,6 @@ TEST_F(same_number_subtractions, test_longnum_minus_longnum)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_largenum_minus_largenum)
@@ -561,7 +488,6 @@ TEST_F(same_number_subtractions, test_largenum_minus_largenum)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_almostsame_minus_almostsame)
@@ -588,7 +514,6 @@ TEST_F(same_number_subtractions, test_almostsame_minus_almostsame)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(same_number_subtractions, test_almostsame_minus_almostsame_reverse)
@@ -615,7 +540,6 @@ TEST_F(same_number_subtractions, test_almostsame_minus_almostsame_reverse)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 struct long_subtractions
@@ -649,7 +573,6 @@ TEST_F(long_subtractions, test_long9s_minus_1)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_1_minus_long9s)
@@ -675,7 +598,6 @@ TEST_F(long_subtractions, test_1_minus_long9s)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_long_sparse_num1_minus_long_sparse_num2)
@@ -700,7 +622,6 @@ TEST_F(long_subtractions, test_long_sparse_num1_minus_long_sparse_num2)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_long_sparse_num2_minus_long_sparse_num1)
@@ -724,7 +645,6 @@ TEST_F(long_subtractions, test_long_sparse_num2_minus_long_sparse_num1)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_4000000000678_minus_999999000)
@@ -746,7 +666,6 @@ TEST_F(long_subtractions, test_4000000000678_minus_999999000)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(long_subtractions, test_999999000_minus_4000000000678)
@@ -769,7 +688,6 @@ TEST_F(long_subtractions, test_999999000_minus_4000000000678)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 struct negative_subtractions
@@ -805,7 +723,6 @@ TEST_F(negative_subtractions, test_neg1_minus_neg1)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(negative_subtractions, test_1_minus_neg1)
@@ -828,7 +745,6 @@ TEST_F(negative_subtractions, test_1_minus_neg1)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(negative_subtractions, test_neg1_minus_1)
@@ -852,7 +768,6 @@ TEST_F(negative_subtractions, test_neg1_minus_1)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 struct large_subtractions
@@ -886,7 +801,6 @@ TEST_F(large_subtractions, test_o1kb_minus_o1kc)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(large_subtractions, test_o1kb_minus_o1ka)
@@ -912,7 +826,6 @@ TEST_F(large_subtractions, test_o1kb_minus_o1ka)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(large_subtractions, test_o500c_minus_o500d)
@@ -937,7 +850,6 @@ TEST_F(large_subtractions, test_o500c_minus_o500d)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 TEST_F(large_subtractions, test_o500d_minus_o500c)
@@ -963,7 +875,6 @@ TEST_F(large_subtractions, test_o500d_minus_o500c)
 		tau->output->num, tau->expected.num,
 		tau->expected.len * sizeof(*(tau->expected.num))
 	);
-	tau->output = bi_delete(tau->output);
 }
 
 /* ################################################################### */
@@ -987,39 +898,24 @@ TEST(null_inputs, test_null_minus_neg1i)
 	CHECK_PTR_EQ(bi_subtract_int(NULL, -1), NULL);
 }
 
-/* zero_len_arrays */
+/* not_a_number */
 
-TEST_F(zero_len_arrays, test_nullarray_minus_0i)
+TEST_F(not_a_number, test_NaN_minus_0i)
 {
-	u_int out[1] = {0};
-
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
 	tau->output = bi_subtract_int(&(tau->num1), 0);
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_minus_490998i)
+TEST_F(not_a_number, test_NaN_minus_490998i)
 {
-	u_int out[1] = {490998};
-
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
 	tau->output = bi_subtract_int(&(tau->num1), 490998);
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 /* simple_subtractions */

@@ -34,6 +34,7 @@ bigint *_bi_resize(bigint *bi, const len_type len);
 
 /* utilities */
 
+bool _bi_isNaN_const(const bigint *const n);
 void _bi_trim(bigint *const arr);
 intmax_t _bi_compare_int_const(const bigint *const n1, const intmax_t n2);
 intmax_t _bi_compare_const(const bigint *const n1, const bigint *const n2);

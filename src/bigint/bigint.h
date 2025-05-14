@@ -35,6 +35,7 @@ bigint *bi_dup(bigint *const n);
 /* `bigint` math */
 
 bool bi_iszero(bigint const *const x);
+bool bi_isNaN(bigint *const n);
 
 bi_div_res
 bi_divide_with_remainder(bigint *const restrict n1, bigint *const restrict n2);

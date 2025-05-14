@@ -84,7 +84,7 @@ iadd_negatives(bigint *const restrict n1, bigint *const restrict n2)
  * The results of the addittion will be stored in n1. No extra memory
  * will be allocated via calls to *alloc family functions.
  *
- * Return: 1 on success, 0 on failure (if n1 is NULL).
+ * Return: 1 on success, 0 on failure.
  */
 bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
 {
@@ -97,6 +97,9 @@ bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
 		return (true);
 
 	_bi_trim(n2);
+	if (bi_isNaN(n1) || bi_isNaN(n2))
+		return (false);
+
 	if (n1->is_negative || n2->is_negative)
 		return (iadd_negatives(n1, n2));
 

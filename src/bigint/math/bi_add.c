@@ -100,6 +100,9 @@ bigint *bi_add(bigint *const restrict n1, bigint *const restrict n2)
 
 	_bi_trim(n1);
 	_bi_trim(n2);
+	if (bi_isNaN(n1) || bi_isNaN(n2))
+		return (_bi_alloc(0));
+
 	if (n1->is_negative || n2->is_negative)
 		return (add_negatives(n1, n2));
 

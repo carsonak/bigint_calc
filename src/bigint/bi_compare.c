@@ -64,6 +64,9 @@ intmax_t _bi_compare_const(const bigint *const n1, const bigint *const n2)
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (0);
 
+	if (!n1->num || !n2->num)
+		return (0);
+
 	if (n1->is_negative && n2->is_negative)
 	{
 		if (n2->len - n1->len)

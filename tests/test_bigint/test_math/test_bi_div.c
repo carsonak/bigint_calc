@@ -93,15 +93,17 @@ TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
 
-TEST_F(zero_len_arrays, test_nullarray_over_nullarray)
+TEST_F(zero_len_arrays, test_NaN_over_NaN)
 {
 	/* cr_redirect_stderr(); */
 	tau->output = bi_divide(&(tau->num1), &(tau->num2));
 
-	CHECK_PTR_EQ(tau->output, NULL);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_4490998_over_nullarray)
+TEST_F(zero_len_arrays, test_4490998_over_NaN)
 {
 	u_int in1[] = {4490998};
 
@@ -110,27 +112,22 @@ TEST_F(zero_len_arrays, test_4490998_over_nullarray)
 	tau->num1.num = in1;
 	tau->output = bi_divide(&(tau->num1), &(tau->num2));
 
-	CHECK_PTR_EQ(tau->output, NULL);
+	CHECK(tau->output->len == tau->expected.len);
+	CHECK(tau->output->is_negative == tau->expected.is_negative);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_null_over_largenum)
+TEST_F(zero_len_arrays, test_NaN_over_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[1] = {0};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-
 	tau->output = bi_divide(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 struct division_by_zero

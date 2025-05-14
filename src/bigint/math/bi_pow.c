@@ -40,6 +40,9 @@ bigint *bi_power(bigint *const base, const intmax_t exponent)
 	}
 
 	_bi_trim(base);
+	if (bi_isNaN(base))
+		return (_bi_alloc(0));
+
 	if (bi_iszero(base) || exponent == 0)
 	{
 		/* x^0==1 */

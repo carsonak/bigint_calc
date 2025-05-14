@@ -13,26 +13,26 @@ TEST_F_TEARDOWN(null_array) { tau->output = bi_delete(tau->output); }
 
 TEST_F(null_array, test_nullarray_len0)
 {
-	CHECK(bi_iszero(&(tau->num1)) == true);
+	CHECK(bi_iszero(&(tau->num1)) == false);
 }
 
 TEST_F(null_array, test_nullarray_len0_neg)
 {
 	tau->num1.is_negative = true;
-	CHECK(bi_iszero(&(tau->num1)) == true);
+	CHECK(bi_iszero(&(tau->num1)) == false);
 }
 
 TEST_F(null_array, test_nullarray_len1)
 {
 	tau->num1.len = 1;
-	CHECK(bi_iszero(&(tau->num1)) == true);
+	CHECK(bi_iszero(&(tau->num1)) == false);
 }
 
 TEST_F(null_array, test_nullarray_len1_neg)
 {
 	tau->num1.len = 1;
 	tau->num1.is_negative = true;
-	CHECK(bi_iszero(&(tau->num1)) == true);
+	CHECK(bi_iszero(&(tau->num1)) == false);
 }
 
 struct incorrect_length

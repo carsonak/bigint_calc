@@ -205,7 +205,7 @@ TEST_F_SETUP(trim_null_array) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(trim_null_array) { tau->output = bi_delete(tau->output); }
 
-TEST_F(trim_null_array, test_nullarray)
+TEST_F(trim_null_array, test_NaN)
 {
 	_bi_trim(&(tau->num1));
 
@@ -214,7 +214,7 @@ TEST_F(trim_null_array, test_nullarray)
 	CHECK_PTR_EQ(tau->num1.num, NULL);
 }
 
-TEST_F(trim_null_array, test_nullarray_neg)
+TEST_F(trim_null_array, test_NaN_neg)
 {
 	tau->num1.is_negative = true;
 
@@ -225,7 +225,7 @@ TEST_F(trim_null_array, test_nullarray_neg)
 	CHECK_PTR_EQ(tau->num1.num, NULL);
 }
 
-TEST_F(trim_null_array, test_nullarray_len5)
+TEST_F(trim_null_array, test_NaN_len5)
 {
 	tau->num1.len = 5;
 
@@ -236,7 +236,7 @@ TEST_F(trim_null_array, test_nullarray_len5)
 	CHECK_PTR_EQ(tau->num1.num, NULL);
 }
 
-TEST_F(trim_null_array, test_nullarray_len5_neg)
+TEST_F(trim_null_array, test_NaN_len5_neg)
 {
 	tau->num1.len = 5;
 	tau->num1.is_negative = true;

@@ -108,12 +108,12 @@ TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
 
-TEST_F(zero_len_arrays, test_nullarray_plus_nullarray)
+TEST_F(zero_len_arrays, test_NaN_plus_NaN)
 {
 	CHECK_PTR_EQ(bi_iadd(&(tau->num1), &(tau->num2)), NULL);
 }
 
-TEST_F(zero_len_arrays, test_4490998_plus_nullarray)
+TEST_F(zero_len_arrays, test_4490998_plus_NaN)
 {
 	u_int in1[] = {4490998}, out[] = {4490998};
 
@@ -131,7 +131,7 @@ TEST_F(zero_len_arrays, test_4490998_plus_nullarray)
 	);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_plus_largenum)
+TEST_F(zero_len_arrays, test_NaN_plus_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
@@ -650,7 +650,7 @@ TEST(null_inputs, test_null_plus_1i)
 	CHECK_PTR_EQ(bi_iadd_int(NULL, 1), NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_plus_0i)
+TEST_F(zero_len_arrays, test_NaN_plus_0i)
 {
 	CHECK_PTR_EQ(bi_iadd_int(&(tau->num1), 0), NULL);
 }

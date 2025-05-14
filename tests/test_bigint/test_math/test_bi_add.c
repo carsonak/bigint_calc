@@ -78,16 +78,16 @@ TEST_F(null_inputs, test_null_plus_neg1)
 	CHECK_PTR_EQ(bi_add(NULL, &(tau->num2)), NULL);
 }
 
-struct zero_len_arrays
+struct not_a_number
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(zero_len_arrays) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(not_a_number) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(not_a_number) { tau->output = bi_delete(tau->output); }
 
-TEST_F(zero_len_arrays, test_nullarray_plus_nullarray)
+TEST_F(not_a_number, test_NaN_plus_NaN)
 {
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
@@ -96,7 +96,7 @@ TEST_F(zero_len_arrays, test_nullarray_plus_nullarray)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_nullarray_plus_nullarray)
+TEST_F(not_a_number, test_neg_NaN_plus_NaN)
 {
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
@@ -106,7 +106,7 @@ TEST_F(zero_len_arrays, test_neg_nullarray_plus_nullarray)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_plus_neg_nullarray)
+TEST_F(not_a_number, test_NaN_plus_neg_NaN)
 {
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
@@ -116,7 +116,7 @@ TEST_F(zero_len_arrays, test_nullarray_plus_neg_nullarray)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_nullarray_plus_neg_nullarray)
+TEST_F(not_a_number, test_neg_NaN_plus_neg_NaN)
 {
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
@@ -127,172 +127,120 @@ TEST_F(zero_len_arrays, test_neg_nullarray_plus_neg_nullarray)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_4490998_plus_nullarray)
+TEST_F(not_a_number, test_4490998_plus_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	u_int in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_4490998_plus_nullarray)
+TEST_F(not_a_number, test_neg_4490998_plus_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	u_int in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_4490998_plus_neg_nullarray)
+TEST_F(not_a_number, test_4490998_plus_neg_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	u_int in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
 	tau->num2.is_negative = true;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_4490998_plus_neg_nullarray)
+TEST_F(not_a_number, test_neg_4490998_plus_neg_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	u_int in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
 	tau->num2.is_negative = true;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_plus_largenum)
+TEST_F(not_a_number, test_NaN_plus_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = false,
 						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_nullarray_plus_largenum)
+TEST_F(not_a_number, test_neg_NaN_plus_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num1.is_negative = true;
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = false,
 						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_plus_neg_largenum)
+TEST_F(not_a_number, test_NaN_plus_neg_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = true,
 						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_neg_nullarray_plus_neg_largenum)
+TEST_F(not_a_number, test_neg_NaN_plus_neg_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
-	u_int out[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num1.is_negative = true;
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = true,
 						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 struct simple_additions
@@ -800,39 +748,24 @@ TEST(null_inputs, test_null_plus_0i) { CHECK(bi_add_int(NULL, 0) == NULL); }
 
 TEST(null_inputs, test_null_plus_1i) { CHECK(bi_add_int(NULL, 1) == NULL); }
 
-/* zero_len_arrays */
+/* not_a_number */
 
-TEST_F(zero_len_arrays, test_nullarray_plus_0i)
+TEST_F(not_a_number, test_NaN_plus_0i)
 {
-	u_int out[1] = {0};
-
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
 	tau->output = bi_add_int(&(tau->num1), 0);
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(zero_len_arrays, test_nullarray_plus_490998i)
+TEST_F(not_a_number, test_NaN_plus_490998i)
 {
-	u_int out[1] = {490998};
-
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
 	tau->output = bi_add_int(&(tau->num1), 490998);
 
 	CHECK(tau->output->len == tau->expected.len);
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
 /* simple_additions */

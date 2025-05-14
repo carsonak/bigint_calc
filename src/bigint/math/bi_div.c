@@ -350,6 +350,13 @@ bi_divide_with_remainder(bigint *const restrict n1, bigint *const restrict n2)
 
 	_bi_trim(n1);
 	_bi_trim(n2);
+	if (bi_isNaN(n1) || bi_isNaN(n2))
+	{
+		res.quotient = _bi_alloc(0);
+		res.remainder = _bi_alloc(0);
+		return (res);
+	}
+
 	if (check_division_by_0(n2))
 		return (res);
 
