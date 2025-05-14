@@ -27,4 +27,9 @@ void *_numstr_free(numstr *freeable_ptr);
 ATTR_MALLOC ATTR_MALLOC_FREE(_numstr_free)
 numstr *_numstr_alloc(len_type len);
 
+/* printing */
+
+len_type
+_numstr_print(FILE *const restrict stream, const numstr *const restrict num);
+
 #endif /* NUMSTR_INTERNALS_H */

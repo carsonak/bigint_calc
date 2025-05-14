@@ -3,15 +3,15 @@
 
 #include "macros.h"
 
-#include <ctype.h>	 /* isdigit */
-#include <stdio.h>	 /* *printf */
+#include <ctype.h>   /* isdigit */
 #include <stdbool.h> /* bool */
-#include <stddef.h>	 /* size_t, ptr_diff */
-#include <string.h>	 /* strlen, strcpy */
+#include <stddef.h>  /* size_t, ptr_diff */
+#include <stdio.h>   /* *printf */
+#include <string.h>  /* strlen, strcpy */
 
-#include "bigint_math.h"
-#include "numstr.h"
-#include "string_utils.h"
+#include "bigint.h"
+#include "stack.h"
+#include "types.h"
 #include "xalloc.h"
 
 #define ANSI_RED "\x1b[31m"
@@ -71,12 +71,12 @@ typedef struct token
 	union ops op;
 } token;
 
-size_t print_bigint(bigint *arr);
-char *uint_array_to_str(u_int const *const arr, size_t len);
-
 /* shunting_yard */
+
 deque *parse_tokens(char const *const expression);
-void print_syntax_error(char const *const expression, size_t idx, char const *const msg);
+void print_syntax_error(
+	char const *const expression, len_type idx, char const *const msg
+);
 void *free_token(token *freeable_token);
 
 #endif /* PARSING_H */

@@ -18,7 +18,7 @@ static len_type uint_to_array(u_int *const dest, uintmax_t num)
 {
 	len_type i = 0;
 
-	while (num)
+	while (num > 0)
 	{
 		dest[i] = num % BIGINT_BASE;
 		num /= BIGINT_BASE;

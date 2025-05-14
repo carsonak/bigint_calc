@@ -3,6 +3,7 @@
 
 #include "macros.h"
 
+#include <printf.h>  /* *printf, FILE */
 #include <stdbool.h> /* bool */
 #include <stdlib.h>  /* strtoull */
 #include <string.h>  /* memmove */
@@ -55,5 +56,10 @@ bigint *bi_subtract_int(bigint *const n1, const intmax_t n2);
 
 bool bi_iadd_int(bigint *const n1, const intmax_t n2);
 bool bi_isubtract_int(bigint *const n1, const intmax_t n2);
+
+/* printing */
+
+len_type bi_print(FILE *const restrict stream, const bigint *const restrict n);
+char *_uint_array_to_str(u_int const *const arr, const len_type len);
 
 #endif /* BIGINT_H */
