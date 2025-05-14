@@ -49,4 +49,7 @@
 	#define _GNU_SOURCE
 #endif
 
+/* Check if an integer is odd. */
+#define INT_IS_ODD(num_to_test) (num_to_test % 2)
+
 #endif /* INFIX_PROJ_MACROS_H */

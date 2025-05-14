@@ -3,10 +3,12 @@
 #include <stdio.h> /* fprintf */
 
 static ATTR_NONNULL bool check_division_by_0(const bigint *const n2);
-static ATTR_NONNULL bool
-quotient_is_less_than_1(const bigint *const n1, const bigint *const n2);
+static ATTR_NONNULL bool quotient_is_less_than_1(
+	const bigint *const restrict n1, const bigint *const restrict n2
+);
 static ATTR_NONNULL bigint *get_remainder(
-	bigint *const restrict n1, bigint *const restrict n2, bigint *quotient
+	bigint *const restrict n1, bigint *const restrict n2,
+	bigint *const restrict quotient
 );
 static ATTR_NONNULL l_int get_current_quotient(
 	bigint *const restrict slice, bigint *const restrict n2,
@@ -14,7 +16,8 @@ static ATTR_NONNULL l_int get_current_quotient(
 );
 static ATTR_NONNULL_IDX(1, 3, 5) len_type drop_next(
 	bigint *const restrict slice, const bigint *const restrict remainder,
-	const bigint *const n1, len_type n1_i, const bigint *const n2
+	const bigint *const restrict n1, len_type n1_i,
+	const bigint *const restrict n2
 );
 static ATTR_NONNULL bi_div_res
 divide(bigint *const restrict n1, bigint *const restrict n2);
@@ -45,8 +48,9 @@ static bool check_division_by_0(const bigint *const n2)
  *
  * Return: true if numerator < denominator, false if not.
  */
-static bool
-quotient_is_less_than_1(const bigint *const n1, const bigint *const n2)
+static bool quotient_is_less_than_1(
+	const bigint *const restrict n1, const bigint *const restrict n2
+)
 {
 	return (_bi_compare_const(n1, n2) < 0);
 }
@@ -66,8 +70,8 @@ static bigint *get_remainder(
 	bigint *const restrict quotient
 )
 {
-	bigint *const multiple = bi_multiply(n2, quotient);
-	bigint *rem = NULL;
+	bigint *const restrict multiple = bi_multiply(n2, quotient);
+	bigint *restrict rem = NULL;
 
 	if (multiple)
 		rem = bi_subtract(n1, multiple);
@@ -152,7 +156,8 @@ static l_int get_current_quotient(
  */
 static len_type drop_next(
 	bigint *const restrict slice, const bigint *const restrict remainder,
-	const bigint *const n1, len_type n1_i, const bigint *const n2
+	const bigint *const restrict n1, len_type n1_i,
+	const bigint *const restrict n2
 )
 {
 	len_type due = n2->len, offset = 1;

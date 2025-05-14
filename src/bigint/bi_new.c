@@ -1,3 +1,5 @@
+#include <inttypes.h> /* imaxabs */
+
 #include "_bigint_internals.h"
 #include "_numstr_internals.h"
 #include "bigint.h"
@@ -35,7 +37,7 @@ static len_type uint_to_array(u_int *const dest, uintmax_t num)
 bigint *int_to_new_bi(const intmax_t n)
 {
 	u_int tmp[4] = {0};
-	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, llabs(n));
+	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
 	bigint *const num = _bi_alloc(i);
 
 	if (num)
@@ -65,7 +67,7 @@ bool int_to_bi(bigint *const dest, const intmax_t n)
 		return (false);
 
 	u_int tmp[4] = {0};
-	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, llabs(n));
+	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
 
 	if (n < 0)
 		dest->is_negative = true;

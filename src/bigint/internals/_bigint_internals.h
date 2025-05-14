@@ -18,7 +18,7 @@
 struct bigint
 {
 	len_type len;
-	u_int *num;
+	u_int *restrict num;
 	bool is_negative;
 };
 
@@ -35,6 +35,7 @@ bigint *_bi_resize(bigint *bi, const len_type len);
 /* utilities */
 
 void _bi_trim(bigint *const arr);
+intmax_t _bi_compare_int_const(const bigint *const n1, const intmax_t n2);
 intmax_t _bi_compare_const(const bigint *const n1, const bigint *const n2);
 intmax_t _cmp_rev_uint_arr(
 	u_int const *const arr1, u_int const *const arr2, len_type len

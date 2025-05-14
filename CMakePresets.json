@@ -29,7 +29,7 @@
             "configurePreset": "default-debug",
             "output": { "outputOnFailure": true },
             "execution": {
-                "jobs": 8,
+                "jobs": 4,
                 "stopOnFailure": true,
                 "scheduleRandom": true,
                 "timeout": 2

@@ -17,7 +17,7 @@
 struct numstr
 {
 	len_type len;
-	char *str;
+	char *restrict str;
 	bool is_negative;
 };
 
