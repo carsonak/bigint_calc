@@ -642,7 +642,12 @@ struct large_additions
 
 TEST_F_SETUP(large_additions) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(large_additions) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(large_additions)
+{
+	tau->output = bi_delete(tau->output);
+	free(tau->num1.num);
+	free(tau->num2.num);
+}
 
 TEST_F(large_additions, test_o1kb_plus_o1kc)
 {
@@ -653,9 +658,13 @@ TEST_F(large_additions, test_o1kb_plus_o1kc)
 	/* clang-format on */
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
+	tau->num1.num = malloc(sizeof(in1));
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
+	tau->num2.num = malloc(sizeof(in2));
+	REQUIRE(tau->num1.num && tau->num2.num);
+	memcpy(tau->num1.num, in1, sizeof(in1));
+	memcpy(tau->num2.num, in2, sizeof(in2));
+
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
@@ -677,9 +686,13 @@ TEST_F(large_additions, test_o1kb_plus_o1ka)
 	/* clang-format on */
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
+	tau->num1.num = malloc(sizeof(in1));
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
+	tau->num2.num = malloc(sizeof(in2));
+	REQUIRE(tau->num1.num && tau->num2.num);
+	memcpy(tau->num1.num, in1, sizeof(in1));
+	memcpy(tau->num2.num, in2, sizeof(in2));
+
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
@@ -701,9 +714,13 @@ TEST_F(large_additions, test_o500c_plus_o500d)
 	/* clang-format on */
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
+	tau->num1.num = malloc(sizeof(in1));
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
+	tau->num2.num = malloc(sizeof(in2));
+	REQUIRE(tau->num1.num && tau->num2.num);
+	memcpy(tau->num1.num, in1, sizeof(in1));
+	memcpy(tau->num2.num, in2, sizeof(in2));
+
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
@@ -725,9 +742,13 @@ TEST_F(large_additions, test_o500d_plus_o500c)
 	/* clang-format on */
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
+	tau->num1.num = malloc(sizeof(in1));
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
+	tau->num2.num = malloc(sizeof(in2));
+	REQUIRE(tau->num1.num && tau->num2.num);
+	memcpy(tau->num1.num, in1, sizeof(in1));
+	memcpy(tau->num2.num, in2, sizeof(in2));
+
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
 	tau->output = bi_add(&(tau->num1), &(tau->num2));
@@ -1076,4 +1097,5 @@ TEST_F(large_additions, test_o1kb_plus_longmaxi)
 		tau->output->num, tau->expected.num,
 		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
+	tau->num1.num = NULL;
 }

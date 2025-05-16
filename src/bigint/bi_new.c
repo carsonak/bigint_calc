@@ -5,7 +5,7 @@
 #include "bigint.h"
 #include "parse_number.h"
 
-static ATTR_NONNULL len_type uint_to_array(u_int *const dest, uintmax_t num);
+static ATTR_NONNULL len_typ uint_to_array(u_int *const dest, uintmax_t num);
 
 /**
  * uint_to_array - convert an unsigned int to a `bigint` array.
@@ -14,9 +14,9 @@ static ATTR_NONNULL len_type uint_to_array(u_int *const dest, uintmax_t num);
  *
  * Return: final length of the array.
  */
-static len_type uint_to_array(u_int *const dest, uintmax_t num)
+static len_typ uint_to_array(u_int *const dest, uintmax_t num)
 {
-	len_type i = 0;
+	len_typ i = 0;
 
 	while (num > 0)
 	{
@@ -37,7 +37,7 @@ static len_type uint_to_array(u_int *const dest, uintmax_t num)
 bigint *int_to_new_bi(const intmax_t n)
 {
 	u_int tmp[4] = {0};
-	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
+	const len_typ i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
 	bigint *const num = _bi_alloc(i);
 
 	if (num)
@@ -67,7 +67,7 @@ bool int_to_bi(bigint *const dest, const intmax_t n)
 		return (false);
 
 	u_int tmp[4] = {0};
-	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
+	const len_typ i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
 
 	if (n < 0)
 		dest->is_negative = true;
@@ -87,8 +87,8 @@ bool int_to_bi(bigint *const dest, const intmax_t n)
  * Return: pointer to the `bigint`, NULL on failure.
  */
 bigint *bi_new(
-	char const *const restrict number, const unsigned short int base,
-	len_type *const restrict processed
+	char const *const restrict number, const radix_typ base,
+	len_typ *const restrict processed
 )
 {
 	numstr *const ns = str_to_numstr(number, base, processed);

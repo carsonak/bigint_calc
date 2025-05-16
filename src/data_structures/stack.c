@@ -8,7 +8,7 @@
  */
 struct stack
 {
-	len_type len;
+	len_typ len;
 	single_link_node *top;
 };
 
@@ -25,7 +25,7 @@ stack *stk_new(void) { return (calloc(1, sizeof(stack))); }
  *
  * Return: number of nodes in the stack.
  */
-len_type stk_len(stack const *const s)
+len_typ stk_len(stack const *const s)
 {
 	if (!s)
 		return (0);

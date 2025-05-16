@@ -2,7 +2,7 @@
 
 TEST(bigint_free, null_pointer) { CHECK_PTR_EQ(_bi_free(NULL), NULL); }
 
-#define TESTS_BIGINT_LENGTH (len_type)10
+#define TESTS_BIGINT_LENGTH (len_typ)10
 
 struct bigint_alloc
 {
@@ -122,7 +122,7 @@ TEST_F(bigint_resize_sized, resize_to_smaller_len_bigint)
 	tau->output->num[0] = DUMMY_VALUE;
 	tau->output->num[TESTS_BIGINT_LENGTH - 1] = DUMMY_VALUE;
 
-	const len_type new_len = TESTS_BIGINT_LENGTH - 6;
+	const len_typ new_len = TESTS_BIGINT_LENGTH - 6;
 	tau->output = _bi_resize(tau->output, new_len);
 
 	REQUIRE_PTR_NE(tau->output, NULL);
@@ -143,7 +143,7 @@ TEST_F(bigint_resize_sized, resize_to_bigger_len_bigint)
 	tau->output->num[0] = DUMMY_VALUE;
 	tau->output->num[TESTS_BIGINT_LENGTH - 1] = DUMMY_VALUE;
 
-	const len_type new_len = TESTS_BIGINT_LENGTH + 3;
+	const len_typ new_len = TESTS_BIGINT_LENGTH + 3;
 	tau->output = _bi_resize(tau->output, new_len);
 
 	REQUIRE_PTR_NE(tau->output, NULL);
@@ -168,7 +168,7 @@ TEST_F(bigint_resize_sized, resize_to_even_bigger_len_bigint)
 	tau->output->num[0] = DUMMY_VALUE;
 	tau->output->num[TESTS_BIGINT_LENGTH - 1] = DUMMY_VALUE;
 
-	const len_type new_len = TESTS_BIGINT_LENGTH * 10;
+	const len_typ new_len = TESTS_BIGINT_LENGTH * 10;
 	tau->output = _bi_resize(tau->output, new_len);
 
 	REQUIRE_PTR_NE(tau->output, NULL);

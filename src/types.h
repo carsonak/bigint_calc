@@ -3,6 +3,9 @@
 
 #include <stdint.h> /* intmax_t */
 
-typedef intmax_t len_type;
+/* for lengths and counting */
+typedef intmax_t len_typ;
+/* for radix */
+typedef unsigned short int radix_typ;
 
 #endif /* BIGINT_TYPES_H */

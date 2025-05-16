@@ -14,8 +14,8 @@ char *bi_tostr(bigint const *const n)
 	if (!n || n->len < 1 || !n->num)
 		return (NULL);
 
-	len_type str_i = 0, bi_i = n->len - 1;
-	const len_type str_len =
+	len_typ str_i = 0, bi_i = n->len - 1;
+	const len_typ str_len =
 		(n->len * count_digits(BIGINT_BASE - 1)) + n->is_negative ? 1 : 0;
 	char *const str = xmalloc(str_len + 1);
 

@@ -413,7 +413,12 @@ struct large_divisions
 
 TEST_F_SETUP(large_divisions) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(large_divisions) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(large_divisions)
+{
+	tau->output = bi_delete(tau->output);
+	free(tau->num1.num);
+	free(tau->num2.num);
+}
 
 TEST_F(large_divisions, test_o1kb_over_o1kc)
 {
@@ -424,9 +429,13 @@ TEST_F(large_divisions, test_o1kb_over_o1kc)
 	/* clang-format on */
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
+	tau->num1.num = malloc(sizeof(in1));
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
+	tau->num2.num = malloc(sizeof(in2));
+	REQUIRE(tau->num1.num && tau->num2.num);
+	memcpy(tau->num1.num, in1, sizeof(in1));
+	memcpy(tau->num2.num, in2, sizeof(in2));
+
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
 	tau->output = bi_divide(&(tau->num1), &(tau->num2));
@@ -448,9 +457,13 @@ TEST_F(large_divisions, test_o500d_over_o500e)
 	/* clang-format on */
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
+	tau->num1.num = malloc(sizeof(in1));
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
+	tau->num2.num = malloc(sizeof(in2));
+	REQUIRE(tau->num1.num && tau->num2.num);
+	memcpy(tau->num1.num, in1, sizeof(in1));
+	memcpy(tau->num2.num, in2, sizeof(in2));
+
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
 	tau->output = bi_divide(&(tau->num1), &(tau->num2));
@@ -471,16 +484,16 @@ TEST_F(large_divisions, test_o100a_over_o100f)
 	u_int out[] = {467911615, 986420336, 456339159, 762062729, 530481552, 890502739, 598230926, 265770966, 42977542, 156122193, 174848149, 489493242, 12775684, 300963748, 912088};
 	/* clang-format on */
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = malloc(sizeof(in1));
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = malloc(sizeof(in2));
+	REQUIRE(tau->num1.num && tau->num2.num);
+	memcpy(tau->num1.num, in1, sizeof(in1));
+	memcpy(tau->num2.num, in2, sizeof(in2));
 
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 	tau->output = bi_divide(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);
@@ -499,16 +512,16 @@ TEST_F(large_divisions, test_o100f_over_o100a)
 	u_int out[] = {0};
 	/* clang-format on */
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1.len = sizeof(in1) / sizeof(*in1);
+	tau->num1.num = malloc(sizeof(in1));
+	tau->num2.len = sizeof(in2) / sizeof(*in2);
+	tau->num2.num = malloc(sizeof(in2));
+	REQUIRE(tau->num1.num && tau->num2.num);
+	memcpy(tau->num1.num, in1, sizeof(in1));
+	memcpy(tau->num2.num, in2, sizeof(in2));
 
+	tau->expected.len = sizeof(out) / sizeof(*out);
+	tau->expected.num = out;
 	tau->output = bi_divide(&(tau->num1), &(tau->num2));
 
 	CHECK(tau->output->len == tau->expected.len);

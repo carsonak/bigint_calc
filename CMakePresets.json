@@ -6,9 +6,23 @@
     },
     "configurePresets": [
         {
-            "name": "default-debug",
+            "name": "debug-default",
             "binaryDir": "debug",
-            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
+            "warnings": {
+                "dev": true
+            }
+        },
+        {
+            "name": "release-debug",
+            "binaryDir": "release-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            },
             "warnings": {
                 "dev": true
             }
@@ -16,17 +30,35 @@
     ],
     "buildPresets": [
         {
-            "name": "default-debug",
+            "name": "debug-default",
             "description": "Code-Compile-Debug",
-            "configurePreset": "default-debug",
+            "configurePreset": "debug-default",
             "jobs": 4,
             "configuration": "Debug"
+        },
+        {
+            "name": "release-debug",
+            "description": "Code-Compile-Debug",
+            "configurePreset": "release-debug",
+            "jobs": 4,
+            "configuration": "RelWithDebInfo"
         }
     ],
     "testPresets": [
         {
-            "name": "default",
-            "configurePreset": "default-debug",
+            "name": "debug-default",
+            "configurePreset": "debug-default",
+            "output": { "outputOnFailure": true },
+            "execution": {
+                "jobs": 4,
+                "stopOnFailure": true,
+                "scheduleRandom": true,
+                "timeout": 2
+            }
+        },
+        {
+            "name": "release-debug",
+            "configurePreset": "release-debug",
             "output": { "outputOnFailure": true },
             "execution": {
                 "jobs": 4,

@@ -1,22 +1,5 @@
 #include "tests.h"
 
-static struct numstr * tau->output;
-static len_typeprocessed;
-
-/**
- * setup - setup some variables.
- */
-void setup(void)
-{
-	tau->output = NULL;
-	processed = 0;
-}
-
-/**
- * teardown - cleanup after tests.
- */
-void teardown(void) { tau->output = free_numstr(tau->output); }
-
 struct null_inputs
 {
 	bigint num1, num2, expected, *output;

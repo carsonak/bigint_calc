@@ -16,8 +16,8 @@ add_compile_options(
     -Wduplicated-branches
     -Wduplicated-cond
     -Werror
-    "$<$<CONFIG:Debug>:-fsanitize=address,undefined>")
-add_link_options("$<$<CONFIG:Debug>:-fsanitize=address,undefined>")
+    "$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>")
+add_link_options("$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>")
 
 add_subdirectory(src)
 

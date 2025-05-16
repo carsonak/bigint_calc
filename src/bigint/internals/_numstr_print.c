@@ -7,7 +7,7 @@
  *
  * Return: number of bytes printed.
  */
-len_type
+len_typ
 _numstr_print(FILE *const restrict stream, const numstr *const restrict num)
 {
 	if (!num || !num->str)
@@ -16,7 +16,7 @@ _numstr_print(FILE *const restrict stream, const numstr *const restrict num)
 		return (0);
 	}
 
-	const len_type bytes_printed =
+	const len_typ bytes_printed =
 		(num->is_negative ? fprintf(stream, "-%s\n", num->str)
 						  : fprintf(stream, "%s\n", num->str));
 	return (bytes_printed);

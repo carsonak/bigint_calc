@@ -10,12 +10,12 @@
  *
  * Return: number of bytes printed, -1 on error.
  */
-len_type bi_print(FILE *const restrict stream, const bigint *const restrict n)
+len_typ bi_print(FILE *const restrict stream, const bigint *const restrict n)
 {
 	if (!n)
 		return (-1);
 
-	len_type bytes_printed = 0;
+	len_typ bytes_printed = 0;
 	char *const str_arr = _uint_array_to_str(n->num, n->len);
 	if (!str_arr)
 		return (-1);
@@ -36,17 +36,17 @@ len_type bi_print(FILE *const restrict stream, const bigint *const restrict n)
  *
  * Return: pointer to a string, NULL on error.
  */
-char *_uint_array_to_str(u_int const *const arr, const len_type len)
+char *_uint_array_to_str(u_int const *const arr, const len_typ len)
 {
 	if (!arr || len < 1)
 		return (xstrdup("{NULL}"));
 
-	len_type s_i = 0, n = 0;
+	len_typ s_i = 0, n = 0;
 	char *const restrict sep = ", ";
-	const len_type len_sep = strlen(sep);
+	const len_typ len_sep = strlen(sep);
 	/* sizeof(str) == (max "digits" in U_INT_MAX * len) + */
 	/* total sizeof(separators) + sizeof("{}") + 1 */
-	const len_type len_str =
+	const len_typ len_str =
 		((count_digits(U_INT_MAX) - 1) * len) + (len_sep * (len - 1)) + 2 + 1;
 	char *const restrict str = xmalloc(len_str * sizeof(*str));
 

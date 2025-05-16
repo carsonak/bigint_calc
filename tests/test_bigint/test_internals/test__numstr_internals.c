@@ -2,7 +2,7 @@
 
 TEST(numstr_alloc, alloc_zero_len_numstr)
 {
-	const len_type len = 0;
+	const len_typ len = 0;
 	numstr *ns = _numstr_alloc(len);
 
 	REQUIRE_PTR_NE(ns, NULL);
@@ -14,7 +14,7 @@ TEST(numstr_alloc, alloc_zero_len_numstr)
 
 TEST(numstr_alloc, alloc_sized_numstr)
 {
-	const len_type len = 10;
+	const len_typ len = 10;
 	numstr *ns = _numstr_alloc(len);
 
 	REQUIRE_PTR_NE(ns, NULL);

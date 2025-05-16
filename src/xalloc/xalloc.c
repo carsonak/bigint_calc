@@ -9,7 +9,7 @@
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xmalloc(const len_type size)
+void *xmalloc(const len_typ size)
 {
 	if (size < 0)
 	{
@@ -32,7 +32,7 @@ void *xmalloc(const len_type size)
  *
  * Return: a pointer to the memory area, NULL on failure.
  */
-void *xcalloc(const len_type items, const len_type sizeof_item)
+void *xcalloc(const len_typ items, const len_typ sizeof_item)
 {
 	if (items < 0)
 	{
@@ -63,7 +63,7 @@ void *xcalloc(const len_type items, const len_type sizeof_item)
  *
  * Return: pointer to the resized memory area, NULL on failure.
  */
-void *xrealloc(void *nullable_ptr, len_type size)
+void *xrealloc(void *nullable_ptr, len_typ size)
 {
 	if (size < 0)
 	{
@@ -86,12 +86,12 @@ void *xrealloc(void *nullable_ptr, len_type size)
  * Return: pointer to the resized memory area, NULL on failure.
  *
  */
-void *xrealloc_free_on_fail(void *nullable_ptr, len_type size)
+void *xrealloc_free_on_fail(void *nullable_ptr, len_typ size)
 {
 	void *const ptr = xrealloc(nullable_ptr, size);
 
 	if (!ptr && size)
-		nullable_ptr = xfree(nullable_ptr);
+		free(nullable_ptr);
 
 	return (ptr);
 }

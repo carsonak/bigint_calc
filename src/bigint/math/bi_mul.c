@@ -1,37 +1,40 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
-static ATTR_NONNULL bigint *
-multiply(bigint const *const n1, bigint const *const n2);
+static ATTR_NONNULL bigint *naive_multiply(
+	const bigint *const restrict n1, const bigint *const restrict n2
+);
 static ATTR_NONNULL bigint *
 multiply_negatives(bigint *const restrict n1, bigint *const restrict n2);
 
 /**
- * multiply - multiply two bigints.
+ * naive_multiply - multiply two bigints.
  * @n1: first number.
  * @n2: second number.
  *
  * Return: pointer to result, NULL on failure.
  */
-static bigint *multiply(bigint const *const n1, bigint const *const n2)
+static bigint *naive_multiply(
+	const bigint *const restrict n1, const bigint *const restrict n2
+)
 {
 	/* Multiplication by zero. */
 	if (bi_iszero(n1) || bi_iszero(n2))
 		return (_bi_alloc(1));
 
-	len_type n2_i = 0;
+	len_typ n2_i = 0;
 	/* Length of product = length of n1 + length of n2 */
-	bigint *product = _bi_alloc(n1->len + n2->len);
-	bigint *const current_mul = _bi_alloc(n1->len + n2->len);
+	bigint *restrict product = _bi_alloc(n1->len + n2->len);
+	bigint *const restrict current_mul = _bi_alloc(n1->len + n2->len);
 
 	if (!product || !current_mul)
 		goto cleanup;
 
 	product->len = 1;
-	/* For every "digit" in n2, multiply with every "digit" in n1. */
+	/* Multiply every "digit" in `n2` with `n1`. */
 	for (n2_i = 0; n2_i < n2->len; ++n2_i)
 	{
-		len_type n1_i = 0;
+		len_typ n1_i = 0;
 		l_int byt_prod = 0;
 
 		/* Skip multiplication by zero */
@@ -41,7 +44,7 @@ static bigint *multiply(bigint const *const n1, bigint const *const n2)
 		/* Length of current_mul = */
 		/* length of n1 + (number of "digits" upto n2_i) */
 		current_mul->len = n1->len + (n2_i + 1);
-		/* The least significant n2_i "digits" will be 0 for every iteration. */
+		/* Set the least significant digits to 0. */
 		memset(current_mul->num, 0, sizeof(*current_mul->num) * n2_i);
 		for (n1_i = 0; n1_i < n1->len; ++n1_i)
 		{
@@ -80,12 +83,12 @@ multiply_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	n1->is_negative = false;
 	n2->is_negative = false;
 	if (neg1 && neg2) /* -8 * -7 = 8*7 */
-		result = multiply(n1, n2);
+		result = naive_multiply(n1, n2);
 	else if (neg1 || neg2)
 	{
 		/* -8 * 7 = -(8*7) */
 		/* 8 * -7 = -(8*7) */
-		result = multiply(n1, n2);
+		result = naive_multiply(n1, n2);
 		if (result)
 			result->is_negative = true;
 	}
@@ -116,7 +119,7 @@ bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2)
 	if (n1->is_negative || n2->is_negative)
 		return (multiply_negatives(n1, n2));
 
-	return (multiply(n1, n2));
+	return (naive_multiply(n1, n2));
 }
 
 /**

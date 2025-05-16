@@ -1,18 +1,20 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
-static void
-multiply_and_replace(bigint **const restrict n1, bigint *const restrict n2);
+static ATTR_NONNULL void multiply_and_replace(
+	bigint *restrict *const restrict n1, bigint *const restrict n2
+);
 
 /**
  * multiply_and_replace - "inplace" `bigint` multiplication.
  * @n1: address of the first `bigint` pointer.
  * @n2: pointer to the second `bigint`.
  */
-static void
-multiply_and_replace(bigint **const restrict n1, bigint *const restrict n2)
+static void multiply_and_replace(
+	bigint *restrict *const restrict n1, bigint *const restrict n2
+)
 {
-	bigint *cpy = *n1;
+	bigint *restrict cpy = *n1;
 
 	*n1 = bi_multiply(cpy, n2);
 	_bi_free(cpy);
@@ -25,9 +27,9 @@ multiply_and_replace(bigint **const restrict n1, bigint *const restrict n2)
  *
  * Return: pointer to the result, NULL on failure.
  */
-bigint *bi_power(bigint *const base, const intmax_t exponent)
+bigint *bi_power(bigint *const restrict base, const intmax_t exponent)
 {
-	bigint *x = NULL, *y = NULL;
+	bigint *restrict x = NULL, *restrict y = NULL;
 	intmax_t exp = exponent;
 
 	if (!base || base->len < 0)
@@ -91,6 +93,6 @@ cleanup:
 		x = _bi_free(x);
 	}
 
-	_bi_free(y);
+	y = _bi_free(y);
 	return (x);
 }
