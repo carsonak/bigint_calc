@@ -9,7 +9,7 @@
  */
 struct deque
 {
-	len_typ length;
+	len_type length;
 	double_link_node *head;
 	double_link_node *tail;
 };
@@ -27,7 +27,7 @@ deque *dq_new(void) { return (calloc(1, sizeof(deque))); }
  *
  * Return: total items in the deque.
  */
-len_typ dq_len(deque const *const dq)
+len_type dq_len(deque const *const dq)
 {
 	if (!dq)
 		return (0);
@@ -227,7 +227,7 @@ void *dq_delete(deque *const nullable_ptr, delete_func *free_data)
  * Return: pointer to the new deque, NULL on failure.
  */
 deque *dq_from_array(
-	void *const data_array, const len_typ len, const len_typ type_size,
+	void *const data_array, const len_type len, const len_type type_size,
 	dup_func *copy_data, delete_func *delete_data
 )
 {
@@ -244,7 +244,7 @@ deque *dq_from_array(
 	if (!new_q)
 		return (NULL);
 
-	for (len_typ i = 0; i < len; ++i)
+	for (len_type i = 0; i < len; ++i)
 	{
 		void *data = (char *)data_array + (type_size * i);
 

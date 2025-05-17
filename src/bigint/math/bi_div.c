@@ -14,9 +14,9 @@ static ATTR_NONNULL l_int get_current_quotient(
 	bigint *const restrict slice, bigint *const restrict n2,
 	bigint *restrict *const restrict remainder
 );
-static ATTR_NONNULL_IDX(1, 3, 5) len_typ drop_next(
+static ATTR_NONNULL_IDX(1, 3, 5) len_type drop_next(
 	bigint *const restrict slice, const bigint *const restrict remainder,
-	const bigint *const restrict n1, len_typ n1_i,
+	const bigint *const restrict n1, len_type n1_i,
 	const bigint *const restrict n2
 );
 static ATTR_NONNULL bi_div_res
@@ -94,7 +94,7 @@ static l_int get_current_quotient(
 )
 {
 	bigint q_estimate = {.len = 1, .is_negative = false, .num = (u_int[3]){0}};
-	len_typ excess = 0;
+	len_type excess = 0;
 	l_int msd_slice = 0, bigger_than_divisor = 0;
 
 	*remainder = _bi_free(*remainder);
@@ -154,13 +154,13 @@ static l_int get_current_quotient(
  *
  * Return: number of "digits" dropped from n1.
  */
-static len_typ drop_next(
+static len_type drop_next(
 	bigint *const restrict slice, const bigint *const restrict remainder,
-	const bigint *const restrict n1, len_typ n1_i,
+	const bigint *const restrict n1, len_type n1_i,
 	const bigint *const restrict n2
 )
 {
-	len_typ due = n2->len, offset = 1;
+	len_type due = n2->len, offset = 1;
 
 	if (remainder) /* Move "digits" from remainder into slice. */
 	{
@@ -212,7 +212,7 @@ static len_typ drop_next(
 static bi_div_res divide(bigint *const restrict n1, bigint *const restrict n2)
 {
 	bigint *current_slice = NULL;
-	len_typ slice_offset = 1, q_i = 0, n1_i = 0, dropped = 0;
+	len_type slice_offset = 1, q_i = 0, n1_i = 0, dropped = 0;
 	l_int current_q = 0;
 	bi_div_res res = {0};
 

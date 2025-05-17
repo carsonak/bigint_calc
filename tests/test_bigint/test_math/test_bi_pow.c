@@ -1,24 +1,32 @@
 #include "tests.h"
 
-TEST(null_inputs, test_null_pow_1) { CHECK_PTR_EQ(bi_power(NULL, 1), NULL); }
-
-TEST(null_inputs, test_null_pow_0) { CHECK_PTR_EQ(bi_power(NULL, 0), NULL); }
-
-TEST(null_inputs, test_null_pow_neg1)
-{
-	CHECK_PTR_EQ(bi_power(NULL, -1), NULL);
-}
-
-struct not_a_number
+struct invalid_inputs
 {
 	bigint base, expected, *output;
 };
 
-TEST_F_SETUP(not_a_number) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(not_a_number) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(invalid_inputs) { tau->output = bi_delete(tau->output); }
 
-TEST_F(not_a_number, test_NaN_pow_1)
+TEST(invalid_inputs, test_null_pow_1)
+{
+	CHECK_PTR_EQ(bi_power(NULL, 1), NULL);
+}
+
+TEST(invalid_inputs, test_null_pow_0)
+{
+	CHECK_PTR_EQ(bi_power(NULL, 0), NULL);
+}
+
+TEST(invalid_inputs, test_null_pow_neg1)
+{
+	CHECK_PTR_EQ(bi_power(NULL, -1), NULL);
+}
+
+/* NaN */
+
+TEST_F(invalid_inputs, test_NaN_pow_1)
 {
 	tau->output = bi_power(&tau->base, 1);
 
@@ -27,7 +35,7 @@ TEST_F(not_a_number, test_NaN_pow_1)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_NaN_pow_largenum)
+TEST_F(invalid_inputs, test_NaN_pow_largenum)
 {
 	tau->output = bi_power(&tau->base, 238542068);
 

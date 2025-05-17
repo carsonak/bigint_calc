@@ -1,20 +1,20 @@
 #include "tests.h"
 
-struct null_inputs
+struct invalid_inputs
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(invalid_inputs) { tau->output = bi_delete(tau->output); }
 
-TEST(null_inputs, test_null_minus_null)
+TEST(invalid_inputs, test_null_minus_null)
 {
 	CHECK_PTR_EQ(bi_subtract(NULL, NULL), NULL);
 }
 
-TEST_F(null_inputs, test_1_minus_null)
+TEST_F(invalid_inputs, test_1_minus_null)
 {
 	u_int in1[] = {1};
 
@@ -25,7 +25,7 @@ TEST_F(null_inputs, test_1_minus_null)
 	CHECK_PTR_EQ(bi_subtract(&(tau->num1), NULL), NULL);
 }
 
-TEST_F(null_inputs, test_null_minus_1)
+TEST_F(invalid_inputs, test_null_minus_1)
 {
 	u_int in2[] = {1};
 
@@ -35,7 +35,7 @@ TEST_F(null_inputs, test_null_minus_1)
 	CHECK_PTR_EQ(bi_subtract(NULL, &(tau->num2)), NULL);
 }
 
-TEST_F(null_inputs, test_0_minus_null)
+TEST_F(invalid_inputs, test_0_minus_null)
 {
 	u_int in1[1] = {0};
 
@@ -46,7 +46,7 @@ TEST_F(null_inputs, test_0_minus_null)
 	CHECK_PTR_EQ(bi_subtract(&(tau->num1), NULL), NULL);
 }
 
-TEST_F(null_inputs, test_null_minus_0)
+TEST_F(invalid_inputs, test_null_minus_0)
 {
 	u_int in2[1] = {0};
 
@@ -56,7 +56,7 @@ TEST_F(null_inputs, test_null_minus_0)
 	CHECK_PTR_EQ(bi_subtract(NULL, &(tau->num2)), NULL);
 }
 
-TEST_F(null_inputs, test_neg1_minus_null)
+TEST_F(invalid_inputs, test_neg1_minus_null)
 {
 	u_int in1[] = {1};
 
@@ -67,7 +67,7 @@ TEST_F(null_inputs, test_neg1_minus_null)
 	CHECK_PTR_EQ(bi_subtract(&(tau->num1), NULL), NULL);
 }
 
-TEST_F(null_inputs, test_null_minus_neg1)
+TEST_F(invalid_inputs, test_null_minus_neg1)
 {
 	u_int in2[] = {1};
 
@@ -78,16 +78,9 @@ TEST_F(null_inputs, test_null_minus_neg1)
 	CHECK_PTR_EQ(bi_subtract(NULL, &(tau->num2)), NULL);
 }
 
-struct not_a_number
-{
-	bigint num1, num2, expected, *output;
-};
+/* NaN */
 
-TEST_F_SETUP(not_a_number) { memset(tau, 0, sizeof(*tau)); }
-
-TEST_F_TEARDOWN(not_a_number) { tau->output = bi_delete(tau->output); }
-
-TEST_F(not_a_number, test_NaN_minus_NaN)
+TEST_F(invalid_inputs, test_NaN_minus_NaN)
 {
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
@@ -96,7 +89,7 @@ TEST_F(not_a_number, test_NaN_minus_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_neg_NaN_minus_NaN)
+TEST_F(invalid_inputs, test_neg_NaN_minus_NaN)
 {
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
@@ -106,7 +99,7 @@ TEST_F(not_a_number, test_neg_NaN_minus_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_NaN_minus_neg_NaN)
+TEST_F(invalid_inputs, test_NaN_minus_neg_NaN)
 {
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
@@ -116,7 +109,7 @@ TEST_F(not_a_number, test_NaN_minus_neg_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_neg_NaN_minus_neg_NaN)
+TEST_F(invalid_inputs, test_neg_NaN_minus_neg_NaN)
 {
 	tau->output = bi_subtract(&(tau->num1), &(tau->num2));
 
@@ -127,7 +120,7 @@ TEST_F(not_a_number, test_neg_NaN_minus_neg_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_4490998_minus_NaN)
+TEST_F(invalid_inputs, test_4490998_minus_NaN)
 {
 	u_int in1[] = {4490998};
 
@@ -141,7 +134,7 @@ TEST_F(not_a_number, test_4490998_minus_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_neg_4490998_minus_NaN)
+TEST_F(invalid_inputs, test_neg_4490998_minus_NaN)
 {
 	u_int in1[] = {4490998};
 
@@ -155,7 +148,7 @@ TEST_F(not_a_number, test_neg_4490998_minus_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_4490998_minus_neg_NaN)
+TEST_F(invalid_inputs, test_4490998_minus_neg_NaN)
 {
 	u_int in1[] = {4490998};
 
@@ -170,7 +163,7 @@ TEST_F(not_a_number, test_4490998_minus_neg_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_neg_4490998_minus_neg_NaN)
+TEST_F(invalid_inputs, test_neg_4490998_minus_neg_NaN)
 {
 	u_int in1[] = {4490998};
 
@@ -185,7 +178,7 @@ TEST_F(not_a_number, test_neg_4490998_minus_neg_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_NaN_minus_largenum)
+TEST_F(invalid_inputs, test_NaN_minus_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
@@ -199,7 +192,7 @@ TEST_F(not_a_number, test_NaN_minus_largenum)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_neg_NaN_minus_largenum)
+TEST_F(invalid_inputs, test_neg_NaN_minus_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
@@ -214,7 +207,7 @@ TEST_F(not_a_number, test_neg_NaN_minus_largenum)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_NaN_minus_neg_largenum)
+TEST_F(invalid_inputs, test_NaN_minus_neg_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
@@ -228,7 +221,7 @@ TEST_F(not_a_number, test_NaN_minus_neg_largenum)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_neg_NaN_minus_neg_largenum)
+TEST_F(invalid_inputs, test_neg_NaN_minus_neg_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
@@ -554,10 +547,14 @@ TEST_F_TEARDOWN(long_subtractions) { tau->output = bi_delete(tau->output); }
 TEST_F(long_subtractions, test_long9s_minus_1)
 {
 	u_int in1[] = {
-		bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 	u_int in2[] = {1};
 	u_int out[] = {
-		bi_BASE - 2, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 2, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -579,9 +576,13 @@ TEST_F(long_subtractions, test_1_minus_long9s)
 {
 	u_int in1[] = {1};
 	u_int in2[] = {
-		bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 	u_int out[] = {
-		bi_BASE - 2, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 2, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -901,26 +902,26 @@ TEST_F(large_subtractions, test_o500d_minus_o500c)
 /* ###################### bi_subtract_int ############################ */
 /* ################################################################### */
 
-/* null_inputs */
+/* invalid_inputs */
 
-TEST(null_inputs, test_null_minus_0i)
+TEST(invalid_inputs, test_null_minus_0i)
 {
 	CHECK_PTR_EQ(bi_subtract_int(NULL, 0), NULL);
 }
 
-TEST(null_inputs, test_null_minus_1i)
+TEST(invalid_inputs, test_null_minus_1i)
 {
 	CHECK_PTR_EQ(bi_subtract_int(NULL, 1), NULL);
 }
 
-TEST(null_inputs, test_null_minus_neg1i)
+TEST(invalid_inputs, test_null_minus_neg1i)
 {
 	CHECK_PTR_EQ(bi_subtract_int(NULL, -1), NULL);
 }
 
-/* not_a_number */
+/* NaN */
 
-TEST_F(not_a_number, test_NaN_minus_0i)
+TEST_F(invalid_inputs, test_NaN_minus_0i)
 {
 	tau->output = bi_subtract_int(&(tau->num1), 0);
 
@@ -929,7 +930,7 @@ TEST_F(not_a_number, test_NaN_minus_0i)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_NaN_minus_490998i)
+TEST_F(invalid_inputs, test_NaN_minus_490998i)
 {
 	tau->output = bi_subtract_int(&(tau->num1), 490998);
 
@@ -1105,9 +1106,13 @@ TEST_F(same_number_subtractions, test_longnum_minus_longi)
 TEST_F(long_subtractions, test_long9s_minus_1i)
 {
 	u_int in1[] = {
-		bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 	u_int out[] = {
-		bi_BASE - 2, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 2, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -1127,7 +1132,7 @@ TEST_F(long_subtractions, test_long9s_minus_1i)
 TEST_F(long_subtractions, test_1_minus_long9si)
 {
 	u_int in1[2] = {1};
-	u_int out[2] = {bi_BASE - 2, bi_BASE - 1};
+	u_int out[2] = {BIGINT_BASE - 2, BIGINT_BASE - 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;

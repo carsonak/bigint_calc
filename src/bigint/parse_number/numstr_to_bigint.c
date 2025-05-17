@@ -18,7 +18,7 @@ bigint *numstr_to_bi(numstr *nstr)
 	if (!nstr || nstr->len < 1 || !nstr->str || !isalnum(nstr->str[0]))
 		return (NULL);
 
-	len_typ nstr_i = 0, bi_i = 0;
+	len_type nstr_i = 0, bi_i = 0;
 	uintmax_t carry = 0;
 	/* sizeof(bigint_i) == */
 	/* ceil(numstr.len / no. of digits that can represent BIGINT_BASE) */
@@ -72,12 +72,12 @@ bigint *numstr_to_bi(numstr *nstr)
  *
  * Return: a pointer to a `bigint` struct, NULL on failure.
  */
-bigint *anybase_to_bi(numstr *const num, const radix_typ base)
+bigint *anybase_to_bi(numstr *const num, const radix_type base)
 {
 	if (!num || num->len < 0 || !num->str || !is_valid_radix(base))
 		return (NULL);
 
-	len_typ i = 0;
+	len_type i = 0;
 	bigint *bigint_final = _bi_alloc(1);
 
 	if (!bigint_final)

@@ -1,20 +1,20 @@
 #include "tests.h"
 
-struct null_inputs
+struct invalid_inputs
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); };
+TEST_F_TEARDOWN(invalid_inputs) { tau->output = bi_delete(tau->output); };
 
-TEST_F(null_inputs, test_null_modulo_null)
+TEST_F(invalid_inputs, test_null_modulo_null)
 {
 	CHECK_PTR_EQ(bi_modulo(NULL, NULL), NULL);
 }
 
-TEST_F(null_inputs, test_1_modulo_null)
+TEST_F(invalid_inputs, test_1_modulo_null)
 {
 	u_int in1[] = {1};
 
@@ -24,7 +24,7 @@ TEST_F(null_inputs, test_1_modulo_null)
 	CHECK_PTR_EQ(bi_modulo(&(tau->num1), NULL), NULL);
 }
 
-TEST_F(null_inputs, test_null_modulo_1)
+TEST_F(invalid_inputs, test_null_modulo_1)
 {
 	u_int in2[] = {1};
 
@@ -34,7 +34,7 @@ TEST_F(null_inputs, test_null_modulo_1)
 	CHECK_PTR_EQ(bi_modulo(NULL, &(tau->num2)), NULL);
 }
 
-TEST_F(null_inputs, test_0_modulo_null)
+TEST_F(invalid_inputs, test_0_modulo_null)
 {
 	u_int in1[1] = {0};
 
@@ -44,7 +44,7 @@ TEST_F(null_inputs, test_0_modulo_null)
 	CHECK_PTR_EQ(bi_modulo(&(tau->num1), NULL), NULL);
 }
 
-TEST_F(null_inputs, test_null_modulo_0)
+TEST_F(invalid_inputs, test_null_modulo_0)
 {
 	u_int in2[1] = {0};
 
@@ -54,7 +54,7 @@ TEST_F(null_inputs, test_null_modulo_0)
 	CHECK_PTR_EQ(bi_modulo(NULL, &(tau->num2)), NULL);
 }
 
-TEST_F(null_inputs, test_minus1_modulo_null)
+TEST_F(invalid_inputs, test_minus1_modulo_null)
 {
 	u_int in1[] = {1};
 
@@ -65,7 +65,7 @@ TEST_F(null_inputs, test_minus1_modulo_null)
 	CHECK_PTR_EQ(bi_modulo(&(tau->num1), NULL), NULL);
 }
 
-TEST_F(null_inputs, test_null_modulo_minus1)
+TEST_F(invalid_inputs, test_null_modulo_minus1)
 {
 	u_int in2[] = {1};
 

@@ -15,10 +15,10 @@ isubtract_negatives(bigint *const restrict n1, bigint *const restrict n2);
  */
 static void isubtract(bigint *const restrict n1, bigint *const restrict n2)
 {
-	len_typ n1_i = 0, n2_i = 0, final_len = 0;
+	len_type n1_i = 0, n2_i = 0, final_len = 0;
 	l_int byt_diff = 0;
 	/* result_len = max(n1->len, n2->len) */
-	len_typ tmp_len = (n1->len > n2->len) ? n1->len : n2->len;
+	len_type tmp_len = (n1->len > n2->len) ? n1->len : n2->len;
 	bool const n1_is_bigger = (bi_compare(n1, n2) > 0) ? true : false;
 
 	/* If both arrays are of the same length then; */

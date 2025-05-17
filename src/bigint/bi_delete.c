@@ -7,4 +7,4 @@
  *
  * Return: NULL always.
  */
-void *bi_delete(bigint *ptr) { return (_bi_free(ptr)); }
+void *bi_delete(bigint *const ptr) { return (_bi_free(ptr)); }

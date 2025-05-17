@@ -1,29 +1,17 @@
 #include "tests.h"
 
-tau->output = NULL;
-
-/**
- * setup - setup some variables.
- */
-void setup(void) {}
-
-/**
- * teardown - cleanup after tests.
- */
-void teardown(void) { tau->output = bi_delete(tau->output); }
-
-struct null_inputs
+struct invalid_inputs
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); };
+TEST_F_TEARDOWN(invalid_inputs) { tau->output = bi_delete(tau->output); };
 
-TEST_F(null_inputs, test_NULL) { cr_assert(numstr_to_bni(NULL)) /* ?? */; }
+TEST_F(invalid_inputs, test_NULL) { cr_assert(numstr_to_bni(NULL)) /* ?? */; }
 
-TEST_F(null_inputs, test_null_str)
+TEST_F(invalid_inputs, test_null_str)
 {
 	numstr in = {.len = 1, .is_negative = false, .str = NULL};
 

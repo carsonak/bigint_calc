@@ -1,20 +1,20 @@
 #include "tests.h"
 
-struct null_inputs
+struct invalid_inputs
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(invalid_inputs) { tau->output = bi_delete(tau->output); }
 
-TEST(null_inputs, test_null_plus_null)
+TEST(invalid_inputs, test_null_plus_null)
 {
 	CHECK_PTR_EQ(bi_iadd(NULL, NULL), NULL);
 }
 
-TEST_F(null_inputs, test_1_plus_null)
+TEST_F(invalid_inputs, test_1_plus_null)
 {
 	u_int in1[] = {1};
 
@@ -32,7 +32,7 @@ TEST_F(null_inputs, test_1_plus_null)
 	);
 }
 
-TEST_F(null_inputs, test_null_plus_1)
+TEST_F(invalid_inputs, test_null_plus_1)
 {
 	u_int in2[] = {1};
 
@@ -42,7 +42,7 @@ TEST_F(null_inputs, test_null_plus_1)
 	CHECK_PTR_EQ(bi_iadd(NULL, &(tau->num2)), NULL);
 }
 
-TEST_F(null_inputs, test_0_plus_null)
+TEST_F(invalid_inputs, test_0_plus_null)
 {
 	u_int in1[1] = {0};
 
@@ -60,7 +60,7 @@ TEST_F(null_inputs, test_0_plus_null)
 	);
 }
 
-TEST_F(null_inputs, test_null_plus_0)
+TEST_F(invalid_inputs, test_null_plus_0)
 {
 	u_int in2[1] = {0};
 
@@ -70,7 +70,7 @@ TEST_F(null_inputs, test_null_plus_0)
 	CHECK_PTR_EQ(bi_iadd(NULL, &(tau->num2)), NULL);
 }
 
-TEST_F(null_inputs, test_neg1_plus_null)
+TEST_F(invalid_inputs, test_neg1_plus_null)
 {
 	u_int in1[] = {1};
 
@@ -88,7 +88,7 @@ TEST_F(null_inputs, test_neg1_plus_null)
 	);
 }
 
-TEST_F(null_inputs, test_null_plus_neg1)
+TEST_F(invalid_inputs, test_null_plus_neg1)
 {
 	u_int in2[] = {1};
 
@@ -281,7 +281,7 @@ TEST_F_TEARDOWN(long_additions) { tau->output = bi_delete(tau->output); }
 
 TEST_F(long_additions, test_999999999_plus_1)
 {
-	u_int in1[2] = {bi_BASE - 1}, in2[] = {1}, out[] = {0, 1};
+	u_int in1[2] = {BIGINT_BASE - 1}, in2[] = {1}, out[] = {0, 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -301,7 +301,8 @@ TEST_F(long_additions, test_999999999_plus_1)
 
 TEST_F(long_additions, test_999999999999999999_plus_999999999)
 {
-	u_int in1[3] = {bi_BASE - 1, bi_BASE - 1}, in2[] = {bi_BASE - 1};
+	u_int in1[3] = {BIGINT_BASE - 1, BIGINT_BASE - 1},
+		  in2[] = {BIGINT_BASE - 1};
 	u_int out[3] = {999999998, 0, 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
@@ -323,7 +324,9 @@ TEST_F(long_additions, test_999999999999999999_plus_999999999)
 TEST_F(long_additions, test_long9s_plus_1)
 {
 	u_int in1[6] = {
-		bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 	u_int in2[] = {1};
 	u_int out[6] = {0, 0, 0, 0, 0, 1};
 
@@ -347,7 +350,9 @@ TEST_F(long_additions, test_1_plus_long9s)
 {
 	u_int in1[6] = {1};
 	u_int in2[] = {
-		bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 	u_int out[6] = {0, 0, 0, 0, 0, 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
@@ -661,12 +666,12 @@ TEST_F(large_additions, test_o500d_plus_o500c)
 /* ######################## bi_iadd_int ############################## */
 /* ################################################################### */
 
-TEST(null_inputs, test_null_plus_0i)
+TEST(invalid_inputs, test_null_plus_0i)
 {
 	CHECK_PTR_EQ(bi_iadd_int(NULL, 0), NULL);
 }
 
-TEST(null_inputs, test_null_plus_1i)
+TEST(invalid_inputs, test_null_plus_1i)
 {
 	CHECK_PTR_EQ(bi_iadd_int(NULL, 1), NULL);
 }
@@ -811,7 +816,7 @@ TEST_F(long_additions, test_1_minus_long9si)
 
 TEST_F(long_additions, test_999999999_plus_1i)
 {
-	u_int in1[2] = {bi_BASE - 1}, out[] = {0, 1};
+	u_int in1[2] = {BIGINT_BASE - 1}, out[] = {0, 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -829,13 +834,14 @@ TEST_F(long_additions, test_999999999_plus_1i)
 
 TEST_F(long_additions, test_999999999999999999_plus_999999999i)
 {
-	u_int in1[3] = {bi_BASE - 1, bi_BASE - 1}, out[3] = {999999998, 0, 1};
+	u_int in1[3] = {BIGINT_BASE - 1, BIGINT_BASE - 1},
+		  out[3] = {999999998, 0, 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
 	tau->expected.len = sizeof(out) / sizeof(*out);
 	tau->expected.num = out;
-	bi_iadd_int(&(tau->num1), bi_BASE - 1);
+	bi_iadd_int(&(tau->num1), BIGINT_BASE - 1);
 
 	CHECK(tau->num1.len == tau->expected.len);
 	CHECK(tau->num1.is_negative == 0);
@@ -848,7 +854,9 @@ TEST_F(long_additions, test_999999999999999999_plus_999999999i)
 TEST_F(long_additions, test_long9s_plus_1i)
 {
 	u_int in1[6] = {
-		bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1, bi_BASE - 1};
+		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
+		BIGINT_BASE - 1
+	};
 	u_int out[6] = {0, 0, 0, 0, 0, 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);

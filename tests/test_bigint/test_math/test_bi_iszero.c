@@ -1,6 +1,6 @@
 #include "tests.h"
 
-TEST(null_inputs, test_NULL) { CHECK(bi_iszero(NULL) == false); }
+TEST(invalid_inputs, test_NULL) { CHECK(bi_iszero(NULL) == false); }
 
 struct null_array
 {

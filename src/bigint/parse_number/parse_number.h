@@ -23,15 +23,15 @@
 typedef char (*mapping_func)(const char c, void *args);
 
 char *filter_str(
-	char const *const restrict str, len_typ *const restrict processed,
+	char const *const restrict str, len_type *const restrict processed,
 	const mapping_func map, void *const map_args
 );
 numstr *str_to_numstr(
-	char const *const restrict num_str, const radix_typ base,
-	len_typ *const restrict processed
+	char const *const restrict num_str, const radix_type base,
+	len_type *const restrict processed
 );
 bigint *numstr_to_bi(numstr *nstr);
-bigint *anybase_to_bi(numstr *num, const radix_typ base);
+bigint *anybase_to_bi(numstr *num, const radix_type base);
 char *bi_tostr(bigint const *const n);
 
 #endif /* PARSE_NUMBER_H */

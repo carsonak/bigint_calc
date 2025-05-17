@@ -13,11 +13,14 @@ add_compile_options(
     -pedantic
     -Wformat=2
     -Wshadow
-    -Wduplicated-branches
-    -Wduplicated-cond
+    "$<$<C_COMPILER_ID:GNU>:-Wduplicated-branches>"
+    "$<$<C_COMPILER_ID:GNU>:-Wduplicated-cond>"
     -Werror
-    "$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>")
-add_link_options("$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>")
+    "$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>"
+)
+add_link_options(
+    "$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>"
+)
 
 add_subdirectory(src)
 

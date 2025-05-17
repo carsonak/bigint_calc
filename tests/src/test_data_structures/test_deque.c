@@ -741,7 +741,7 @@ TEST(deleting_deque, delete_f_should_clear_all_items)
 TEST(dqfa, dqfa_invalid_args)
 {
 	long long int arr[] = {1, 2, 3, 4, 5};
-	const len_typ arr_len = (sizeof(arr) / sizeof(*arr));
+	const len_type arr_len = (sizeof(arr) / sizeof(*arr));
 
 	CHECK(dq_from_array(NULL, 0, 0, NULL, NULL) == NULL,
 		  "data_array, len and type_size are required");
@@ -767,7 +767,7 @@ TEST(dqfa, dqfa_invalid_args)
 TEST(dqfa, deque_from_array)
 {
 	long long int arr[] = {1, 2, 3, 4, 5};
-	const len_typ arr_len = (sizeof(arr) / sizeof(*arr));
+	const len_type arr_len = (sizeof(arr) / sizeof(*arr));
 	deque *q = dq_from_array(arr, arr_len, sizeof(*arr), NULL, NULL);
 
 	REQUIRE(q, "dq_from_array() should return non-null pointer");

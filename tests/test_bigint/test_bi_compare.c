@@ -1,17 +1,20 @@
 #include "tests.h"
 
-struct null_inputs
+struct invalid_inputs
 {
 	bigint num1, num2;
 };
 
-TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(null_inputs) { (void)tau; }
+TEST_F_TEARDOWN(invalid_inputs) { (void)tau; }
 
-TEST(null_inputs, test_NULL_cmp_NULL) { CHECK(bi_compare(NULL, NULL) == 0); }
+TEST(invalid_inputs, test_NULL_cmp_NULL)
+{
+	CHECK(bi_compare(NULL, NULL) == 0);
+}
 
-TEST_F(null_inputs, test_0_cmp_NULL)
+TEST_F(invalid_inputs, test_0_cmp_NULL)
 {
 	u_int in1[1] = {0};
 
@@ -20,7 +23,7 @@ TEST_F(null_inputs, test_0_cmp_NULL)
 	CHECK(bi_compare(&(tau->num1), NULL) == 0);
 }
 
-TEST_F(null_inputs, test_NULL_cmp_0)
+TEST_F(invalid_inputs, test_NULL_cmp_0)
 {
 	u_int in1[1] = {0};
 
@@ -29,7 +32,7 @@ TEST_F(null_inputs, test_NULL_cmp_0)
 	CHECK(bi_compare(NULL, &(tau->num1)) == 0);
 }
 
-TEST_F(null_inputs, test_1_cmp_NULL)
+TEST_F(invalid_inputs, test_1_cmp_NULL)
 {
 	u_int in1[] = {1};
 
@@ -38,7 +41,7 @@ TEST_F(null_inputs, test_1_cmp_NULL)
 	CHECK(bi_compare(&(tau->num1), NULL) == 0);
 }
 
-TEST_F(null_inputs, test_NULL_cmp_1)
+TEST_F(invalid_inputs, test_NULL_cmp_1)
 {
 	u_int in1[] = {1};
 
@@ -47,12 +50,12 @@ TEST_F(null_inputs, test_NULL_cmp_1)
 	CHECK(bi_compare(NULL, &(tau->num1)) == 0);
 }
 
-TEST_F(null_inputs, test_NULL_cmp_NaN)
+TEST_F(invalid_inputs, test_NULL_cmp_NaN)
 {
 	CHECK(bi_compare(NULL, &(tau->num2)) == 0);
 }
 
-TEST_F(null_inputs, test_NaN_cmp_NULL)
+TEST_F(invalid_inputs, test_NaN_cmp_NULL)
 {
 	CHECK(bi_compare(&(tau->num1), NULL) == 0);
 }
@@ -387,11 +390,11 @@ TEST_F(negative_numbers, test_neg1_cmp_1)
 /* ####################### bi_compare_int ############################ */
 /* ################################################################### */
 
-TEST(null_inputs, test_NULL_cmp_0i) { CHECK(bi_compare_int(NULL, 0) == 0); }
+TEST(invalid_inputs, test_NULL_cmp_0i) { CHECK(bi_compare_int(NULL, 0) == 0); }
 
-TEST(null_inputs, test_NULL_cmp_1i) { CHECK(bi_compare_int(NULL, 1) == 0); }
+TEST(invalid_inputs, test_NULL_cmp_1i) { CHECK(bi_compare_int(NULL, 1) == 0); }
 
-TEST(null_inputs, test_NULL_cmp_neg1i)
+TEST(invalid_inputs, test_NULL_cmp_neg1i)
 {
 	CHECK(bi_compare_int(NULL, -1) == 0);
 }

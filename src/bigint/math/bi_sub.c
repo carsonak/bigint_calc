@@ -16,7 +16,7 @@ subtract_negatives(bigint *const restrict n1, bigint *const restrict n2);
 static bigint *
 subtract(const bigint *const restrict n1, const bigint *const restrict n2)
 {
-	len_typ n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
+	len_type n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
 	l_int n1_is_bigger = 0, byt_diff = 0;
 	bigint *diff = NULL;
 

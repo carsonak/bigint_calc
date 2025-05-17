@@ -13,7 +13,7 @@ iadd_negatives(bigint *const restrict n1, bigint *const restrict n2);
  */
 static void iadd(bigint *const restrict n1, bigint const *const restrict n2)
 {
-	len_typ n1_i = 0, n2_i = 0, res_len = 0;
+	len_type n1_i = 0, n2_i = 0, res_len = 0;
 	l_int byt_sum = 0;
 
 	while (n1_i < n1->len || n2_i < n2->len || byt_sum > 0)

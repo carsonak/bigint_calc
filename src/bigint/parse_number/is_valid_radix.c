@@ -3,7 +3,7 @@
 
 #include "bigint_types.h"
 
-static bool is_valid_radix(const radix_typ base);
+static bool is_valid_radix(const radix_type base);
 
 /**
  * is_valid_radix - check if a number is within the accepted radix range.
@@ -14,7 +14,7 @@ static bool is_valid_radix(const radix_typ base);
  *
  * Return: true if `base` is within the valid range, false otherwise.
  */
-static bool is_valid_radix(const radix_typ base)
+static bool is_valid_radix(const radix_type base)
 {
 	return (base >= RADIX_MINIMUM && base <= RADIX_MAXIMUM);
 }

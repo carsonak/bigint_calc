@@ -74,7 +74,7 @@ typedef struct token
 
 deque *parse_tokens(char const *const expression);
 void print_syntax_error(
-	char const *const expression, len_typ idx, char const *const msg
+	char const *const expression, len_type idx, char const *const msg
 );
 void *free_token(token *freeable_token);
 

@@ -16,11 +16,11 @@ uintmax_t safe_imaxabs(intmax_t n);
 
 /* `bigint` construction */
 
-void *bi_delete(bigint *ptr);
+void *bi_delete(bigint *const ptr);
 ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
 bigint *bi_new(
-	char const *const restrict number, const radix_typ base,
-	len_typ *const restrict processed
+	char const *const restrict number, const radix_type base,
+	len_type *const restrict processed
 );
 
 bool int_to_bi(bigint *const dest, const intmax_t n);
@@ -45,9 +45,13 @@ bigint *bi_divide(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_modulo(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_power(bigint *const restrict base, const intmax_t exponent);
+bigint *bi_shift_l(bigint *const restrict n, const len_type c);
+bigint *bi_shift_r(bigint *const restrict n, const len_type c);
 bigint *bi_subtract(bigint *const restrict n1, bigint *const restrict n2);
 
 bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2);
+bool bi_ishift_l(bigint *const restrict n, const len_type c);
+bool bi_ishift_r(bigint *const restrict n, const len_type c);
 bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2);
 
 bigint *bi_add_int(bigint *const n1, const intmax_t n2);
@@ -59,7 +63,7 @@ bool bi_isubtract_int(bigint *const n1, const intmax_t n2);
 
 /* printing */
 
-len_typ bi_print(FILE *const restrict stream, const bigint *const restrict n);
-char *_uint_array_to_str(u_int const *const arr, const len_typ len);
+len_type bi_print(FILE *const restrict stream, const bigint *const restrict n);
+char *_uint_array_to_str(u_int const *const arr, const len_type len);
 
 #endif /* BIGINT_H */

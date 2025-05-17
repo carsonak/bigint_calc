@@ -6,23 +6,31 @@
  *
  * Return: a pointer to a `bigint` struct, NULL on failure.
  */
-bigint *_bi_alloc(const len_typ len)
+bigint *_bi_alloc(const len_type len)
 {
-	bigint *arr = xmalloc(sizeof(*arr) + (sizeof(*arr->num) * len));
-
-	if (!arr || len < 0)
+	if (len < 0)
 		return (NULL);
 
-	*arr = (bigint){0};
-	arr->len = len;
+	bigint *bn = NULL;
+	const size_t size = sizeof(*bn->num) * len;
+
+	if (len > 0 && size / len != sizeof(*bn->num))
+		return (NULL);
+
+	bn = xmalloc(sizeof(*bn) + size);
+	if (!bn)
+		return (NULL);
+
+	*bn = (bigint){0};
+	bn->len = len;
 	if (len > 0)
 	{
-		arr->num = (u_int *)(arr + 1);
-		arr->num[0] = 0;
-		arr->num[len - 1] = 0;
+		bn->num = (u_int *)(bn + 1);
+		bn->num[0] = 0;
+		bn->num[len - 1] = 0;
 	}
 
-	return (arr);
+	return (bn);
 }
 
 /**
@@ -37,15 +45,21 @@ bigint *_bi_alloc(const len_typ len)
  *
  * Return: pointer to the resized `bigint`, NULL on failure.
  */
-bigint *_bi_resize(bigint *bi, const len_typ len)
+bigint *_bi_resize(bigint *bi, const len_type len)
 {
 	if (len < 0)
-		return (NULL);
+		return (_bi_free(bi));
 
-	const len_typ actual_size =
-		sizeof(*bi) + (sizeof((bigint){0}.num[0]) * len);
+	const size_t new_size = sizeof(*bi->num) * len;
 
-	bi = bi ? xrealloc_free_on_fail(bi, actual_size) : _bi_alloc(len);
+	if (len > 0 && new_size / len != sizeof(*bi->num))
+		return (_bi_free(bi));
+
+	if (bi)
+		bi = xrealloc_free_on_fail(bi, sizeof(*bi) + new_size);
+	else
+		bi = _bi_alloc(len);
+
 	if (!bi)
 		return (NULL);
 
@@ -68,7 +82,7 @@ bigint *_bi_resize(bigint *bi, const len_typ len)
  *
  * Return: NULL always.
  */
-void *_bi_free(bigint *freeable_ptr)
+void *_bi_free(bigint *const freeable_ptr)
 {
 	if (freeable_ptr)
 	{

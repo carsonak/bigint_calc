@@ -1,21 +1,21 @@
 #include "tests.h"
 
-struct null_inputs
+struct invalid_inputs
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); };
+TEST_F_TEARDOWN(invalid_inputs) { tau->output = bi_delete(tau->output); };
 
-TEST_F(null_inputs, test_NULL)
+TEST_F(invalid_inputs, test_NULL)
 {
 	EXPECT(str_to_numstr(NULL, 10, &processed) == 0);
 	EXPECT(processed == 0);
 }
 
-TEST_F(null_inputs, test_null)
+TEST_F(invalid_inputs, test_null)
 {
 	EXPECT(str_to_numstr("\0001", 10, &processed) == 0);
 	EXPECT(processed == 0);

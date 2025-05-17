@@ -1,22 +1,22 @@
 #include "tests.h"
 
-struct null_inputs
+struct invalid_inputs
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(null_inputs) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(null_inputs) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(invalid_inputs) { tau->output = bi_delete(tau->output); }
 
-TEST_F(null_inputs, test_null_times_null)
+TEST_F(invalid_inputs, test_null_times_null)
 {
 	tau->output = bi_multiply(NULL, NULL);
 
 	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-TEST_F(null_inputs, test_1_times_null)
+TEST_F(invalid_inputs, test_1_times_null)
 {
 	u_int in1[] = {1};
 
@@ -27,7 +27,7 @@ TEST_F(null_inputs, test_1_times_null)
 	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-TEST_F(null_inputs, test_null_times_1)
+TEST_F(invalid_inputs, test_null_times_1)
 {
 	u_int in2[] = {1};
 
@@ -38,7 +38,7 @@ TEST_F(null_inputs, test_null_times_1)
 	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-TEST_F(null_inputs, test_0_times_null)
+TEST_F(invalid_inputs, test_0_times_null)
 {
 	u_int in1[1] = {0};
 
@@ -49,7 +49,7 @@ TEST_F(null_inputs, test_0_times_null)
 	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-TEST_F(null_inputs, test_null_times_0)
+TEST_F(invalid_inputs, test_null_times_0)
 {
 	u_int in2[1] = {0};
 
@@ -60,7 +60,7 @@ TEST_F(null_inputs, test_null_times_0)
 	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-TEST_F(null_inputs, test_neg1_times_null)
+TEST_F(invalid_inputs, test_neg1_times_null)
 {
 	u_int in1[] = {1};
 
@@ -72,7 +72,7 @@ TEST_F(null_inputs, test_neg1_times_null)
 	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-TEST_F(null_inputs, test_null_times_neg1)
+TEST_F(invalid_inputs, test_null_times_neg1)
 {
 	u_int in2[] = {1};
 
@@ -84,16 +84,9 @@ TEST_F(null_inputs, test_null_times_neg1)
 	CHECK_PTR_EQ(tau->output, NULL);
 }
 
-struct not_a_number
-{
-	bigint num1, num2, expected, *output;
-};
+/* NaN */
 
-TEST_F_SETUP(not_a_number) { memset(tau, 0, sizeof(*tau)); }
-
-TEST_F_TEARDOWN(not_a_number) { tau->output = bi_delete(tau->output); }
-
-TEST_F(not_a_number, test_NaN_times_NaN)
+TEST_F(invalid_inputs, test_NaN_times_NaN)
 {
 	tau->output = bi_multiply(&(tau->num1), &(tau->num2));
 
@@ -102,7 +95,7 @@ TEST_F(not_a_number, test_NaN_times_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_4490998_times_NaN)
+TEST_F(invalid_inputs, test_4490998_times_NaN)
 {
 	u_int in1[] = {4490998};
 
@@ -116,7 +109,7 @@ TEST_F(not_a_number, test_4490998_times_NaN)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_NaN_times_largenum)
+TEST_F(invalid_inputs, test_NaN_times_largenum)
 {
 	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
@@ -740,26 +733,26 @@ TEST_F(large_multiplications, test_0_times_01ka)
 /* ###################### bi_multiply_int ############################ */
 /* ################################################################### */
 
-/* null_inputs */
+/* invalid_inputs */
 
-TEST(null_inputs, test_null_times_0i)
+TEST(invalid_inputs, test_null_times_0i)
 {
 	CHECK_PTR_EQ(bi_multiply_int(NULL, 0), NULL);
 }
 
-TEST(null_inputs, test_null_times_4490998i)
+TEST(invalid_inputs, test_null_times_4490998i)
 {
 	CHECK_PTR_EQ(bi_multiply_int(NULL, 4490998), NULL);
 }
 
-TEST(null_inputs, test_null_times_neg4490998i)
+TEST(invalid_inputs, test_null_times_neg4490998i)
 {
 	CHECK_PTR_EQ(bi_multiply_int(NULL, -4490998), NULL);
 }
 
-/* not_a_number */
+/* NaN */
 
-TEST_F(not_a_number, test_NaN_times_0i)
+TEST_F(invalid_inputs, test_NaN_times_0i)
 {
 	tau->output = bi_multiply_int(&tau->num1, 0);
 
@@ -768,7 +761,7 @@ TEST_F(not_a_number, test_NaN_times_0i)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_negNaN_times_0i)
+TEST_F(invalid_inputs, test_negNaN_times_0i)
 {
 	tau->num1.is_negative = true;
 	tau->output = bi_multiply_int(&tau->num1, 0);
@@ -778,7 +771,7 @@ TEST_F(not_a_number, test_negNaN_times_0i)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_NaN_times_4490998i)
+TEST_F(invalid_inputs, test_NaN_times_4490998i)
 {
 	tau->output = bi_multiply_int(&tau->num1, 4490998);
 
@@ -787,7 +780,7 @@ TEST_F(not_a_number, test_NaN_times_4490998i)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_negNaN_times_4490998i)
+TEST_F(invalid_inputs, test_negNaN_times_4490998i)
 {
 	tau->num1.is_negative = true;
 	tau->output = bi_multiply_int(&tau->num1, 4490998);
@@ -797,7 +790,7 @@ TEST_F(not_a_number, test_negNaN_times_4490998i)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_NaN_times_neg4490998i)
+TEST_F(invalid_inputs, test_NaN_times_neg4490998i)
 {
 	tau->output = bi_multiply_int(&tau->num1, -4490998);
 
@@ -806,7 +799,7 @@ TEST_F(not_a_number, test_NaN_times_neg4490998i)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
-TEST_F(not_a_number, test_negNaN_times_neg4490998i)
+TEST_F(invalid_inputs, test_negNaN_times_neg4490998i)
 {
 	tau->num1.is_negative = true;
 	tau->output = bi_multiply_int(&tau->num1, -4490998);

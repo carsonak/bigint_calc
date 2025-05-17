@@ -96,13 +96,13 @@ intmax_t _bi_compare_const(const bigint *const n1, const bigint *const n2)
  * Return: +ve number if arr1 > arr2, -ve number if arr1 < arr2 else 0.
  */
 intmax_t _cmp_rev_uint_arr(
-	u_int const *const arr1, u_int const *const arr2, len_typ len
+	u_int const *const arr1, u_int const *const arr2, len_type len
 )
 {
 	if ((!arr1 && !arr2) || len < 0)
 		return (0);
 
-	len_typ i = len > 0 ? len - 1 : 0;
+	len_type i = len > 0 ? len - 1 : 0;
 
 	if (!arr1)
 		return ((intmax_t)0 - arr2[i]);

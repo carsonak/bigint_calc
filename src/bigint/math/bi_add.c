@@ -16,9 +16,9 @@ add_negatives(bigint *const restrict n1, bigint *const restrict n2);
 static bigint *
 add(const bigint *const restrict n1, const bigint *const restrict n2)
 {
-	len_typ n1_i = 0, n2_i = 0, sum_i = 0;
+	len_type n1_i = 0, n2_i = 0, sum_i = 0;
 	/* sum->len = (larger of n1->len or n2->len, +1 for a carry) */
-	const len_typ result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
+	const len_type result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	l_int byt_sum = 0;
 	bigint *sum = NULL;
 

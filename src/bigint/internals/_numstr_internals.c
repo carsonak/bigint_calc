@@ -6,7 +6,7 @@
  *
  * Return: a pointer to a numstr struct, NULL on failure.
  */
-numstr *_numstr_alloc(len_typ len)
+numstr *_numstr_alloc(len_type len)
 {
 	if (len < 0)
 		return (NULL);

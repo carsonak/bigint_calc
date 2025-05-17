@@ -3,10 +3,11 @@
 #include "parse_number.h"
 
 static ATTR_NONNULL bool check_is_negative(
-	char const *const restrict number, len_typ *const restrict str_i
+	char const *const restrict number, len_type *const restrict str_i
 );
 static ATTR_NONNULL_IDX(2) char map_digits(const char c, void *radix);
-static len_typ leading_chars_span(char const *const str, char const *const ch);
+static len_type
+leading_chars_span(char const *const str, char const *const ch);
 
 #include "char_to_int.c"
 #include "int_to_char.c"
@@ -22,12 +23,12 @@ static len_typ leading_chars_span(char const *const str, char const *const ch);
 static char map_digits(const char c, void *radix)
 {
 	short int a = char_to_int(c);
-	const radix_typ base = *((const radix_typ *)radix);
+	const radix_type base = *((const radix_type *)radix);
 
 	if (c == '_')
 		return (0); /* underscores should be ignored. */
 
-	if (a < 0 || (radix_typ)a >= base)
+	if (a < 0 || (radix_type)a >= base)
 		return (-1); /* invalid character. */
 
 	return (int_to_char(a));
@@ -53,7 +54,7 @@ static char map_digits(const char c, void *radix)
  * Return: pointer to the filtered string, NULL on failure.
  */
 char *filter_str(
-	char const *const restrict str, len_typ *const restrict processed,
+	char const *const restrict str, len_type *const restrict processed,
 	const mapping_func map, void *const map_args
 )
 {
@@ -61,12 +62,12 @@ char *filter_str(
 		return (NULL);
 
 	char *output = NULL, c = 0;
-	len_typ str_i = 0, out_len = 0;
+	len_type str_i = 0, out_len = 0;
 	char buffer[FILTER_STR_BUFFER_SIZE];
 
 	while (str[str_i])
 	{
-		len_typ buf_i = 0;
+		len_type buf_i = 0;
 
 		for (buf_i = 0; buf_i < FILTER_STR_BUFFER_SIZE - 1 && str[str_i];
 			 ++str_i)
@@ -118,9 +119,9 @@ char *filter_str(
  *
  * Return: number of leading characters.
  */
-static len_typ leading_chars_span(char const *const str, char const *const ch)
+static len_type leading_chars_span(char const *const str, char const *const ch)
 {
-	len_typ count = 0;
+	len_type count = 0;
 
 	if (str && ch && *ch)
 	{
@@ -140,7 +141,7 @@ static len_typ leading_chars_span(char const *const str, char const *const ch)
  * Return: true if the sign is negative, false otherwise.
  */
 static bool check_is_negative(
-	char const *const restrict number, len_typ *const restrict str_i
+	char const *const restrict number, len_type *const restrict str_i
 )
 {
 	bool is_neg = false;
@@ -164,12 +165,12 @@ static bool check_is_negative(
  * Return: pointer to a numstr struct, NULL on failure.
  */
 numstr *str_to_numstr(
-	char const *const restrict number, const radix_typ base,
-	len_typ *const restrict processed
+	char const *const restrict number, const radix_type base,
+	len_type *const restrict processed
 )
 {
 	numstr *ns = NULL;
-	len_typ str_i = 0, p = 0;
+	len_type str_i = 0, p = 0;
 
 	if (!number || !is_valid_radix(base))
 		return (NULL);
@@ -187,7 +188,7 @@ numstr *str_to_numstr(
 
 	str_i += leading_chars_span(&number[str_i], "0");
 	{
-		radix_typ b = base;  // Avoiding Undefined Behaviour.
+		radix_type b = base;  // Avoiding Undefined Behaviour.
 		ns->str = filter_str(&number[str_i], &p, map_digits, &b);
 	}
 

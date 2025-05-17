@@ -29,3 +29,7 @@ add_test(NAME test_bi_pow COMMAND test_bi_pow)
 add_executable(test_bi_iszero test_bi_iszero.c test_main.c)
 target_link_libraries(test_bi_iszero PRIVATE bigint)
 add_test(NAME test_bi_iszero COMMAND test_bi_iszero)
+
+add_executable(test_bi_shift test_bi_shift.c test_main.c)
+target_link_libraries(test_bi_shift PRIVATE bigint)
+add_test(NAME test_bi_shift COMMAND test_bi_shift)

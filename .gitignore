@@ -6,3 +6,6 @@ __pycache__
 build/*
 debug/*
 release-debug/*
+
+# private
+CMakeUserPresets.json
