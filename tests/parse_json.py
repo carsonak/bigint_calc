@@ -3,9 +3,8 @@
 
 from argparse import ArgumentParser
 import json
-from os import path
 import sys
-from typing import Callable, NamedTuple, TypeVar
+from typing import Callable, NamedTuple
 
 if hasattr(sys, "set_int_max_str_digits"):
     sys.set_int_max_str_digits(200_000)
@@ -13,12 +12,8 @@ if hasattr(sys, "set_int_max_str_digits"):
 
 class AccessKeys(NamedTuple):
     """Keys to extract numbers from a dict of dicts of str."""
-
     category: str
     key: str
-
-
-_IORS = TypeVar("_IORS", bound=int | str)
 
 
 def get_value(d: dict[str, dict[str, str]], k: AccessKeys) -> str:
@@ -31,18 +26,28 @@ def get_accesskeys(token: str, delimeter: str = ".") -> AccessKeys:
     return AccessKeys(*token.split(delimeter))
 
 
-def parse_argv(
-        argv: list[str]) -> tuple[AccessKeys, str | None, AccessKeys | None]:
+def parse_argv(argv: list[str]
+               ) -> tuple[str, AccessKeys, str | None, AccessKeys | None]:
     """Process argv into operation to be executed."""
     parser = ArgumentParser(
         description="Perform some simple math operations on "
-        "numbers from json file.", add_help=False
+        "numbers from json file."
     )
-    parser.add_argument("num1_token", metavar="category_name.number_key")
     parser.add_argument(
-        "operator", choices=["+", "-", "*", "/", "%", "**"], nargs="?")
+        "-f", "--json-file", default="nums_as_str.json",
+        help="the json file to read from"
+    )
+    parser.add_argument("num1_token", metavar="category_name.number_key",
+                        help="a string identifying a number in the json file")
     parser.add_argument(
-        "num2_token", metavar="category_name.number_key", nargs="?")
+        "operator", choices=["+", "-", "*", "/", "%", "**"], nargs="?",
+        help=("optional symbol representing a mathematical operation "
+              "to carry out")
+    )
+    parser.add_argument(
+        "num2_token", metavar="category_name.number_key", nargs="?",
+        help="an optional string identifying a number in the json file"
+    )
 
     tokens = parser.parse_args(argv)
     num1_keys: AccessKeys = get_accesskeys(tokens.num1_token)
@@ -62,12 +67,12 @@ def parse_argv(
             "second number key are mutually inclusive"
         )
 
-    return num1_keys, operator, num2_keys
+    return tokens.json_file, num1_keys, operator, num2_keys
 
 
 def main(argv: list[str]) -> None:
     """Entry point."""
-    ops: dict[str, Callable[[_IORS, _IORS], int]] = {
+    ops: dict[str, Callable[[int | str, int | str], int]] = {
         "+": lambda x, y: int(x) + int(y),
         "-": lambda x, y: int(x) - int(y),
         "*": lambda x, y: int(x) * int(y),
@@ -76,9 +81,7 @@ def main(argv: list[str]) -> None:
         "**": lambda x, y: int(x) ** int(y),
     }
 
-    num1_keys, operator, num2_keys = parse_argv(argv)
-    json_file: str = path.sep.join(
-        [path.dirname(path.realpath(__file__)), "nums_as_str.json"])
+    json_file, num1_keys, operator, num2_keys = parse_argv(argv)
     with open(json_file, encoding="utf-8") as f:
         numstr_dict: dict[str, dict[str, str]] = json.load(f)
 

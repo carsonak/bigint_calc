@@ -43,8 +43,8 @@ add(const bigint *const restrict n1, const bigint *const restrict n2)
 			++n2_i;
 		}
 
-		sum->num[sum_i] = byt_sum % (BIGINT_BASE);
-		byt_sum /= (BIGINT_BASE);
+		sum->num[sum_i] = byt_sum % BIGINT_BASE;
+		byt_sum /= BIGINT_BASE;
 		++sum_i;
 	}
 

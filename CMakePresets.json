@@ -52,9 +52,9 @@
             "execution": {
                 "jobs": 4,
                 "stopOnFailure": true,
-                "scheduleRandom": true,
-                "timeout": 2
-            }
+                "scheduleRandom": true
+            },
+            "filter": { "exclude": { "label": "performance" } }
         },
         {
             "name": "release-debug",
@@ -63,9 +63,19 @@
             "execution": {
                 "jobs": 4,
                 "stopOnFailure": true,
+                "scheduleRandom": true
+            },
+            "filter": { "exclude": { "label": "performance" } }
+        },
+        {
+            "name": "performance-debug",
+            "configurePreset": "release-debug",
+            "output": { "verbosity": "verbose" },
+            "execution": {
                 "scheduleRandom": true,
-                "timeout": 2
-            }
+                "timeout": 20
+            },
+            "filter": { "include": { "label": "performance" } }
         }
     ]
 }

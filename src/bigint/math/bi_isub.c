@@ -132,7 +132,7 @@ bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2)
 		return (false);
 
 	_bi_trim(n1);
-	if (!n2) /* This case is treated as -(n1). */
+	if (!n2) /* This case is treated as n1 = -n1. */
 	{
 		n1->is_negative = !n1->is_negative;
 		return (true);

@@ -122,12 +122,12 @@ void _bi_trim(bigint *const n)
  *
  * Return: a pointer to duplicated bi, NULL on failure.
  */
-bigint *_bi_dup(bigint const *const bi)
+bigint *_bi_dup(bigint const *const restrict bi)
 {
 	if (!bi)
 		return (NULL);
 
-	bigint *const dup = _bi_alloc(bi->len);
+	bigint *const restrict dup = _bi_alloc(bi->len);
 
 	if (!dup)
 		return (NULL);
@@ -148,17 +148,17 @@ bigint *_bi_dup(bigint const *const bi)
  * the corresponding data in src.
  * If pointers in src are NULL, pointers in dest will not be affected.
  *
- * Return: true on success, false on failure.
+ * Return: pointer to the destination, NULL on failure.
  */
-bool _bi_move(bigint *const dest, bigint const *const src)
+bigint *_bi_move(bigint *const dest, bigint const *const src)
 {
-	if (!src || !dest || (src->len && src->num && !dest->num))
-		return (false);
+	if (!src || !dest || (src->len > 0 && src->num && !dest->num))
+		return (NULL);
 
 	dest->len = src->len;
 	dest->is_negative = src->is_negative;
 	if (src->num && dest->num)
 		memmove(dest->num, src->num, sizeof(*src->num) * src->len);
 
-	return (true);
+	return (dest);
 }
