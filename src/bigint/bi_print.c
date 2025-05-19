@@ -17,6 +17,7 @@ len_type bi_print(FILE *const restrict stream, const bigint *const restrict n)
 
 	len_type bytes_printed = 0;
 	char *const str_arr = _uint_array_to_str(n->num, n->len);
+
 	if (!str_arr)
 		return (-1);
 
@@ -57,6 +58,7 @@ char *_uint_array_to_str(u_int const *const arr, const len_type len)
 	for (n = 0, s_i = 1; n < len - 1 && s_i < len_str; ++n)
 	{
 		int bytes_written = sprintf(&str[s_i], "%d", arr[n]);
+
 		if (bytes_written < 0)
 			return (xfree(str));
 

@@ -7,5 +7,5 @@ build/*
 debug/*
 release-debug/*
 
-# private
+# local
 CMakeUserPresets.json

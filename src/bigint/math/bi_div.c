@@ -260,10 +260,10 @@ static bi_div_res divide(bigint *const restrict n1, bigint *const restrict n2)
 		if (dropped > 0)
 		{
 			slice_offset = current_slice->len - (dropped + res.remainder->len);
-			q_i -=
-				dropped - 1; /* One drop is discounted after every division. */
-			/* For every index "i" dropped into current_slice set quotient[i] to
-			 * 0. */
+			/* One drop is discounted after every division. */
+			q_i -= dropped - 1;
+			/* For every index "i" dropped into current_slice */
+			/* set quotient[i] to 0. */
 			memset(
 				&(res.quotient->num[q_i]), 0,
 				sizeof(*(res.quotient->num)) * (dropped - 1)
@@ -333,11 +333,12 @@ cleanup:
 }
 
 /**
- * bi_divide_with_remainder - handle division of two bigints, returns reminder too.
+ * bi_divide_with_remainder - handle division of two bigints,
+ * return quotient and reminder.
  * @n1: numerator/divisor.
  * @n2: denominator/dividend.
  *
- * Return: a struct with pointers to the results,
+ * Return: a struct with pointers to the quotient and remainder,
  * struct with NULL pointers on error.
  */
 bi_div_res

@@ -2,18 +2,17 @@
 #include "bigint.h"
 
 /**
- * struct bigint_karatsuba_split - a `bigint` split into its most
- * significant digits, least significant digits and their sum.
+ * struct bigint_karatsuba_split - a `bigint` split into its most significant
+ * digits and least significant digits.
  * @hi: the most significant digits of the bigint.
  * @lo: the least significant digits of the bigint.
- * @sum: sum of `hi` and `lo`.
  *
  * a `bi_split` can be reconstituted into a `bigint` (x) with
  * the formula:
  * if lo > 0:
- * 	x = (hi * `BIGINT_BASE` * lo.len) + lo
+ *    x = (hi * `BIGINT_BASE` * lo.len) + lo
  * else
- *  x = hi
+ *    x = hi
  */
 typedef struct bigint_karatsuba_split
 {
@@ -85,21 +84,23 @@ long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
 			break;
 	}
 
-cleanup:
-	_bi_free(current_mul);
 	if (n2_i < n2->len)
+	{
+cleanup:
 		product = _bi_free(product);
+	}
 
+	_bi_free(current_mul);
 	_bi_trim(product);
 	return (product);
 }
 
 /**
- * bi_split_at - split a `bigint` into a `bi_split` at the given index.
+ * bi_split_at - split the "digits" of a `bigint` at the given index.
  * @n: pointer to the `bigint`.
- * @i: index to split at.
+ * @i: a positive integer indicating index to split at.
  *
- * Return: a `bi_split` of the `bigint`.
+ * Return: a `bi_split` with both the higher digits and lower ones.
  */
 static bi_split bi_split_at(const bigint *const restrict n, const len_type i)
 {
@@ -128,7 +129,7 @@ static bi_split bi_split_at(const bigint *const restrict n, const len_type i)
 }
 
 /**
- * max_of_3 - returns the maximum value of 3 values.
+ * max_of_3 - get the maximum of 3 integers.
  * @a: first
  * @b: second
  * @c: third
@@ -162,20 +163,22 @@ static len_type max_of_3(const len_type a, const len_type b, const len_type c)
  * `x = x1*B^m + x0`
  * `y = y1*B^m + y0`
  *
- * where *x0* and *y0* are less than *B^m*. The product is then:
+ * where *x0* and *y0* are less than *B^m*. The product of the two numbers
+ * is then:
  *
  * `xy = (x1*B^m + x0)(y1*B^m + y0)`
  * `   = x1*y1*B^(2*m) + (x1*y0 + x0*y1)B^m + x0*y0`
  * `   = z2*B^(2*m) + z1*B^m + z0`
  *
- * we can then rewrite, `z1 = x1*y0 + x0*y1` as:
+ * Notice that *z1* can be rewritten as follows:
  *
- * `z1 = (x0 + x1)(y0 + y1) - x1y1 - x0y0`
- * `   = z3 - z2 - z1`
+ * `z1 = x1*y0 + x0*y1`
+ * `   = (x0 + x1)(y0 + y1) - x1y1 - x0y0`
+ * `   = z3 - z2 - z0`
  *
- * thus reducing the number of multiplications by one.
+ * thus reducing the number of multiplications in the formula by one.
  *
- * `xy = z2*B^(2*m) + (z3 - z2 - z1)*B^m + z0`
+ * `xy = z2*B^(2*m) + (z3 - z2 - z0)*B^m + z0`
  *
  * Return: pointer to the result, NULL on failure.
  */
@@ -211,18 +214,15 @@ bigint *karatsuba_multiply(
 
 	z3->len -= i;
 	bi_ishift_l(z3, i);
-	result = bi_dup(z2);
-	if (!result)
-		goto cleanup;
+	const len_type z2_len = z2->len;
 
 	/* z2 * BIGINT_BASE^(2*i) */
-	result =
-		_bi_resize(result, max_of_3(z2->len + i * 2, z3->len, z0->len) + 1);
+	result = _bi_resize(z2, max_of_3(z2_len + i * 2, z3->len, z0->len) + 1);
 	if (!result)
 		goto cleanup;
 
 	memset(&(result->num[result->len - 2]), 0, sizeof(*result->num) * 2);
-	result->len = z2->len;
+	result->len = z2_len;
 	bi_ishift_l(result, i * 2);
 
 	/* z2 * BIGINT_BASE^(2*i) + (z3 - z2 - z0) * BIGINT_BASE^i + z0 */
@@ -232,7 +232,6 @@ cleanup:
 	_bi_free(xhi_plus_xlo);
 	_bi_free(yhi_plus_ylo);
 	_bi_free(z0);
-	_bi_free(z2);
 	_bi_free(z3);
 	return (result);
 }
@@ -320,6 +319,5 @@ bigint *bi_multiply_int(bigint *const n1, const intmax_t n2)
 
 	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (u_int[4]){0}};
 
-	int_to_bi(&num2, n2);
-	return (bi_multiply(n1, &num2));
+	return (bi_multiply(n1, int_to_bi(&num2, n2)));
 }

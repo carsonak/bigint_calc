@@ -10,10 +10,10 @@
 #include "xalloc.h"
 
 /**
- * struct `bigint` - an arbitrary precision integer representation.
+ * struct bigint - an arbitrary precision integer representation.
  * @len: number of items in the int array.
- * @num: pointer to an array of unsigned ints.
  * @is_negative: a bool for signedness of the number.
+ * @num: pointer to an array of unsigned ints.
  */
 struct bigint
 {

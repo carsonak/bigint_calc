@@ -1,16 +1,22 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
+static bigint *
+_bi_shift(bigint *const restrict n, const len_type d) ATTR_NONNULL;
+static bigint *
+_bi_ishift(bigint *const restrict n, const len_type d) ATTR_NONNULL;
+
 /**
- * bi_shift - digit shift a `bigint`.
+ * _bi_shift - shift digits of a `bigint`.
  * @n: pointer to the bigint.
- * @c: how much to shift by; if negative, left shift; if positive, right shift.
+ * @d: how much to shift by: if negative shift to the left,
+ * if positive shift to the right.
  *
  * Return: pointer to the shifted `bigint`, NULL on failure.
  */
-static bigint *bi_shift(bigint *const restrict n, len_type c)
+static bigint *_bi_shift(bigint *const restrict n, const len_type d)
 {
-	if (!n || n->len < 0)
+	if (n->len < 0)
 		return (NULL);
 
 	_bi_trim(n);
@@ -22,100 +28,102 @@ static bigint *bi_shift(bigint *const restrict n, len_type c)
 
 	bigint *restrict res = NULL;
 
-	if (c < 0) /* left shift */
+	if (d < 0) /* left shift */
 	{
-		c = -c;
-		const uintmax_t final_len = (uintmax_t)n->len + c;
+		const len_type digits = -d;
+		const uintmax_t final_len = (uintmax_t)n->len + digits;
 
 		res = _bi_alloc(final_len);
 		if (res)
 		{
-			memset(res->num, 0, sizeof(*n->num) * c);
-			memcpy(&(res->num[c]), n->num, sizeof(*n->num) * n->len);
+			memset(res->num, 0, sizeof(*n->num) * digits);
+			memcpy(&(res->num[digits]), n->num, sizeof(*n->num) * n->len);
 		}
 	}
 	else /* right shift */
 	{
-		const uintmax_t final_len = n->len > c ? (uintmax_t)n->len - c : 1;
+		const uintmax_t final_len = n->len > d ? (uintmax_t)n->len - d : 1;
 
 		res = _bi_alloc(final_len);
-		if (c >= n->len)
+		if (d >= n->len)
 			return (res);
 
 		if (res)
-			memcpy(res->num, &(n->num[c]), sizeof(*n->num) * final_len);
+			memcpy(res->num, &(n->num[d]), sizeof(*n->num) * final_len);
 	}
 
 	return (res);
 }
 
 /**
- * bi_shift_r - right shift a `bigint` i.e: n / BIGINT_BASE^c.
+ * bi_shift_r - right shift a `bigint` i.e: n / BIGINT_BASE^d.
  * @n: pointer to the bigint.
- * @c: how much to shift by.
+ * @d: how much to shift by.
  *
  * Return: pointer to the shifted `bigint`, NULL on failure.
  */
-bigint *bi_shift_r(bigint *const restrict n, const len_type c)
+bigint *bi_shift_r(bigint *const restrict n, const len_type d)
 {
-	if (!n || n->len < 0 || c < 0)
+	if (!n || n->len < 0 || d < 0)
 		return (NULL);
 
-	return (bi_shift(n, c));
+	return (_bi_shift(n, d));
 }
 
 /**
- * bi_shift_l - left shift a `bigint` i.e: n * BIGINT_BASE^c.
+ * bi_shift_l - left shift a `bigint` i.e: n * BIGINT_BASE^d.
  * @n: pointer to the bigint.
- * @c: how much to shift by.
+ * @d: how much to shift by.
  *
  * Return: pointer to the shifted `bigint`, NULL on failure.
  */
-bigint *bi_shift_l(bigint *const restrict n, const len_type c)
+bigint *bi_shift_l(bigint *const restrict n, const len_type d)
 {
-	if (!n || n->len < 0 || c < 0)
+	if (!n || n->len < 0 || d < 0)
 		return (NULL);
 
-	return (bi_shift(n, -c));
+	return (_bi_shift(n, -d));
 }
 
 /**
- * bi_ishift - digit shift a `bigint` inplace.
+ * _bi_ishift - shift digits of a `bigint` inplace.
  * @n: pointer to the bigint.
- * @c: how much to shift by; if negative, left shift; if positive, right shift.
+ * @d: how much to shift by: if negative shift to the left,
+ * if positive shift to the right.
  *
- * No memory allocations via *alloc family functions will occur and therefore
- * `n` must be large enough to hold the final result.
+ * `n` must be large enough to hold the final result, as there will be
+ * no memory allocations via *alloc family functions.
  *
- * Return: true on success, false on failure.
+ * Return: pointer to the bigint on success, NULL on failure.
  */
-static bool bi_ishift(bigint *const restrict n, len_type c)
+static bigint *_bi_ishift(bigint *const restrict n, const len_type d)
 {
-	if (!n || n->len < 0)
-		return (false);
+	if (n->len < 0)
+		return (NULL);
 
 	_bi_trim(n);
 	if (bi_isNaN(n))
-		return (false);
+		return (NULL);
 
-	if (c == 0 || bi_iszero(n))
-		return (true);
+	if (d == 0 || bi_iszero(n))
+		return (n);
 
 	uintmax_t final_len = 0;
 
-	if (c < 0) /* left shift */
+	if (d < 0) /* left shift */
 	{
-		c = -c;
-		final_len = (uintmax_t)n->len + c;
-		memmove(&(n->num[c]), n->num, sizeof(*n->num) * n->len);
-		memset(n->num, 0, sizeof(*n->num) * c);
+		const len_type digits = -d;
+
+		final_len = (uintmax_t)n->len + digits;
+		memmove(&(n->num[digits]), n->num, sizeof(*n->num) * n->len);
+		memset(n->num, 0, sizeof(*n->num) * digits);
 	}
 	else /* right shift */
 	{
 
-		final_len = n->len > c ? (uintmax_t)n->len - c : 1;
-		if (n->len > c)
-			memmove(n->num, &(n->num[c]), sizeof(*n->num) * final_len);
+		final_len = n->len > d ? (uintmax_t)n->len - d : 1;
+		if (n->len > d)
+			memmove(n->num, &(n->num[d]), sizeof(*n->num) * final_len);
 		else
 			n->num[final_len - 1] = 0;
 
@@ -123,40 +131,40 @@ static bool bi_ishift(bigint *const restrict n, len_type c)
 	}
 
 	n->len = final_len;
-	return (true);
+	return (n);
 }
 
 /**
- * bi_ishift_r - shift a `bigint` to the right inplace, i.e: n / BIGINT_BASE^c.
+ * bi_ishift_r - shift a `bigint` to the right inplace, i.e: n / BIGINT_BASE^d.
  * @n: pointer to the bigint.
- * @c: how much to shift by.
+ * @d: how much to shift by.
  *
  * No memory allocations via *alloc family functions will occur.
  *
- * Return: true on success, false on failure.
+ * Return: pointer to the `bigint` on success, NULL on failure.
  */
-bool bi_ishift_r(bigint *const restrict n, const len_type c)
+bigint *bi_ishift_r(bigint *const restrict n, const len_type d)
 {
-	if (!n || n->len < 0 || c < 0)
-		return (false);
+	if (!n || n->len < 0 || d < 0)
+		return (NULL);
 
-	return (bi_ishift(n, c));
+	return (_bi_ishift(n, d));
 }
 
 /**
- * bi_ishift_l - shift a `bigint` to the left inplace, i.e: n * BIGINT_BASE^c.
+ * bi_ishift_l - shift a `bigint` to the left inplace, i.e: n * BIGINT_BASE^d.
  * @n: pointer to the bigint.
- * @c: how much to shift by.
+ * @d: how much to shift by.
  *
  * No memory allocations via *alloc family functions will occur and therefore
  * `n` must be large enough to hold the final result.
  *
- * Return: true on success, false on failure.
+ * Return: pointer to the `bigint` on success, NULL on failure.
  */
-bool bi_ishift_l(bigint *const restrict n, const len_type c)
+bigint *bi_ishift_l(bigint *const restrict n, const len_type d)
 {
-	if (!n || n->len < 0 || c < 0)
-		return (false);
+	if (!n || n->len < 0 || d < 0)
+		return (NULL);
 
-	return (bi_ishift(n, -c));
+	return (_bi_ishift(n, -d));
 }

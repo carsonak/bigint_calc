@@ -160,6 +160,5 @@ bigint *bi_subtract_int(bigint *const n1, const intmax_t n2)
 	if (!n1 || n1->len < 0)
 		return (NULL);
 
-	int_to_bi(&num2, n2);
-	return (bi_subtract(n1, &num2));
+	return (bi_subtract(n1, int_to_bi(&num2, n2)));
 }

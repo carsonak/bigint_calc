@@ -18,7 +18,7 @@ intmax_t bi_compare_int(bigint *const n1, const intmax_t n2)
 }
 
 /**
- * bi_compare_int - compare a const bigint to a const int.
+ * _bi_compare_int_const - compare a const bigint to a const int.
  * @n1: the `bigint`.
  * @n2: the int.
  *
@@ -31,8 +31,7 @@ intmax_t _bi_compare_int_const(const bigint *const n1, const intmax_t n2)
 
 	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (u_int[4]){0}};
 
-	int_to_bi(&num2, n2);
-	return (_bi_compare_const(n1, &num2));
+	return (_bi_compare_const(n1, int_to_bi(&num2, n2)));
 }
 
 /**
@@ -53,7 +52,7 @@ intmax_t bi_compare(bigint *const n1, bigint *const n2)
 }
 
 /**
- * bi_compare_const - compare 2 const bigints.
+ * _bi_compare_const - compare 2 const bigints.
  * @n1: the first `bigint`.
  * @n2: the second `bigint`.
  *

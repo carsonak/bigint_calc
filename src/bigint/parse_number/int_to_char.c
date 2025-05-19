@@ -4,7 +4,8 @@
 static char int_to_char(const unsigned short int num);
 
 /**
- * int_to_char - map a decimal number in the range 0-35 to an ascii symbol for base36.
+ * int_to_char - map a decimal number in the range 0-35 to an ascii symbol
+ * for base36.
  * @num: the number to convert.
  *
  * Return: ascii symbol of the number, '\0' on error.

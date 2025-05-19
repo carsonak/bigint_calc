@@ -17,7 +17,7 @@ bool bi_isNaN(bigint *const n)
 }
 
 /**
- * bi_isNaN - check if a const bigint is Not a Number.
+ * _bi_isNaN_const - check if a const bigint is Not a Number.
  * @n: pointer to the bigint.
  *
  * Return: true if the bigint is NaN, false otherwise.

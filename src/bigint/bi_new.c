@@ -12,7 +12,7 @@ static ATTR_NONNULL len_type uint_to_array(u_int *const dest, uintmax_t num);
  * @dest: pointer to the array to store the number.
  * @num: the unsigned int to convert.
  *
- * Return: final length of the array.
+ * Return: number of used slots of the array.
  */
 static len_type uint_to_array(u_int *const dest, uintmax_t num)
 {
@@ -52,19 +52,19 @@ bigint *int_to_new_bi(const intmax_t n)
 }
 
 /**
- * int_to_bigint - convert an integer to a `bigint` representation.
- * @dest: a pointer to a `bigint` struct to store the number.
+ * int_to_bigint - store an integer into a `bigint`.
+ * @dest: a pointer to the `bigint` to store the integer in.
  * @n: the int to convert.
  *
- * `dest` must be large enough to store the number, otherwise memory
+ * `dest` must be large enough to store the integer, otherwise memory
  * might be corrupted when writing to the `bigint`.
  *
- * Return: true on success, false on failure.
+ * Return: pointer to the bigint on success, NULL on failure.
  */
-bool int_to_bi(bigint *const dest, const intmax_t n)
+bigint *int_to_bi(bigint *const dest, const intmax_t n)
 {
 	if (!dest || !dest->num)
-		return (false);
+		return (NULL);
 
 	u_int tmp[4] = {0};
 	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
@@ -74,7 +74,7 @@ bool int_to_bi(bigint *const dest, const intmax_t n)
 
 	dest->len = i;
 	memmove(dest->num, tmp, sizeof(*tmp) * i);
-	return (true);
+	return (dest);
 }
 
 /**

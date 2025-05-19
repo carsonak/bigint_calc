@@ -57,7 +57,7 @@ static void isubtract(bigint *const restrict n1, bigint *const restrict n2)
 			/* For cases such as: 1,000,000,000 - 5 = 999,999,995 */
 			/* n1 is reduced in length from the original number, therefore */
 			/* don't update n1 as the borrow reduces the next "digit" to 0. */
-			if (byt_diff || (n2_i + 1 < n2->len || n1_i < n1->len))
+			if (byt_diff > 0 || (n2_i + 1 < n2->len || n1_i < n1->len))
 			{
 				n1->num[n1_i] = byt_diff % BIGINT_BASE;
 				++final_len;
@@ -166,6 +166,5 @@ bool bi_isubtract_int(bigint *const n1, const intmax_t n2)
 	if (!n1)
 		return (false);
 
-	int_to_bi(&num2, n2);
-	return (bi_isubtract(n1, &num2));
+	return (bi_isubtract(n1, int_to_bi(&num2, n2)));
 }

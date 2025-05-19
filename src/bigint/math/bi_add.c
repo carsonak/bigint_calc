@@ -125,6 +125,5 @@ bigint *bi_add_int(bigint *const n1, const intmax_t n2)
 
 	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[4]){0}};
 
-	int_to_bi(&num2, n2);
-	return (bi_add(n1, &num2));
+	return (bi_add(n1, int_to_bi(&num2, n2)));
 }

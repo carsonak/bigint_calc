@@ -11,14 +11,14 @@
 /**
  * struct numstr - a string representing a number.
  * @len: length of the string.
- * @str: the string.
  * @is_negative: a bool indicating signedness of the number.
+ * @str: the string.
  */
 struct numstr
 {
 	len_type len;
-	char *restrict str;
 	bool is_negative;
+	char *restrict str;
 };
 
 typedef struct numstr numstr;

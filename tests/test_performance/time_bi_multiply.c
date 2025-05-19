@@ -100,7 +100,7 @@ int main(void)
 			.len = test_cases[i + 1].len, .num = test_cases[i + 1].array
 		};
 
-		printf("%zu", (i / 2) + 1);
+		printf("%2zu", (i / 2) + 1);
 		time_bi_multiply(&n1, &n2);
 	}
 
