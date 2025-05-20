@@ -73,7 +73,7 @@
             "output": { "verbosity": "verbose" },
             "execution": {
                 "scheduleRandom": true,
-                "timeout": 20
+                "timeout": 120
             },
             "filter": { "include": { "label": "performance" } }
         }

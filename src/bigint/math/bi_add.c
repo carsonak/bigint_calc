@@ -1,10 +1,12 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
-static ATTR_NONNULL bigint *
-add(const bigint *const restrict n1, const bigint *const restrict n2);
-static ATTR_NONNULL bigint *
-add_negatives(bigint *const restrict n1, bigint *const restrict n2);
+static bigint *
+add(const bigint *const restrict n1,
+	const bigint *const restrict n2) ATTR_NONNULL;
+static bigint *add_negatives(
+	bigint *const restrict n1, bigint *const restrict n2
+) ATTR_NONNULL;
 
 /**
  * add - add two bigints.

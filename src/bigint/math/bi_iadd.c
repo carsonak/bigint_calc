@@ -1,10 +1,11 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
-static ATTR_NONNULL void
-iadd(bigint *const restrict n1, bigint const *const restrict n2);
-static ATTR_NONNULL bool
-iadd_negatives(bigint *const restrict n1, bigint *const restrict n2);
+static void
+iadd(bigint *const restrict n1, bigint const *const restrict n2) ATTR_NONNULL;
+static bool iadd_negatives(
+	bigint *const restrict n1, bigint *const restrict n2
+) ATTR_NONNULL;
 
 /**
  * iadd - add two bigints inplace.

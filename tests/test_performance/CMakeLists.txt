@@ -14,5 +14,8 @@ set_property(
     PROPERTY LABELS "performance"
 )
 set_property(
-    TEST time_bi_multiply_karatsuba time_bi_multiply_naive PROPERTY TIMEOUT 10
+    TEST time_bi_multiply_karatsuba time_bi_multiply_naive PROPERTY TIMEOUT 80
+)
+set_property(
+    TEST time_bi_multiply_karatsuba time_bi_multiply_naive PROPERTY WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
 )

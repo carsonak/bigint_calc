@@ -1,9 +1,9 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
-static ATTR_NONNULL void multiply_and_replace(
+static void multiply_and_replace(
 	bigint *restrict *const restrict n1, bigint *const restrict n2
-);
+) ATTR_NONNULL;
 
 /**
  * multiply_and_replace - "inplace" `bigint` multiplication.

@@ -26,10 +26,10 @@ struct bigint
 
 void *_bi_free(bigint *const freeable_ptr);
 
-ATTR_MALLOC ATTR_MALLOC_FREE(_bi_free)
-bigint *_bi_alloc(const len_type len);
-ATTR_MALLOC ATTR_MALLOC_FREE(_bi_free)
-bigint *_bi_dup(bigint const *const restrict bn);
+bigint *_bi_alloc(const len_type len) ATTR_MALLOC ATTR_MALLOC_FREE(_bi_free);
+bigint *_bi_dup(bigint const *const restrict bn) ATTR_MALLOC ATTR_MALLOC_FREE(
+	_bi_free
+);
 bigint *_bi_resize(bigint *bi, const len_type len);
 
 /* utilities */

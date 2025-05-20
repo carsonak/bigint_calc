@@ -23,16 +23,16 @@ static const bigint zero = {
 	.len = 1, .is_negative = false, .num = (u_int[1]){0}
 };
 
-static ATTR_NONNULL bigint *long_multiply(
+static bigint *long_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
-);
-static ATTR_NONNULL bi_split
-bi_split_at(const bigint *const restrict n, const len_type i);
+) ATTR_NONNULL;
+static bi_split bi_split_at(const bigint *const restrict n, const len_type i);
 bigint *karatsuba_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
 );
-static ATTR_NONNULL bigint *
-multiply_negatives(bigint *const restrict n1, bigint *const restrict n2);
+static bigint *multiply_negatives(
+	bigint *const restrict n1, bigint *const restrict n2
+) ATTR_NONNULL;
 
 /**
  * long_multiply - multiply two bigints.
@@ -149,6 +149,8 @@ static len_type max_of_3(const len_type a, const len_type b, const len_type c)
 	return (maximum);
 }
 
+#define CUTOFF 10
+
 /**
  * karatsuba_multiply - multiply 2 `bigint`s using the Karatsuba algorithm.
  * @n1: the first number.
@@ -189,7 +191,7 @@ bigint *karatsuba_multiply(
 	if ((!n1 || !n2) || (n1->len < 1 || n2->len < 1) || (!n1->num || !n2->num))
 		return (NULL);
 
-	if (n1->len < 2 || n2->len < 2)
+	if (n1->len < CUTOFF || n2->len < CUTOFF)
 		return (long_multiply(n1, n2));
 
 	const len_type i = (n1->len > n2->len ? n1->len / 2 : n2->len / 2);
@@ -221,7 +223,10 @@ bigint *karatsuba_multiply(
 	if (!result)
 		goto cleanup;
 
-	memset(&(result->num[result->len - 2]), 0, sizeof(*result->num) * 2);
+	memset(
+		&(result->num[z2_len + i * 2]), 0,
+		sizeof(*result->num) * (result->len - (z2_len + i * 2))
+	);
 	result->len = z2_len;
 	bi_ishift_l(result, i * 2);
 

@@ -1,10 +1,11 @@
 #include "_bigint_internals.h"
 #include "bigint.h"
 
-static ATTR_NONNULL void
-isubtract(bigint *const restrict n1, bigint *const restrict n2);
-static ATTR_NONNULL bool
-isubtract_negatives(bigint *const restrict n1, bigint *const restrict n2);
+static void
+isubtract(bigint *const restrict n1, bigint *const restrict n2) ATTR_NONNULL;
+static bool isubtract_negatives(
+	bigint *const restrict n1, bigint *const restrict n2
+) ATTR_NONNULL;
 
 /**
  * isubtract - subtract two bigints inplace.

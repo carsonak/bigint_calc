@@ -17,15 +17,14 @@ uintmax_t safe_imaxabs(intmax_t n);
 /* `bigint` construction */
 
 void *bi_delete(bigint *const ptr);
-ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
 bigint *bi_new(
 	char const *const restrict number, const radix_type base,
 	len_type *const restrict processed
-);
+) ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete);
 
 bigint *int_to_bi(bigint *const dest, const intmax_t n);
-ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete)
-bigint *int_to_new_bi(const intmax_t n);
+bigint *
+int_to_new_bi(const intmax_t n) ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete);
 
 /* `bigint` manipulation */
 

@@ -5,7 +5,7 @@
 #include "bigint.h"
 #include "parse_number.h"
 
-static ATTR_NONNULL len_type uint_to_array(u_int *const dest, uintmax_t num);
+static len_type uint_to_array(u_int *const dest, uintmax_t num) ATTR_NONNULL;
 
 /**
  * uint_to_array - convert an unsigned int to a `bigint` array.

@@ -2,27 +2,28 @@
 #include "bigint.h"
 #include <stdio.h> /* fprintf */
 
-static ATTR_NONNULL bool check_division_by_0(const bigint *const n2);
-static ATTR_NONNULL bool quotient_is_less_than_1(
+static bool check_division_by_0(const bigint *const n2) ATTR_NONNULL;
+static bool quotient_is_less_than_1(
 	const bigint *const restrict n1, const bigint *const restrict n2
-);
-static ATTR_NONNULL bigint *get_remainder(
+) ATTR_NONNULL;
+static bigint *get_remainder(
 	bigint *const restrict n1, bigint *const restrict n2,
 	bigint *const restrict quotient
-);
-static ATTR_NONNULL l_int get_current_quotient(
+) ATTR_NONNULL;
+static l_int get_current_quotient(
 	bigint *const restrict slice, bigint *const restrict n2,
 	bigint *restrict *const restrict remainder
 );
-static ATTR_NONNULL_IDX(1, 3, 5) len_type drop_next(
+static len_type drop_next(
 	bigint *const restrict slice, const bigint *const restrict remainder,
 	const bigint *const restrict n1, len_type n1_i,
 	const bigint *const restrict n2
-);
-static ATTR_NONNULL bi_div_res
-divide(bigint *const restrict n1, bigint *const restrict n2);
-static ATTR_NONNULL bi_div_res
-divide_negatives(bigint *const restrict n1, bigint *const restrict n2);
+) ATTR_NONNULL_IDX(1, 3, 5);
+static bi_div_res
+divide(bigint *const restrict n1, bigint *const restrict n2) ATTR_NONNULL;
+static bi_div_res divide_negatives(
+	bigint *const restrict n1, bigint *const restrict n2
+) ATTR_NONNULL;
 
 /**
  * check_division_by_0 - checks if the denominator is zero.
