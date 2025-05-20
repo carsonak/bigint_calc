@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 """Operate on numbers from json document."""
 
 from argparse import ArgumentParser
@@ -34,7 +34,7 @@ def parse_argv(argv: list[str]
         "numbers from json file."
     )
     parser.add_argument(
-        "-f", "--json-file", default="nums_as_str.json",
+        "-f", "--json-file", default="random_nums.json",
         help="the json file to read from"
     )
     parser.add_argument("num1_token", metavar="category_name.number_key",

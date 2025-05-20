@@ -1,5 +1,5 @@
-#!/usr/bin/env python
-"""Convert a number string to a reversed array."""
+#!/usr/bin/env python3
+"""Convert a number in a string to a reversed list of integers."""
 
 from collections.abc import Iterable
 import sys
@@ -8,9 +8,11 @@ import sys
 if hasattr(sys, "set_int_max_str_digits"):
     sys.set_int_max_str_digits(200_000)
 
+BIGINT_BASE = 1_000_000_000
+
 
 def numstr_to_numarray(input_strings: Iterable[str]) -> str:
-    """Return the repr of a list of ints from a string of decimals."""
+    """Convert a number in a string to a reversed list of integers."""
     output: str = ""
     carry: int = 0
     for numstr in input_strings:
@@ -31,13 +33,13 @@ def numstr_to_numarray(input_strings: Iterable[str]) -> str:
             str_i = 0 if str_i - 9 < 0 else str_i - 9
             section: str = numstr[str_i:prev]
             carry += int(section)
-            num_list.append(carry % 1000000000)
-            carry //= 1000000000
+            num_list.append(carry % BIGINT_BASE)
+            carry //= BIGINT_BASE
             prev = str_i
 
         while carry:
-            num_list.append(carry % 1000000000)
-            carry //= 1000000000
+            num_list.append(carry % BIGINT_BASE)
+            carry //= BIGINT_BASE
 
         if is_negative:
             num_list[-1] *= -1

@@ -52,7 +52,7 @@ time_bi_multiply(bigint *restrict const n1, bigint *restrict const n2)
 {
 	bool passed = true;
 
-	printf(" : Size %4" PRIdMAX "x%zub", n1->len, sizeof(*n1->num));
+	printf(": %5" PRIdMAX "x%zub", n1->len, sizeof(*n1->num));
 
 	const clock_t start = clock();
 
@@ -68,7 +68,7 @@ time_bi_multiply(bigint *restrict const n1, bigint *restrict const n2)
 	}
 
 	bi_delete(output);
-	printf(" : %fs\n", time_taken);
+	printf(" - %fs\n", time_taken);
 	return (passed);
 }
 
@@ -77,7 +77,7 @@ int main(void)
 	char *line1 = NULL, *line2 = NULL;
 	bool ok = true;
 	size_t line1_sz = 0, line2_sz = 0, i = 1;
-	FILE *file = fopen("tests/a.txt", "r");
+	FILE *file = fopen("tests_data/a.txt", "r");
 
 	if (!file)
 	{
@@ -85,12 +85,18 @@ int main(void)
 		return (1);
 	}
 
+#ifdef LONG_MULTIPLY
+	printf("Long Multiplication\n");
+#else
+	printf("Karatsuba Multiplication\n");
+#endif
 	errno = 0;
 	while (ok && getline(&line1, &line1_sz, file) > 0 &&
 		   getline(&line2, &line2_sz, file) > 0)
 	{
 		bigint n1 = {0}, n2 = {0};
 
+		errno = 0;
 		if (!str_to_bignum(line1, &n1) || !str_to_bignum(line2, &n2))
 			ok = false;
 
@@ -100,7 +106,7 @@ int main(void)
 		line2 = NULL;
 		if (ok)
 		{
-			printf("%2zu", i++);
+			printf("%.2zu", i++);
 			if (!time_bi_multiply(&n1, &n2))
 				ok = false;
 		}
@@ -109,7 +115,6 @@ int main(void)
 		n1.num = NULL;
 		free(n2.num);
 		n2.num = NULL;
-		errno = 0;
 	}
 
 	if (errno)

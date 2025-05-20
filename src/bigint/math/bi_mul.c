@@ -149,7 +149,8 @@ static len_type max_of_3(const len_type a, const len_type b, const len_type c)
 	return (maximum);
 }
 
-#define CUTOFF 10
+/* Why this number? Is testing the best way to determine the cutoff? */
+#define KARATSUBA_GAIN_CUTOFF 21
 
 /**
  * karatsuba_multiply - multiply 2 `bigint`s using the Karatsuba algorithm.
@@ -191,7 +192,7 @@ bigint *karatsuba_multiply(
 	if ((!n1 || !n2) || (n1->len < 1 || n2->len < 1) || (!n1->num || !n2->num))
 		return (NULL);
 
-	if (n1->len < CUTOFF || n2->len < CUTOFF)
+	if (n1->len < KARATSUBA_GAIN_CUTOFF || n2->len < KARATSUBA_GAIN_CUTOFF)
 		return (long_multiply(n1, n2));
 
 	const len_type i = (n1->len > n2->len ? n1->len / 2 : n2->len / 2);
@@ -258,20 +259,20 @@ multiply_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	n2->is_negative = false;
 	if (neg1 && neg2) /* -8 * -7 = 8*7 */
 	{
-#ifdef KARATSUBA_MULTIPLY
-		result = karatsuba_multiply(n1, n2);
-#else
+#ifdef LONG_MULTIPLY
 		result = long_multiply(n1, n2);
+#else
+		result = karatsuba_multiply(n1, n2);
 #endif
 	}
 	else if (neg1 || neg2)
 	{
 		/* -8 * 7 = -(8*7) */
 		/* 8 * -7 = -(8*7) */
-#ifdef KARATSUBA_MULTIPLY
-		result = karatsuba_multiply(n1, n2);
-#else
+#ifdef LONG_MULTIPLY
 		result = long_multiply(n1, n2);
+#else
+		result = karatsuba_multiply(n1, n2);
 #endif
 		if (result)
 			result->is_negative = true;
@@ -303,10 +304,10 @@ bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2)
 	if (n1->is_negative || n2->is_negative)
 		return (multiply_negatives(n1, n2));
 
-#ifdef KARATSUBA_MULTIPLY
-	return (karatsuba_multiply(n1, n2));
-#else
+#ifdef LONG_MULTIPLY
 	return (long_multiply(n1, n2));
+#else
+	return (karatsuba_multiply(n1, n2));
 #endif
 }
 
