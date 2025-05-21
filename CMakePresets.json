@@ -17,6 +17,14 @@
             }
         },
         {
+            "name": "release",
+            "binaryDir": "release",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": true
+            }
+        },
+        {
             "name": "release-debug",
             "binaryDir": "release-debug",
             "cacheVariables": {
@@ -35,6 +43,12 @@
             "configurePreset": "debug-default",
             "jobs": 4,
             "configuration": "Debug"
+        },
+        {
+            "name": "release",
+            "configurePreset": "release",
+            "jobs": 4,
+            "configuration": "Release"
         },
         {
             "name": "release-debug",
@@ -57,8 +71,28 @@
             "filter": { "exclude": { "label": "performance" } }
         },
         {
-            "name": "release-debug",
+            "name": "performance-debug",
             "configurePreset": "release-debug",
+            "output": { "verbosity": "verbose" },
+            "execution": {
+                "scheduleRandom": true,
+                "timeout": 60
+            },
+            "filter": { "include": { "label": "performance" } }
+        },
+        {
+            "name": "performance-release",
+            "configurePreset": "release",
+            "output": { "verbosity": "verbose" },
+            "execution": {
+                "scheduleRandom": true,
+                "timeout": 60
+            },
+            "filter": { "include": { "label": "performance" } }
+        },
+        {
+            "name": "release",
+            "configurePreset": "release",
             "output": { "outputOnFailure": true },
             "execution": {
                 "jobs": 4,
@@ -68,14 +102,15 @@
             "filter": { "exclude": { "label": "performance" } }
         },
         {
-            "name": "performance-debug",
+            "name": "release-debug",
             "configurePreset": "release-debug",
-            "output": { "verbosity": "verbose" },
+            "output": { "outputOnFailure": true },
             "execution": {
-                "scheduleRandom": true,
-                "timeout": 60
+                "jobs": 4,
+                "stopOnFailure": true,
+                "scheduleRandom": true
             },
-            "filter": { "include": { "label": "performance" } }
+            "filter": { "exclude": { "label": "performance" } }
         }
     ]
 }
