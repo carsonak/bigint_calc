@@ -193,7 +193,7 @@ TEST_F(simple_divisions, test_0_over_1)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -214,7 +214,7 @@ TEST_F(simple_divisions, test_1_over_1)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -235,7 +235,7 @@ TEST_F(simple_divisions, test_9723746_over_2938487)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -256,7 +256,7 @@ TEST_F(simple_divisions, test_1000000000_over_50000)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -277,7 +277,7 @@ TEST_F(simple_divisions, test_50000_over_100000000)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -299,7 +299,7 @@ TEST_F(simple_divisions, test_longnum1_over_longnum2)
 	CHECK(tau->output->is_negative == 0);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -322,7 +322,7 @@ TEST_F(simple_divisions, test_equal_over_equal)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -354,7 +354,7 @@ TEST_F(negative_divisions, test_neg9107428777003_over_neg809754437)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -378,7 +378,7 @@ TEST_F(negative_divisions, test_neg9107428777003_over_809754437)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -402,7 +402,7 @@ TEST_F(negative_divisions, test_9107428777003_over_neg809754437)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -444,7 +444,7 @@ TEST_F(large_divisions, test_o1kb_over_o1kc)
 	CHECK(tau->output->is_negative == 0);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -472,7 +472,7 @@ TEST_F(large_divisions, test_o500d_over_o500e)
 	CHECK(tau->output->is_negative == 0);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -500,7 +500,7 @@ TEST_F(large_divisions, test_o100a_over_o100f)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -528,6 +528,6 @@ TEST_F(large_divisions, test_o100f_over_o100a)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }

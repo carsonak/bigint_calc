@@ -9,6 +9,7 @@
 #include "_bigint_internals.h"
 #include "_numstr_internals.h"
 #include "bigint.h"
+#include "parse_number.h"
 
 #define DUMMY_VALUE 2222222222
 

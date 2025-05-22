@@ -91,13 +91,13 @@ bigint *bi_new(
 	len_type *const restrict processed
 )
 {
-	numstr *const ns = str_to_numstr(number, base, processed);
+	numstr *const ns = _str_to_numstr(number, base, processed);
 
 	if (!ns)
 		return (NULL);
 
 	bigint *const bi =
-		(base == 10) ? numstr_to_bi(ns) : anybase_to_bi(ns, base);
+		(base == 10) ? _numstr_to_bi(ns) : _anybase_to_bi(ns, base);
 
 	_numstr_free(ns);
 	return (bi);

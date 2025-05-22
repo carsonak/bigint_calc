@@ -30,7 +30,7 @@ char *bi_tostr(bigint const *const n)
 
 	for (; bi_i > 0 && str_i < str_len; --bi_i)
 	{
-		int bytes_written = sprintf(&str[str_i], "%u", n->num[bi_i]);
+		int bytes_written = sprintf(&str[str_i], "%" PRIu_int, n->num[bi_i]);
 
 		str_i += bytes_written - 1;
 	}

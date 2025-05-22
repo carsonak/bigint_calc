@@ -70,7 +70,7 @@ TEST_F(simple_exponentiations, test_123_pow_0)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -88,7 +88,7 @@ TEST_F(simple_exponentiations, test_123_pow_1)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -106,7 +106,7 @@ TEST_F(simple_exponentiations, test_123_pow_2)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -124,7 +124,7 @@ TEST_F(simple_exponentiations, test_123_pow_3)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -142,7 +142,7 @@ TEST_F(simple_exponentiations, test_123_pow_4)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -160,7 +160,7 @@ TEST_F(simple_exponentiations, test_123_pow_5)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -181,7 +181,7 @@ TEST_F(simple_exponentiations, test_234_pow_477)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -202,7 +202,7 @@ TEST_F(simple_exponentiations, test_234_pow_266)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -223,7 +223,7 @@ TEST_F(simple_exponentiations, test_9847_pow_525)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -254,7 +254,7 @@ TEST_F(negative_exponentiations, test_neg123_pow_2)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -274,6 +274,6 @@ TEST_F(negative_exponentiations, test_neg123_pow_3)
 	CHECK(tau->output->is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->output->num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }

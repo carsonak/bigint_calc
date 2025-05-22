@@ -25,4 +25,4 @@ function process_json_nums () {
     process_json_nums 100 1000 100 &&
     process_json_nums 1000 10000 1000 # &&
     # process_json_nums 10000 50000 10000
-) > "a.txt"
+) > "speed_test_nums_as_arrays.txt"

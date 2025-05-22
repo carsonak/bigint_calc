@@ -8,18 +8,17 @@
 #include "is_valid_radix.c"
 
 /**
- * numstr_to_bi - convert a numstr to a `bigint`.
+ * _numstr_to_bi - convert a numstr to a `bigint`.
  * @nstr: the numstr.
  *
  * Return: a pointer to a bigint_i struct, NULL on failure.
  */
-bigint *numstr_to_bi(numstr *nstr)
+bigint *_numstr_to_bi(numstr *nstr)
 {
 	if (!nstr || nstr->len < 1 || !nstr->str || !isalnum(nstr->str[0]))
 		return (NULL);
 
 	len_type nstr_i = 0, bi_i = 0;
-	uintmax_t carry = 0;
 	/* sizeof(bigint_i) == */
 	/* ceil(numstr.len / no. of digits that can represent BIGINT_BASE) */
 	unsigned int digits = count_digits(BIGINT_BASE - 1);
@@ -43,38 +42,29 @@ bigint *numstr_to_bi(numstr *nstr)
 
 		strncpy(num_buf, &nstr->str[nstr_i], digits);
 		num_buf[digits] = '\0';
-		carry += strtoull(num_buf, &end, 10);
+		bi->num[bi_i] = strtoumax(num_buf, &end, 10);
 		if (*end)
 		{
 			fprintf(stderr, "ParsingError: Invalid character '%c'\n", *end);
 			return (_bi_free(bi));
 		}
-
-		bi->num[bi_i] = carry % BIGINT_BASE;
-		carry /= BIGINT_BASE;
 	}
 
-	while (bi_i < bi->len && carry)
-	{
-		bi->num[bi_i] = carry % BIGINT_BASE;
-		carry /= BIGINT_BASE;
-		++bi_i;
-	}
-
+	bi->is_negative = nstr->is_negative;
 	_bi_trim(bi);
 	return (bi);
 }
 
 /**
- * anybase_to_bi - convert a numstr in any base to a `bigint`.
+ * _anybase_to_bi - convert a numstr in any base to a `bigint`.
  * @num: the numstr.
  * @base: an int between 2-36 indicating the base of the number.
  *
  * Return: a pointer to a `bigint` struct, NULL on failure.
  */
-bigint *anybase_to_bi(numstr *const num, const radix_type base)
+bigint *_anybase_to_bi(numstr *const num, const radix_type base)
 {
-	if (!num || num->len < 0 || !num->str || !is_valid_radix(base))
+	if (!num || num->len < 1 || !num->str || !is_valid_radix(base))
 		return (NULL);
 
 	len_type i = 0;
@@ -95,7 +85,8 @@ bigint *anybase_to_bi(numstr *const num, const radix_type base)
 		{
 			fprintf(
 				stderr, "ParsingError: Invalid character '%c' for base%u\n",
-				num->str[i], base);
+				num->str[i], base
+			);
 			return (_bi_free(bigint_final));
 		}
 

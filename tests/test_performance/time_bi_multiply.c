@@ -77,7 +77,7 @@ int main(void)
 	char *line1 = NULL, *line2 = NULL;
 	bool ok = true;
 	size_t line1_sz = 0, line2_sz = 0, i = 1;
-	FILE *file = fopen("tests_data/a.txt", "r");
+	FILE *file = fopen("tests_data/speed_test_nums_as_arrays.txt", "r");
 
 	if (!file)
 	{

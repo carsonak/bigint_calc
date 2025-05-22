@@ -40,7 +40,7 @@ static token *match_token(char const *const str, size_t *processed)
 		*t = (token){.id = POW_OP, .start = str, .op = {bi_power}};
 	else if (isdigit(*str))
 	{
-		n = str_to_numstr(str, 10, processed);
+		n = _str_to_numstr(str, 10, processed);
 		if (n)
 			*t = (token){.id = NUMBER, .start = str, .op.number = n};
 		else

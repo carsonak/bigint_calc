@@ -272,7 +272,10 @@ TEST_F(trim_trailing_zeros, test_one_zero)
 
 	CHECK(tau->num1.len == tau->expected.len);
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(tau->num1.num, tau->expected.num, tau->expected.len);
+	CHECK_BUF_EQ(
+		tau->num1.num, tau->expected.num,
+		sizeof(*tau->expected.num) * tau->expected.len
+	);
 }
 
 TEST_F(trim_trailing_zeros, test_several_zeros)
@@ -290,7 +293,10 @@ TEST_F(trim_trailing_zeros, test_several_zeros)
 
 	CHECK(tau->num1.len == tau->expected.len);
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(tau->num1.num, tau->expected.num, tau->expected.len);
+	CHECK_BUF_EQ(
+		tau->num1.num, tau->expected.num,
+		sizeof(*tau->expected.num) * tau->expected.len
+	);
 }
 
 TEST_F(trim_trailing_zeros, test_0001)
@@ -310,7 +316,7 @@ TEST_F(trim_trailing_zeros, test_0001)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -331,7 +337,7 @@ TEST_F(trim_trailing_zeros, test_0100)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -364,7 +370,7 @@ TEST_F(trim_trailing_zeros_negative, test_one_zero)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -385,7 +391,7 @@ TEST_F(trim_trailing_zeros_negative, test_several_zeros)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -406,7 +412,7 @@ TEST_F(trim_trailing_zeros_negative, test_0001)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -427,7 +433,7 @@ TEST_F(trim_trailing_zeros_negative, test_0100)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -457,7 +463,7 @@ TEST_F(trim_normal_input, test_1)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -478,7 +484,7 @@ TEST_F(trim_normal_input, test_neg1)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -499,7 +505,7 @@ TEST_F(trim_normal_input, test_100)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 
@@ -520,7 +526,7 @@ TEST_F(trim_normal_input, test_neg100)
 	CHECK(tau->num1.is_negative == tau->expected.is_negative);
 	CHECK_BUF_EQ(
 		tau->num1.num, tau->expected.num,
-		tau->expected.len * sizeof(*(tau->expected.num))
+		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
 

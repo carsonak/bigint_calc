@@ -154,7 +154,7 @@ static bool check_is_negative(
 }
 
 /**
- * str_to_numstr - parse a string of digits.
+ * _str_to_numstr - parse a string of digits.
  * @number: a string with a number.
  * @base: an int between 2-36 indicating the radix of the number.
  * @processed: address to store number of characters processed in the string.
@@ -164,7 +164,7 @@ static bool check_is_negative(
  *
  * Return: pointer to a numstr struct, NULL on failure.
  */
-numstr *str_to_numstr(
+numstr *_str_to_numstr(
 	char const *const restrict number, const radix_type base,
 	len_type *const restrict processed
 )
