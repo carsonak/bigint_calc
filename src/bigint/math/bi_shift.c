@@ -1,4 +1,4 @@
-#include "_bigint_internals.h"
+#include "_bi_internals.h"
 #include "bigint.h"
 
 static bigint *

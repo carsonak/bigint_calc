@@ -1,4 +1,4 @@
-#include "_numstr_internals.h"
+#include "number_parsing.h"
 
 /**
  * _numstr_print - print a `numstr`.

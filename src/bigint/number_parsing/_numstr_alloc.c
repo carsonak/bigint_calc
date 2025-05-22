@@ -1,4 +1,4 @@
-#include "_numstr_internals.h"
+#include "_numstr_alloc.h"
 
 /**
  * _numstr_alloc - allocate memory for a numstr of given length.

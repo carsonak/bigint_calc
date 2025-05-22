@@ -1,6 +1,5 @@
-#include "_bigint_internals.h"
-#include "_numstr_internals.h"
-#include "parse_number.h"
+#include "_bi_internals.h"
+#include "number_parsing.h"
 
 static ATTR_NONNULL bool check_is_negative(
 	char const *const restrict number, len_type *const restrict str_i
@@ -85,7 +84,8 @@ char *filter_str(
 
 		buffer[buf_i] = '\0';
 		output = xrealloc_free_on_fail(
-			output, (out_len + buf_i + 1) * sizeof(*output));
+			output, (out_len + buf_i + 1) * sizeof(*output)
+		);
 		if (!output)
 			break;
 
@@ -200,7 +200,8 @@ numstr *_str_to_numstr(
 	if (ns->len < 1)
 	{
 		fprintf(
-			stderr, "ParsingError: string did not contain any valid digits.\n");
+			stderr, "ParsingError: string did not contain any valid digits.\n"
+		);
 		goto input_error;
 	}
 

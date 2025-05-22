@@ -10,10 +10,6 @@
 
 #include "bigint_types.h"
 
-/* helper functions */
-
-uintmax_t safe_imaxabs(intmax_t n);
-
 /* `bigint` construction */
 
 void *bi_delete(bigint *const ptr);
@@ -37,8 +33,7 @@ bigint *bi_dup(bigint *const n);
 bool bi_iszero(bigint const *const x);
 bool bi_isNaN(bigint *const n);
 
-bi_div_res
-bi_divide_with_remainder(bigint *const restrict n1, bigint *const restrict n2);
+bi_div_res bi_divmod(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_add(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_divide(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_modulo(bigint *const restrict n1, bigint *const restrict n2);

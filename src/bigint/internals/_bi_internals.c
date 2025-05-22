@@ -1,4 +1,4 @@
-#include "_bigint_internals.h"
+#include "_bi_internals.h"
 
 /**
  * _bi_alloc - allocate memory for a `bigint` of given length.

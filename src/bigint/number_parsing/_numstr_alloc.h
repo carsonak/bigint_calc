@@ -26,9 +26,4 @@ typedef struct numstr numstr;
 void *_numstr_free(numstr *freeable_ptr);
 numstr *_numstr_alloc(len_type len) ATTR_MALLOC ATTR_MALLOC_FREE(_numstr_free);
 
-/* printing */
-
-len_type
-_numstr_print(FILE *const restrict stream, const numstr *const restrict num);
-
 #endif /* NUMSTR_INTERNALS_H */

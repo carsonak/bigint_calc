@@ -6,10 +6,9 @@
 #include <ctype.h>
 #include <inttypes.h> /* printf macros for variable size ints */
 
-#include "_bigint_internals.h"
-#include "_numstr_internals.h"
+#include "_bi_internals.h"
 #include "bigint.h"
-#include "parse_number.h"
+#include "number_parsing.h"
 
 #define DUMMY_VALUE 2222222222
 

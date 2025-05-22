@@ -7,12 +7,16 @@
 #include <inttypes.h> /* strtoumax */
 #include <string.h>   /* strlen */
 
+#include "_numstr_alloc.h"
 #include "bigint_types.h"
 
 /* Minimum supported radix. */
 #define RADIX_MINIMUM 2U
 /* Maximum supported radix. */
 #define RADIX_MAXIMUM 36U
+
+len_type
+_numstr_print(FILE *const restrict stream, const numstr *const restrict num);
 
 /**
  * mapping_func - a pointer to a function that maps one character to another.

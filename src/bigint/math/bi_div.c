@@ -1,4 +1,4 @@
-#include "_bigint_internals.h"
+#include "_bi_internals.h"
 #include "bigint.h"
 #include <stdio.h> /* fprintf */
 
@@ -301,7 +301,7 @@ divide_negatives(bigint *const restrict n1, bigint *const restrict n2)
 
 	n1->is_negative = false;
 	n2->is_negative = false;
-	res = bi_divide_with_remainder(n1, n2);
+	res = bi_divmod(n1, n2);
 	if (!res.quotient || !res.remainder)
 		goto cleanup;
 
@@ -334,7 +334,7 @@ cleanup:
 }
 
 /**
- * bi_divide_with_remainder - handle division of two bigints,
+ * bi_divmod - handle division of two bigints,
  * return quotient and reminder.
  * @n1: numerator/divisor.
  * @n2: denominator/dividend.
@@ -342,8 +342,7 @@ cleanup:
  * Return: a struct with pointers to the quotient and remainder,
  * struct with NULL pointers on error.
  */
-bi_div_res
-bi_divide_with_remainder(bigint *const restrict n1, bigint *const restrict n2)
+bi_div_res bi_divmod(bigint *const restrict n1, bigint *const restrict n2)
 {
 	bi_div_res res = {0};
 
@@ -428,7 +427,7 @@ bigint *bi_divide(bigint *const restrict n1, bigint *const restrict n2)
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
-	bi_div_res result = bi_divide_with_remainder(n1, n2);
+	bi_div_res result = bi_divmod(n1, n2);
 
 	result.remainder = _bi_free(result.remainder);
 	_bi_trim(result.quotient);
@@ -447,7 +446,7 @@ bigint *bi_modulo(bigint *const restrict n1, bigint *const restrict n2)
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
-	bi_div_res result = bi_divide_with_remainder(n1, n2);
+	bi_div_res result = bi_divmod(n1, n2);
 
 	result.quotient = _bi_free(result.quotient);
 	_bi_trim(result.remainder);

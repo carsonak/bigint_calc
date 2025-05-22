@@ -1,5 +1,5 @@
-#include "_bigint_internals.h"
-#include "parse_number.h"
+#include "_bi_internals.h"
+#include "number_parsing.h"
 
 #include "count_digits.c"
 

@@ -1,9 +1,8 @@
-#include <inttypes.h> /* imaxabs */
-
-#include "_bigint_internals.h"
-#include "_numstr_internals.h"
+#include "_bi_internals.h"
 #include "bigint.h"
-#include "parse_number.h"
+#include "number_parsing.h"
+
+#include "safe_imaxabs.c"
 
 static len_type uint_to_array(u_int *const dest, uintmax_t num) ATTR_NONNULL;
 
