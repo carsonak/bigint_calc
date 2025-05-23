@@ -1,7 +1,7 @@
 #ifndef PARSING_H
 #define PARSING_H
 
-#include "macros.h"
+#include "attribute_macros.h"
 
 #include <ctype.h>   /* isdigit */
 #include <stdbool.h> /* bool */

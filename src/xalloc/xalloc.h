@@ -1,7 +1,7 @@
 #ifndef BIGINT_XALLOC_H
 #define BIGINT_XALLOC_H
 
-#include "macros.h"
+#include "attribute_macros.h"
 
 #include <stdio.h>  /* perror */
 #include <stdlib.h> /* *alloc */

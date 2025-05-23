@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "test_math.h"
 
 TEST(invalid_inputs, test_NULL) { CHECK(bi_iszero(NULL) == false); }
 

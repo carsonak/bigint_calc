@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "test_number_parsing.h"
 
 TEST(numstr_alloc, alloc_zero_len_numstr)
 {

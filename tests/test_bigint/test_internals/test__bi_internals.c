@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "test_internals.h"
 
 TEST(bigint_free, null_pointer) { CHECK_PTR_EQ(_bi_free(NULL), NULL); }
 

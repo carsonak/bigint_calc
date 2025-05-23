@@ -1,10 +1,11 @@
-link_libraries(bigint)
+include_directories(${CMAKE_CURRENT_LIST_DIR})
 
 add_subdirectory(test_internals)
 add_subdirectory(test_math)
-add_subdirectory(test_parse_number)
+add_subdirectory(test_number_parsing)
 
 add_executable(test_bi_compare test_bi_compare.c test_main.c)
+target_link_libraries(test_bi_compare PRIVATE bigint)
 add_test(NAME test_bi_compare COMMAND test_bi_compare --failed-output-only)
 
 set_property(TEST test_bi_compare PROPERTY TIMEOUT 5)

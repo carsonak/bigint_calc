@@ -1,7 +1,7 @@
 #ifndef BIGINT_H
 #define BIGINT_H
 
-#include "macros.h"
+#include "attribute_macros.h"
 
 #include <printf.h>  /* *printf, FILE */
 #include <stdbool.h> /* bool */
@@ -9,6 +9,9 @@
 #include <string.h>  /* memmove */
 
 #include "bigint_types.h"
+
+/* Check if an integer is odd. */
+#define INT_IS_ODD(num_to_test) (num_to_test % 2)
 
 /* `bigint` construction */
 

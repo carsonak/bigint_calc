@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "test_bigint.h"
 
 struct invalid_inputs
 {

@@ -1,7 +1,7 @@
 #ifndef PARSE_NUMBER_H
 #define PARSE_NUMBER_H
 
-#include "macros.h"
+#include "attribute_macros.h"
 
 #include <ctype.h>    /* isalnum, isdigit, toupper */
 #include <inttypes.h> /* strtoumax */

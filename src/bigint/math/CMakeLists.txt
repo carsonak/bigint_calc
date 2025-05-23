@@ -1,5 +1,5 @@
 target_sources(
-    bigint
+    bigint_common
     PUBLIC bi_add.c
            bi_div.c
            bi_iadd.c

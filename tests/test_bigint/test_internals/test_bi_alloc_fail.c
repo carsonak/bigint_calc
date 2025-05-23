@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "test_internals.h"
 
 TEST(memory_allocation_failure, test_bi_alloc)
 {

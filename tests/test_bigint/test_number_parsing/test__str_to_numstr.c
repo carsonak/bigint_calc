@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "test_number_parsing.h"
 
 struct invalid_inputs
 {

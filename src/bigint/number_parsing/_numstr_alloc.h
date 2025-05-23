@@ -1,7 +1,7 @@
 #ifndef NUMSTR_INTERNALS_H
 #define NUMSTR_INTERNALS_H
 
-#include "macros.h"
+#include "attribute_macros.h"
 
 #include <stdbool.h> /* bool */
 

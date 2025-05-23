@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "test_number_parsing.h"
 
 TEST(invalid_inputs, test_NULL)
 {

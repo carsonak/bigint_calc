@@ -1,4 +1,4 @@
-#include "tests.h"
+#include "test_math.h"
 
 struct invalid_inputs
 {

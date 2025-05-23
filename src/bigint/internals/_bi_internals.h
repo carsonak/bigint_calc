@@ -1,7 +1,7 @@
 #ifndef BIGINT_INTERNALS_H
 #define BIGINT_INTERNALS_H
 
-#include "macros.h"
+#include "attribute_macros.h"
 
 #include <stdbool.h> /* bool */
 #include <string.h>  /* memset, memcpy */
