@@ -1,4 +1,4 @@
-include_directories(${CMAKE_CURRENT_LIST_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/src/bigint/internals)
 
 add_subdirectory(test_internals)
 add_subdirectory(test_math)

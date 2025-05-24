@@ -3,4 +3,4 @@ target_sources(
                           _str_to_numstr.c bi_tostr.c
 )
 target_include_directories(bigint_common PRIVATE ${CMAKE_CURRENT_LIST_DIR})
-target_include_directories(bigint PRIVATE ${CMAKE_CURRENT_LIST_DIR})
+# target_include_directories(bigint PRIVATE ${CMAKE_CURRENT_LIST_DIR})

@@ -1,16 +1,8 @@
 #ifndef PARSING_H
 #define PARSING_H
 
-#include "attribute_macros.h"
-
-#include <ctype.h>   /* isdigit */
-#include <stdbool.h> /* bool */
-#include <stddef.h>  /* size_t, ptr_diff */
-#include <stdio.h>   /* *printf */
-#include <string.h>  /* strlen, strcpy */
-
 #include "bigint.h"
-#include "stack.h"
+#include "deque.h"
 #include "xalloc.h"
 
 #define ANSI_RED "\x1b[31m"

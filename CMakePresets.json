@@ -67,28 +67,7 @@
                 "jobs": 4,
                 "stopOnFailure": true,
                 "scheduleRandom": true
-            },
-            "filter": { "exclude": { "label": "performance" } }
-        },
-        {
-            "name": "performance-debug",
-            "configurePreset": "release-debug",
-            "output": { "verbosity": "verbose" },
-            "execution": {
-                "scheduleRandom": true,
-                "timeout": 60
-            },
-            "filter": { "include": { "label": "performance" } }
-        },
-        {
-            "name": "performance-release",
-            "configurePreset": "release",
-            "output": { "verbosity": "verbose" },
-            "execution": {
-                "scheduleRandom": true,
-                "timeout": 60
-            },
-            "filter": { "include": { "label": "performance" } }
+            }
         },
         {
             "name": "release",
@@ -98,8 +77,7 @@
                 "jobs": 4,
                 "stopOnFailure": true,
                 "scheduleRandom": true
-            },
-            "filter": { "exclude": { "label": "performance" } }
+            }
         },
         {
             "name": "release-debug",
@@ -109,8 +87,7 @@
                 "jobs": 4,
                 "stopOnFailure": true,
                 "scheduleRandom": true
-            },
-            "filter": { "exclude": { "label": "performance" } }
+            }
         }
     ]
 }

@@ -257,23 +257,16 @@ multiply_negatives(bigint *const restrict n1, bigint *const restrict n2)
 
 	n1->is_negative = false;
 	n2->is_negative = false;
-	if (neg1 && neg2) /* -8 * -7 = 8*7 */
+	if (neg1 && neg2)
 	{
-#ifdef LONG_MULTIPLY
-		result = long_multiply(n1, n2);
-#else
+		/* -8 * -7 = 8*7 */
 		result = karatsuba_multiply(n1, n2);
-#endif
 	}
 	else if (neg1 || neg2)
 	{
 		/* -8 * 7 = -(8*7) */
 		/* 8 * -7 = -(8*7) */
-#ifdef LONG_MULTIPLY
-		result = long_multiply(n1, n2);
-#else
 		result = karatsuba_multiply(n1, n2);
-#endif
 		if (result)
 			result->is_negative = true;
 	}
@@ -304,11 +297,7 @@ bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2)
 	if (n1->is_negative || n2->is_negative)
 		return (multiply_negatives(n1, n2));
 
-#ifdef LONG_MULTIPLY
-	return (long_multiply(n1, n2));
-#else
 	return (karatsuba_multiply(n1, n2));
-#endif
 }
 
 /**

@@ -4,7 +4,7 @@ add_test(NAME test__bi_internals COMMAND test__bi_internals
                                          --failed-output-only
 )
 
-# Building custom library with mocked out alloc functions.
+# Custom library with mocked out alloc functions.
 add_library(bigint_with_dummy_xalloc dummy_xalloc.c)
 target_link_libraries(bigint_with_dummy_xalloc PUBLIC bigint_common)
 
