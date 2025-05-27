@@ -1,5 +1,7 @@
+#include <string.h> /* strcpy */
+
 #include "deque.h"
-#include "linked_node.h"
+#include "list_node.h"
 #include "list_type_structs.h"
 #include "xalloc.h"
 
@@ -155,4 +157,54 @@ void *dq_pop_tail(deque *const restrict dq)
 		--(dq->len);
 
 	return (d);
+}
+
+/**
+ * dq_tostr - stringify a `deque`.
+ * @dq: the `deque` to print.
+ * @print_data: function that will be called to print data in nodes.
+ *
+ * Return: number of bytes printed, negative number on error.
+ */
+char *dq_tostr(deque const *const restrict dq, data_tostr *print_data)
+{
+	if (!dq)
+		return (NULL);
+
+	if (!dq->head)
+	{
+		char *const restrict s = malloc(sizeof("(NULL)"));
+
+		if (s)
+			strcpy(s, "(NULL)");
+
+		return (s);
+	}
+
+	return (linked_list_tostr(dq->head, print_data));
+}
+
+/**
+ * dq_tostr_reversed - stringify a `deque` from tail to head.
+ * @dq: the `deque` to print.
+ * @print_data: function that will be called to print data in nodes.
+ *
+ * Return: number of bytes printed, negative number on error.
+ */
+char *dq_tostr_reversed(deque const *const restrict dq, data_tostr *print_data)
+{
+	if (!dq)
+		return (NULL);
+
+	if (!dq->tail)
+	{
+		char *const restrict s = malloc(sizeof("(NULL)"));
+
+		if (s)
+			strcpy(s, "(NULL)");
+
+		return (s);
+	}
+
+	return (linked_list_tostr_reversed(dq->tail, print_data));
 }

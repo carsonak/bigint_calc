@@ -1,12 +1,11 @@
 #ifndef TEST_BIGINT_DEQUE
 #define TEST_BIGINT_DEQUE
 
-#define _POSIX_C_SOURCE 200809L
-#include <stdlib.h> /* free */
-#include <string.h> /* memset */
+#include <stdlib.h> /* *alloc, free */
+#include <string.h> /* memset, memcpy */
 
 #include "deque.h"
-#include "linked_node.h"
+#include "list_node.h"
 #include "list_type_structs.h"
 #include "tests.h"
 

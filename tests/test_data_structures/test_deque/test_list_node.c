@@ -181,6 +181,7 @@ TEST_F(data_swap, swap_n_d_NULL)
 }
 
 /* ###################################################################### */
+/* ############################ node_insertion ########################## */
 /* ###################################################################### */
 
 struct node_insertion
@@ -407,9 +408,9 @@ TEST(node_deletion, remove_NULL) { CHECK_PTR_EQ(lstnode_del(NULL), NULL); }
 TEST(node_deletion, remove_n)
 {
 	list_node *n1 = lstnode_new(original, NULL);
-	char *out = lstnode_del(n1);
+	void *const restrict data = lstnode_del(n1);
 
-	CHECK_PTR_EQ(out, original);
+	CHECK_PTR_EQ(data, original);
 }
 
 TEST_F(node_deletion, remove_first_node_in_list)
@@ -485,4 +486,244 @@ TEST_F(node_deletion, clear_ll)
 	tau->n1 = NULL;
 	tau->n2 = NULL;
 	tau->n3 = NULL;
+}
+
+/* ###################################################################### */
+/* ############################# print_ll ############################### */
+/* ###################################################################### */
+
+/**
+ * format_string - duplicates a string.
+ * @str: pointer to the string.
+ *
+ * Return: pointer to the duplicated string, NULL on failure.
+ */
+static char *format_string(void const *const str)
+{
+	char const *restrict s = str;
+	char *restrict out_str = NULL;
+
+	if (s)
+		out_str = malloc(strlen(s) + 1);
+	else
+	{
+		out_str = malloc(sizeof("NULL"));
+		s = "NULL";
+	}
+
+	if (out_str)
+		strcpy(out_str, s);
+
+	return (out_str);
+}
+
+struct print_ll
+{
+	list_node *restrict n1, *restrict n2, *restrict n3;
+	char *restrict output;
+};
+
+TEST_F_SETUP(print_ll)
+{
+	tau->output = NULL;
+	tau->n1 = lstnode_new(n1d, NULL);
+	tau->n2 = lstnode_new(n2d, NULL);
+	tau->n3 = lstnode_new(n3d, NULL);
+	if (!tau->n1 || !tau->n2 || !tau->n3)
+	{
+		free(tau->n1);
+		free(tau->n2);
+		free(tau->n3);
+	}
+
+	REQUIRE(tau->n1 && tau->n2 && tau->n3);
+}
+
+TEST_F_TEARDOWN(print_ll)
+{
+	free(tau->n1);
+	free(tau->n2);
+	free(tau->n3);
+	free(tau->output);
+}
+
+TEST(print_ll, print_null_arguments)
+{
+	CHECK_PTR_EQ(linked_list_tostr(NULL, NULL), NULL);
+	CHECK_PTR_EQ(linked_list_tostr(NULL, format_string), NULL);
+}
+
+TEST_F(print_ll, print_one_node_no_stringify_function)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	REQUIRE(snprintf(expected, MAX_STRING_LENGTH, "%p", (void *)n1d) > 0);
+
+	tau->output = linked_list_tostr(tau->n1, NULL);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, print_one_node)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	REQUIRE(snprintf(expected, MAX_STRING_LENGTH, "%s", n1d) > 0);
+
+	tau->output = linked_list_tostr(tau->n1, format_string);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, print_two_nodes_no_stringify_function)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	lstnode_insert_after(tau->n1, tau->n2);
+	REQUIRE(
+		snprintf(
+			expected, MAX_STRING_LENGTH, "%p <--> %p", (void *)n1d, (void *)n2d
+		) > 0
+	);
+
+	tau->output = linked_list_tostr(tau->n1, NULL);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, print_two_nodes)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	lstnode_insert_after(tau->n1, tau->n2);
+	REQUIRE(snprintf(expected, MAX_STRING_LENGTH, "%s <--> %s", n1d, n2d) > 0);
+
+	tau->output = linked_list_tostr(tau->n1, format_string);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, print_three_nodes_no_stringify_function)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	lstnode_insert_after(lstnode_insert_after(tau->n1, tau->n2), tau->n3);
+	REQUIRE(
+		snprintf(
+			expected, MAX_STRING_LENGTH, "%p <--> %p <--> %p", (void *)n1d,
+			(void *)n2d, (void *)n3d
+		) > 0
+	);
+
+	tau->output = linked_list_tostr(tau->n1, NULL);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, print_three_nodes)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	lstnode_insert_after(lstnode_insert_after(tau->n1, tau->n2), tau->n3);
+	REQUIRE(
+		snprintf(
+			expected, MAX_STRING_LENGTH, "%s <--> %s <--> %s", n1d, n2d, n3d
+		) > 0
+	);
+
+	tau->output = linked_list_tostr(tau->n1, format_string);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+/* ###################################################################### */
+/* ###################################################################### */
+
+TEST(print_ll, printrev_null_arguments)
+{
+	CHECK_PTR_EQ(linked_list_tostr_reversed(NULL, NULL), NULL);
+	CHECK_PTR_EQ(linked_list_tostr_reversed(NULL, format_string), NULL);
+}
+
+TEST_F(print_ll, printrev_one_node_no_stringify_function)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	REQUIRE(snprintf(expected, MAX_STRING_LENGTH, "%p", (void *)n1d) > 0);
+
+	tau->output = linked_list_tostr_reversed(tau->n1, NULL);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, printrev_one_node)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	REQUIRE(snprintf(expected, MAX_STRING_LENGTH, "%s", n1d) > 0);
+
+	tau->output = linked_list_tostr_reversed(tau->n1, format_string);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, printrev_two_nodes_no_stringify_function)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	lstnode_insert_before(tau->n1, tau->n2);
+	REQUIRE(
+		snprintf(
+			expected, MAX_STRING_LENGTH, "%p <--> %p", (void *)n1d, (void *)n2d
+		) > 0
+	);
+
+	tau->output = linked_list_tostr_reversed(tau->n1, NULL);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, printrev_two_nodes)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	lstnode_insert_before(tau->n1, tau->n2);
+	REQUIRE(snprintf(expected, MAX_STRING_LENGTH, "%s <--> %s", n1d, n2d) > 0);
+
+	tau->output = linked_list_tostr_reversed(tau->n1, format_string);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, printrev_three_nodes_no_stringify_function)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	lstnode_insert_before(lstnode_insert_before(tau->n1, tau->n2), tau->n3);
+	REQUIRE(
+		snprintf(
+			expected, MAX_STRING_LENGTH, "%p <--> %p <--> %p", (void *)n1d,
+			(void *)n2d, (void *)n3d
+		) > 0
+	);
+
+	tau->output = linked_list_tostr_reversed(tau->n1, NULL);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
+}
+
+TEST_F(print_ll, printrev_three_nodes)
+{
+	char expected[MAX_STRING_LENGTH] = {'\0'};
+
+	lstnode_insert_before(lstnode_insert_before(tau->n1, tau->n2), tau->n3);
+	REQUIRE(
+		snprintf(
+			expected, MAX_STRING_LENGTH, "%s <--> %s <--> %s", n1d, n2d, n3d
+		) > 0
+	);
+
+	tau->output = linked_list_tostr_reversed(tau->n1, format_string);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	CHECK_STREQ(tau->output, expected);
 }

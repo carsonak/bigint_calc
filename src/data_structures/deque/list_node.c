@@ -1,6 +1,18 @@
-#include "linked_node.h"
+/* snprintf, vsnprintf */
+#define _ISOC99_SOURCE
+
+#include <assert.h> /* asserts */
+#include <stdarg.h> /* va_arg, vsnprintf */
+#include <stdio.h>  /* vsnprintf */
+#include <string.h> /* strlen, strcat */
+
+#include "list_node.h"
 #include "list_type_structs.h"
 #include "xalloc.h"
+
+static char *format_str(
+	const char *const restrict fmt, ...
+) ATTR_NONNULL ATTR_FORMAT(printf, 1, 2);
 
 /**
  * lstnode_get_next - get next node.
@@ -261,4 +273,162 @@ void *linked_list_del(list_node *const head, free_func *free_data)
 	}
 
 	return (NULL);
+}
+
+/**
+ * format_str - return a printf style formatted string.
+ * @fmt: pointer to a string with format specifiers.
+ *
+ * Return: pointer to the formatted string, NULL on failure.
+ */
+static char *format_str(const char *const restrict fmt, ...)
+{
+	intmax_t size = 0;
+	char *restrict out_str = NULL;
+	va_list vars;
+
+	va_start(vars, fmt);
+	size = vsnprintf(NULL, 0, fmt, vars);
+	va_end(vars);
+	if (size < 0)
+		return (NULL);
+
+	out_str = malloc(sizeof(*out_str) * (++size));
+	if (!out_str)
+		return (NULL);
+
+	va_start(vars, fmt);
+	size = vsnprintf(out_str, size, fmt, vars);
+	va_end(vars);
+	if (size < 0)
+	{
+		free(out_str);
+		out_str = NULL;
+	}
+
+	return (out_str);
+}
+
+/**
+ * linked_list_tostr - stringify a linked list.
+ * @head: pointer to the start of the linked list to stringify.
+ * @stringify_data: function that will be called to stringify the data
+ * in the linked list nodes.
+ *
+ * Return: pointer to the stringified linked list, NULL on error.
+ */
+char *linked_list_tostr(
+	list_node const *const restrict head, data_tostr *stringify_data
+)
+{
+	if (!head)
+		return (NULL);
+
+	const char link[] = " <--> ";
+	char *restrict list_str = NULL, *restrict data_str = NULL;
+	intmax_t list_str_len = 0;
+	list_node const *restrict walk = head;
+
+	if (stringify_data)
+		list_str = stringify_data(lstnode_get_data(walk));
+	else
+		list_str = format_str("%p", lstnode_get_data(walk));
+
+	if (!list_str)
+		return (NULL);
+
+	list_str_len += strlen(list_str);
+	walk = lstnode_get_next(walk);
+	while (list_str && walk)
+	{
+		void *d = lstnode_get_data(walk);
+
+		if (stringify_data)
+			data_str = stringify_data(d);
+		else
+			data_str = format_str("%p", d);
+
+		if (!data_str)
+			goto malloc_error;
+
+		list_str_len += sizeof(link) - 1 + strlen(data_str);
+		list_str = realloc(list_str, list_str_len + 1);
+		if (list_str)
+			strcat(strcat(list_str, link), data_str);
+
+		free(data_str);
+		data_str = NULL;
+		walk = lstnode_get_next(walk);
+	}
+
+	if (0)
+	{
+malloc_error:
+		free(list_str);
+		list_str = NULL;
+	}
+
+	return (list_str);
+}
+
+/**
+ * linked_list_tostr_reversed - stringify a linked list in reverse.
+ * @tail: pointer to the tail of the linked list.
+ * @stringify_data: function that will be called to stringify the data
+ * in the linked list nodes.
+ *
+ * Return: pointer to the stringified linked list, NULL on error.
+ */
+char *linked_list_tostr_reversed(
+	list_node const *const restrict tail, data_tostr *stringify_data
+)
+{
+	if (!tail)
+		return (NULL);
+
+	const char link[] = " <--> ";
+	char *restrict list_str = NULL, *restrict data_str = NULL;
+	intmax_t list_str_len = 0;
+	list_node const *restrict walk = tail;
+
+	if (stringify_data)
+		list_str = stringify_data(lstnode_get_data(walk));
+	else
+		list_str = format_str("%p", lstnode_get_data(walk));
+
+	if (!list_str)
+		return (NULL);
+
+	list_str_len += strlen(list_str);
+	walk = lstnode_get_prev(walk);
+	while (list_str && walk)
+	{
+		void *d = lstnode_get_data(walk);
+
+		if (stringify_data)
+			data_str = stringify_data(d);
+		else
+			data_str = format_str("%p", d);
+
+		if (!data_str)
+			goto malloc_error;
+
+		list_str_len += sizeof(link) - 1 + strlen(data_str);
+		list_str = realloc(list_str, list_str_len + 1);
+		if (list_str)
+			strcat(strcat(list_str, link), data_str);
+
+		free(data_str);
+		data_str = NULL;
+		walk = lstnode_get_prev(walk);
+	}
+
+	if (0)
+	{
+malloc_error:
+		free(list_str);
+		list_str = NULL;
+	}
+
+	return (list_str);
 }
