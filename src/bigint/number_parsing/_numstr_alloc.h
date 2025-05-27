@@ -1,10 +1,9 @@
 #ifndef NUMSTR_INTERNALS_H
 #define NUMSTR_INTERNALS_H
 
-#include "attribute_macros.h"
-
 #include <stdbool.h> /* bool */
 
+#include "attribute_macros.h"
 #include "types.h"
 #include "xalloc.h"
 

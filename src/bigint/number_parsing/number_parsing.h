@@ -3,10 +3,6 @@
 
 #include "attribute_macros.h"
 
-#include <ctype.h>    /* isalnum, isdigit, toupper */
-#include <inttypes.h> /* strtoumax */
-#include <string.h>   /* strlen */
-
 #include "_numstr_alloc.h"
 #include "bigint_types.h"
 

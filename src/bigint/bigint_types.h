@@ -3,7 +3,6 @@
 
 #include <inttypes.h> /* *printf macros */
 #include <limits.h>
-#include <stdbool.h>
 #include <stdint.h> /* fixed width types */
 
 #include "types.h"

@@ -1,3 +1,5 @@
+#include <string.h> /* memmove */
+
 #include "_bi_internals.h"
 #include "bigint.h"
 #include "number_parsing.h"

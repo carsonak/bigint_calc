@@ -4,7 +4,6 @@
 #include "attribute_macros.h"
 
 #include <stdbool.h> /* bool */
-#include <string.h>  /* memset, memcpy */
 
 #include "bigint_types.h"
 #include "xalloc.h"

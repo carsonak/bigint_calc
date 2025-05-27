@@ -1,3 +1,6 @@
+#include <string.h> /* memmove */
+#include <string.h> /* memset, memcpy */
+
 #include "_bi_internals.h"
 
 /**

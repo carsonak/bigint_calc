@@ -1,3 +1,5 @@
+#include <string.h> /* memset */
+
 #include "_bi_internals.h"
 #include "bigint.h"
 

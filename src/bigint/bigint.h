@@ -5,8 +5,6 @@
 
 #include <printf.h>  /* *printf, FILE */
 #include <stdbool.h> /* bool */
-#include <stdlib.h>  /* strtoull */
-#include <string.h>  /* memmove */
 
 #include "bigint_types.h"
 

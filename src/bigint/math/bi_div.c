@@ -1,6 +1,8 @@
+#include <stdio.h>  /* fprintf */
+#include <string.h> /* memmove */
+
 #include "_bi_internals.h"
 #include "bigint.h"
-#include <stdio.h> /* fprintf */
 
 static bool check_division_by_0(const bigint *const n2) ATTR_NONNULL;
 static bool quotient_is_less_than_1(
@@ -18,7 +20,7 @@ static len_type drop_next(
 	bigint *const restrict slice, const bigint *const restrict remainder,
 	const bigint *const restrict n1, len_type n1_i,
 	const bigint *const restrict n2
-) ATTR_NONNULL_IDX(1, 3, 5);
+) ATTR_NONNULL_POS(1, 3, 5);
 static bi_div_res
 divide(bigint *const restrict n1, bigint *const restrict n2) ATTR_NONNULL;
 static bi_div_res divide_negatives(

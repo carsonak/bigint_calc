@@ -1,0 +1,304 @@
+#include <ctype.h>  /* isdigit */
+#include <string.h> /* memset */
+
+#include "lexer.h"
+
+static len_type block_comment_len(const char *const str) ATTR_NONNULL;
+static len_type identifier_len(const char *const str) ATTR_NONNULL;
+static len_type line_comment_len(const char *const str) ATTR_NONNULL;
+static len_type number_len(const char *const str) ATTR_NONNULL;
+static len_type sign_len(const char *const str) ATTR_NONNULL;
+
+static const char KEYWORD_EXIT[] = "exit";
+
+/**
+ * token_new - allocate and initialise memory for `lexer_token`.
+ * @token: data to initialise with.
+ *
+ * Return: pointer to the token, NULL on failure.
+ */
+void *token_new(const void *const token)
+{
+	lexer_token *const restrict t = xcalloc(1, sizeof(*t));
+
+	if (t && token)
+		*t = *(const lexer_token *)token;
+
+	return (t);
+}
+
+/**
+ * token_del - frees a `lexer_token`.
+ * @freeable_token: pointer to a `lexer_token`.
+ */
+void token_del(void *freeable_token)
+{
+	lexer_token *const t = freeable_token;
+
+	t->id = INVALID;
+	t->str = (string_view){0};
+	xfree(t);
+}
+
+/**
+ * number_len - calculate the number of characters
+ * representing a number in a string.
+ * @str: pointer to the first character in the number.
+ *
+ * Return: number of characters in the number, 0 if none.
+ */
+static len_type number_len(const char *const str)
+{
+	len_type i = 0;
+
+	if (!isdigit(*str))
+		return (0);
+
+	for (; isalnum(str[i]) || str[i] == '_'; ++i)
+		;
+
+	return (i);
+}
+
+/**
+ * identifier_len - calculate the number of characters
+ * representing an identifier in a string.
+ * @str: pointer to the first character in the identifier.
+ *
+ * Return: number of characters in the identifier, 0 if none.
+ */
+static len_type identifier_len(const char *const str)
+{
+	len_type i = 0;
+
+	if (!isalpha(*str) || *str != '_')
+		return (0);
+
+	for (; isalnum(str[i]) || str[i] == '_'; ++i)
+		;
+
+	return (i);
+}
+
+/**
+ * sign_len - count number of consecutive '+' and '-' in a string.
+ * @str: pointer to the first sign character.
+ *
+ * Return: number of consecutive sign characters, 0 if none.
+ */
+static len_type sign_len(const char *const str)
+{
+	len_type i = 0;
+
+	for (; str[i] == '+' || str[i] == '-'; ++i)
+		;
+
+	return (i);
+}
+
+/**
+ * block_comment_len - count number of characters that make up a block comment
+ * in a string.
+ * @str: pointer to the starting symbols of a block comment.
+ *
+ * Return: number of characters in a the block comment, 0 if none.
+ */
+static len_type block_comment_len(const char *const str)
+{
+	len_type i = 2;
+
+	if (!(str[0] == '/' && str[1] == '*'))
+		return (0);
+
+	for (; str[i] && !(str[0] == '*' && str[1] == '/'); ++i)
+		;
+
+	if (str[0] == '*' && str[1] == '/')
+		i += 2;
+
+	return (i);
+}
+
+/**
+ * line_comment_len - count number of characters that make up a line comment in a string.
+ * @str: pointer to the starting symbol of a line comment.
+ *
+ * Return: number of characters in the line comment, 0 if none.
+ */
+static len_type line_comment_len(const char *const str)
+{
+	len_type i = 1;
+
+	if (*str != '#')
+		return (0);
+
+	for (; str[i] && str[i] != '\n'; ++i)
+		;
+
+	return (i);
+}
+
+/**
+ * lex_str - break down a string into tokens.
+ * @str: pointer to the string.
+ *
+ * Return: a `deque` of tokens on success, NULL otherwise.
+ */
+deque *lex_str(const char *restrict str)
+{
+	if (!str)
+		return (NULL);
+
+	lexer_token t = {0};
+	deque *restrict tokens = dq_new();
+
+	if (!tokens)
+		return (NULL);
+
+	for (; *str; ++str)
+	{
+		string_view slice = {.len = 1, .s = str};
+
+		if (strncmp(str, KEYWORD_EXIT, sizeof(KEYWORD_EXIT) - 1) == 0 &&
+			!isalnum(str[sizeof(KEYWORD_EXIT) - 1]) &&
+			str[sizeof(KEYWORD_EXIT) - 1] != '_')
+		{
+			t = (lexer_token){.id = KW_EXIT, .str = slice};
+			t.str.len = sizeof(KEYWORD_EXIT) - 1;
+			str += sizeof(KEYWORD_EXIT) - 2;
+			goto early_exit;
+		}
+		else if (isalpha(*str) || *str == '_')
+		{
+			t = (lexer_token){.id = ID, .str = slice};
+			t.str.len = identifier_len(str);
+			str += (t.str.len - 1);
+		}
+		else if (isdigit(*str))
+		{
+			t = (lexer_token){.id = NUMBER, .str = slice};
+			t.str.len = number_len(str);
+			str += (t.str.len - 1);
+		}
+		else if (*str == '+')
+		{
+			t = (lexer_token){.id = OP_ADD, .str = slice};
+			t.str.len = sign_len(str);
+			str += (t.str.len - 1);
+			if (isalpha(str[1]) || str[1] == '_')
+			{
+				const len_type id_len = identifier_len(++str);
+
+				t.id = ID;
+				t.str.len += id_len;
+				str += (id_len - 1);
+			}
+			else if (isdigit(str[1]))
+			{
+				const len_type num_len = number_len(++str);
+
+				t.id = NUMBER;
+				t.str.len += num_len;
+				str += (num_len - 1);
+			}
+			else if (t.str.len == 2 && *str == '+')
+				t.id = OP_INC;
+			else
+			{
+				t.id = INVALID;
+				goto early_exit;
+			}
+		}
+		else if (*str == '/')
+			t = (lexer_token){.id = OP_DIV, .str = slice};
+		else if (*str == '%')
+			t = (lexer_token){.id = OP_MOD, .str = slice};
+		else if (*str == '*')
+			t = (lexer_token){.id = OP_MUL, .str = slice};
+		else if (*str == '^')
+			t = (lexer_token){.id = OP_POW, .str = slice};
+		else if (*str == '-')
+		{
+			t = (lexer_token){.id = OP_SUB, .str = slice};
+			t.str.len = sign_len(str);
+			str += (t.str.len - 1);
+			if (isalpha(str[1]) || str[1] == '_')
+			{
+				const len_type id_len = identifier_len(++str);
+
+				t.id = ID;
+				t.str.len += id_len;
+				str += (id_len - 1);
+			}
+			else if (isdigit(str[1]))
+			{
+				const len_type num_len = number_len(++str);
+
+				t.id = NUMBER;
+				t.str.len += num_len;
+				str += (num_len - 1);
+			}
+			else if (t.str.len == 2 && *str == '-')
+				t.id = OP_DEC;
+			else
+			{
+				t.id = INVALID;
+				goto early_exit;
+			}
+		}
+		else if (*str == '=')
+			t = (lexer_token){.id = SYM_ASSIGN, .str = slice};
+		else if (str[0] == '/' && str[1] == '*')
+		{
+			t = (lexer_token){.id = SYM_BCOMMENT, .str = slice};
+			t.str.len = block_comment_len(str);
+			str += (t.str.len - 1);
+			if (!(*(str - 1) == '*' && *str == '/'))
+			{
+				t.id = INVALID;
+				goto early_exit;
+			}
+		}
+		else if (*str == '#')
+		{
+			t = (lexer_token){.id = SYM_LCOMMENT, .str = slice};
+			t.str.len = line_comment_len(str);
+			str += (t.str.len - 1);
+		}
+		else if (*str == '(')
+			t = (lexer_token){.id = SYM_PAREN_L, .str = slice};
+		else if (*str == ')')
+			t = (lexer_token){.id = SYM_PAREN_R, .str = slice};
+		else if (*str == '[')
+			t = (lexer_token){.id = SYM_SQUARE_L, .str = slice};
+		else if (*str == ']')
+			t = (lexer_token){.id = SYM_SQUARE_R, .str = slice};
+		else if (*str == ';' || *str == '\n')
+			t = (lexer_token){.id = SYM_STATEMENT_END, .str = slice};
+		else if (isspace(*str))
+			continue;
+		else
+		{
+			t = (lexer_token){.id = INVALID, .str = slice};
+			goto early_exit;
+		}
+
+		if (!dq_push_tail(tokens, &t, token_new))
+			break;
+	}
+
+	if (*str)
+	{
+alloc_fail:
+		tokens = dq_del(tokens, token_del);
+	}
+
+	if (0)
+	{
+early_exit:
+		if (!dq_push_tail(tokens, &t, token_new))
+			goto alloc_fail;
+	}
+
+	return (tokens);
+}
