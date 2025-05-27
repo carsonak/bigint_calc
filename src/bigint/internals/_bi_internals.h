@@ -17,8 +17,8 @@
  */
 struct bigint
 {
-	len_type len;
-	bool is_negative;
+	bool is_negative : 1;
+	len_type len : sizeof(len_type) * 8 - 1;
 	u_int *restrict num;
 };
 

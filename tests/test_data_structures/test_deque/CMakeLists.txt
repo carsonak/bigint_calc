@@ -1,7 +1,3 @@
-link_libraries(bigint)
-
-include_directories(${PROJECT_SOURCE_DIR}/src/deque)
-
 add_executable(test_deque test_deque.c test_main.c)
 add_test(NAME test_deque COMMAND test_deque --failed-output-only)
 

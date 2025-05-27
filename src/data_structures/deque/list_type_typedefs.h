@@ -26,7 +26,7 @@ typedef void(free_func)(void *const data);
  */
 typedef int(print_func)(FILE *stream, void const *const data);
 
-typedef struct linked_node linked_node;
+typedef struct list_node list_node;
 typedef struct deque deque;
 
 #endif /* BIGINT_LIST_TYPE_TYPEDEFS_H */

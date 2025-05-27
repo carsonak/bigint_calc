@@ -188,7 +188,7 @@ numstr *_str_to_numstr(
 
 	str_i += leading_chars_span(&number[str_i], "0");
 	{
-		radix_type b = base;  // Avoiding Undefined Behaviour.
+		radix_type b = base; /* Switch to modifiable type to avoid UB. */
 		ns->str = filter_str(&number[str_i], &p, map_digits, &b);
 	}
 

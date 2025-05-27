@@ -1,13 +1,14 @@
 #include "deque.h"
 #include "linked_node.h"
 #include "list_type_structs.h"
+#include "xalloc.h"
 
 /**
  * dq_new - allocate and initialise memory for a `deque`.
  *
  * Return: pointer to the new list.
  */
-deque *dq_new(void) { return (calloc(1, sizeof(deque))); }
+deque *dq_new(void) { return (xcalloc(1, sizeof(deque))); }
 
 /**
  * dq_clear - free all the nodes of a `deque`.
@@ -19,17 +20,17 @@ void dq_clear(deque *const restrict dq, free_func *free_data)
 	if (!dq || !dq->head)
 		return;
 
-	linked_node *next_node = node_get_next(dq->head);
+	list_node *next_node = lstnode_get_next(dq->head);
 
 	while (dq->head)
 	{
-		void *d = node_del(dq->head);
+		void *d = lstnode_del(dq->head);
 
 		if (free_data)
 			free_data(d);
 
 		dq->head = next_node;
-		next_node = dq->head ? node_get_next(dq->head) : NULL;
+		next_node = dq->head ? lstnode_get_next(dq->head) : NULL;
 	}
 
 	dq->head = NULL;
@@ -59,18 +60,18 @@ void *dq_del(deque *const dq, free_func *free_data)
  *
  * Return: pointer to the new node, NULL on failure.
  */
-linked_node *
+list_node *
 dq_push_head(deque *const restrict dq, void *const data, dup_func *copy_data)
 {
 	if (!dq)
 		return (NULL);
 
-	linked_node *const restrict nw = node_new(data, copy_data);
+	list_node *const restrict nw = lstnode_new(data, copy_data);
 
 	if (!nw)
 		return (NULL);
 
-	dq->head = node_insert_before(dq->head, nw);
+	dq->head = lstnode_insert_before(dq->head, nw);
 	if (!dq->tail)
 		dq->tail = nw;
 
@@ -87,18 +88,18 @@ dq_push_head(deque *const restrict dq, void *const data, dup_func *copy_data)
  *
  * Return: pointer to the newly added node, NULL if dq is NULL or failure.
  */
-linked_node *dq_push_tail(
+list_node *dq_push_tail(
 	deque *const restrict dq, void *const restrict data, dup_func *copy_data
 )
 {
 	if (!dq)
 		return (NULL);
 
-	linked_node *const restrict nw = node_new(data, copy_data);
+	list_node *const restrict nw = lstnode_new(data, copy_data);
 	if (!nw)
 		return (NULL);
 
-	dq->tail = node_insert_after(dq->tail, nw);
+	dq->tail = lstnode_insert_after(dq->tail, nw);
 	if (!dq->head)
 		dq->head = nw;
 
@@ -117,10 +118,10 @@ void *dq_pop_head(deque *const restrict dq)
 	if (!dq || !dq->head)
 		return (NULL);
 
-	linked_node *const node = dq->head;
+	list_node *const node = dq->head;
 
-	dq->head = node_get_next(node);
-	void *const d = node_del(node);
+	dq->head = lstnode_get_next(node);
+	void *const d = lstnode_del(node);
 
 	if (!dq->head)
 		dq->tail = NULL;
@@ -142,10 +143,10 @@ void *dq_pop_tail(deque *const restrict dq)
 	if (!dq || !dq->tail)
 		return (NULL);
 
-	linked_node *node = dq->tail;
+	list_node *node = dq->tail;
 
-	dq->tail = node_get_prev(node);
-	void *const d = node_del(node);
+	dq->tail = lstnode_get_prev(node);
+	void *const d = lstnode_del(node);
 
 	if (!dq->tail)
 		dq->head = NULL;

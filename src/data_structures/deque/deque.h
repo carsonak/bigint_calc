@@ -1,5 +1,5 @@
-#ifndef BIGINT_DEQUE_TYPE_H
-#define BIGINT_DEQUE_TYPE_H
+#ifndef DS_DEQUE_TYPE_H
+#define DS_DEQUE_TYPE_H
 
 #include <assert.h> /* asserts */
 #include <stdint.h> /* intmax_t */
@@ -11,13 +11,13 @@
 void *dq_del(deque *const dq, free_func *free_data);
 deque *dq_new(void) ATTR_MALLOC ATTR_MALLOC_FREE(dq_del);
 
-linked_node *
+list_node *
 dq_push_head(deque *const restrict dq, void *const data, dup_func *copy_data);
-linked_node *dq_push_tail(
+list_node *dq_push_tail(
 	deque *const restrict dq, void *const restrict data, dup_func *copy_data
 );
 void *dq_pop_head(deque *const restrict dq);
 void *dq_pop_tail(deque *const restrict dq);
 void dq_clear(deque *const restrict dq, free_func *free_data);
 
-#endif /* BIGINT_DEQUE_TYPE_H */
+#endif /* DS_DEQUE_TYPE_H */

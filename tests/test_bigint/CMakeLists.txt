@@ -1,5 +1,7 @@
 include_directories(${PROJECT_SOURCE_DIR}/src/bigint/internals)
 
+set_directory_properties(PROPERTIES LABELS "test_bigint")
+
 add_subdirectory(test_internals)
 add_subdirectory(test_math)
 add_subdirectory(test_number_parsing)
