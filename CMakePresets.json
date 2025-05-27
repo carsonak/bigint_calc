@@ -6,88 +6,79 @@
     },
     "configurePresets": [
         {
+            "name": "configure-base",
+            "hidden": true,
+            "cacheVariables": { "CMAKE_EXPORT_COMPILE_COMMANDS": true },
+            "warnings": { "dev": true }
+        },
+        {
             "name": "debug-default",
+            "inherits": ["configure-base"],
             "binaryDir": "debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            },
-            "warnings": {
-                "dev": true
-            }
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
         },
         {
             "name": "release",
+            "inherits": ["configure-base"],
             "binaryDir": "release",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            }
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "Release" },
+            "warnings": { "dev": false }
         },
         {
             "name": "release-debug",
+            "inherits": ["configure-base"],
             "binaryDir": "release-debug",
-            "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
-                "CMAKE_EXPORT_COMPILE_COMMANDS": true
-            },
-            "warnings": {
-                "dev": true
-            }
+            "cacheVariables": { "CMAKE_BUILD_TYPE": "RelWithDebInfo" }
         }
     ],
     "buildPresets": [
+        { "name": "build-base", "hidden": true, "jobs": 4 },
         {
             "name": "debug-default",
             "description": "Code-Compile-Debug",
+            "inherits": ["build-base"],
             "configurePreset": "debug-default",
-            "jobs": 4,
             "configuration": "Debug"
         },
         {
             "name": "release",
+            "inherits": ["build-base"],
             "configurePreset": "release",
-            "jobs": 4,
             "configuration": "Release"
         },
         {
             "name": "release-debug",
             "description": "Code-Compile-Debug",
+            "inherits": ["build-base"],
             "configurePreset": "release-debug",
-            "jobs": 4,
             "configuration": "RelWithDebInfo"
         }
     ],
     "testPresets": [
         {
-            "name": "debug-default",
-            "configurePreset": "debug-default",
+            "name": "tests-base",
+            "hidden": true,
             "output": { "outputOnFailure": true },
             "execution": {
                 "jobs": 4,
                 "stopOnFailure": true,
                 "scheduleRandom": true
             }
+        },
+        {
+            "name": "debug-default",
+            "inherits": ["tests-base"],
+            "configurePreset": "debug-default"
         },
         {
             "name": "release",
-            "configurePreset": "release",
-            "output": { "outputOnFailure": true },
-            "execution": {
-                "jobs": 4,
-                "stopOnFailure": true,
-                "scheduleRandom": true
-            }
+            "inherits": ["tests-base"],
+            "configurePreset": "release"
         },
         {
             "name": "release-debug",
-            "configurePreset": "release-debug",
-            "output": { "outputOnFailure": true },
-            "execution": {
-                "jobs": 4,
-                "stopOnFailure": true,
-                "scheduleRandom": true
-            }
+            "inherits": ["tests-base"],
+            "configurePreset": "release-debug"
         }
     ]
 }
