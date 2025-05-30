@@ -14,12 +14,13 @@ leading_chars_span(char const *const str, char const *const ch);
 #include "int_to_char.c"
 #include "is_valid_radix.c"
 
-/**
- * map_digits - validates that characters are acceptable digits.
- * @c: the character to validate.
- * @radix: pointer to an int indicating the current working radix.
+/*!
+ * @brief validates that characters are acceptable digits.
  *
- * Return: the transformed character, -1 on error.
+ * @param[in] c the character to validate.
+ * @param[in] radix pointer to an int indicating the current working radix.
+ *
+ * @return the transformed character, -1 on error.
  */
 static char map_digits(const char c, void *radix)
 {
@@ -35,14 +36,11 @@ static char map_digits(const char c, void *radix)
 	return (int_to_char(a));
 }
 
+/*! internal buffer size of the filter_str function. */
 #define FILTER_STR_BUFFER_SIZE 1024U
 
-/**
- * filter_str - filter characters of a string.
- * @str: the string to filter.
- * @processed: address to store number of characters processed in the string.
- * @map: pointer to a function that maps characters onto other characters.
- * @map_args: pointer to arguments that will be passed onto the map function.
+/*!
+ * @brief filter characters of a string.
  *
  * If the `map` function returns a negative int, processing of the string is
  * finalised and the filtered string returned.
@@ -52,7 +50,14 @@ static char map_digits(const char c, void *radix)
  * If the function fails due to a memory allocation issue, the original value
  * in `processed` will be unchanged.
  *
- * Return: pointer to the filtered string, NULL on failure.
+ * @param[in] str the string to filter.
+ * @param[out] processed address to store number of characters processed in the
+ * string.
+ * @param[in] map pointer to a function that maps characters onto other characters.
+ * @param[in] map_args pointer to arguments that will be passed onto the map
+ * function.
+ *
+ * @return pointer to the filtered string, NULL on failure.
  */
 char *filter_str(
 	char const *const restrict str, len_type *const restrict processed,
@@ -111,15 +116,16 @@ char *filter_str(
 
 #undef FILTER_STR_BUFFER_SIZE
 
-/**
- * leading_chars_span - finds the number of leading characters in a string.
- * @str: the string to check.
- * @ch: pointer to a string of characters to look for.
+/*!
+ * @brief finds the number of leading characters in a string.
  *
  * If `str` consists of only characters in `ch`, then;
- * length of leading characters = length of `str` - 1
+ * length of leading characters = length of `str` - 1.
  *
- * Return: number of leading characters.
+ * @param[in] str the string to check.
+ * @param[in] ch pointer to a string of characters to look for.
+ *
+ * @return number of leading characters.
  */
 static len_type leading_chars_span(char const *const str, char const *const ch)
 {
@@ -135,12 +141,13 @@ static len_type leading_chars_span(char const *const str, char const *const ch)
 	return (count);
 }
 
-/**
- * check_is_negative - determine signedness of number.
- * @number: a string with a number.
- * @str_i: pointer to number's index.
+/*!
+ * @brief determine signedness of number in a string.
  *
- * Return: true if the sign is negative, false otherwise.
+ * @param[in] number a string with a number.
+ * @param[in] str_i pointer to number's index.
+ *
+ * @return true if the sign is negative, false otherwise.
  */
 static bool check_is_negative(
 	char const *const restrict number, len_type *const restrict str_i
@@ -155,18 +162,21 @@ static bool check_is_negative(
 	return (is_neg);
 }
 
-/**
- * _str_to_numstr - parse a string of digits.
- * @number: a string with a number.
- * @base: an int between 2-36 indicating the radix of the number.
- * @processed: address to store number of characters processed in the string.
+/*!
+ * @brief initialise a `numstr` from a string.
+ * @public @memberof numstr
  *
  * If the function fails due to a memory allocation issue,
  * the value in `processed` will be unchanged.
  *
- * Return: pointer to a numstr struct, NULL on failure.
+ * @param number a string with a number.
+ * @param base an int in the range 2-36 indicating the radix of the number.
+ * @param processed address to store number of characters of the string
+ * processed.
+ *
+ * @return pointer to a `numstr`, NULL on failure.
  */
-numstr *_str_to_numstr(
+numstr *_numstr_new(
 	char const *const restrict number, const radix_type base,
 	len_type *const restrict processed
 )
@@ -182,10 +192,11 @@ numstr *_str_to_numstr(
 		return (NULL);
 
 	ns->is_negative = check_is_negative(number, &str_i);
+	ns->base = base;
 	if (number[str_i] == '_')
 	{
 		fprintf(stderr, "ParsingError: Leading underscores not allowed.\n");
-		goto input_error;
+		goto parsing_error;
 	}
 
 	str_i += leading_chars_span(&number[str_i], "0");
@@ -204,14 +215,14 @@ numstr *_str_to_numstr(
 		fprintf(
 			stderr, "ParsingError: string did not contain any valid digits.\n"
 		);
-		goto input_error;
+		goto parsing_error;
 	}
 
 	if (str_i && number[str_i - 1] == '_')
 	{
 		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
 		--str_i;
-input_error:
+parsing_error:
 		ns = _numstr_free(ns);
 	}
 

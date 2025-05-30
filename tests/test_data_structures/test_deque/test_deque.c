@@ -4,11 +4,12 @@
 
 static char n1d[] = "one", n2d[] = "two", n3d[] = "three";
 
-/**
- * fail_dup - failing duplicating function.
- * @d: unused.
+/*!
+ * @brief failing duplicating function.
  *
- * Return: NULL.
+ * @param d unused.
+ *
+ * @return NULL.
  */
 static void *fail_dup(void const *const d)
 {
@@ -16,11 +17,12 @@ static void *fail_dup(void const *const d)
 	return (NULL);
 }
 
-/**
- * dup_str - makes a copy of a string.
- * @str: pointer to the string.
+/*!
+ * @brief makes a copy of a string.
  *
- * Return: pointer to the new string, NULL on failure.
+ * @param str pointer to the string.
+ *
+ * @return pointer to the new string, NULL on failure.
  */
 static void *dup_str(void const *const str)
 {

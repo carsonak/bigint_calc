@@ -4,9 +4,9 @@
 #include <inttypes.h> /* *printf macros */
 #include <stdint.h> /* intmax_t */
 
-/* for lengths and counting */
+/*! for lengths and counting. */
 typedef intmax_t len_type;
-/* for radix */
+/*! for radix. */
 typedef unsigned short int radix_type;
 
 /* maximums and minimums. */

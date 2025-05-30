@@ -1,3 +1,8 @@
+/*!
+ * @file
+ * @brief methods for list_node types.
+ */
+
 /* snprintf, vsnprintf */
 #define _ISOC99_SOURCE
 
@@ -14,11 +19,13 @@ static char *format_str(
 	const char *const restrict fmt, ...
 ) ATTR_NONNULL ATTR_FORMAT(printf, 1, 2);
 
-/**
- * lstnode_get_next - get next node.
- * @node: pointer to a `list_node`, should not be NULL.
+/*!
+ * @brief get next node.
+ * @public @memberof list_node
  *
- * Return: pointer to the next node.
+ * @param[in] node pointer to a `list_node`, should not be NULL.
+ *
+ * @return pointer to the next node.
  */
 list_node *lstnode_get_next(const list_node *const node)
 {
@@ -26,11 +33,13 @@ list_node *lstnode_get_next(const list_node *const node)
 	return (node->next);
 }
 
-/**
- * lstnode_get_prev - get previous node.
- * @node: pointer to a `list_node`, should not be NULL.
+/*!
+ * @brief get previous node.
+ * @public @memberof list_node
  *
- * Return: pointer to the previous node.
+ * @param[in] node pointer to a `list_node`, should not be NULL.
+ *
+ * @return pointer to the previous node.
  */
 list_node *lstnode_get_prev(const list_node *const node)
 {
@@ -38,11 +47,13 @@ list_node *lstnode_get_prev(const list_node *const node)
 	return (node->prev);
 }
 
-/**
- * node_get_data - get data of a node.
- * @node: pointer to a `list_node`, should not be NULL.
+/*!
+ * @brief get data of a node.
+ * @public @memberof list_node
  *
- * Return: pointer to the data in the node.
+ * @param[in] node pointer to a `list_node`, should not be NULL.
+ *
+ * @return pointer to the data in the node.
  */
 void *lstnode_get_data(const list_node *const node)
 {
@@ -50,67 +61,75 @@ void *lstnode_get_data(const list_node *const node)
 	return (node->data);
 }
 
-/**
- * node_set_next - swap out the next node of a another node.
- * @this_node: pointer to a `list_node` to be modified, should not be NULL.
- * @other_node: pointer to the `list_node` to be swapped in.
+/*!
+ * @brief swap out the next node of a node.
+ * @public @memberof list_node
  *
- * Return: pointer to the old next node.
+ * @param[in] this_node pointer to a `list_node` to be modified, should not be NULL.
+ * @param[in] new_node pointer to the `list_node` to be swapped in.
+ *
+ * @return pointer to the old next node.
  */
 list_node *lstnode_set_next(
-	list_node *const restrict this_node, list_node *const restrict other_node
+	list_node *const restrict this_node, list_node *const restrict new_node
 )
 {
 	assert(this_node);
 	list_node *const tmp = this_node->next;
 
-	this_node->next = other_node;
+	this_node->next = new_node;
 	return (tmp);
 }
 
-/**
- * node_set_prev - swap out the previous node of a another node.
- * @this_node: pointer to a `list_node` to be modified, should not be NULL.
- * @other_node: pointer to the `list_node` to be swapped in.
+/*!
+ * @brief swap out the previous node of a node.
+ * @public @memberof list_node
  *
- * Return: pointer to the old previous node.
+ * @param[in] this_node pointer to a `list_node` to be modified, should not be NULL.
+ * @param[in] new_node pointer to the `list_node` to be swapped in.
+ *
+ * @return pointer to the old previous node.
  */
 list_node *lstnode_set_prev(
-	list_node *const restrict this_node, list_node *const restrict other_node
+	list_node *const restrict this_node, list_node *const restrict new_node
 )
 {
 	assert(this_node);
 	list_node *const tmp = this_node->prev;
 
-	this_node->prev = other_node;
+	this_node->prev = new_node;
 	return (tmp);
 }
 
-/**
- * node_set_data - swap the data of a node with new data.
- * @node: pointer to a `list_node` to modify, should not be NULL.
- * @data: pointer to the data to swap in.
+/*!
+ * @brief swap the data of a node with new data.
+ * @public @memberof list_node
  *
- * Return: pointer to the old data.
+ * @param[in] node pointer to a `list_node` to modify, should not be NULL.
+ * @param[in] new_data pointer to the data to swap in.
+ *
+ * @return pointer to the old data.
  */
 void *
-lstnode_set_data(list_node *const restrict node, void *const restrict data)
+lstnode_set_data(list_node *const restrict node, void *const restrict new_data)
 {
 	assert(node);
 	void *const tmp = node->data;
 
-	node->data = data;
+	node->data = new_data;
 	return (tmp);
 }
 
-/**
- * node_new - allocate memory for a new `list_node` and initialise it.
- * @data: pointer to the data to be stored in the new node.
- * @copy_data: pointer to a function that can duplicate `data`.
+/*!
+ * @brief allocate memory for a new `list_node` and initialise it.
+ * @public @memberof list_node
  *
- * Return: pointer to the created node, NULL on failure.
+ * @param[in] data pointer to the data to be stored in the new node.
+ * @param[in] copy_func pointer to a function that can duplicate `data`.
+ *
+ * @return pointer to the created node, NULL on failure.
  */
-list_node *lstnode_new(void *data, dup_func *copy_data)
+list_node *lstnode_new(void *data, dup_func *copy_func)
 {
 	list_node *const node = xcalloc(1, sizeof(list_node));
 
@@ -118,9 +137,9 @@ list_node *lstnode_new(void *data, dup_func *copy_data)
 		return (NULL);
 
 	lstnode_set_data(node, data);
-	if (copy_data)
+	if (copy_func)
 	{
-		lstnode_set_data(node, copy_data(data));
+		lstnode_set_data(node, copy_func(data));
 		if (!lstnode_get_data(node) && data)
 		{
 			xfree(node);
@@ -131,11 +150,13 @@ list_node *lstnode_new(void *data, dup_func *copy_data)
 	return (node);
 }
 
-/**
- * node_pop - remove a node from a linked list.
- * @node: pointer to a `list_node`.
+/*!
+ * @brief remove a node from a linked list.
+ * @public @memberof list_node
  *
- * Return: pointer to the popped list_node.
+ * @param[in] node pointer to a `list_node`.
+ *
+ * @return pointer to the popped list_node.
  */
 list_node *lstnode_pop(list_node *const restrict node)
 {
@@ -154,11 +175,13 @@ list_node *lstnode_pop(list_node *const restrict node)
 	return (node);
 }
 
-/**
- * node_del - pop and free a `list_node`.
- * @node: pointer to a `list_node`.
+/*!
+ * @brief pop and free a `list_node`.
+ * @public @memberof list_node
  *
- * Return: pointer to the data in the node.
+ * @param[in] node pointer to a `list_node`.
+ *
+ * @return pointer to the data in the node.
  */
 void *lstnode_del(list_node *const restrict node)
 {
@@ -171,12 +194,14 @@ void *lstnode_del(list_node *const restrict node)
 	return (data);
 }
 
-/**
- * node_insert_after - insert a node after another node.
- * @this_node: pointer to a node.
- * @other_node: pointer to the node to be inserted.
+/*!
+ * @brief insert a node after another node.
+ * @public @memberof list_node
  *
- * Return: pointer to the newly inserted node, NULL if `other_node` is NULL.
+ * @param[in] this_node pointer to a node.
+ * @param[in] other_node pointer to the node to be inserted.
+ *
+ * @return pointer to the newly inserted node, NULL if `other_node` is NULL.
  */
 list_node *lstnode_insert_after(
 	list_node *const restrict this_node, list_node *const restrict other_node
@@ -198,12 +223,14 @@ list_node *lstnode_insert_after(
 	return (other_node);
 }
 
-/**
- * node_insert_before - insert a node before another node.
- * @this_node: pointer to a node.
- * @other_node: pointer to the node to be inserted.
+/*!
+ * @brief insert a node before another node.
+ * @public @memberof list_node
  *
- * Return: pointer to the newly inserted node, NULL if `other_node` is NULL.
+ * @param[in] this_node pointer to a node.
+ * @param[in] other_node pointer to the node to be inserted.
+ *
+ * @return pointer to the newly inserted node, NULL if `other_node` is NULL.
  */
 list_node *lstnode_insert_before(
 	list_node *const restrict this_node, list_node *const restrict other_node
@@ -225,12 +252,14 @@ list_node *lstnode_insert_before(
 	return (other_node);
 }
 
-/**
- * node_swap - swap data of two nodes.
- * @this_node: pointer to the node to be swapped out.
- * @other_node: pointer to the node to be swapped in.
+/*!
+ * @brief swap data of two nodes.
+ * @public @memberof list_node
  *
- * Return: pointer to the swapped in node, NULL if `other_node` is NULL.
+ * @param[in] this_node pointer to the node to be swapped out.
+ * @param[in] other_node pointer to the node to be swapped in.
+ *
+ * @return pointer to the swapped in node, NULL if `other_node` is NULL.
  */
 list_node *lstnode_swap(
 	list_node *const restrict this_node, list_node *const restrict other_node
@@ -248,14 +277,16 @@ list_node *lstnode_swap(
 	return (other_node);
 }
 
-/**
- * linked_list_del - free a linked list.
- * @head: pointer to the start of the linked list.
- * @free_data: function that will be called to free data in the nodes.
+/*!
+ * @brief free a linked list.
+ * @public @memberof list_node
  *
- * Return: NULL always.
+ * @param[in] head pointer to the start of the linked list.
+ * @param[in] delete_func function that will be called to free data in the nodes.
+ *
+ * @return NULL always.
  */
-void *linked_list_del(list_node *const head, free_func *free_data)
+void *linked_list_del(list_node *const head, free_func *delete_func)
 {
 	if (!head)
 		return (NULL);
@@ -265,8 +296,8 @@ void *linked_list_del(list_node *const head, free_func *free_data)
 	while (walk)
 	{
 		void *data = lstnode_del(walk);
-		if (free_data)
-			free_data(data);
+		if (delete_func)
+			delete_func(data);
 
 		walk = next;
 		next = walk ? lstnode_get_next(walk) : NULL;
@@ -275,11 +306,12 @@ void *linked_list_del(list_node *const head, free_func *free_data)
 	return (NULL);
 }
 
-/**
- * format_str - return a printf style formatted string.
- * @fmt: pointer to a string with format specifiers.
+/*!
+ * @brief return a printf style formatted string.
  *
- * Return: pointer to the formatted string, NULL on failure.
+ * @param[in] fmt pointer to a string with format specifiers.
+ *
+ * @return pointer to the formatted string, NULL on failure.
  */
 static char *format_str(const char *const restrict fmt, ...)
 {
@@ -309,16 +341,18 @@ static char *format_str(const char *const restrict fmt, ...)
 	return (out_str);
 }
 
-/**
- * linked_list_tostr - stringify a linked list.
- * @head: pointer to the start of the linked list to stringify.
- * @stringify_data: function that will be called to stringify the data
+/*!
+ * @brief stringify a linked list.
+ * @public @memberof list_node
+ *
+ * @param[in] head pointer to the start of the linked list to stringify.
+ * @param[in] stringify_func function that will be called to stringify the data
  * in the linked list nodes.
  *
- * Return: pointer to the stringified linked list, NULL on error.
+ * @return pointer to the stringified linked list, NULL on error.
  */
 char *linked_list_tostr(
-	list_node const *const restrict head, data_tostr *stringify_data
+	list_node const *const restrict head, data_tostr *stringify_func
 )
 {
 	if (!head)
@@ -329,8 +363,8 @@ char *linked_list_tostr(
 	intmax_t list_str_len = 0;
 	list_node const *restrict walk = head;
 
-	if (stringify_data)
-		list_str = stringify_data(lstnode_get_data(walk));
+	if (stringify_func)
+		list_str = stringify_func(lstnode_get_data(walk));
 	else
 		list_str = format_str("%p", lstnode_get_data(walk));
 
@@ -343,8 +377,8 @@ char *linked_list_tostr(
 	{
 		void *d = lstnode_get_data(walk);
 
-		if (stringify_data)
-			data_str = stringify_data(d);
+		if (stringify_func)
+			data_str = stringify_func(d);
 		else
 			data_str = format_str("%p", d);
 
@@ -371,16 +405,18 @@ malloc_error:
 	return (list_str);
 }
 
-/**
- * linked_list_tostr_reversed - stringify a linked list in reverse.
- * @tail: pointer to the tail of the linked list.
- * @stringify_data: function that will be called to stringify the data
+/*!
+ * @brief stringify a linked list in reverse.
+ * @public @memberof list_node
+ *
+ * @param[in] tail pointer to the tail of the linked list.
+ * @param[in] stringify_func function that will be called to stringify the data
  * in the linked list nodes.
  *
- * Return: pointer to the stringified linked list, NULL on error.
+ * @return pointer to the stringified linked list, NULL on error.
  */
 char *linked_list_tostr_reversed(
-	list_node const *const restrict tail, data_tostr *stringify_data
+	list_node const *const restrict tail, data_tostr *stringify_func
 )
 {
 	if (!tail)
@@ -391,8 +427,8 @@ char *linked_list_tostr_reversed(
 	intmax_t list_str_len = 0;
 	list_node const *restrict walk = tail;
 
-	if (stringify_data)
-		list_str = stringify_data(lstnode_get_data(walk));
+	if (stringify_func)
+		list_str = stringify_func(lstnode_get_data(walk));
 	else
 		list_str = format_str("%p", lstnode_get_data(walk));
 
@@ -405,8 +441,8 @@ char *linked_list_tostr_reversed(
 	{
 		void *d = lstnode_get_data(walk);
 
-		if (stringify_data)
-			data_str = stringify_data(d);
+		if (stringify_func)
+			data_str = stringify_func(d);
 		else
 			data_str = format_str("%p", d);
 

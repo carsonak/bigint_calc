@@ -1,10 +1,17 @@
+/*!
+ * @file
+ * @brief parser.
+ */
+
 #include "parser.h"
 #include "lexer.h"
+#include "xalloc.h"
 
-/**
- * parse_tokens - converts an infix expression to an RPN deque of tokens.
- * @expression: pointer to a math expression.
+/*!
+ * @brief parse tokens of a program.
  *
- * Return: pointer to a deque, NULL on failure.
+ * @param[in] tokens pointer to a deque of tokens.
+ *
+ * @return ???, NULL on failure.
  */
 deque *parse_tokens(deque *const restrict tokens) { return (NULL); }

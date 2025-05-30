@@ -1,3 +1,8 @@
+/*!
+ * @file
+ * @brief lexer.
+ */
+
 #include <ctype.h>  /* isdigit */
 #include <string.h> /* memset */
 
@@ -9,13 +14,13 @@ static len_type line_comment_len(const char *const str) ATTR_NONNULL;
 static len_type number_len(const char *const str) ATTR_NONNULL;
 static len_type sign_len(const char *const str) ATTR_NONNULL;
 
-static const char KEYWORD_EXIT[] = "exit";
-
-/**
- * token_new - allocate and initialise memory for `lexer_token`.
- * @token: data to initialise with.
+/*!
+ * @brief allocate and initialise memory for `lexer_token`.
+ * @public @memberof lexer_token
  *
- * Return: pointer to the token, NULL on failure.
+ * @param[in] token data to initialise with.
+ *
+ * @return pointer to the token, NULL on failure.
  */
 void *token_new(const void *const token)
 {
@@ -27,9 +32,11 @@ void *token_new(const void *const token)
 	return (t);
 }
 
-/**
- * token_del - frees a `lexer_token`.
- * @freeable_token: pointer to a `lexer_token`.
+/*!
+ * @brief frees a `lexer_token`.
+ * @public @memberof lexer_token
+ *
+ * @param[in] freeable_token pointer to a `lexer_token`.
  */
 void token_del(void *freeable_token)
 {
@@ -40,12 +47,12 @@ void token_del(void *freeable_token)
 	xfree(t);
 }
 
-/**
- * number_len - calculate the number of characters
- * representing a number in a string.
- * @str: pointer to the first character in the number.
+/*!
+ * @brief count the characters in a string representing a number.
  *
- * Return: number of characters in the number, 0 if none.
+ * @param[in] str pointer to the first character in the number.
+ *
+ * @return number of characters in the number, 0 if none.
  */
 static len_type number_len(const char *const str)
 {
@@ -60,12 +67,12 @@ static len_type number_len(const char *const str)
 	return (i);
 }
 
-/**
- * identifier_len - calculate the number of characters
- * representing an identifier in a string.
- * @str: pointer to the first character in the identifier.
+/*!
+ * @brief count the characters in a string representing an identifier.
  *
- * Return: number of characters in the identifier, 0 if none.
+ * @param[in] str pointer to the first character in the identifier.
+ *
+ * @return number of characters in the identifier, 0 if none.
  */
 static len_type identifier_len(const char *const str)
 {
@@ -80,11 +87,12 @@ static len_type identifier_len(const char *const str)
 	return (i);
 }
 
-/**
- * sign_len - count number of consecutive '+' and '-' in a string.
- * @str: pointer to the first sign character.
+/*!
+ * @brief count number of consecutive '+' and '-' in a string.
  *
- * Return: number of consecutive sign characters, 0 if none.
+ * @param[in] str pointer to the first sign character.
+ *
+ * @return number of consecutive sign characters, 0 if none.
  */
 static len_type sign_len(const char *const str)
 {
@@ -96,12 +104,12 @@ static len_type sign_len(const char *const str)
 	return (i);
 }
 
-/**
- * block_comment_len - count number of characters that make up a block comment
- * in a string.
- * @str: pointer to the starting symbols of a block comment.
+/*!
+ * @brief count the characters that make up a block comment in a string.
  *
- * Return: number of characters in a the block comment, 0 if none.
+ * @param[in] str pointer to the starting symbols of a block comment.
+ *
+ * @return number of characters in a the block comment, 0 if none.
  */
 static len_type block_comment_len(const char *const str)
 {
@@ -119,11 +127,12 @@ static len_type block_comment_len(const char *const str)
 	return (i);
 }
 
-/**
- * line_comment_len - count number of characters that make up a line comment in a string.
- * @str: pointer to the starting symbol of a line comment.
+/*!
+ * @brief count the characters that make up a line comment in a string.
  *
- * Return: number of characters in the line comment, 0 if none.
+ * @param[in] str pointer to the starting symbol of a line comment.
+ *
+ * @return number of characters in the line comment, 0 if none.
  */
 static len_type line_comment_len(const char *const str)
 {
@@ -138,17 +147,20 @@ static len_type line_comment_len(const char *const str)
 	return (i);
 }
 
-/**
- * lex_str - break down a string into tokens.
- * @str: pointer to the string.
+/*!
+ * @brief break down a string into tokens.
+ * @relatesalso lexer_token
  *
- * Return: a `deque` of tokens on success, NULL otherwise.
+ * @param[in] str pointer to the string.
+ *
+ * @return a `deque` of tokens on success, NULL otherwise.
  */
 deque *lex_str(const char *restrict str)
 {
 	if (!str)
 		return (NULL);
 
+	const char KEYWORD_EXIT[] = "exit";
 	lexer_token t = {0};
 	deque *restrict tokens = dq_new();
 
@@ -273,8 +285,10 @@ deque *lex_str(const char *restrict str)
 			t = (lexer_token){.id = SYM_SQUARE_L, .str = slice};
 		else if (*str == ']')
 			t = (lexer_token){.id = SYM_SQUARE_R, .str = slice};
-		else if (*str == ';' || *str == '\n')
-			t = (lexer_token){.id = SYM_STATEMENT_END, .str = slice};
+		else if (*str == ';')
+			t = (lexer_token){.id = SYM_SEMICOLON, .str = slice};
+		else if (*str == '\n')
+			t = (lexer_token){.id = SYM_NEWLINE, .str = slice};
 		else if (isspace(*str))
 			continue;
 		else

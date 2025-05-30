@@ -8,5 +8,8 @@ debug/*
 release-debug/*
 release/*
 
-# local
+# local configs
 CMakeUserPresets.json
+
+# doxygen
+docs/*

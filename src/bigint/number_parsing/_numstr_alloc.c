@@ -1,17 +1,20 @@
 #include "_numstr_alloc.h"
 
-/**
- * _numstr_alloc - allocate memory for a numstr of given length.
- * @len: length of the array, length 0 returns the struct with a NULL array.
+/*!
+ * @brief allocate memory for a `numstr`.
+ * @protected @memberof numstr
  *
- * Return: a pointer to a numstr struct, NULL on failure.
+ * @param[in] len length of the array,
+ * length 0 returns the struct with a NULL array.
+ *
+ * @return a pointer to a `numstr`, NULL on failure.
  */
 numstr *_numstr_alloc(len_type len)
 {
 	if (len < 0)
 		return (NULL);
 
-	numstr *arr = xcalloc(1, sizeof(*arr));
+	numstr *restrict arr = xcalloc(1, sizeof(*arr));
 
 	if (!arr)
 		return (NULL);
@@ -27,11 +30,13 @@ numstr *_numstr_alloc(len_type len)
 	return (arr);
 }
 
-/**
- * _numstr_free - free a numstr, return NULL.
- * @freeable_ptr: a pointer to a numstr.
+/*!
+ * @brief free a `numstr`.
+ * @protected @memberof numstr
  *
- * Return: NULL always.
+ * @param[in] freeable_ptr a pointer to a numstr.
+ *
+ * @return NULL always.
  */
 void *_numstr_free(numstr *freeable_ptr)
 {

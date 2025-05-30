@@ -1,13 +1,14 @@
-#include <string.h> /* memmove */
-#include <string.h> /* memset, memcpy */
+#include <string.h> /* memmove, memset, memcpy */
 
 #include "_bi_internals.h"
 
-/**
- * _bi_alloc - allocate memory for a `bigint` of given length.
- * @len: length of the array, length 0 returns the struct with a NULL array.
+/*!
+ * @brief allocate memory for a `bigint` of given length.
+ * @protected @memberof bigint
  *
- * Return: a pointer to a `bigint` struct, NULL on failure.
+ * @param[in] len length of the array, length 0 returns the struct with a NULL array.
+ *
+ * @return a pointer to a `bigint` struct, NULL on failure.
  */
 bigint *_bi_alloc(const len_type len)
 {
@@ -36,17 +37,19 @@ bigint *_bi_alloc(const len_type len)
 	return (bn);
 }
 
-/**
- * _bi_resize - resizes memory of a `bigint` array.
- * @bi: pointer to the `bigint`.
- * @len: length to resize the array to.
+/*!
+ * @brief resizes memory of a `bigint` array.
+ * @protected @memberof bigint
  *
  * If `bi` is NULL, returns pointer to a new `bigint`, otherwise
  * resize to len. If len is 0 the resized `bigint` will not be able
  * to store any numbers.
  * On failure `bi` is freed.
  *
- * Return: pointer to the resized `bigint`, NULL on failure.
+ * @param[in] bi pointer to the `bigint`.
+ * @param[in] len length to resize the array to.
+ *
+ * @return pointer to the resized `bigint`, NULL on failure.
  */
 bigint *_bi_resize(bigint *bi, const len_type len)
 {
@@ -79,11 +82,13 @@ bigint *_bi_resize(bigint *bi, const len_type len)
 	return (bi);
 }
 
-/**
- * _bi_free - frees memory of a `bigint`.
- * @freeable_ptr: pointer to the `bigint` to free.
+/*!
+ * @brief frees memory of a `bigint`.
+ * @protected @memberof bigint
  *
- * Return: NULL always.
+ * @param[in] freeable_ptr pointer to the `bigint` to free.
+ *
+ * @return NULL always.
  */
 void *_bi_free(bigint *const freeable_ptr)
 {
@@ -97,17 +102,21 @@ void *_bi_free(bigint *const freeable_ptr)
 	return (xfree(freeable_ptr));
 }
 
-/**
- * _bi_trim - truncate length of a `bigint` to ignore trailing zeros.
- * @n: pointer to a `bigint` struct.
+/*!
+ * @brief truncate length of a `bigint` to ignore trailing zeros.
+ * @protected @memberof bigint
  *
  * If the value of the `bigint` is 0 or the length is 0,
  * the is_negative flag will be set to false.
+ *
+ * @param[in] n pointer to a `bigint`.
+ *
+ * @return pointer to the truncated `bigint`.
  */
-void _bi_trim(bigint *const n)
+bigint *_bi_trim(bigint *const restrict n)
 {
 	if (!n)
-		return;
+		return (NULL);
 
 	if (!n->num)
 		n->len = 0;
@@ -117,13 +126,17 @@ void _bi_trim(bigint *const n)
 
 	if (!n->num || (n->len == 1 && !n->num[0]))
 		n->is_negative = false;
+
+	return (n);
 }
 
-/**
- * _bi_dup - duplicate a `bigint` as is.
- * @bi: pointer to the `bigint` to duplicate.
+/*!
+ * @brief duplicate a `bigint` as is.
+ * @protected @memberof bigint
  *
- * Return: a pointer to duplicated bi, NULL on failure.
+ * @param[in] bi pointer to the `bigint` to duplicate.
+ *
+ * @return a pointer to duplicated bi, NULL on failure.
  */
 bigint *_bi_dup(bigint const *const restrict bi)
 {
@@ -142,16 +155,18 @@ bigint *_bi_dup(bigint const *const restrict bi)
 	return (dup);
 }
 
-/**
- * _bi_move - copies contents of a `bigint` to another `bigint`.
- * @dest: where to copy to.
- * @src: the `bigint` to be copied.
+/*!
+ * @brief copy contents of a `bigint` to another `bigint`.
+ * @protected @memberof bigint
  *
  * All pointers in dest should reference memory areas large enough to hold
  * the corresponding data in src.
  * If pointers in src are NULL, pointers in dest will not be affected.
  *
- * Return: pointer to the destination, NULL on failure.
+ * @param[out] dest where to copy to.
+ * @param[in] src the `bigint` to be copied.
+ *
+ * @return pointer to the destination, NULL on failure.
  */
 bigint *_bi_move(bigint *const dest, bigint const *const src)
 {

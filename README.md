@@ -19,17 +19,13 @@ Then run the following commands to build the executable and run tests.
 
 ## Usage
 
-Run the [**math**](./math) executable on a terminal as follows:
-
-`./math <number> '<operator>' <number>`
-
 | **Operator** | **Description** |
 | ------ | ------- |
 | `+` | Addition |
 | `-` | Subtraction |
 | `*` | Multiplication |
 | `^` | Exponentiation |
-| `//` | Division |
+| `/` | Division |
 | `%` | Modulus |
 
 Metacharacters such as `*` should be quoted to avoid accidental interpretation by the shell.
@@ -38,5 +34,3 @@ Metacharacters such as `*` should be quoted to avoid accidental interpretation b
 
 - Support for Floating Point numbers.
 - Support for longer expressions.
-- Parenthesis.
-- Improve speed and memory usage.

@@ -1,3 +1,8 @@
+/*!
+ * @file
+ * @brief methods for creating bigint types.
+ */
+
 #include <string.h> /* memmove */
 
 #include "_bi_internals.h"
@@ -8,12 +13,14 @@
 
 static len_type uint_to_array(u_int *const dest, uintmax_t num) ATTR_NONNULL;
 
-/**
- * uint_to_array - convert an unsigned int to a `bigint` array.
- * @dest: pointer to the array to store the number.
- * @num: the unsigned int to convert.
+/*!
+ * @brief convert an unsigned int to a `bigint` array.
+ * @private @memberof bigint
  *
- * Return: number of used slots of the array.
+ * @param[out] dest pointer to the array to store the number.
+ * @param[in] num the unsigned int to convert.
+ *
+ * @return number of used slots of the array.
  */
 static len_type uint_to_array(u_int *const dest, uintmax_t num)
 {
@@ -29,11 +36,13 @@ static len_type uint_to_array(u_int *const dest, uintmax_t num)
 	return (i);
 }
 
-/**
- * int_to_new_bi - convert an integer to a `bigint` representation.
- * @n: the int to convert.
+/*!
+ * @brief convert an integer to a `bigint` representation.
+ * @public @memberof bigint
  *
- * Return: a pointer to the `bigint`, NULL on failure.
+ * @param[in] n the int to convert.
+ *
+ * @return a pointer to the `bigint`, NULL on failure.
  */
 bigint *int_to_new_bi(const intmax_t n)
 {
@@ -52,15 +61,17 @@ bigint *int_to_new_bi(const intmax_t n)
 	return (num);
 }
 
-/**
- * int_to_bigint - store an integer into a `bigint`.
- * @dest: a pointer to the `bigint` to store the integer in.
- * @n: the int to convert.
+/*!
+ * @brief store an integer into a `bigint`.
+ * @public @memberof bigint
  *
  * `dest` must be large enough to store the integer, otherwise memory
  * might be corrupted when writing to the `bigint`.
  *
- * Return: pointer to the bigint on success, NULL on failure.
+ * @param[out] dest a pointer to the `bigint` to store the integer in.
+ * @param[in] n the int to convert.
+ *
+ * @return pointer to the bigint on success, NULL on failure.
  */
 bigint *int_to_bi(bigint *const dest, const intmax_t n)
 {
@@ -78,27 +89,29 @@ bigint *int_to_bi(bigint *const dest, const intmax_t n)
 	return (dest);
 }
 
-/**
- * bi_new - returns a pointer to a new `bigint` type representing a number.
- * @number: number to initialise the `bigint` with.
- * @base: radix of the number in `number`.
- * @processed: pointer to a variable to store index of the last character to be
- * processed.
+/*!
+ * @brief returns a pointer to a new `bigint` type representing a number.
+ * @public @memberof bigint
  *
- * Return: pointer to the `bigint`, NULL on failure.
+ * @param[in] number number to initialise the `bigint` with.
+ * @param[in] base radix of the number in `number`.
+ * @param[out] processed pointer to an int to store index of the last
+ * character of the string to be processed.
+ *
+ * @return pointer to the `bigint`, NULL on failure.
  */
 bigint *bi_new(
 	char const *const restrict number, const radix_type base,
 	len_type *const restrict processed
 )
 {
-	numstr *const ns = _str_to_numstr(number, base, processed);
+	numstr *const restrict ns = _numstr_new(number, base, processed);
 
 	if (!ns)
 		return (NULL);
 
-	bigint *const bi =
-		(base == 10) ? _numstr_to_bi(ns) : _anybase_to_bi(ns, base);
+	bigint *const restrict bi =
+		(base == 10) ? _numstr_to_bi(ns) : _anybase_to_bi(ns);
 
 	_numstr_free(ns);
 	return (bi);

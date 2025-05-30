@@ -1,26 +1,35 @@
+/*!
+ * @file
+ * @brief methods for subtracting bigint types inplace.
+ */
+
 #include "_bi_internals.h"
 #include "bigint.h"
 
-static void
-isubtract(bigint *const restrict n1, bigint *const restrict n2) ATTR_NONNULL;
+static void isubtract(
+	bigint *const restrict n1, const bigint *const restrict n2
+) ATTR_NONNULL;
 static bool isubtract_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
 ) ATTR_NONNULL;
 
-/**
- * isubtract - subtract two bigints inplace.
- * @n1: first number.
- * @n2: second numbers.
+/*!
+ * @brief subtract two `bigint`s inplace.
+ * @private @memberof bigint
  *
- * Return: pointer to the result, NULL on failure.
+ * @param[in out] n1 first number.
+ * @param[in] n2 second number.
+ *
+ * @return pointer to the result, NULL on failure.
  */
-static void isubtract(bigint *const restrict n1, bigint *const restrict n2)
+static void
+isubtract(bigint *const restrict n1, const bigint *const restrict n2)
 {
 	len_type n1_i = 0, n2_i = 0, final_len = 0;
 	l_int byt_diff = 0;
 	/* result_len = max(n1->len, n2->len) */
 	len_type tmp_len = (n1->len > n2->len) ? n1->len : n2->len;
-	bool const n1_is_bigger = (bi_compare(n1, n2) > 0) ? true : false;
+	bool const n1_is_bigger = (_bi_compare_const(n1, n2) > 0) ? true : false;
 
 	/* If both arrays are of the same length then; */
 	/* result_len = n1->len - */
@@ -78,12 +87,14 @@ static void isubtract(bigint *const restrict n1, bigint *const restrict n2)
 	_bi_trim(n1);
 }
 
-/**
- * isubtract_negatives - handle subtraction of two signed bigints.
- * @n1: first number.
- * @n2: second number.
+/*!
+ * @brief handle subtraction of two signed `bigint`s.
+ * @private @memberof bigint
  *
- * Return: pointer to the result, NULL on failure.
+ * @param[in out] n1 first number.
+ * @param[in] n2 second number.
+ *
+ * @return pointer to the result, NULL on failure.
  */
 static bool
 isubtract_negatives(bigint *const restrict n1, bigint *const restrict n2)
@@ -116,15 +127,17 @@ isubtract_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	return (true);
 }
 
-/**
- * bi_isubtract - handles subtraction of two bigints inplace.
- * @n1: first number, must have enough space to store the result.
- * @n2: second number.
+/*!
+ * @brief handle subtraction of two `bigint`s inplace.
+ * @public @memberof bigint
  *
  * The results of the subtraction will be stored in n1. No extra memory
  * will be allocated via calls to *alloc family functions.
  *
- * Return: 1 on success, 0 on failure.
+ * @param[in out] n1 first number, must have enough space to store the result.
+ * @param[in] n2 second number.
+ *
+ * @return 1 on success, 0 on failure.
  */
 bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2)
 {
@@ -139,8 +152,7 @@ bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2)
 		return (true);
 	}
 
-	_bi_trim(n2);
-	if (bi_isNaN(n1) || bi_isNaN(n2))
+	if (bi_isNaN(n1) || bi_isNaN(_bi_trim(n2)))
 		return (false);
 
 	if (n1->is_negative || n2->is_negative)
@@ -150,15 +162,17 @@ bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2)
 	return (true);
 }
 
-/**
- * bi_isubtract_int - subtract an int from a `bigint` inplace.
- * @n1: the first number, must have enough memory allocated to hold the answer.
- * @n2: the second number.
+/*!
+ * @brief subtract an int from a `bigint` inplace.
+ * @public @memberof bigint
  *
  * The results of the subtraction will be stored in n1. No extra memory
  * will be allocated via calls to *alloc family functions.
  *
- * Return: true on success, false on failure.
+ * @param[in out] n1 the first number, must have enough memory allocated to hold the answer.
+ * @param[in] n2 the second number.
+ *
+ * @return 1 on success, 0 on failure.
  */
 bool bi_isubtract_int(bigint *const n1, const intmax_t n2)
 {

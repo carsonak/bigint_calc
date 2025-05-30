@@ -265,8 +265,9 @@ TEST_F(trim_trailing_zeros, test_one_zero)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -286,8 +287,9 @@ TEST_F(trim_trailing_zeros, test_several_zeros)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -307,8 +309,9 @@ TEST_F(trim_trailing_zeros, test_0001)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -328,8 +331,9 @@ TEST_F(trim_trailing_zeros, test_0100)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -361,8 +365,9 @@ TEST_F(trim_trailing_zeros_negative, test_one_zero)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -382,8 +387,9 @@ TEST_F(trim_trailing_zeros_negative, test_several_zeros)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -403,8 +409,9 @@ TEST_F(trim_trailing_zeros_negative, test_0001)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -424,8 +431,9 @@ TEST_F(trim_trailing_zeros_negative, test_0100)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -454,8 +462,9 @@ TEST_F(trim_normal_input, test_1)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -475,8 +484,9 @@ TEST_F(trim_normal_input, test_neg1)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -496,8 +506,9 @@ TEST_F(trim_normal_input, test_100)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = false, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = false,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 
@@ -517,8 +528,9 @@ TEST_F(trim_normal_input, test_neg100)
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
 						 .num = in1};
-	tau->expected = (bigint){
-		.len = sizeof(out) / sizeof(*out), .is_negative = true, .num = out};
+	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
+							 .is_negative = true,
+							 .num = out};
 
 	_bi_trim(&(tau->num1));
 

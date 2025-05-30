@@ -1,4 +1,10 @@
-#include "infiX.h"
+/*!
+ * @file
+ */
+
+#include <stdio.h> /* fprintf */
+
+#include "main.h"
 
 /* ERRORS: */
 /* "base" - unrecognised base */
@@ -6,9 +12,10 @@
 /* "division by zero" - ... */
 /* "unrecognised characters" - ... */
 
-/**
- * panic - app misuse error handler.
- * @err_type: a string with the error type.
+/*!
+ * @brief app misuse error handler.
+ *
+ * @param err_type a string with the error type.
  */
 void panic(char const *const err_type)
 {
@@ -33,9 +40,10 @@ void panic(char const *const err_type)
 	}
 }
 
-/**
- * help_me - print help text.
- * @which_help: a string specifying which text to print.
+/*!
+ * @brief print help text.
+ *
+ * @param which_help a string specifying which text to print.
  */
 void help_me(char const *const which_help)
 {

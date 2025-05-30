@@ -1,26 +1,34 @@
+/*!
+ * @file
+ * @brief methods for testing if a bigint is Not a Number (NaN).
+ */
+
 #include "_bi_internals.h"
 #include "bigint.h"
 
-/**
- * bi_isNaN - check if a bigint is Not a Number.
- * @n: pointer to the bigint.
+/*!
+ * @brief check if a `bigint` is Not a Number.
+ * @public @memberof bigint
  *
- * Return: true if the bigint is NaN, false otherwise.
+ * @param[in] n pointer to the bigint.
+ *
+ * @return true if the bigint is NaN, false otherwise.
  */
 bool bi_isNaN(bigint *const n)
 {
 	if (!n)
 		return (false);
 
-	_bi_trim(n);
-	return (_bi_isNaN_const(n));
+	return (_bi_isNaN_const(_bi_trim(n)));
 }
 
-/**
- * _bi_isNaN_const - check if a const bigint is Not a Number.
- * @n: pointer to the bigint.
+/*!
+ * @brief check if a const `bigint` is Not a Number.
+ * @protected @memberof bigint
  *
- * Return: true if the bigint is NaN, false otherwise.
+ * @param[in] n pointer to the `bigint`.
+ *
+ * @return true if the bigint is NaN, false otherwise.
  */
 bool _bi_isNaN_const(const bigint *const n)
 {

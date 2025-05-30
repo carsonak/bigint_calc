@@ -1,13 +1,20 @@
+/*!
+ * @file
+ * @brief methods for stringifying bigint types.
+ */
+
 #include "_bi_internals.h"
 #include "number_parsing.h"
 
 #include "count_digits.c"
 
-/**
- * bi_tostr - return the number represented by a `bigint` as a string.
- * @n: pointer to the `bigint`.
+/*!
+ * @brief convert the number represented by a `bigint` into a string of decimals.
+ * @public @memberof bigint
  *
- * Return: a pointer to a str, NULL on failure.
+ * @param[in] n pointer to the `bigint`.
+ *
+ * @return pointer to a str, NULL on failure.
  */
 char *bi_tostr(bigint const *const n)
 {
@@ -15,8 +22,8 @@ char *bi_tostr(bigint const *const n)
 		return (NULL);
 
 	len_type str_i = 0, bi_i = n->len - 1;
-	const len_type str_len =
-		(n->len * count_digits(BIGINT_BASE - 1)) + (n->is_negative ? 1 : 0);
+	const len_type str_len = (n->len * count_digits(BIGINT_BASE - 1, 10)) +
+							 (n->is_negative ? 1 : 0);
 	char *const str = xmalloc(str_len + 1);
 
 	if (!str)

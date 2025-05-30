@@ -1,3 +1,10 @@
+/*!
+ * @file
+ * @brief methods for exponentiating bigint types.
+ */
+
+#include <stdio.h> /* fprintf */
+
 #include "_bi_internals.h"
 #include "bigint.h"
 
@@ -5,10 +12,15 @@ static void multiply_and_replace(
 	bigint *restrict *const restrict n1, bigint *const restrict n2
 ) ATTR_NONNULL;
 
-/**
- * multiply_and_replace - "inplace" `bigint` multiplication.
- * @n1: address of the first `bigint` pointer.
- * @n2: pointer to the second `bigint`.
+/*! Check if an integer is odd. */
+#define INT_IS_ODD(num_to_test) (num_to_test % 2)
+
+/*!
+ * @brief "inplace" `bigint` multiplication.
+ * @private @memberof bigint
+ *
+ * @param[in out] n1 address of the first `bigint` pointer.
+ * @param[in] n2 pointer to the second `bigint`.
  */
 static void multiply_and_replace(
 	bigint *restrict *const restrict n1, bigint *const restrict n2
@@ -20,12 +32,14 @@ static void multiply_and_replace(
 	_bi_free(cpy);
 }
 
-/**
- * bi_power - handle exponentiation of a `bigint`.
- * @base: the base.
- * @exponent: the exponent.
+/*!
+ * @brief handle exponentiation of a `bigint`.
+ * @public @memberof bigint
  *
- * Return: pointer to the result, NULL on failure.
+ * @param[in] base the base.
+ * @param[in] exponent the exponent.
+ *
+ * @return pointer to the result, NULL on failure.
  */
 bigint *bi_power(bigint *const restrict base, const intmax_t exponent)
 {
@@ -41,8 +55,7 @@ bigint *bi_power(bigint *const restrict base, const intmax_t exponent)
 		return (NULL);
 	}
 
-	_bi_trim(base);
-	if (bi_isNaN(base))
+	if (bi_isNaN(_bi_trim(base)))
 		return (_bi_alloc(0));
 
 	if (bi_iszero(base) || exponent == 0)

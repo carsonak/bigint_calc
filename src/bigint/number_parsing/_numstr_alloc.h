@@ -7,16 +7,18 @@
 #include "types.h"
 #include "xalloc.h"
 
-/**
- * struct numstr - a string representing a number.
- * @len: length of the string.
- * @is_negative: a bool indicating signedness of the number.
- * @str: the string.
+/*!
+ * @brief a string representing a number.
  */
 struct numstr
 {
+	/*! @protected length of the string. */
 	len_type len;
+	/*! @protected a bool indicating signedness of the number. */
 	bool is_negative;
+	/*! @protected an int in the range 2-36 indicating the radix of the number. */
+	radix_type base;
+	/*! @protected pointer to the string. */
 	char *restrict str;
 };
 

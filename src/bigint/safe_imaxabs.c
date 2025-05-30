@@ -5,12 +5,13 @@
 
 static uintmax_t safe_imaxabs(intmax_t n);
 
-/**
- * safe_imaxabs - return the absolute value of an intmax_t including the
+/*!
+ * @brief return the absolute value of an intmax_t including the
  * minimum value of the type.
- * @n: the integer to convert.
  *
- * Return: the absolute value of `n`.
+ * @param[in] n the integer to convert.
+ *
+ * @return the absolute value of `n`.
  */
 static uintmax_t safe_imaxabs(intmax_t n)
 {

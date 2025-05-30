@@ -1,3 +1,8 @@
+/*!
+ * @file
+ * @brief methods for shifting "digits" of bigints.
+ */
+
 #include <string.h> /* memmove */
 
 #include "_bi_internals.h"
@@ -8,21 +13,22 @@ _bi_shift(bigint *const restrict n, const len_type d) ATTR_NONNULL;
 static bigint *
 _bi_ishift(bigint *const restrict n, const len_type d) ATTR_NONNULL;
 
-/**
- * _bi_shift - shift digits of a `bigint`.
- * @n: pointer to the bigint.
- * @d: how much to shift by: if negative shift to the left,
- * if positive shift to the right.
+/*!
+ * @brief shift "digits" of a `bigint`.
+ * @private @memberof bigint
  *
- * Return: pointer to the shifted `bigint`, NULL on failure.
+ * @param[in] n pointer to the bigint.
+ * @param[in] d how much to shift by: if negative, shift to the left;
+ * else, shift to the right;
+ *
+ * @return pointer to the shifted `bigint`, NULL on failure.
  */
 static bigint *_bi_shift(bigint *const restrict n, const len_type d)
 {
 	if (n->len < 0)
 		return (NULL);
 
-	_bi_trim(n);
-	if (bi_isNaN(n))
+	if (bi_isNaN(_bi_trim(n)))
 		return (_bi_alloc(0));
 
 	if (bi_iszero(n))
@@ -57,12 +63,14 @@ static bigint *_bi_shift(bigint *const restrict n, const len_type d)
 	return (res);
 }
 
-/**
- * bi_shift_r - right shift a `bigint` i.e: n / BIGINT_BASE^d.
- * @n: pointer to the bigint.
- * @d: how much to shift by.
+/*!
+ * @brief right shift a `bigint` i.e: `n / BIGINT_BASE^d`.
+ * @public @memberof bigint
  *
- * Return: pointer to the shifted `bigint`, NULL on failure.
+ * @param[in] n pointer to the bigint.
+ * @param[in] d how much to shift by.
+ *
+ * @return pointer to the shifted `bigint`, NULL on failure.
  */
 bigint *bi_shift_r(bigint *const restrict n, const len_type d)
 {
@@ -72,12 +80,14 @@ bigint *bi_shift_r(bigint *const restrict n, const len_type d)
 	return (_bi_shift(n, d));
 }
 
-/**
- * bi_shift_l - left shift a `bigint` i.e: n * BIGINT_BASE^d.
- * @n: pointer to the bigint.
- * @d: how much to shift by.
+/*!
+ * @brief left shift a `bigint` i.e: `n * BIGINT_BASE^d`.
+ * @public @memberof bigint
  *
- * Return: pointer to the shifted `bigint`, NULL on failure.
+ * @param[in] n pointer to the bigint.
+ * @param[in] d how much to shift by.
+ *
+ * @return pointer to the shifted `bigint`, NULL on failure.
  */
 bigint *bi_shift_l(bigint *const restrict n, const len_type d)
 {
@@ -87,24 +97,25 @@ bigint *bi_shift_l(bigint *const restrict n, const len_type d)
 	return (_bi_shift(n, -d));
 }
 
-/**
- * _bi_ishift - shift digits of a `bigint` inplace.
- * @n: pointer to the bigint.
- * @d: how much to shift by: if negative shift to the left,
- * if positive shift to the right.
+/*!
+ * @brief shift digits of a `bigint` inplace.
+ * @private @memberof bigint
  *
  * `n` must be large enough to hold the final result, as there will be
  * no memory allocations via *alloc family functions.
  *
- * Return: pointer to the bigint on success, NULL on failure.
+ * @param[in out] n pointer to the bigint.
+ * @param[in] d how much to shift by: if negative shift to the left,
+ * if positive shift to the right.
+ *
+ * @return pointer to the bigint on success, NULL on failure.
  */
 static bigint *_bi_ishift(bigint *const restrict n, const len_type d)
 {
 	if (n->len < 0)
 		return (NULL);
 
-	_bi_trim(n);
-	if (bi_isNaN(n))
+	if (bi_isNaN(_bi_trim(n)))
 		return (NULL);
 
 	if (d == 0 || bi_iszero(n))
@@ -136,14 +147,17 @@ static bigint *_bi_ishift(bigint *const restrict n, const len_type d)
 	return (n);
 }
 
-/**
- * bi_ishift_r - shift a `bigint` to the right inplace, i.e: n / BIGINT_BASE^d.
- * @n: pointer to the bigint.
- * @d: how much to shift by.
+/*!
+ * @brief shift a `bigint` to the right inplace, i.e: `n / BIGINT_BASE^d`.
+ * @public @memberof bigint
  *
- * No memory allocations via *alloc family functions will occur.
+ * No memory allocations via *alloc family functions will occur, therefore
+ * `n` must be large enough to hold the final result.
  *
- * Return: pointer to the `bigint` on success, NULL on failure.
+ * @param[in out] n pointer to the bigint.
+ * @param[in] d how much to shift by.
+ *
+ * @return pointer to the `bigint` on success, NULL on failure.
  */
 bigint *bi_ishift_r(bigint *const restrict n, const len_type d)
 {
@@ -153,15 +167,17 @@ bigint *bi_ishift_r(bigint *const restrict n, const len_type d)
 	return (_bi_ishift(n, d));
 }
 
-/**
- * bi_ishift_l - shift a `bigint` to the left inplace, i.e: n * BIGINT_BASE^d.
- * @n: pointer to the bigint.
- * @d: how much to shift by.
+/*!
+ * @brief shift a `bigint` to the left inplace, i.e: `n * BIGINT_BASE^d`.
+ * @public @memberof bigint
  *
- * No memory allocations via *alloc family functions will occur and therefore
+ * No memory allocations via *alloc family functions will occur, therefore
  * `n` must be large enough to hold the final result.
  *
- * Return: pointer to the `bigint` on success, NULL on failure.
+ * @param[in out] n pointer to the bigint.
+ * @param[in] d how much to shift by.
+ *
+ * @return pointer to the `bigint` on success, NULL on failure.
  */
 bigint *bi_ishift_l(bigint *const restrict n, const len_type d)
 {

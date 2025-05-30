@@ -1,17 +1,23 @@
+/*!
+ * @file
+ * @brief methods for duplicating bigint types.
+ */
+
 #include "_bi_internals.h"
 #include "bigint.h"
 
-/**
- * bi_dup - duplicates a `bigint`.
- * @n: pointer to the `bigint` to duplicate.
+/*!
+ * @brief duplicates a `bigint`.
+ * @public @memberof bigint
  *
- * Return: pointer to the duplicated int, NULL on failure.
+ * @param[in] n pointer to the `bigint` to duplicate.
+ *
+ * @return pointer to the duplicated int, NULL on failure.
  */
 bigint *bi_dup(bigint *const n)
 {
 	if (!n)
 		return (NULL);
 
-	_bi_trim(n);
-	return (_bi_dup(n));
+	return (_bi_dup(_bi_trim(n)));
 }

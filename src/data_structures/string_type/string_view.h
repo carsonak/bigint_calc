@@ -3,14 +3,14 @@
 
 #include "types.h"
 
-/**
- * struct string_view - slice of a c string.
- * @len: number of characters in the string excluding the terminating null byte.
- * @s: pointer to the first character in the string.
+/*!
+ * @brief slice of a c string.
  */
 typedef struct string_view
 {
+	/*! @public number of characters in the string excluding the terminating null byte. */
 	len_type len;
+	/*! @public pointer to the first character in the string. */
 	const char *s;
 } string_view;
 

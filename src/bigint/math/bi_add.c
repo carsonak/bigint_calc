@@ -1,3 +1,8 @@
+/*!
+ * @file
+ * @brief bigint addition methods.
+ */
+
 #include <string.h> /* memset */
 
 #include "_bi_internals.h"
@@ -10,12 +15,14 @@ static bigint *add_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
 ) ATTR_NONNULL;
 
-/**
- * add - add two bigints.
- * @n1: the first number.
- * @n2: the second number.
+/*!
+ * @brief add two bigints.
+ * @private @memberof bigint
  *
- * Return: pointer to result, NULL on failure.
+ * @param[in] n1 the first number.
+ * @param[in] n2 the second number.
+ *
+ * @return pointer to result, NULL on failure.
  */
 static bigint *
 add(const bigint *const restrict n1, const bigint *const restrict n2)
@@ -55,16 +62,17 @@ add(const bigint *const restrict n1, const bigint *const restrict n2)
 	if (sum_i < sum->len)
 		memset(&sum->num[sum_i], 0, sizeof(*sum->num) * (sum->len - sum_i));
 
-	_bi_trim(sum);
-	return (sum);
+	return (_bi_trim(sum));
 }
 
-/**
- * add_negatives - handle addition of signed bigints.
- * @n1: first number.
- * @n2: second number.
+/*!
+ * @brief handle addition of two signed bigints.
+ * @private @memberof bigint
  *
- * Return: pointer to the result, NULL on failure.
+ * @param[in] n1 first number.
+ * @param[in] n2 second number.
+ *
+ * @return pointer to the result, NULL on failure.
  */
 static bigint *
 add_negatives(bigint *const restrict n1, bigint *const restrict n2)
@@ -88,25 +96,24 @@ add_negatives(bigint *const restrict n1, bigint *const restrict n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	_bi_trim(result);
-	return (result);
+	return (_bi_trim(result));
 }
 
-/**
- * bi_add - handle addition of two bigints.
- * @n1: the first number.
- * @n2: the second number.
+/*!
+ * @brief handle addition of two bigints.
+ * @public @memberof bigint
  *
- * Return: pointer to result, NULL on failure.
+ * @param[in] n1 the first number.
+ * @param[in] n2 the second number.
+ *
+ * @return pointer to result, NULL on failure.
  */
 bigint *bi_add(bigint *const restrict n1, bigint *const restrict n2)
 {
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
-	_bi_trim(n1);
-	_bi_trim(n2);
-	if (bi_isNaN(n1) || bi_isNaN(n2))
+	if (bi_isNaN(_bi_trim(n1)) || bi_isNaN(_bi_trim(n2)))
 		return (_bi_alloc(0));
 
 	if (n1->is_negative || n2->is_negative)
@@ -115,12 +122,14 @@ bigint *bi_add(bigint *const restrict n1, bigint *const restrict n2)
 	return (add(n1, n2));
 }
 
-/**
- * bi_add_int - add an int to a `bigint`.
- * @n1: the first number.
- * @n2: the second number.
+/*!
+ * @brief add an int to a `bigint`.
+ * @public @memberof bigint
  *
- * Return: pointer to the answer on success, NULL on failure.
+ * @param n1 the first number.
+ * @param n2 the second number.
+ *
+ * @return pointer to the answer on success, NULL on failure.
  */
 bigint *bi_add_int(bigint *const n1, const intmax_t n2)
 {

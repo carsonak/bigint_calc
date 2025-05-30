@@ -3,7 +3,6 @@
 
 #include "attribute_macros.h"
 
-#include <stdio.h>  /* perror */
 #include <stdlib.h> /* *alloc */
 
 #include "types.h"

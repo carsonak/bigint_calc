@@ -77,18 +77,19 @@ typedef uint16_t ul_int;
 	#error "Unknown pointer size or missing integer size macros."
 #endif /* UINTPTR_MAX >= UINT64_MAX */
 
+/*! a representation of an arbitrary precision integer. */
 typedef struct bigint bigint;
-typedef struct numstr numstr;
 
-/**
- * struct bigint_division_result - container that holds the quotient and
- * remainder of a `bigint` division.
- * @quotient: pointer to the quotient.
- * @remainder: pointer to the remainder.
+/*!
+ * @brief container that holds the quotient and remainder of a
+ * `bigint` division.
  */
 typedef struct bigint_division_result
 {
-	bigint *restrict quotient, *restrict remainder;
-} bi_div_res;
+	/*! pointer to the quotient. */
+	bigint *restrict quotient;
+	/*! pointer to the remainder. */
+	bigint *restrict remainder;
+} bi_divmod_res;
 
 #endif /* BIGINT_TYPES_H */

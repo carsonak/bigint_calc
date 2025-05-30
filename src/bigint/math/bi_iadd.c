@@ -1,3 +1,8 @@
+/*!
+ * @file
+ * @brief methods for adding bigint types inplace.
+ */
+
 #include "_bi_internals.h"
 #include "bigint.h"
 
@@ -7,10 +12,12 @@ static bool iadd_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
 ) ATTR_NONNULL;
 
-/**
- * iadd - add two bigints inplace.
- * @n1: the first number, should be large enough to store the results.
- * @n2: the second number.
+/*!
+ * @brief add two `bigint`s inplace.
+ * @private @memberof bigint
+ *
+ * @param[in out] n1 the first number, should be large enough to store the results.
+ * @param[in] n2 the second number.
  */
 static void iadd(bigint *const restrict n1, bigint const *const restrict n2)
 {
@@ -38,12 +45,14 @@ static void iadd(bigint *const restrict n1, bigint const *const restrict n2)
 	_bi_trim(n1);
 }
 
-/**
- * iadd_negatives - handle inplace addition of signed bigints.
- * @n1: first number.
- * @n2: second number.
+/*!
+ * @brief handle inplace addition of two signed `bigint`s.
+ * @private @memberof bigint
  *
- * Return: true on success, false on failure.
+ * @param[in out] n1 first number.
+ * @param[in] n2 second number.
+ *
+ * @return true on success, false on failure.
  */
 static bool
 iadd_negatives(bigint *const restrict n1, bigint *const restrict n2)
@@ -77,15 +86,17 @@ iadd_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	return (true);
 }
 
-/**
- * bi_iadd - add two bigints and store results in first number.
- * @n1: the first number, should have enough space to store the result.
- * @n2: the second number.
+/*!
+ * @brief add two `bigint`s and store results in first number.
+ * @public @memberof bigint
  *
  * The results of the addittion will be stored in n1. No extra memory
  * will be allocated via calls to *alloc family functions.
  *
- * Return: 1 on success, 0 on failure.
+ * @param[in out] n1 the first number, should have enough space to store the result.
+ * @param[in] n2 the second number.
+ *
+ * @return 1 on success, 0 on failure.
  */
 bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
 {
@@ -93,12 +104,10 @@ bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
 	if (!n1 || !n1->num || n1->len < 0)
 		return (false);
 
-	_bi_trim(n1);
 	if (!n2) /* This case is treated as: n1 = +n1. */
 		return (true);
 
-	_bi_trim(n2);
-	if (bi_isNaN(n1) || bi_isNaN(n2))
+	if (bi_isNaN(_bi_trim(n1)) || bi_isNaN(_bi_trim(n2)))
 		return (false);
 
 	if (n1->is_negative || n2->is_negative)
@@ -108,15 +117,17 @@ bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
 	return (true);
 }
 
-/**
- * bi_iadd_int - add an int to a `bigint` inplace.
- * @n1: the first number, must have enough memory allocated to hold the answer.
- * @n2: the second number.
+/*!
+ * @brief add an int to a `bigint` inplace.
+ * @public @memberof bigint
  *
  * The results of the addittion will be stored in n1. No extra memory
  * will be allocated via calls to *alloc family functions.
  *
- * Return: true on success, false on failure.
+ * @param[in out] n1 the first number, must have enough memory allocated to hold the answer.
+ * @param[in] n2 the second number.
+ *
+ * @return true on success, false on failure.
  */
 bool bi_iadd_int(bigint *const n1, const intmax_t n2)
 {

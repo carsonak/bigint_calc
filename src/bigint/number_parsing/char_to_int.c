@@ -5,12 +5,12 @@
 
 static short int char_to_int(const char c);
 
-/**
- * char_to_int - map an ascii symbol for base36 to a decimal number in
- * the range 0-35.
- * @c: an alphanumeric character.
+/*!
+ * @brief map an ascii symbol of a base36 number to a decimal number.
  *
- * Return: decimal value of the symbol, -1 on error.
+ * @param c an alphanumeric character.
+ *
+ * @return decimal value of the symbol, -1 on error.
  */
 static short int char_to_int(const char c)
 {

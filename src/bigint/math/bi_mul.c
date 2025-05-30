@@ -1,26 +1,35 @@
+/*!
+ * @file
+ * @brief methods for multiplying bigint types.
+ */
+
 #include <string.h> /* memset */
 
 #include "_bi_internals.h"
 #include "bigint.h"
 
-/**
- * struct bigint_karatsuba_split - a `bigint` split into its most significant
- * digits and least significant digits.
- * @hi: the most significant digits of the bigint.
- * @lo: the least significant digits of the bigint.
+/*!
+ * @brief a `bigint` split into its most significant digits and least
+ * significant digits.
  *
  * a `bi_split` can be reconstituted into a `bigint` (x) with
  * the formula:
- * if lo > 0:
- *    x = (hi * `BIGINT_BASE` * lo.len) + lo
+ * ```C
+ * if (lo > 0)
+ *    x = (hi * BIGINT_BASE ^ lo.len) + lo
  * else
  *    x = hi
+ * ```
  */
 typedef struct bigint_karatsuba_split
 {
-	bigint hi, lo;
+	/*! the most significant digits of the `bigint`. */
+	bigint hi;
+	/*! the least significant digits of the `bigint`. */
+	bigint lo;
 } bi_split;
 
+/*! zero as a `bigint`. */
 static const bigint zero = {
 	.len = 1, .is_negative = false, .num = (u_int[1]){0}
 };
@@ -29,19 +38,21 @@ static bigint *long_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
 ) ATTR_NONNULL;
 static bi_split bi_split_at(const bigint *const restrict n, const len_type i);
-bigint *karatsuba_multiply(
+static bigint *karatsuba_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
 );
 static bigint *multiply_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
 ) ATTR_NONNULL;
 
-/**
- * long_multiply - multiply two bigints.
- * @n1: first number.
- * @n2: second number.
+/*!
+ * @brief multiply two `bigint`s.
+ * @private @memberof bigint
  *
- * Return: pointer to result, NULL on failure.
+ * @param[in] n1 first number.
+ * @param[in] n2 second number.
+ *
+ * @return pointer to result, NULL on failure.
  */
 static bigint *
 long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
@@ -93,16 +104,17 @@ cleanup:
 	}
 
 	_bi_free(current_mul);
-	_bi_trim(product);
-	return (product);
+	return (_bi_trim(product));
 }
 
-/**
- * bi_split_at - split the "digits" of a `bigint` at the given index.
- * @n: pointer to the `bigint`.
- * @i: a positive integer indicating index to split at.
+/*!
+ * @brief split the "digits" of a `bigint` at the given index.
+ * @public @memberof bi_split
  *
- * Return: a `bi_split` with both the higher digits and lower ones.
+ * @param[in] n pointer to the `bigint`.
+ * @param[in] i a positive integer indicating index to split at.
+ *
+ * @return a `bi_split` with both the higher digits and lower ones.
  */
 static bi_split bi_split_at(const bigint *const restrict n, const len_type i)
 {
@@ -130,13 +142,14 @@ static bi_split bi_split_at(const bigint *const restrict n, const len_type i)
 	return (split);
 }
 
-/**
- * max_of_3 - get the maximum of 3 integers.
- * @a: first
- * @b: second
- * @c: third
+/*!
+ * @brief get the maximum of 3 integers.
  *
- * Return: max value.
+ * @param a first.
+ * @param b second.
+ * @param c third.
+ *
+ * @return max value.
  */
 static len_type max_of_3(const len_type a, const len_type b, const len_type c)
 {
@@ -152,48 +165,62 @@ static len_type max_of_3(const len_type a, const len_type b, const len_type c)
 }
 
 /* Why this number? Is testing the best way to determine the cutoff? */
+/*! Minimum length of a bigint for Karatsuba algorithm. */
 #define KARATSUBA_GAIN_CUTOFF 21
 
-/**
- * karatsuba_multiply - multiply 2 `bigint`s using the Karatsuba algorithm.
- * @n1: the first number.
- * @n2: the second number.
+/*!
+ * @brief multiply 2 `bigint`s using the Karatsuba algorithm.
+ * @private @memberof bigint
  *
- * https://en.wikipedia.org/wiki/Karatsuba_algorithm
+ * [Karatsuba_algorithm](https://en.wikipedia.org/wiki/Karatsuba_algorithm)
  *
- * Let *x* and *y* be represented as *n*-digit strings in some base *B*.
- * For any positive integer *m* less than *n*, one can write the two given
- * numbers as:
+ * Let ***x*** and ***y*** be represented as ***n***-digit strings in some
+ * base ***B***. For any positive integer ***m*** less than ***n***, one can
+ * write the two given numbers as:
  *
- * `x = x1*B^m + x0`
- * `y = y1*B^m + y0`
+ * ```C
+ * x = x1*B^m + x0
+ * y = y1*B^m + y0
+ * ```
  *
- * where *x0* and *y0* are less than *B^m*. The product of the two numbers
- * is then:
+ * where ***x0*** and ***y0*** are less than ***B^m***. The product of the two
+ * numbers is then:
  *
- * `xy = (x1*B^m + x0)(y1*B^m + y0)`
- * `   = x1*y1*B^(2*m) + (x1*y0 + x0*y1)B^m + x0*y0`
- * `   = z2*B^(2*m) + z1*B^m + z0`
+ * ```C
+ * xy = (x1*B^m + x0)(y1*B^m + y0)
+ *    = x1*y1*B^(2*m) + (x1*y0 + x0*y1)B^m + x0*y0
+ *    = z2*B^(2*m) + z1*B^m + z0
+ * ```
  *
- * Notice that *z1* can be rewritten as follows:
+ * Notice that ***z1*** can be rewritten as follows:
  *
- * `z1 = x1*y0 + x0*y1`
- * `   = (x0 + x1)(y0 + y1) - x1y1 - x0y0`
- * `   = z3 - z2 - z0`
+ * ```C
+ * z1 = x1*y0 + x0*y1
+ *    = (x0 + x1)(y0 + y1) - x1y1 - x0y0
+ *    = z3 - z2 - z0
+ * ```
  *
  * thus reducing the number of multiplications in the formula by one.
  *
- * `xy = z2*B^(2*m) + (z3 - z2 - z0)*B^m + z0`
+ * ```C
+ * xy = z2*B^(2*m) + (z3 - z2 - z0)*B^m + z0
+ * ```
  *
- * Return: pointer to the result, NULL on failure.
+ * @param[in] n1 the first number.
+ * @param[in] n2 the second number.
+ *
+ * @return pointer to the result, NULL on failure.
  */
-bigint *karatsuba_multiply(
+static bigint *karatsuba_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
 )
 {
 	if ((!n1 || !n2) || (n1->len < 1 || n2->len < 1) || (!n1->num || !n2->num))
 		return (NULL);
 
+	/* The Karatsuba algorithm only shows a significant speed up compared to */
+	/* the long multiplication algorithm if the number of "digits" in the */
+	/* `bigint`s is greater than `KARATSUBA_GAIN_CUTOFF` */
 	if (n1->len < KARATSUBA_GAIN_CUTOFF || n2->len < KARATSUBA_GAIN_CUTOFF)
 		return (long_multiply(n1, n2));
 
@@ -244,12 +271,14 @@ cleanup:
 	return (result);
 }
 
-/**
- * multiply_negatives - handle multiplication of signed bigints.
- * @n1: first number.
- * @n2: second number.
+/*!
+ * @brief handle multiplication of two signed `bigint`s.
+ * @private @memberof bigint
  *
- * Return: pointer to the result, NULL on failure.
+ * @param[in] n1 first number.
+ * @param[in] n2 second number.
+ *
+ * @return pointer to the result, NULL on failure.
  */
 static bigint *
 multiply_negatives(bigint *const restrict n1, bigint *const restrict n2)
@@ -275,25 +304,24 @@ multiply_negatives(bigint *const restrict n1, bigint *const restrict n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	_bi_trim(result);
-	return (result);
+	return (_bi_trim(result));
 }
 
-/**
- * bi_multiply - handle multiplication of two bigints.
- * @n1: the first number.
- * @n2: the second number.
+/*!
+ * @brief handle multiplication of two `bigint`s.
+ * @public @memberof bigint
  *
- * Return: pointer to result, NULL on failure.
+ * @param[in] n1 the first number.
+ * @param[in] n2 the second number.
+ *
+ * @return pointer to result, NULL on failure.
  */
 bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2)
 {
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
-	_bi_trim(n1);
-	_bi_trim(n2);
-	if (bi_isNaN(n1) || bi_isNaN(n2))
+	if (bi_isNaN(_bi_trim(n1)) || bi_isNaN(_bi_trim(n2)))
 		return (_bi_alloc(0));
 
 	if (n1->is_negative || n2->is_negative)
@@ -302,12 +330,14 @@ bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2)
 	return (karatsuba_multiply(n1, n2));
 }
 
-/**
- * bi_multiply_int - multiply a `bigint` with an int.
- * @n1: pointer to the `bigint`.
- * @n2: the int to multiply with.
+/*!
+ * @brief multiply a `bigint` with an int.
+ * @public @memberof bigint
  *
- * Return: pointer to the result.
+ * @param[in] n1 pointer to the `bigint`.
+ * @param[in] n2 the int to multiply with.
+ *
+ * @return pointer to the result.
  */
 bigint *bi_multiply_int(bigint *const n1, const intmax_t n2)
 {

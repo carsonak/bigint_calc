@@ -1,25 +1,28 @@
 #ifndef BIGINT_LIST_TYPE_TYPEDEFS_H
 #define BIGINT_LIST_TYPE_TYPEDEFS_H
 
-/**
- * dup_func - a function that duplicates an object.
- * @data: pointer to the object to be duplicated.
+/*!
+ * @brief a function that duplicates an object.
  *
- * Return: pointer to the duplicated object, NULL on failure.
+ * @param[in] data pointer to the object to be duplicated.
+ *
+ * @return pointer to the duplicated object, NULL on failure.
  */
 typedef void *(dup_func)(void const *const data);
 
-/**
- * free_func - a function that frees an object from memory.
- * @data: pointer to the object to delete.
+/*!
+ * @brief a function that frees an object from memory.
+ *
+ * @param[in] data pointer to the object to delete.
  */
 typedef void(free_func)(void *const data);
 
-/**
- * data_tostr - a function that stringifies an object.
- * @data: the object to stringify.
+/*!
+ * @brief a function that stringifies an object.
  *
- * Return: pointer to the stringified data(must be null terminated),
+ * @param[in] data the object to stringify.
+ *
+ * @return pointer to the stringified data(must be null terminated),
  * NULL error.
  */
 typedef char *(data_tostr)(void const *const data);

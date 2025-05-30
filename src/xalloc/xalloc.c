@@ -1,13 +1,20 @@
+/*!
+ * @file
+ * @brief memory manipulation functions.
+ */
+
 #include "xalloc.h"
-#include "string.h"
 
 #include <inttypes.h> /* printf macros for variable stdint types. */
+#include <stdio.h>    /* perror */
+#include <string.h>   /* strcpy, strlen */
 
-/**
- * xmalloc - allocate memory with malloc and report errors.
- * @size: size in bytes to allocate.
+/*!
+ * @brief allocate memory with malloc and report errors.
  *
- * Return: a pointer to the memory area, NULL on failure.
+ * @param[in] size size in bytes to allocate.
+ *
+ * @return a pointer to the memory area, NULL on failure.
  */
 void *xmalloc(const len_type size)
 {
@@ -25,12 +32,13 @@ void *xmalloc(const len_type size)
 	return (ptr);
 }
 
-/**
- * xcalloc - allocate memory with calloc and report errors.
- * @items: number of items to allocate memory for.
- * @sizeof_item: the size in bytes of each item.
+/*!
+ * @brief allocate memory with calloc and report errors.
  *
- * Return: a pointer to the memory area, NULL on failure.
+ * @param[in] items number of items to allocate memory for.
+ * @param[in] sizeof_item the size in bytes of each item.
+ *
+ * @return a pointer to the memory area, NULL on failure.
  */
 void *xcalloc(const len_type items, const len_type sizeof_item)
 {
@@ -56,12 +64,13 @@ void *xcalloc(const len_type items, const len_type sizeof_item)
 	return (ptr);
 }
 
-/**
- * xrealloc - resize memory with realloc and report errors.
- * @nullable_ptr: pointer to an allocated block.
- * @size: size in bytes to resize to.
+/*!
+ * @brief resize memory with realloc and report errors.
  *
- * Return: pointer to the resized memory area, NULL on failure.
+ * @param[in] nullable_ptr pointer to an allocated block.
+ * @param[in] size size in bytes to resize to.
+ *
+ * @return pointer to the resized memory area, NULL on failure.
  */
 void *xrealloc(void *nullable_ptr, const len_type size)
 {
@@ -78,12 +87,13 @@ void *xrealloc(void *nullable_ptr, const len_type size)
 	return (nullable_ptr);
 }
 
-/**
- * xrealloc_free_on_fail - resize memory with xrealloc but free original memory on error.
- * @nullable_ptr: pointer to an allocated block.
- * @size: size in bytes to resize to.
+/*!
+ * @brief resize memory with xrealloc but free original memory on error.
  *
- * Return: pointer to the resized memory area, NULL on failure.
+ * @param[in] nullable_ptr pointer to an allocated block.
+ * @param[in] size size in bytes to resize to.
+ *
+ * @return pointer to the resized memory area, NULL on failure.
  *
  */
 void *xrealloc_free_on_fail(void *nullable_ptr, const len_type size)
@@ -96,11 +106,12 @@ void *xrealloc_free_on_fail(void *nullable_ptr, const len_type size)
 	return (ptr);
 }
 
-/**
- * xstrdup - duplicate a string and report errors.
- * @str: the string to duplicate.
+/*!
+ * @brief duplicate a string and report errors.
  *
- * Return: pointer to the duplicated string, NULL on failure.
+ * @param[in] str the string to duplicate.
+ *
+ * @return pointer to the duplicated string, NULL on failure.
  */
 char *xstrdup(char const *const str)
 {
@@ -112,11 +123,12 @@ char *xstrdup(char const *const str)
 	return (s);
 }
 
-/**
- * xfree - free a pointer, return NULL.
- * @freeable_ptr: a freeable pointer.
+/*!
+ * @brief free a pointer, return NULL.
  *
- * Return: NULL always.
+ * @param[in] freeable_ptr a freeable pointer.
+ *
+ * @return NULL always.
  */
 void *xfree(void *const freeable_ptr)
 {

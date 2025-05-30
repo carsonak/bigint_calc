@@ -1,11 +1,19 @@
-#include "infiX.h"
+/*!
+ * @file
+ * @brief bigint_calc.
+ */
 
-/**
- * main - entry point.
- * @argc: number of arguments.
- * @argv: pointer to an array of strings.
+#include <stdlib.h> /* NULL */
+
+#include "main.h"
+
+/*!
+ * @brief entry point.
  *
- * Return: 0 on success, 1 on error.
+ * @param argc number of arguments.
+ * @param argv pointer to an array of strings.
+ *
+ * @return 0 on success, 1 on error.
  */
 int main(int argc, char *argv[])
 {
