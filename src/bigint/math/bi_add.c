@@ -3,8 +3,6 @@
  * @brief bigint addition methods.
  */
 
-#include <string.h> /* memset */
-
 #include "_bi_internals.h"
 #include "bigint.h"
 
@@ -19,6 +17,8 @@ static bigint *add_negatives(
  * @brief add two bigints.
  * @private @memberof bigint
  *
+ * This function only adds unsigned numbers.
+ *
  * @param[in] n1 the first number.
  * @param[in] n2 the second number.
  *
@@ -32,9 +32,6 @@ add(const bigint *const restrict n1, const bigint *const restrict n2)
 	const len_type result_len = ((n1->len > n2->len) ? n1->len : n2->len) + 1;
 	l_int byt_sum = 0;
 	bigint *sum = NULL;
-
-	if (result_len <= 1)
-		return (_bi_alloc(0));
 
 	sum = _bi_alloc(result_len);
 	if (!sum)
@@ -60,9 +57,12 @@ add(const bigint *const restrict n1, const bigint *const restrict n2)
 	}
 
 	if (sum_i < sum->len)
-		memset(&sum->num[sum_i], 0, sizeof(*sum->num) * (sum->len - sum_i));
+	{
+		sum->num[sum_i] = 0;
+		sum->len = sum_i;
+	}
 
-	return (_bi_trim(sum));
+	return (sum);
 }
 
 /*!
@@ -96,7 +96,7 @@ add_negatives(bigint *const restrict n1, bigint *const restrict n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	return (_bi_trim(result));
+	return (result);
 }
 
 /*!
@@ -113,13 +113,15 @@ bigint *bi_add(bigint *const restrict n1, bigint *const restrict n2)
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (NULL);
 
+	bigint *restrict result = NULL;
 	if (bi_isNaN(_bi_trim(n1)) || bi_isNaN(_bi_trim(n2)))
 		return (_bi_alloc(0));
+	else if (n1->is_negative || n2->is_negative)
+		result = add_negatives(n1, n2);
+	else
+		result = add(n1, n2);
 
-	if (n1->is_negative || n2->is_negative)
-		return (add_negatives(n1, n2));
-
-	return (add(n1, n2));
+	return (_bi_trim(result));
 }
 
 /*!
@@ -131,7 +133,7 @@ bigint *bi_add(bigint *const restrict n1, bigint *const restrict n2)
  *
  * @return pointer to the answer on success, NULL on failure.
  */
-bigint *bi_add_int(bigint *const n1, const intmax_t n2)
+bigint *bi_add_int(bigint *const restrict n1, const intmax_t n2)
 {
 	if (!n1 || n1->len < 0)
 		return (NULL);

@@ -57,7 +57,7 @@ void dq_clear(deque *const restrict dq, free_func *free_data)
  *
  * @return NULL always.
  */
-void *dq_del(deque *const dq, free_func *free_data)
+void *dq_del(deque *const restrict dq, free_func *free_data)
 {
 	dq_clear(dq, free_data);
 	free(dq);

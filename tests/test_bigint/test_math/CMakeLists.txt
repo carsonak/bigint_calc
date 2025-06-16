@@ -1,5 +1,7 @@
 link_libraries(bigint)
 
+set_directory_properties(PROPERTIES LABELS "test_bigint_math")
+
 add_executable(test_bi_add test_bi_add.c test_main.c)
 add_test(NAME test_bi_add COMMAND test_bi_add --failed-output-only)
 

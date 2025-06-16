@@ -131,7 +131,7 @@ lstnode_set_data(list_node *const restrict node, void *const restrict new_data)
  */
 list_node *lstnode_new(void *data, dup_func *copy_func)
 {
-	list_node *const node = xcalloc(1, sizeof(list_node));
+	list_node *const restrict node = xcalloc(1, sizeof(list_node));
 
 	if (!node)
 		return (NULL);
@@ -286,7 +286,7 @@ list_node *lstnode_swap(
  *
  * @return NULL always.
  */
-void *linked_list_del(list_node *const head, free_func *delete_func)
+void *linked_list_del(list_node *const restrict head, free_func *delete_func)
 {
 	if (!head)
 		return (NULL);

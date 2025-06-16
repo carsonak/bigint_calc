@@ -3,21 +3,21 @@
 
 #include "attribute_macros.h"
 
+#include <limits.h> /* CHAR_BIT */
 #include <stdbool.h> /* bool */
 
 #include "bigint_types.h"
 #include "xalloc.h"
 
 /*!
- * @struct bigint
  * @brief a representation of an arbitrary precision integer.
  */
 struct bigint
 {
-	/*! @protected a bool for signedness of the number. */
+	/*! @protected boolean indicating signedness of the number. */
 	bool is_negative : 1;
-	/*! @protected number of items in the int array. */
-	len_type len : sizeof(len_type) * 8 - 1;
+	/*! @protected number of "digits" in the number. */
+	len_type len : sizeof(len_type) * CHAR_BIT - 1;
 	/*! @protected pointer to an array of unsigned ints. */
 	u_int *restrict num;
 };

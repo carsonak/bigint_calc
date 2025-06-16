@@ -6,9 +6,9 @@
 #include "_bi_internals.h"
 #include "bigint.h"
 
-static void
+static bigint *
 iadd(bigint *const restrict n1, bigint const *const restrict n2) ATTR_NONNULL;
-static bool iadd_negatives(
+static bigint *iadd_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
 ) ATTR_NONNULL;
 
@@ -18,8 +18,10 @@ static bool iadd_negatives(
  *
  * @param[in out] n1 the first number, should be large enough to store the results.
  * @param[in] n2 the second number.
+ *
+ * @return pointer to `n1`.
  */
-static void iadd(bigint *const restrict n1, bigint const *const restrict n2)
+static bigint *iadd(bigint *const restrict n1, bigint const *const restrict n2)
 {
 	len_type n1_i = 0, n2_i = 0, res_len = 0;
 	l_int byt_sum = 0;
@@ -42,7 +44,7 @@ static void iadd(bigint *const restrict n1, bigint const *const restrict n2)
 	}
 
 	n1->len = res_len;
-	_bi_trim(n1);
+	return (n1);
 }
 
 /*!
@@ -52,9 +54,9 @@ static void iadd(bigint *const restrict n1, bigint const *const restrict n2)
  * @param[in out] n1 first number.
  * @param[in] n2 second number.
  *
- * @return true on success, false on failure.
+ * @return pointer to `n1` on success, NULL on failure.
  */
-static bool
+static bigint *
 iadd_negatives(bigint *const restrict n1, bigint *const restrict n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
@@ -70,20 +72,19 @@ iadd_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	else if (neg1) /* -8 + 7 = -(8-7) */
 	{
 		if (!bi_isubtract(n1, n2))
-			return (false);
+			return (NULL);
 
 		n1->is_negative = !n1->is_negative;
 	}
 	else if (neg2) /* 8 + -7 = 8-7 */
 	{
 		if (!bi_isubtract(n1, n2))
-			return (false);
+			return (NULL);
 
 		n2->is_negative = true;
 	}
 
-	_bi_trim(n1);
-	return (true);
+	return (n1);
 }
 
 /*!
@@ -98,23 +99,29 @@ iadd_negatives(bigint *const restrict n1, bigint *const restrict n2)
  *
  * @return 1 on success, 0 on failure.
  */
-bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
+bigint *bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
 {
-	/* n1.num cannot be NULL as this function does not allocate any memory. */
+	/* n1.num should not be NULL as this function does not */
+	/* allocate any memory. */
 	if (!n1 || !n1->num || n1->len < 0)
-		return (false);
+		return (NULL);
 
+	_bi_trim(n1);
 	if (!n2) /* This case is treated as: n1 = +n1. */
-		return (true);
+		return (n1);
 
-	if (bi_isNaN(_bi_trim(n1)) || bi_isNaN(_bi_trim(n2)))
-		return (false);
+	if (bi_isNaN(n1) || bi_isNaN(_bi_trim(n2)))
+		return (NULL);
 
 	if (n1->is_negative || n2->is_negative)
-		return (iadd_negatives(n1, n2));
+	{
+		if (!iadd_negatives(n1, n2))
+			return (NULL);
+	}
+	else
+		iadd(n1, n2);
 
-	iadd(n1, n2);
-	return (true);
+	return (_bi_trim(n1));
 }
 
 /*!
@@ -127,9 +134,9 @@ bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
  * @param[in out] n1 the first number, must have enough memory allocated to hold the answer.
  * @param[in] n2 the second number.
  *
- * @return true on success, false on failure.
+ * @return pointer to `n1` on success, NULL on failure.
  */
-bool bi_iadd_int(bigint *const n1, const intmax_t n2)
+bigint *bi_iadd_int(bigint *const restrict n1, const intmax_t n2)
 {
 	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
 

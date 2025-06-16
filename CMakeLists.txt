@@ -17,6 +17,7 @@ add_compile_options(
     "$<$<C_COMPILER_ID:GNU>:-Wduplicated-cond>"
     -Werror
     "$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>"
+    "$<$<AND:$<C_COMPILER_ID:GNU,Clang>,$<CONFIG:Debug>>:-Og>"
 )
 add_link_options(
     "$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>"

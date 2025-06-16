@@ -7,7 +7,7 @@
 
 #include "types.h"
 
-#if UINTPTR_MAX >= UINT64_MAX
+#if UINTMAX_MAX >= UINT64_MAX
 
 typedef uint32_t u_int;
 typedef int64_t l_int;
@@ -29,7 +29,7 @@ typedef uint64_t ul_int;
 	/* Radix for the `bigint` type. */
 	#define BIGINT_BASE 1000000000U
 
-#elif UINTPTR_MAX == UINT32_MAX
+#elif UINTMAX_MAX == UINT32_MAX
 
 typedef uint16_t u_int;
 typedef int32_t l_int;
@@ -51,7 +51,7 @@ typedef uint32_t ul_int;
 	/* Radix for the `bigint` type. */
 	#define BIGINT_BASE 10000U
 
-#elif UINTPTR_MAX == UINT16_MAX
+#elif UINTMAX_MAX == UINT16_MAX
 
 typedef uint8_t u_int;
 typedef int16_t l_int;
@@ -75,9 +75,8 @@ typedef uint16_t ul_int;
 
 #else
 	#error "Unknown pointer size or missing integer size macros."
-#endif /* UINTPTR_MAX >= UINT64_MAX */
+#endif /* UINTMAX_MAX >= UINT64_MAX */
 
-/*! a representation of an arbitrary precision integer. */
 typedef struct bigint bigint;
 
 /*!

@@ -24,7 +24,7 @@ void *xmalloc(const len_type size)
 		return (NULL);
 	}
 
-	void *const ptr = malloc(size);
+	void *const restrict ptr = malloc(size);
 
 	if (!ptr && size > 0)
 		perror("xmalloc error");
@@ -56,7 +56,7 @@ void *xcalloc(const len_type items, const len_type sizeof_item)
 		return (NULL);
 	}
 
-	void *const ptr = calloc(items, sizeof_item);
+	void *const restrict ptr = calloc(items, sizeof_item);
 
 	if (!ptr && ((size_t)items * sizeof_item) > 0)
 		perror("xcalloc error");
@@ -98,7 +98,7 @@ void *xrealloc(void *nullable_ptr, const len_type size)
  */
 void *xrealloc_free_on_fail(void *nullable_ptr, const len_type size)
 {
-	void *const ptr = xrealloc(nullable_ptr, size);
+	void *const restrict ptr = xrealloc(nullable_ptr, size);
 
 	if (!ptr && size)
 		free(nullable_ptr);
@@ -115,7 +115,7 @@ void *xrealloc_free_on_fail(void *nullable_ptr, const len_type size)
  */
 char *xstrdup(char const *const str)
 {
-	char *const s = xmalloc(sizeof(*s) * (strlen(str) + 1));
+	char *const restrict s = xmalloc(sizeof(*s) * (strlen(str) + 1));
 
 	if (str)
 		strcpy(s, str);

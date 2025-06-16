@@ -3,8 +3,6 @@
  * @brief methods for subtracting bigint types.
  */
 
-#include <string.h> /* memset */
-
 #include "_bi_internals.h"
 #include "bigint.h"
 
@@ -19,6 +17,12 @@ static bigint *subtract_negatives(
  * @brief subtract two `bigint`s.
  * @private @memberof bigint
  *
+ * @invariant
+ * The arguments should not be negative numbers.
+ *
+ * @invariant
+ * n1 should always be greater in value than n2.
+ *
  * @param[in] n1 first number.
  * @param[in] n2 second number.
  *
@@ -27,45 +31,28 @@ static bigint *subtract_negatives(
 static bigint *
 subtract(const bigint *const restrict n1, const bigint *const restrict n2)
 {
-	len_type n1_i = 0, n2_i = 0, diff_i = 0, result_len = 0;
-	bool n1_is_bigger = 0;
+	len_type n1_i = 0, n2_i = 0, diff_i = 0, result_len = n1->len;
 	l_int byt_diff = 0;
 	bigint *diff = NULL;
 
-	/* result_len = max(n1->len, n2->len) */
-	result_len = (n1->len > n2->len) ? n1->len : n2->len;
 	/* If both arrays are of the same length then; */
-	/* result_len = n1->len - */
-	/* (length of longest continuos matches of m.s.ds in n1 and n2). */
-	if (n1->len == n2->len)
+	/* result_len = (length of longest continuos matches of m.s.ds in n1 and n2). */
+	if (result_len == n2->len)
+	{
 		while (result_len > 1 &&
-		       n1->num[result_len - 1] == n2->num[result_len - 1])
+			   n1->num[result_len - 1] == n2->num[result_len - 1])
 			result_len--;
+	}
 
 	diff = _bi_alloc(result_len);
 	if (!diff)
 		return (NULL);
 
-	n1_is_bigger = _bi_compare_const(n1, n2) > 0;
-	if (n1_is_bigger == false)
-		diff->is_negative = true;
-
 	while ((n1_i < n1->len || n2_i < n2->len) && diff_i < diff->len)
 	{
-		if (n1_is_bigger == true) /* then; n1 - n2 */
-		{
-			if (n2_i < n2->len)
-				byt_diff += (l_int)n1->num[n1_i] - n2->num[n2_i];
-			else
-				byt_diff += n1->num[n1_i];
-		}
-		else /* n2 - n1 */
-		{
-			if (n1_i < n1->len)
-				byt_diff += (l_int)n2->num[n2_i] - n1->num[n1_i];
-			else
-				byt_diff += n2->num[n2_i];
-		}
+		byt_diff += n1->num[n1_i];
+		if (n2_i < n2->len)
+			byt_diff -= n2->num[n2_i];
 
 		if (byt_diff < 0) /* borrow 1 from next. */
 		{
@@ -84,11 +71,7 @@ subtract(const bigint *const restrict n1, const bigint *const restrict n2)
 		++diff_i;
 	}
 
-	if (diff_i < diff->len)
-		memset(
-			&diff->num[diff_i], 0, sizeof(*diff->num) * (diff->len - diff_i));
-
-	return (_bi_trim(diff));
+	return (diff);
 }
 
 /*!
@@ -110,7 +93,7 @@ subtract_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	n2->is_negative = false;
 	if (neg1 && neg2) /* -8 - -5 = -(8-5) */
 	{
-		result = subtract(n1, n2);
+		result = bi_subtract(n1, n2);
 		if (result)
 			result->is_negative = !result->is_negative;
 	}
@@ -126,7 +109,7 @@ subtract_negatives(bigint *const restrict n1, bigint *const restrict n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	return (_bi_trim(result));
+	return (result);
 }
 
 /*!
@@ -147,9 +130,24 @@ bigint *bi_subtract(bigint *const restrict n1, bigint *const restrict n2)
 		return (_bi_alloc(0));
 
 	if (n1->is_negative || n2->is_negative)
-		return (subtract_negatives(n1, n2));
+		return (_bi_trim(subtract_negatives(n1, n2)));
 
-	return (subtract(n1, n2));
+	const l_int comparison = bi_compare(n1, n2);
+
+	if (comparison == 0) /* n1 and n2 are equal. */
+		return (_bi_alloc(1));
+
+	bigint *restrict result = NULL;
+
+	if (comparison > 0) /* n1 is bigger than n2. */
+		result = subtract(n1, n2);
+	else
+	{
+		result = subtract(n2, n1);
+		result->is_negative = true;
+	}
+
+	return (_bi_trim(result));
 }
 
 /*!
@@ -161,7 +159,7 @@ bigint *bi_subtract(bigint *const restrict n1, bigint *const restrict n2)
  *
  * @return pointer to the answer on success, NULL on failure.
  */
-bigint *bi_subtract_int(bigint *const n1, const intmax_t n2)
+bigint *bi_subtract_int(bigint *const restrict n1, const intmax_t n2)
 {
 	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[4]){0}};
 

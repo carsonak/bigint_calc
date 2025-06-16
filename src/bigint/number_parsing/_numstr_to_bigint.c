@@ -26,7 +26,7 @@ bigint *_numstr_to_bi(const numstr *const restrict nstr)
 	/* sizeof(`bigint`) == */
 	/* ceil(numstr.len / no. of digits that can represent BIGINT_BASE) */
 	unsigned int digits = count_digits(BIGINT_BASE - 1, 10);
-	bigint *const bi =
+	bigint *const restrict bi =
 		_bi_alloc((nstr->len / digits) + (nstr->len % digits ? 1 : 0));
 
 	if (!bi)

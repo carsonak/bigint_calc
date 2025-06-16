@@ -22,7 +22,7 @@ int_to_new_bi(const intmax_t n) ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete);
 /* `bigint` manipulation */
 
 bigint *bi_dup(bigint *const n);
-char *bi_tostr(bigint const *const n);
+char *bi_tostr(bigint const *const restrict n);
 l_int bi_compare_int(bigint *const n1, const intmax_t n2);
 l_int bi_compare(bigint *const n1, bigint *const n2);
 
@@ -43,14 +43,14 @@ bigint *bi_subtract(bigint *const restrict n1, bigint *const restrict n2);
 
 bigint *bi_ishift_l(bigint *const restrict n, const len_type c);
 bigint *bi_ishift_r(bigint *const restrict n, const len_type c);
-bool bi_iadd(bigint *const restrict n1, bigint *const restrict n2);
-bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2);
+bigint *bi_iadd(bigint *const restrict n1, bigint *const restrict n2);
+bigint *bi_isubtract(bigint *const restrict n1, bigint *const restrict n2);
 
-bigint *bi_add_int(bigint *const n1, const intmax_t n2);
-bigint *bi_multiply_int(bigint *const n1, const intmax_t n2);
-bigint *bi_subtract_int(bigint *const n1, const intmax_t n2);
+bigint *bi_add_int(bigint *const restrict n1, const intmax_t n2);
+bigint *bi_multiply_int(bigint *const restrict n1, const intmax_t n2);
+bigint *bi_subtract_int(bigint *const restrict n1, const intmax_t n2);
 
-bool bi_iadd_int(bigint *const n1, const intmax_t n2);
-bool bi_isubtract_int(bigint *const n1, const intmax_t n2);
+bigint *bi_iadd_int(bigint *const restrict n1, const intmax_t n2);
+bigint *bi_isubtract_int(bigint *const restrict n1, const intmax_t n2);
 
 #endif /* BIGINT_H */

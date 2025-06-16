@@ -44,27 +44,6 @@ TEST_F(invalid_inputs, test_null_minus_1)
 	CHECK_PTR_EQ(bi_isubtract(NULL, &(tau->num2)), NULL);
 }
 
-TEST_F(invalid_inputs, test_0_minus_null)
-{
-	u_int in1[1] = {0};
-
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(in1) / sizeof(*in1),
-							 .is_negative = true,
-							 .num = in1};
-
-	bi_isubtract(&(tau->num1), NULL);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
-}
-
 TEST_F(invalid_inputs, test_null_minus_0)
 {
 	u_int in2[1] = {0};
@@ -151,6 +130,27 @@ TEST_F_SETUP(negations) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(negations) { tau->output = bi_delete(tau->output); }
 
+TEST_F(invalid_inputs, test_0_minus_null)
+{
+	u_int in1[1] = {0};
+
+	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
+						 .is_negative = false,
+						 .num = in1};
+	tau->expected = (bigint){.len = sizeof(in1) / sizeof(*in1),
+							 .is_negative = false,
+							 .num = in1};
+
+	bi_isubtract(&(tau->num1), NULL);
+
+	CHECK(tau->num1.len == tau->expected.len);
+	CHECK(tau->num1.is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->num1.num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
+}
+
 TEST_F(negations, test_4490998_minus_NULL)
 {
 	u_int in1[] = {4490998}, out[] = {4490998};
@@ -175,6 +175,50 @@ TEST_F(negations, test_4490998_minus_NULL)
 TEST_F(negations, test_neg_4490998_minus_NULL)
 {
 	u_int in1[] = {4490998}, out[] = {4490998};
+
+	tau->num1 = (bigint){.is_negative = true,
+						 .len = sizeof(in1) / sizeof(*in1),
+						 .num = in1};
+	tau->expected = (bigint){.is_negative = false,
+							 .len = sizeof(out) / sizeof(*out),
+							 .num = out};
+
+	bi_isubtract(&(tau->num1), NULL);
+
+	CHECK(tau->num1.len == tau->expected.len);
+	CHECK(tau->num1.is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->num1.num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
+}
+
+TEST_F(negations, test_long_minus_NULL)
+{
+	u_int in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	u_int out[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+
+	tau->num1 = (bigint){.is_negative = false,
+						 .len = sizeof(in1) / sizeof(*in1),
+						 .num = in1};
+	tau->expected = (bigint){.is_negative = true,
+							 .len = sizeof(out) / sizeof(*out),
+							 .num = out};
+
+	bi_isubtract(&(tau->num1), NULL);
+
+	CHECK(tau->num1.len == tau->expected.len);
+	CHECK(tau->num1.is_negative == tau->expected.is_negative);
+	CHECK_BUF_EQ(
+		tau->num1.num, tau->expected.num,
+		sizeof(*(tau->expected.num)) * tau->expected.len
+	);
+}
+
+TEST_F(negations, test_neg_long_minus_NULL)
+{
+	u_int in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	u_int out[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	tau->num1 = (bigint){.is_negative = true,
 						 .len = sizeof(in1) / sizeof(*in1),
@@ -287,7 +331,7 @@ TEST_F(simple_subtractions, test_1_minus_1)
 	);
 }
 
-TEST_F(simple_subtractions, test_MAX_VAL_u4b_minus_neg50000)
+TEST_F(simple_subtractions, test_MAX_VAL_minus_neg50000)
 {
 	u_int in1[] = {0, 1}, in2[] = {50000}, out[] = {999950000};
 
@@ -971,7 +1015,7 @@ TEST_F(simple_subtractions, test_1_minus_1i)
 	);
 }
 
-TEST_F(simple_subtractions, test_MAX_VAL_u4b_minus_neg50000i)
+TEST_F(simple_subtractions, test_MAX_VAL_minus_neg50000i)
 {
 	u_int in1[] = {0, 1}, out[] = {999950000};
 

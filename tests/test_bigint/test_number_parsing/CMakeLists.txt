@@ -2,6 +2,8 @@ link_libraries(bigint)
 
 include_directories(${PROJECT_SOURCE_DIR}/src/bigint/number_parsing)
 
+set_directory_properties(PROPERTIES LABELS "test_bigint_parsing")
+
 add_executable(test__numstr_alloc test__numstr_alloc.c test_main.c)
 add_test(NAME test__numstr_alloc COMMAND test__numstr_alloc
                                          --failed-output-only

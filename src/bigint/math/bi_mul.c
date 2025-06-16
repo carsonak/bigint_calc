@@ -49,6 +49,8 @@ static bigint *multiply_negatives(
  * @brief multiply two `bigint`s.
  * @private @memberof bigint
  *
+ * This function only multiplies unsigned numbers.
+ *
  * @param[in] n1 first number.
  * @param[in] n2 second number.
  *
@@ -93,8 +95,7 @@ long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
 		}
 
 		current_mul->num[n2_i + n1_i] = byt_prod;
-		if (!bi_iadd(product, current_mul))
-			break;
+		bi_iadd(product, current_mul); /* Addittion should never fail. */
 	}
 
 	if (n2_i < n2->len)
@@ -104,7 +105,7 @@ cleanup:
 	}
 
 	_bi_free(current_mul);
-	return (_bi_trim(product));
+	return (product);
 }
 
 /*!
@@ -222,7 +223,7 @@ static bigint *karatsuba_multiply(
 	/* the long multiplication algorithm if the number of "digits" in the */
 	/* `bigint`s is greater than `KARATSUBA_GAIN_CUTOFF` */
 	if (n1->len < KARATSUBA_GAIN_CUTOFF || n2->len < KARATSUBA_GAIN_CUTOFF)
-		return (long_multiply(n1, n2));
+		return (_bi_trim(long_multiply(n1, n2)));
 
 	const len_type i = (n1->len > n2->len ? n1->len / 2 : n2->len / 2);
 	bigint *restrict result = NULL;
@@ -304,7 +305,7 @@ multiply_negatives(bigint *const restrict n1, bigint *const restrict n2)
 
 	n1->is_negative = neg1;
 	n2->is_negative = neg2;
-	return (_bi_trim(result));
+	return (result);
 }
 
 /*!
@@ -324,10 +325,13 @@ bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2)
 	if (bi_isNaN(_bi_trim(n1)) || bi_isNaN(_bi_trim(n2)))
 		return (_bi_alloc(0));
 
+	bigint *restrict result = NULL;
 	if (n1->is_negative || n2->is_negative)
-		return (multiply_negatives(n1, n2));
+		result = multiply_negatives(n1, n2);
+	else
+		result = karatsuba_multiply(n1, n2);
 
-	return (karatsuba_multiply(n1, n2));
+	return (_bi_trim(result));
 }
 
 /*!
@@ -339,7 +343,7 @@ bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2)
  *
  * @return pointer to the result.
  */
-bigint *bi_multiply_int(bigint *const n1, const intmax_t n2)
+bigint *bi_multiply_int(bigint *const restrict n1, const intmax_t n2)
 {
 	if (!n1 || n1->len < 0)
 		return (NULL);

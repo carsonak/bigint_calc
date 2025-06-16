@@ -175,8 +175,8 @@ TEST_F_TEARDOWN(compare_arrays) { (void)tau; }
 
 TEST_F(compare_arrays, test_0_cmp_0)
 {
-	u_int in1[1];
-	u_int in2[1];
+	u_int in1[1] = {0};
+	u_int in2[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -202,7 +202,7 @@ TEST_F(compare_arrays, test_1_cmp_1)
 TEST_F(compare_arrays, test_1_cmp_0)
 {
 	u_int in1[] = {1};
-	u_int in2[1];
+	u_int in2[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -214,7 +214,7 @@ TEST_F(compare_arrays, test_1_cmp_0)
 
 TEST_F(compare_arrays, test_0_cmp_1)
 {
-	u_int in1[1];
+	u_int in1[1] = {0};
 	u_int in2[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);

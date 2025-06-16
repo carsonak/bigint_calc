@@ -6,10 +6,10 @@
 #include "_bi_internals.h"
 #include "bigint.h"
 
-static void isubtract(
+static bigint *isubtract(
 	bigint *const restrict n1, const bigint *const restrict n2
 ) ATTR_NONNULL;
-static bool isubtract_negatives(
+static bigint *isubtract_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
 ) ATTR_NONNULL;
 
@@ -17,12 +17,14 @@ static bool isubtract_negatives(
  * @brief subtract two `bigint`s inplace.
  * @private @memberof bigint
  *
+ * This function subtracts only unsigned numbers.
+ *
  * @param[in out] n1 first number.
  * @param[in] n2 second number.
  *
- * @return pointer to the result, NULL on failure.
+ * @return pointer to `n1`.
  */
-static void
+static bigint *
 isubtract(bigint *const restrict n1, const bigint *const restrict n2)
 {
 	len_type n1_i = 0, n2_i = 0, final_len = 0;
@@ -84,7 +86,7 @@ isubtract(bigint *const restrict n1, const bigint *const restrict n2)
 		n1->is_negative = true;
 
 	n1->len = final_len;
-	_bi_trim(n1);
+	return (n1);
 }
 
 /*!
@@ -94,9 +96,9 @@ isubtract(bigint *const restrict n1, const bigint *const restrict n2)
  * @param[in out] n1 first number.
  * @param[in] n2 second number.
  *
- * @return pointer to the result, NULL on failure.
+ * @return pointer to `n1` on success, NULL on failure.
  */
-static bool
+static bigint *
 isubtract_negatives(bigint *const restrict n1, bigint *const restrict n2)
 {
 	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
@@ -111,20 +113,19 @@ isubtract_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	else if (neg2) /* 8 - -5 = 8+5 */
 	{
 		if (!bi_iadd(n1, n2))
-			return (false);
+			return (NULL);
 	}
 	else if (neg1)
 	{
 		/* -8 - 5 = -(8+5) */
 		if (!bi_iadd(n1, n2))
-			return (false);
+			return (NULL);
 
 		n1->is_negative = !n1->is_negative;
 	}
 
 	n2->is_negative = neg2;
-	_bi_trim(n1);
-	return (true);
+	return (n1);
 }
 
 /*!
@@ -137,29 +138,33 @@ isubtract_negatives(bigint *const restrict n1, bigint *const restrict n2)
  * @param[in out] n1 first number, must have enough space to store the result.
  * @param[in] n2 second number.
  *
- * @return 1 on success, 0 on failure.
+ * @return pointer to `n1` on success, NULL on failure.
  */
-bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2)
+bigint *bi_isubtract(bigint *const restrict n1, bigint *const restrict n2)
 {
 	/* n1.num cannot be NULL as this function does not allocate any memory. */
 	if (!n1 || !n1->num)
-		return (false);
+		return (NULL);
 
 	_bi_trim(n1);
 	if (!n2) /* This case is treated as n1 = -n1. */
 	{
 		n1->is_negative = !n1->is_negative;
-		return (true);
+		return (_bi_trim(n1));
 	}
 
 	if (bi_isNaN(n1) || bi_isNaN(_bi_trim(n2)))
-		return (false);
+		return (NULL);
 
 	if (n1->is_negative || n2->is_negative)
-		return (isubtract_negatives(n1, n2));
+	{
+		if (!isubtract_negatives(n1, n2))
+			return (NULL);
+	}
+	else
+		isubtract(n1, n2);
 
-	isubtract(n1, n2);
-	return (true);
+	return (_bi_trim(n1));
 }
 
 /*!
@@ -172,14 +177,14 @@ bool bi_isubtract(bigint *const restrict n1, bigint *const restrict n2)
  * @param[in out] n1 the first number, must have enough memory allocated to hold the answer.
  * @param[in] n2 the second number.
  *
- * @return 1 on success, 0 on failure.
+ * @return pointer to `n1` on success, NULL on failure.
  */
-bool bi_isubtract_int(bigint *const n1, const intmax_t n2)
+bigint *bi_isubtract_int(bigint *const restrict n1, const intmax_t n2)
 {
 	bigint num2 = {.len = 4, .is_negative = 0, .num = (u_int[3]){0}};
 
 	if (!n1)
-		return (false);
+		return (NULL);
 
 	return (bi_isubtract(n1, int_to_bi(&num2, n2)));
 }
