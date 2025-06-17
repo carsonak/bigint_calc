@@ -32,24 +32,20 @@
         }
     ],
     "buildPresets": [
-        { "name": "build-base", "hidden": true, "jobs": 4 },
         {
             "name": "debug-default",
             "description": "Code-Compile-Debug",
-            "inherits": ["build-base"],
             "configurePreset": "debug-default",
             "configuration": "Debug"
         },
         {
             "name": "release",
-            "inherits": ["build-base"],
             "configurePreset": "release",
             "configuration": "Release"
         },
         {
             "name": "release-debug",
             "description": "Code-Compile-Debug",
-            "inherits": ["build-base"],
             "configurePreset": "release-debug",
             "configuration": "RelWithDebInfo"
         }
@@ -59,11 +55,7 @@
             "name": "tests-base",
             "hidden": true,
             "output": { "outputOnFailure": true },
-            "execution": {
-                "jobs": 4,
-                "stopOnFailure": true,
-                "scheduleRandom": true
-            }
+            "execution": { "stopOnFailure": true, "scheduleRandom": true }
         },
         {
             "name": "debug-default",

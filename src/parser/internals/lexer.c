@@ -3,8 +3,7 @@
  * @brief lexer.
  */
 
-#include <ctype.h>  /* isdigit */
-#include <string.h> /* memset */
+#include <ctype.h> /* isdigit */
 
 #include "lexer.h"
 

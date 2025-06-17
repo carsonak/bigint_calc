@@ -3,7 +3,17 @@ cmake_minimum_required(VERSION 3.27)
 project(
     bigint_calc
     DESCRIPTION "Simple arbitrary precision calculator"
-    LANGUAGES C)
+    LANGUAGES C
+)
+
+include(CheckIPOSupported)
+check_ipo_supported(RESULT LTO_available)
+if(LTO_available)
+    set(CMAKE_INTERPROCEDURAL_OPTIMIZATION
+        TRUE
+        CACHE BOOL "Enable Interprocedural Optimisations."
+    )
+endif()
 
 # Compiler warnings
 set(CMAKE_C_STANDARD 17)
@@ -27,7 +37,8 @@ add_subdirectory(src)
 
 # Tests are automatically built if this is the main project
 option(BIGINT_CALC_ENABLE_TESTING "Enable tests for bigint_calc"
-       ${PROJECT_IS_TOP_LEVEL})
+       ${PROJECT_IS_TOP_LEVEL}
+)
 
 if(BIGINT_CALC_ENABLE_TESTING)
     enable_testing()
