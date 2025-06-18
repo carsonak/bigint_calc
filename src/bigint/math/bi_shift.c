@@ -9,9 +9,9 @@
 #include "bigint.h"
 
 static bigint *
-_bi_shift(bigint *const restrict n, const len_type d) ATTR_NONNULL;
+_bi_shift(bigint *const restrict n, const intmax_t d) ATTR_NONNULL;
 static bigint *
-_bi_ishift(bigint *const restrict n, const len_type d) ATTR_NONNULL;
+_bi_ishift(bigint *const restrict n, const intmax_t d) ATTR_NONNULL;
 
 /*!
  * @brief shift "digits" of a `bigint`.
@@ -23,7 +23,7 @@ _bi_ishift(bigint *const restrict n, const len_type d) ATTR_NONNULL;
  *
  * @return pointer to the shifted `bigint`, NULL on failure.
  */
-static bigint *_bi_shift(bigint *const restrict n, const len_type d)
+static bigint *_bi_shift(bigint *const restrict n, const intmax_t d)
 {
 	if (n->len < 0)
 		return (NULL);
@@ -38,7 +38,7 @@ static bigint *_bi_shift(bigint *const restrict n, const len_type d)
 
 	if (d < 0) /* left shift */
 	{
-		const len_type digits = -d;
+		const intmax_t digits = -d;
 		const uintmax_t final_len = (uintmax_t)n->len + digits;
 
 		res = _bi_alloc(final_len);
@@ -50,15 +50,18 @@ static bigint *_bi_shift(bigint *const restrict n, const len_type d)
 	}
 	else /* right shift */
 	{
-		const uintmax_t final_len = n->len > d ? (uintmax_t)n->len - d : 1;
+		const uintmax_t final_len = d < n->len ? (uintmax_t)n->len - d : 1;
 
 		res = _bi_alloc(final_len);
-		if (d >= n->len)
+		if (d >= n->len) /* result == 0 */
 			return (res);
 
 		if (res)
 			memcpy(res->num, &(n->num[d]), sizeof(*n->num) * final_len);
 	}
+
+	if (res)
+		res->is_negative = n->is_negative;
 
 	return (res);
 }
@@ -72,7 +75,7 @@ static bigint *_bi_shift(bigint *const restrict n, const len_type d)
  *
  * @return pointer to the shifted `bigint`, NULL on failure.
  */
-bigint *bi_shift_r(bigint *const restrict n, const len_type d)
+bigint *bi_shift_r(bigint *const restrict n, const intmax_t d)
 {
 	if (!n || n->len < 0 || d < 0)
 		return (NULL);
@@ -89,7 +92,7 @@ bigint *bi_shift_r(bigint *const restrict n, const len_type d)
  *
  * @return pointer to the shifted `bigint`, NULL on failure.
  */
-bigint *bi_shift_l(bigint *const restrict n, const len_type d)
+bigint *bi_shift_l(bigint *const restrict n, const intmax_t d)
 {
 	if (!n || n->len < 0 || d < 0)
 		return (NULL);
@@ -110,7 +113,7 @@ bigint *bi_shift_l(bigint *const restrict n, const len_type d)
  *
  * @return pointer to the bigint on success, NULL on failure.
  */
-static bigint *_bi_ishift(bigint *const restrict n, const len_type d)
+static bigint *_bi_ishift(bigint *const restrict n, const intmax_t d)
 {
 	if (n->len < 0)
 		return (NULL);
@@ -125,7 +128,7 @@ static bigint *_bi_ishift(bigint *const restrict n, const len_type d)
 
 	if (d < 0) /* left shift */
 	{
-		const len_type digits = -d;
+		const intmax_t digits = -d;
 
 		final_len = (uintmax_t)n->len + digits;
 		memmove(&(n->num[digits]), n->num, sizeof(*n->num) * n->len);
@@ -159,7 +162,7 @@ static bigint *_bi_ishift(bigint *const restrict n, const len_type d)
  *
  * @return pointer to the `bigint` on success, NULL on failure.
  */
-bigint *bi_ishift_r(bigint *const restrict n, const len_type d)
+bigint *bi_ishift_r(bigint *const restrict n, const intmax_t d)
 {
 	if (!n || n->len < 0 || d < 0)
 		return (NULL);
@@ -179,7 +182,7 @@ bigint *bi_ishift_r(bigint *const restrict n, const len_type d)
  *
  * @return pointer to the `bigint` on success, NULL on failure.
  */
-bigint *bi_ishift_l(bigint *const restrict n, const len_type d)
+bigint *bi_ishift_l(bigint *const restrict n, const intmax_t d)
 {
 	if (!n || n->len < 0 || d < 0)
 		return (NULL);

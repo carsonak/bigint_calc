@@ -128,9 +128,7 @@ TEST_F(bigint_resize_sized, resize_to_smaller_len_bigint)
 	REQUIRE_PTR_NE(tau->output, NULL);
 	CHECK(tau->output->len == new_len);
 	CHECK_PTR_NE(tau->output->num, NULL);
-	CHECK(
-		tau->output->num[0] == DUMMY_VALUE, "data should have been copied over"
-	);
+	CHECK(tau->output->num[0] == DUMMY_VALUE);
 	/* memory checkers should not complain. */
 	tau->output->num[new_len - 1] = DUMMY_VALUE;
 }
@@ -149,13 +147,8 @@ TEST_F(bigint_resize_sized, resize_to_bigger_len_bigint)
 	REQUIRE_PTR_NE(tau->output, NULL);
 	CHECK(tau->output->len == new_len);
 	CHECK_PTR_NE(tau->output->num, NULL);
-	CHECK(
-		tau->output->num[0] == DUMMY_VALUE, "data should have been copied over"
-	);
-	CHECK(
-		tau->output->num[TESTS_BIGINT_LENGTH - 1] == DUMMY_VALUE,
-		"data should have been copied over"
-	);
+	CHECK(tau->output->num[0] == DUMMY_VALUE);
+	CHECK(tau->output->num[TESTS_BIGINT_LENGTH - 1] == DUMMY_VALUE);
 	/* memory checkers should not complain. */
 	tau->output->num[new_len - 1] = DUMMY_VALUE;
 }
@@ -174,13 +167,8 @@ TEST_F(bigint_resize_sized, resize_to_even_bigger_len_bigint)
 	REQUIRE_PTR_NE(tau->output, NULL);
 	CHECK(tau->output->len == new_len);
 	CHECK_PTR_NE(tau->output->num, NULL);
-	CHECK(
-		tau->output->num[0] == DUMMY_VALUE, "data should have been copied over"
-	);
-	CHECK(
-		tau->output->num[TESTS_BIGINT_LENGTH - 1] == DUMMY_VALUE,
-		"data should have been copied over"
-	);
+	CHECK(tau->output->num[0] == DUMMY_VALUE);
+	CHECK(tau->output->num[TESTS_BIGINT_LENGTH - 1] == DUMMY_VALUE);
 	/* memory checkers should not complain. */
 	tau->output->num[new_len - 1] = DUMMY_VALUE;
 }

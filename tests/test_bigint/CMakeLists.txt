@@ -10,4 +10,8 @@ add_executable(test_bi_compare test_bi_compare.c test_main.c)
 target_link_libraries(test_bi_compare PRIVATE bigint)
 add_test(NAME test_bi_compare COMMAND test_bi_compare --failed-output-only)
 
+add_executable(test_bi_tostr test_bi_tostr.c test_main.c)
+target_link_libraries(test_bi_tostr PRIVATE bigint)
+add_test(NAME test_bi_tostr COMMAND test_bi_tostr --failed-output-only)
+
 set_property(TEST test_bi_compare PROPERTY TIMEOUT 5)

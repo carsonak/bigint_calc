@@ -1,5 +1,9 @@
 #include "test_math.h"
 
+/* ################################################################### */
+/* ####################### invalid_inputs ############################ */
+/* ################################################################### */
+
 struct invalid_inputs
 {
 	bigint base, expected, *output;
@@ -44,236 +48,242 @@ TEST_F(invalid_inputs, test_NaN_pow_largenum)
 	CHECK_PTR_EQ(tau->output->num, NULL);
 }
 
+/* ################################################################### */
+/* ################### simple_exponentiations ######################## */
+/* ################################################################### */
+
 struct simple_exponentiations
 {
-	bigint base, expected, *output;
+	bigint *restrict num1, *restrict output;
+	char *restrict outstr;
 };
 
 TEST_F_SETUP(simple_exponentiations) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(simple_exponentiations)
 {
-	tau->output = bi_delete(tau->output);
+	bi_delete(tau->num1);
+	bi_delete(tau->output);
+	xfree(tau->outstr);
+}
+
+TEST_F(simple_exponentiations, test_0_pow_0)
+{
+	const char expected[] = "1";
+
+	tau->num1 = bi_new("0", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 0);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
+
+	CHECK_STREQ(tau->outstr, expected);
+}
+
+TEST_F(simple_exponentiations, test_1_pow_1)
+{
+	const char expected[] = "1";
+
+	tau->num1 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 1);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
+
+	CHECK_STREQ(tau->outstr, expected);
+}
+
+TEST_F(simple_exponentiations, test_1_pow_longmax)
+{
+	const char expected[] = "1";
+
+	tau->num1 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, LLONG_MAX);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
+
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_123_pow_0)
 {
-	u_int bs[] = {123}, out[] = {1};
+	const char expected[] = "1";
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 0);
+	tau->num1 = bi_new("123", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 0);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_123_pow_1)
 {
-	u_int bs[] = {123}, out[] = {123};
+	const char expected[] = "123";
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 1);
+	tau->num1 = bi_new("123", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 1);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_123_pow_2)
 {
-	u_int bs[] = {123}, out[] = {15129};
+	const char expected[] = "15129";
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 2);
+	tau->num1 = bi_new("123", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 2);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_123_pow_3)
 {
-	u_int bs[] = {123}, out[] = {1860867};
+	const char expected[] = "1860867";
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 3);
+	tau->num1 = bi_new("123", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 3);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_123_pow_4)
 {
-	u_int bs[] = {123}, out[] = {228886641};
+	const char expected[] = "228886641";
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 4);
+	tau->num1 = bi_new("123", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 4);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_123_pow_5)
 {
-	u_int bs[] = {123}, out[] = {153056843, 28};
+	const char expected[] = "28153056843";
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 5);
+	tau->num1 = bi_new("123", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 5);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_234_pow_477)
 {
 	/* clang-format off */
-	u_int bs[] = {234};
-	u_int out[] = {138463744, 630382847, 425138196, 490057072, 42738656, 562352760, 295161161, 543519655, 265718800, 64620485, 975049337, 240021309, 215978840, 55782129, 849270075, 760996761, 32235035, 447626698, 534302852, 161083119, 30412973, 400786483, 992033896, 855034263, 435988368, 684563114, 266643638, 133173866, 673072223, 34504819, 342857813, 745043721, 798533122, 700144204, 470863810, 594437054, 430923488, 157091748, 450986271, 315274613, 838384114, 33278729, 133366133, 317251008, 441412309, 619366973, 282014902, 892514216, 906275551, 933202156, 866307837, 243896017, 610238855, 39603391, 272913065, 592191975, 999079521, 751657070, 241753884, 466580044, 868465256, 125117490, 825635666, 867236425, 252800494, 348107782, 931851, 794309767, 14743444, 766320565, 367541745, 432557403, 336829936, 249651988, 216412537, 487948097, 553749552, 103790680, 154383230, 537669816, 697724514, 825453593, 618993331, 13717548, 937161704, 677850779, 679885658, 229734360, 697004859, 938833278, 608403586, 18855403, 205656264, 373908591, 546690969, 765047235, 462433400, 637088006, 413981371, 515919479, 4353766, 416891820, 91823479, 776479816, 905684090, 602420390, 788973444, 583995007, 386478856, 359831547, 31927055, 690487036, 891942550, 852664769, 445808884, 892235228, 50712602, 512334281, 920209023, 950205994, 200783440, 842852295, 618665336, 406537103, 257391501, 130606};
+	const char expected[] = "130606257391501406537103618665336842852295200783440950205994920209023512334281050712602892235228445808884852664769891942550690487036031927055359831547386478856583995007788973444602420390905684090776479816091823479416891820004353766515919479413981371637088006462433400765047235546690969373908591205656264018855403608403586938833278697004859229734360679885658677850779937161704013717548618993331825453593697724514537669816154383230103790680553749552487948097216412537249651988336829936432557403367541745766320565014743444794309767000931851348107782252800494867236425825635666125117490868465256466580044241753884751657070999079521592191975272913065039603391610238855243896017866307837933202156906275551892514216282014902619366973441412309317251008133366133033278729838384114315274613450986271157091748430923488594437054470863810700144204798533122745043721342857813034504819673072223133173866266643638684563114435988368855034263992033896400786483030412973161083119534302852447626698032235035760996761849270075055782129215978840240021309975049337064620485265718800543519655295161161562352760042738656490057072425138196630382847138463744";
 	/* clang-format on */
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 477);
+	tau->num1 = bi_new("234", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 477);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_234_pow_266)
 {
 	/* clang-format off */
-	u_int bs[] = {234};
-	u_int out[] = {697007616, 658013101, 162202795, 73251460, 801345075, 657045283, 355942256, 871201480, 833741925, 164602412, 650273249, 755777576, 67826351, 932682058, 936889471, 240178765, 917296984, 610928359, 213259850, 81420064, 741164266, 237108231, 261918816, 24322661, 769693803, 981096105, 38216949, 885817392, 892756033, 349534593, 522160077, 468573133, 867025899, 245791842, 538671069, 242743507, 689940329, 26748175, 381062143, 331416069, 50951868, 176671784, 274749583, 901295397, 35807714, 169754602, 722630030, 538497733, 382131844, 776449123, 414860898, 652989656, 729447453, 637681316, 873137881, 207652620, 634848248, 734487857, 253451423, 223674185, 988937383, 571235276, 638935086, 381512860, 733925572, 610154307, 545711481, 22012290, 385664924, 627114334, 1};
+	const char expected[] = "1627114334385664924022012290545711481610154307733925572381512860638935086571235276988937383223674185253451423734487857634848248207652620873137881637681316729447453652989656414860898776449123382131844538497733722630030169754602035807714901295397274749583176671784050951868331416069381062143026748175689940329242743507538671069245791842867025899468573133522160077349534593892756033885817392038216949981096105769693803024322661261918816237108231741164266081420064213259850610928359917296984240178765936889471932682058067826351755777576650273249164602412833741925871201480355942256657045283801345075073251460162202795658013101697007616";
 	/* clang-format on */
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 266);
+	tau->num1 = bi_new("234", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 266);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_exponentiations, test_9847_pow_525)
 {
 	/* clang-format off */
-	u_int bs[] = {9847};
-	u_int out[] = {718406807, 838934696, 918927641, 248230681, 655163181, 252369778, 892071187, 987148570, 537595147, 62103025, 169106547, 192375617, 20472376, 793612401, 465844292, 42571378, 381338405, 612527666, 258164308, 852388587, 506704015, 652813760, 904575728, 721478894, 651842884, 296475346, 307716637, 467857491, 339523621, 327047075, 50859426, 685355539, 968707021, 846290406, 476099468, 69160989, 952276582, 287055838, 224462543, 350097400, 83319300, 116693572, 350238376, 684645490, 186270522, 77520798, 93928257, 630828309, 548045453, 156042083, 671776125, 538940746, 883986146, 213764396, 287923840, 759318137, 335025607, 898565562, 114774479, 921843543, 549032810, 857941948, 526855271, 603059463, 305968743, 649785641, 47525666, 503919000, 997303490, 802705143, 242511754, 849608418, 272147440, 768295344, 51389730, 648856809, 952315689, 713484724, 693242264, 458460078, 121633132, 710795130, 364800887, 80687518, 706292927, 601112921, 317631785, 490964386, 24423837, 316268976, 182265878, 257297900, 526966339, 552894485, 908893976, 192247960, 636177304, 655832957, 212843399, 132630029, 762201636, 331761709, 921437075, 541726321, 758723427, 480890669, 857438019, 787796065, 736557167, 874833834, 872194003, 472374310, 49115941, 54937124, 620615703, 391769116, 778797661, 798862546, 624052668, 522197497, 388270954, 660118131, 478571980, 532140993, 653833898, 309969279, 390183050, 368285800, 721855899, 639410646, 582363718, 924933234, 246860379, 123660495, 455592095, 94248930, 778653391, 771230182, 397553791, 871272898, 328293643, 359765195, 60806892, 372000770, 330595304, 256646973, 883188190, 277691227, 936937778, 657623925, 97455328, 494442185, 45399729, 394979082, 795739743, 161952307, 329664186, 395954323, 403820833, 282667305, 886582721, 657862402, 946270329, 14290273, 589828473, 648137367, 61151121, 310345289, 821521221, 186393458, 299577218, 727159778, 201235010, 824355686, 609215241, 709978621, 959782934, 703941748, 27788931, 263383146, 451511246, 992285958, 229859375, 760101064, 560504336, 32854974, 320401718, 72737537, 308023147, 868138334, 700323162, 985608681, 709360773, 743318025, 203970450, 805781108, 861490454, 949314398, 996086355, 806763826, 550159191, 887083510, 265191236, 892424952, 779685409, 663606664, 169547434, 68921953, 832225720, 323342237, 866842327, 800830329, 154955842, 460548120, 746037552, 37241474, 798241568, 448620814, 290848152, 391615870, 233937713, 325217023, 689259451, 669347600, 394917569, 305488388, 955399387, 626035997, 650554608, 129910036, 173366384, 79412336, 305187968};
+	const char expected[] = "305187968079412336173366384129910036650554608626035997955399387305488388394917569669347600689259451325217023233937713391615870290848152448620814798241568037241474746037552460548120154955842800830329866842327323342237832225720068921953169547434663606664779685409892424952265191236887083510550159191806763826996086355949314398861490454805781108203970450743318025709360773985608681700323162868138334308023147072737537320401718032854974560504336760101064229859375992285958451511246263383146027788931703941748959782934709978621609215241824355686201235010727159778299577218186393458821521221310345289061151121648137367589828473014290273946270329657862402886582721282667305403820833395954323329664186161952307795739743394979082045399729494442185097455328657623925936937778277691227883188190256646973330595304372000770060806892359765195328293643871272898397553791771230182778653391094248930455592095123660495246860379924933234582363718639410646721855899368285800390183050309969279653833898532140993478571980660118131388270954522197497624052668798862546778797661391769116620615703054937124049115941472374310872194003874833834736557167787796065857438019480890669758723427541726321921437075331761709762201636132630029212843399655832957636177304192247960908893976552894485526966339257297900182265878316268976024423837490964386317631785601112921706292927080687518364800887710795130121633132458460078693242264713484724952315689648856809051389730768295344272147440849608418242511754802705143997303490503919000047525666649785641305968743603059463526855271857941948549032810921843543114774479898565562335025607759318137287923840213764396883986146538940746671776125156042083548045453630828309093928257077520798186270522684645490350238376116693572083319300350097400224462543287055838952276582069160989476099468846290406968707021685355539050859426327047075339523621467857491307716637296475346651842884721478894904575728652813760506704015852388587258164308612527666381338405042571378465844292793612401020472376192375617169106547062103025537595147987148570892071187252369778655163181248230681918927641838934696718406807";
 	/* clang-format on */
 
-	tau->base.len = sizeof(bs) / sizeof(*bs);
-	tau->base.num = bs;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 525);
+	tau->num1 = bi_new("9847", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 525);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
+
+/* ################################################################### */
+/* ################### negative_exponentiations ###################### */
+/* ################################################################### */
 
 struct negative_exponentiations
 {
-	bigint base, expected, *output;
+	bigint *restrict num1, *restrict output;
+	char *restrict outstr;
 };
 
 TEST_F_SETUP(negative_exponentiations) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(negative_exponentiations)
 {
-	tau->output = bi_delete(tau->output);
+	bi_delete(tau->num1);
+	bi_delete(tau->output);
+	xfree(tau->outstr);
 }
 
 TEST_F(negative_exponentiations, test_neg123_pow_2)
 {
-	u_int bs[] = {123}, out[] = {15129};
+	const char expected[] = "15129";
 
-	tau->base = (bigint){.len = sizeof(bs) / sizeof(*bs),
-						 .is_negative = true,
-						 .num = bs};
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	tau->output = bi_power(&tau->base, 2);
+	tau->num1 = bi_new("-123", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 2);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(negative_exponentiations, test_neg123_pow_3)
 {
-	u_int bs[] = {123}, out[] = {1860867};
+	const char expected[] = "-1860867";
 
-	tau->base = (bigint){.len = sizeof(bs) / sizeof(*bs),
-						 .is_negative = true,
-						 .num = bs};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
-	tau->output = bi_power(&tau->base, 3);
+	tau->num1 = bi_new("-123", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->output = bi_power(tau->num1, 3);
+	REQUIRE_PTR_NE(tau->output, NULL);
+	tau->outstr = bi_tostr(tau->output);
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->output->len == tau->expected.len);
-	CHECK(tau->output->is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->output->num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }

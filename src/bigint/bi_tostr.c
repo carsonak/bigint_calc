@@ -4,6 +4,7 @@
  */
 
 #include "_bi_internals.h"
+#include "bigint.h"
 #include "number_parsing.h"
 
 #include "count_digits.c"
@@ -22,25 +23,22 @@ char *bi_tostr(bigint const *const restrict n)
 		return (NULL);
 
 	len_type str_i = 0, bi_i = n->len - 1;
-	const len_type str_len = (n->len * count_digits(BIGINT_BASE - 1, 10)) +
-							 (n->is_negative ? 1 : 0);
+	const unsigned int digits = count_digits(BIGINT_BASE - 1, 10);
+	const len_type str_len = (n->len * digits) + (n->is_negative ? 1 : 0);
 	char *const restrict str = xmalloc(str_len + 1);
 
 	if (!str)
 		return (NULL);
 
-	if (n->is_negative)
+	if (n->is_negative && !bi_iszero(n))
 		str[str_i++] = '-';
 
-	while (bi_i && !n->num[bi_i])
+	while (bi_i > 0 && n->num[bi_i] == 0)
 		--bi_i;
 
-	for (; bi_i > 0 && str_i < str_len; --bi_i)
-	{
-		int bytes_written = sprintf(&str[str_i], "%" PRIu_int, n->num[bi_i]);
-
-		str_i += bytes_written - 1;
-	}
+	str_i += sprintf(&str[str_i], "%" PRIu_int, n->num[bi_i--]);
+	for (; bi_i >= 0 && str_i < str_len; --bi_i)
+		str_i += sprintf(&str[str_i], "%.*" PRIu_int, digits, n->num[bi_i]);
 
 	return (str);
 }

@@ -37,12 +37,12 @@ bigint *bi_divide(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_modulo(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_multiply(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_power(bigint *const restrict base, const intmax_t exponent);
-bigint *bi_shift_l(bigint *const restrict n, const len_type c);
-bigint *bi_shift_r(bigint *const restrict n, const len_type c);
+bigint *bi_shift_l(bigint *const restrict n, const intmax_t c);
+bigint *bi_shift_r(bigint *const restrict n, const intmax_t c);
 bigint *bi_subtract(bigint *const restrict n1, bigint *const restrict n2);
 
-bigint *bi_ishift_l(bigint *const restrict n, const len_type c);
-bigint *bi_ishift_r(bigint *const restrict n, const len_type c);
+bigint *bi_ishift_l(bigint *const restrict n, const intmax_t c);
+bigint *bi_ishift_r(bigint *const restrict n, const intmax_t c);
 bigint *bi_iadd(bigint *const restrict n1, bigint *const restrict n2);
 bigint *bi_isubtract(bigint *const restrict n1, bigint *const restrict n2);
 

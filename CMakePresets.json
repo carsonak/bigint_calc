@@ -12,7 +12,7 @@
             "warnings": { "dev": true }
         },
         {
-            "name": "debug-default",
+            "name": "debug",
             "inherits": ["configure-base"],
             "binaryDir": "debug",
             "cacheVariables": { "CMAKE_BUILD_TYPE": "Debug" }
@@ -33,9 +33,9 @@
     ],
     "buildPresets": [
         {
-            "name": "debug-default",
+            "name": "debug",
             "description": "Code-Compile-Debug",
-            "configurePreset": "debug-default",
+            "configurePreset": "debug",
             "configuration": "Debug"
         },
         {
@@ -58,9 +58,9 @@
             "execution": { "stopOnFailure": true, "scheduleRandom": true }
         },
         {
-            "name": "debug-default",
+            "name": "debug",
             "inherits": ["tests-base"],
-            "configurePreset": "debug-default"
+            "configurePreset": "debug"
         },
         {
             "name": "release",
