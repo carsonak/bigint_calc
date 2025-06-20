@@ -3,7 +3,7 @@
  * @brief methods for deque types.
  */
 
-#include <string.h> /* strcpy */
+#include <string.h>  // strcpy
 
 #include "deque.h"
 #include "list_node.h"

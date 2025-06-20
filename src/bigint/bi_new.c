@@ -3,7 +3,7 @@
  * @brief methods for creating bigint types.
  */
 
-#include <string.h> /* memmove */
+#include <string.h>  // memmove
 
 #include "_bi_internals.h"
 #include "bigint.h"
@@ -11,7 +11,7 @@
 
 #include "safe_imaxabs.c"
 
-static len_type uint_to_array(u_int *const dest, uintmax_t num) ATTR_NONNULL;
+static len_ty uint_to_array(digit_ty *const dest, uintmax_t num) ATTR_NONNULL;
 
 /*!
  * @brief convert an unsigned int to a `bigint` array.
@@ -22,15 +22,15 @@ static len_type uint_to_array(u_int *const dest, uintmax_t num) ATTR_NONNULL;
  *
  * @return number of used slots of the array.
  */
-static len_type uint_to_array(u_int *const dest, uintmax_t num)
+static len_ty uint_to_array(digit_ty *const dest, uintmax_t num)
 {
-	len_type i = 0;
+	len_ty i = 0;
 
 	while (num > 0)
 	{
 		dest[i] = num % BIGINT_BASE;
 		num /= BIGINT_BASE;
-		++i;
+		i++;
 	}
 
 	return (i);
@@ -46,8 +46,8 @@ static len_type uint_to_array(u_int *const dest, uintmax_t num)
  */
 bigint *int_to_new_bi(const intmax_t n)
 {
-	u_int tmp[4] = {0};
-	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
+	digit_ty tmp[6] = {0};
+	const len_ty i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
 	bigint *const num = _bi_alloc(i);
 
 	if (num)
@@ -78,8 +78,8 @@ bigint *int_to_bi(bigint *const dest, const intmax_t n)
 	if (!dest || !dest->num)
 		return (NULL);
 
-	u_int tmp[4] = {0};
-	const len_type i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
+	digit_ty tmp[6] = {0};
+	const len_ty i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
 
 	if (n < 0)
 		dest->is_negative = true;
@@ -101,8 +101,8 @@ bigint *int_to_bi(bigint *const dest, const intmax_t n)
  * @return pointer to the `bigint`, NULL on failure.
  */
 bigint *bi_new(
-	char const *const restrict number, const radix_type base,
-	len_type *const restrict processed
+	char const *const restrict number, const radix_ty base,
+	len_ty *const restrict processed
 )
 {
 	numstr *const restrict ns = _numstr_new(number, base, processed);

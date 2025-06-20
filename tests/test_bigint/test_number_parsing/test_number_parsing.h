@@ -7,4 +7,4 @@
 
 #include "tests.h"
 
-#endif /* TEST_NUMBER_PARSING_H */
+#endif  // TEST_NUMBER_PARSING_H

@@ -3,7 +3,7 @@
  * @brief methods for multiplying bigint types.
  */
 
-#include <string.h> /* memset */
+#include <string.h>  // memset
 
 #include "_bi_internals.h"
 #include "bigint.h"
@@ -31,13 +31,13 @@ typedef struct bigint_karatsuba_split
 
 /*! zero as a `bigint`. */
 static const bigint zero = {
-	.len = 1, .is_negative = false, .num = (u_int[1]){0}
+	.len = 1, .is_negative = false, .num = (digit_ty[1]){0}
 };
 
 static bigint *long_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
 ) ATTR_NONNULL;
-static bi_split bi_split_at(const bigint *const restrict n, const len_type i);
+static bi_split bi_split_at(const bigint *const restrict n, const len_ty i);
 static bigint *karatsuba_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
 );
@@ -63,9 +63,9 @@ long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
 	if (bi_iszero(n1) || bi_iszero(n2))
 		return (_bi_alloc(1));
 
-	len_type n2_i = 0;
+	len_ty n2_i = 0;
 	/* Length of product = length of n1 + length of n2 */
-	bigint *restrict product = _bi_alloc(n1->len + n2->len);
+	bigint *restrict product = _bi_resize(NULL, n1->len + n2->len);
 	bigint *const restrict current_mul = _bi_alloc(n1->len + n2->len);
 
 	if (!product || !current_mul)
@@ -75,8 +75,8 @@ long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
 	/* Multiply every "digit" in `n2` with `n1`. */
 	for (n2_i = 0; n2_i < n2->len; ++n2_i)
 	{
-		len_type n1_i = 0;
-		l_int byt_prod = 0;
+		len_ty n1_i = 0;
+		ldigit_ty byt_prod = 0;
 
 		/* Skip multiplication by zero */
 		if (n2->num[n2_i] == 0)
@@ -89,13 +89,13 @@ long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
 		memset(current_mul->num, 0, sizeof(*current_mul->num) * n2_i);
 		for (n1_i = 0; n1_i < n1->len; ++n1_i)
 		{
-			byt_prod += (l_int)n2->num[n2_i] * n1->num[n1_i];
+			byt_prod += (ldigit_ty)n2->num[n2_i] * n1->num[n1_i];
 			current_mul->num[n2_i + n1_i] = byt_prod % BIGINT_BASE;
 			byt_prod /= BIGINT_BASE;
 		}
 
 		current_mul->num[n2_i + n1_i] = byt_prod;
-		bi_iadd(product, current_mul); /* Addittion should never fail. */
+		bi_iadd(product, current_mul);  // inplace addition should not fail.
 	}
 
 	if (n2_i < n2->len)
@@ -117,7 +117,7 @@ cleanup:
  *
  * @return a `bi_split` with both the higher digits and lower ones.
  */
-static bi_split bi_split_at(const bigint *const restrict n, const len_type i)
+static bi_split bi_split_at(const bigint *const restrict n, const len_ty i)
 {
 	bi_split split = {0};
 
@@ -152,9 +152,9 @@ static bi_split bi_split_at(const bigint *const restrict n, const len_type i)
  *
  * @return max value.
  */
-static len_type max_of_3(const len_type a, const len_type b, const len_type c)
+static len_ty max_of_3(const len_ty a, const len_ty b, const len_ty c)
 {
-	len_type maximum = a;
+	len_ty maximum = a;
 
 	if (b > maximum)
 		maximum = b;
@@ -225,7 +225,7 @@ static bigint *karatsuba_multiply(
 	if (n1->len < KARATSUBA_GAIN_CUTOFF || n2->len < KARATSUBA_GAIN_CUTOFF)
 		return (_bi_trim(long_multiply(n1, n2)));
 
-	const len_type i = (n1->len > n2->len ? n1->len / 2 : n2->len / 2);
+	const len_ty i = (n1->len > n2->len ? n1->len / 2 : n2->len / 2);
 	bigint *restrict result = NULL;
 	bi_split x = bi_split_at(n1, i);
 	bi_split y = bi_split_at(n2, i);
@@ -247,17 +247,13 @@ static bigint *karatsuba_multiply(
 
 	z3->len -= i;
 	bi_ishift_l(z3, i);
-	const len_type z2_len = z2->len;
+	const len_ty z2_len = z2->len;
 
 	/* z2 * BIGINT_BASE^(2*i) */
 	result = _bi_resize(z2, max_of_3(z2_len + i * 2, z3->len, z0->len) + 1);
 	if (!result)
 		goto cleanup;
 
-	memset(
-		&(result->num[z2_len + i * 2]), 0,
-		sizeof(*result->num) * (result->len - (z2_len + i * 2))
-	);
 	result->len = z2_len;
 	bi_ishift_l(result, i * 2);
 
@@ -348,7 +344,7 @@ bigint *bi_multiply_int(bigint *const restrict n1, const intmax_t n2)
 	if (!n1 || n1->len < 0)
 		return (NULL);
 
-	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (u_int[4]){0}};
+	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (digit_ty[6]){0}};
 
 	return (bi_multiply(n1, int_to_bi(&num2, n2)));
 }

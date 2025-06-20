@@ -3,8 +3,8 @@
  * @brief bigint division methods.
  */
 
-#include <stdio.h>  /* fprintf */
-#include <string.h> /* memmove */
+#include <stdio.h>   // fprintf
+#include <string.h>  // memmove
 
 #include "_bi_internals.h"
 #include "bigint.h"
@@ -17,13 +17,13 @@ static bigint *get_remainder(
 	const bigint *const restrict n1, const bigint *const restrict n2,
 	bigint *const restrict quotient
 ) ATTR_NONNULL;
-static l_int get_current_quotient(
+static ldigit_ty get_current_quotient(
 	bigint *const restrict slice, const bigint *const restrict n2,
 	bigint *restrict *const restrict rem
 );
-static len_type drop_next(
+static len_ty drop_next(
 	bigint *const restrict slice, const bigint *const restrict rem,
-	const bigint *const restrict n1, len_type n1_i,
+	const bigint *const restrict n1, len_ty n1_i,
 	const bigint *const restrict n2
 ) ATTR_NONNULL_POS(1, 3, 5);
 static bi_divmod_res divide(
@@ -108,14 +108,16 @@ static bigint *get_remainder(
  *
  * @return an int representing a "digit" of the quotient, -1 on error.
  */
-static l_int get_current_quotient(
+static ldigit_ty get_current_quotient(
 	bigint *const restrict slice, const bigint *const restrict n2,
 	bigint *restrict *const restrict rem
 )
 {
-	bigint q_estimate = {.len = 1, .is_negative = false, .num = (u_int[3]){0}};
+	bigint q_estimate = {
+		.len = 1, .is_negative = false, .num = (digit_ty[2]){0}
+	};
 	bool rem_gteq_divisor = 0;
-	l_int msd_slice = 0;
+	ldigit_ty msd_slice = 0;
 
 	*rem = _bi_free(*rem);
 	msd_slice = slice->num[slice->len - 1];
@@ -137,11 +139,11 @@ static l_int get_current_quotient(
 			/* q_estimate was too big. */
 			/* over_shoot = ceil(m.s.d remainder / m.s.d denominator) */
 			/* CAUTION: Possible case => overshoot.len > n2.len. */
-			u_int over_shoot =
+			digit_ty over_shoot =
 				(*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1];
 
 			if ((*rem)->num[(*rem)->len - 1] % n2->num[n2->len - 1])
-				++over_shoot;
+				over_shoot++;
 
 			bi_isubtract_int(&q_estimate, over_shoot);
 		}
@@ -149,7 +151,7 @@ static l_int get_current_quotient(
 		{
 			/* q_estimate was too small. */
 			/* under_shoot = floor(m.s.d remainder / m.s.d denominator) */
-			u_int under_shoot =
+			digit_ty under_shoot =
 				(*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1];
 
 			bi_iadd_int(&q_estimate, under_shoot);
@@ -178,15 +180,15 @@ static l_int get_current_quotient(
  *
  * @return number of "digits" dropped from n1.
  */
-static len_type drop_next(
+static len_ty drop_next(
 	bigint *const restrict slice, const bigint *const restrict rem,
-	const bigint *const restrict n1, len_type n1_i,
+	const bigint *const restrict n1, len_ty n1_i,
 	const bigint *const restrict n2
 )
 {
-	len_type due = n2->len, offset = 1;
+	len_ty due = n2->len, offset = 1;
 
-	if (rem) /* Move "digits" from remainder into slice. */
+	if (rem)  // Move "digits" from remainder into slice.
 	{
 		memcpy(
 			&slice->num[slice->len - rem->len], rem->num,
@@ -211,16 +213,16 @@ static len_type drop_next(
 	/* Drop in "digits" from n1 until due == 0. */
 	if (due)
 	{
-		n1_i -= due - 1; /* n1_i is already included. */
+		n1_i -= due - 1;  // n1_i is already included.
 		memcpy(&slice->num[offset], &n1->num[n1_i], sizeof(*n1->num) * due);
 		/* n1_i should point to the index of the next "digit" to drop. */
 		n1_i--;
 	}
 
 	if (_cmp_rev_uint_arr(&slice->num[offset], n2->num, n2->len) < 0)
-	{ /* If slice < n2 then; drop an extra "digit". */
+	{  // If slice < n2 then; drop an extra "digit".
 		slice->num[0] = n1->num[n1_i];
-		++due;
+		due++;
 	}
 
 	return (due);
@@ -240,8 +242,8 @@ static bi_divmod_res
 divide(const bigint *const restrict n1, const bigint *const restrict n2)
 {
 	bigint *current_slice = NULL;
-	len_type slice_offset = 1, q_i = 0, n1_i = 0, dropped = 0;
-	l_int current_q = 0;
+	len_ty slice_offset = 1, q_i = 0, n1_i = 0, dropped = 0;
+	ldigit_ty current_q = 0;
 	bi_divmod_res res = {0};
 
 	/* Since division is reverse of multiplication then; */
@@ -262,7 +264,7 @@ divide(const bigint *const restrict n1, const bigint *const restrict n2)
 	dropped = drop_next(current_slice, NULL, n1, n1_i, n2);
 	if (n1_i < dropped)
 		n1_i = 0;
-	else /* n1_i should point to the index of the next "digit" to drop. */
+	else  // n1_i should point to the index of the next "digit" to drop.
 		n1_i -= dropped;
 
 	slice_offset = current_slice->len - dropped;
@@ -335,14 +337,14 @@ divide_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	if (!res.quotient || !res.remainder)
 		goto cleanup;
 
-	if (neg1 && neg2) /* -8 / -5 = 8 / 5 */
+	if (neg1 && neg2)  // -8 / -5 = 8 / 5
 		goto cleanup;
 
 	if (neg1 || neg2)
 	{
 		/* -8 / 5 = -((8 / 5) + 1) */
 		/* 8 / -5 = -((8 / 5) + 1) */
-		bigint one = {.len = 1, .is_negative = false, .num = (u_int[1]){1}};
+		bigint one = {.len = 1, .is_negative = false, .num = (digit_ty[1]){1}};
 
 		res.quotient = _bi_resize(res.quotient, res.quotient->len + 1);
 		if (!res.quotient)
@@ -395,7 +397,7 @@ bi_divmod_res bi_divmod(bigint *const restrict n1, bigint *const restrict n2)
 		res = divide_negatives(n1, n2);
 	else
 	{
-		if (bi_iszero(n1)) /* then quotient and remainder == 0 */
+		if (bi_iszero(n1))  // then quotient and remainder == 0
 		{
 			res.quotient = _bi_alloc(1);
 			res.remainder = _bi_alloc(1);
@@ -404,7 +406,7 @@ bi_divmod_res bi_divmod(bigint *const restrict n1, bigint *const restrict n2)
 
 			return (res);
 		}
-		else if (quotient_is_less_than_1(n1, n2)) /* then remainder == n1 */
+		else if (quotient_is_less_than_1(n1, n2))  // then remainder == n1
 		{
 			res.quotient = _bi_alloc(1);
 			res.remainder = _bi_alloc(n1->len);

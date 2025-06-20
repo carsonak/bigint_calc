@@ -9,9 +9,9 @@
 typedef struct string_view
 {
 	/*! @public number of characters in the string excluding the terminating null byte. */
-	len_type len;
+	len_ty len;
 	/*! @public pointer to the first character in the string. */
 	const char *s;
 } string_view;
 
-#endif /* DS_STRING_VIEW_H */
+#endif  // DS_STRING_VIEW_H

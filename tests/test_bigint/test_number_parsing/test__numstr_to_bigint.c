@@ -118,7 +118,7 @@ TEST_F_TEARDOWN(valid_inputs) { tau->output = bi_delete(tau->output); }
 TEST_F(valid_inputs, test_0)
 {
 	numstr input = {.len = 1, .str = "0"};
-	u_int arr[] = {0};
+	digit_ty arr[] = {0};
 	bigint expected = {.len = sizeof(arr) / sizeof(*arr), .num = arr};
 
 	tau->output = _numstr_to_bi(&input);
@@ -132,7 +132,7 @@ TEST_F(valid_inputs, test_0)
 TEST_F(valid_inputs, test_eight9s)
 {
 	numstr input = {.len = 8, .str = "99999999"};
-	u_int arr[] = {99999999};
+	digit_ty arr[] = {99999999};
 	bigint expected = {.len = sizeof(arr) / sizeof(*arr), .num = arr};
 
 	tau->output = _numstr_to_bi(&input);
@@ -146,7 +146,7 @@ TEST_F(valid_inputs, test_eight9s)
 TEST_F(valid_inputs, test_nine9s)
 {
 	numstr input = {.len = 9, .str = "999999999"};
-	u_int arr[] = {999999999};
+	digit_ty arr[] = {999999999};
 	bigint expected = {.len = sizeof(arr) / sizeof(*arr), .num = arr};
 
 	tau->output = _numstr_to_bi(&input);
@@ -160,7 +160,7 @@ TEST_F(valid_inputs, test_nine9s)
 TEST_F(valid_inputs, test_ten9s)
 {
 	numstr input = {.len = 10, .str = "9999999999"};
-	u_int arr[] = {999999999, 9};
+	digit_ty arr[] = {999999999, 9};
 	bigint expected = {.len = sizeof(arr) / sizeof(*arr), .num = arr};
 
 	tau->output = _numstr_to_bi(&input);
@@ -175,7 +175,7 @@ TEST_F(valid_inputs, test_1234567890)
 {
 	char in_s[] = "1234567890";
 	numstr input = {.len = sizeof(in_s) - 1, .str = in_s};
-	u_int arr[] = {234567890, 1};
+	digit_ty arr[] = {234567890, 1};
 	bigint expected = {.len = sizeof(arr) / sizeof(*arr), .num = arr};
 
 	tau->output = _numstr_to_bi(&input);
@@ -190,7 +190,7 @@ TEST_F(valid_inputs, test_9876543210)
 {
 	char in_s[] = "9876543210";
 	numstr input = {.len = sizeof(in_s) - 1, .str = in_s};
-	u_int arr[] = {876543210, 9};
+	digit_ty arr[] = {876543210, 9};
 	bigint expected = {.len = sizeof(arr) / sizeof(*arr), .num = arr};
 
 	tau->output = _numstr_to_bi(&input);
@@ -214,7 +214,7 @@ TEST_F(long_nums, test_3digits)
 {
 	char in_s[] = "12345678909876543210";
 	numstr input = {.len = sizeof(in_s) - 1, .str = in_s};
-	u_int arr[] = {876543210, 345678909, 12};
+	digit_ty arr[] = {876543210, 345678909, 12};
 	bigint expected = {.len = sizeof(arr) / sizeof(*arr), .num = arr};
 
 	tau->output = _numstr_to_bi(&input);
@@ -229,7 +229,7 @@ TEST_F(long_nums, test_5digits_neg)
 {
 	char in_s[] = "4857987000000000000000012345678909876543210";
 	numstr input = {.len = sizeof(in_s) - 1, .is_negative = true, .str = in_s};
-	u_int arr[] = {876543210, 345678909, 12, 0, 4857987};
+	digit_ty arr[] = {876543210, 345678909, 12, 0, 4857987};
 	bigint expected = {
 		.len = sizeof(arr) / sizeof(*arr), .is_negative = true, .num = arr
 	};

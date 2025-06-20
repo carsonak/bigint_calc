@@ -17,12 +17,12 @@
 		#undef ATTR_ALLOC_SIZE
 		/* INFO: 1 based indexing. */
 		#define ATTR_ALLOC_SIZE(...) __attribute__((alloc_size(__VA_ARGS__)))
-	#endif /* __has_attribute(alloc_size) */
+	#endif  // __has_attribute(alloc_size)
 
 	#if __has_attribute(counted_by)
 		#undef ATTR_COUNTED_BY
 		#define ATTR_COUNTED_BY(counter) __attribute__((counted_by(counter)))
-	#endif /* __has_attribute(counted_by) */
+	#endif  // __has_attribute(counted_by)
 
 	/* https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html */
 	#if __has_attribute(malloc)
@@ -32,8 +32,8 @@
 		#if defined __GNUC__ && !__clang__
 			#undef ATTR_MALLOC_FREE
 			#define ATTR_MALLOC_FREE(...) __attribute__((malloc(__VA_ARGS__)))
-		#endif /* defined __GNUC__ && !__clang__ */
-	#endif     /* __has_attribute(malloc) */
+		#endif  // defined __GNUC__ && !__clang__
+	#endif      // __has_attribute(malloc)
 
 	#if __has_attribute(nonnull)
 		#undef ATTR_NONNULL
@@ -41,20 +41,20 @@
 		#undef ATTR_NONNULL_POS
 		/* INFO: 1 based indexing. */
 		#define ATTR_NONNULL_POS(...) __attribute__((nonnull(__VA_ARGS__)))
-	#endif /* __has_attribute(nonnull) */
+	#endif  // __has_attribute(nonnull)
 
 	#if __has_attribute(format)
 		#undef ATTR_FORMAT
 		/* INFO: 1 based indexing. */
 		#define ATTR_FORMAT(archetype, string_position, va_position)          \
 			__attribute__((format(archetype, string_position, va_position)))
-	#endif /* __has_attribute(format) */
+	#endif  // __has_attribute(format)
 
-#endif /* defined __has_attribute */
+#endif  // defined __has_attribute
 
 /* program_invocation_name */
 #ifndef _GNU_SOURCE
 	#define _GNU_SOURCE
 #endif
 
-#endif /* ATTRIBUTE_MACROS_H */
+#endif  // ATTRIBUTE_MACROS_H

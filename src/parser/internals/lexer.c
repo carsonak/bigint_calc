@@ -3,15 +3,15 @@
  * @brief lexer.
  */
 
-#include <ctype.h> /* isdigit */
+#include <ctype.h>  // isdigit
 
 #include "lexer.h"
 
-static len_type block_comment_len(const char *const str) ATTR_NONNULL;
-static len_type identifier_len(const char *const str) ATTR_NONNULL;
-static len_type line_comment_len(const char *const str) ATTR_NONNULL;
-static len_type number_len(const char *const str) ATTR_NONNULL;
-static len_type sign_len(const char *const str) ATTR_NONNULL;
+static len_ty block_comment_len(const char *const str) ATTR_NONNULL;
+static len_ty identifier_len(const char *const str) ATTR_NONNULL;
+static len_ty line_comment_len(const char *const str) ATTR_NONNULL;
+static len_ty number_len(const char *const str) ATTR_NONNULL;
+static len_ty sign_len(const char *const str) ATTR_NONNULL;
 
 /*!
  * @brief allocate and initialise memory for `lexer_token`.
@@ -53,9 +53,9 @@ void token_del(void *freeable_token)
  *
  * @return number of characters in the number, 0 if none.
  */
-static len_type number_len(const char *const str)
+static len_ty number_len(const char *const str)
 {
-	len_type i = 0;
+	len_ty i = 0;
 
 	if (!isdigit(*str))
 		return (0);
@@ -73,9 +73,9 @@ static len_type number_len(const char *const str)
  *
  * @return number of characters in the identifier, 0 if none.
  */
-static len_type identifier_len(const char *const str)
+static len_ty identifier_len(const char *const str)
 {
-	len_type i = 0;
+	len_ty i = 0;
 
 	if (!isalpha(*str) || *str != '_')
 		return (0);
@@ -93,9 +93,9 @@ static len_type identifier_len(const char *const str)
  *
  * @return number of consecutive sign characters, 0 if none.
  */
-static len_type sign_len(const char *const str)
+static len_ty sign_len(const char *const str)
 {
-	len_type i = 0;
+	len_ty i = 0;
 
 	for (; str[i] == '+' || str[i] == '-'; ++i)
 		;
@@ -110,9 +110,9 @@ static len_type sign_len(const char *const str)
  *
  * @return number of characters in a the block comment, 0 if none.
  */
-static len_type block_comment_len(const char *const str)
+static len_ty block_comment_len(const char *const str)
 {
-	len_type i = 2;
+	len_ty i = 2;
 
 	if (!(str[0] == '/' && str[1] == '*'))
 		return (0);
@@ -133,9 +133,9 @@ static len_type block_comment_len(const char *const str)
  *
  * @return number of characters in the line comment, 0 if none.
  */
-static len_type line_comment_len(const char *const str)
+static len_ty line_comment_len(const char *const str)
 {
-	len_type i = 1;
+	len_ty i = 1;
 
 	if (*str != '#')
 		return (0);
@@ -198,7 +198,7 @@ deque *lex_str(const char *restrict str)
 			str += (t.str.len - 1);
 			if (isalpha(str[1]) || str[1] == '_')
 			{
-				const len_type id_len = identifier_len(++str);
+				const len_ty id_len = identifier_len(++str);
 
 				t.id = ID;
 				t.str.len += id_len;
@@ -206,7 +206,7 @@ deque *lex_str(const char *restrict str)
 			}
 			else if (isdigit(str[1]))
 			{
-				const len_type num_len = number_len(++str);
+				const len_ty num_len = number_len(++str);
 
 				t.id = NUMBER;
 				t.str.len += num_len;
@@ -235,7 +235,7 @@ deque *lex_str(const char *restrict str)
 			str += (t.str.len - 1);
 			if (isalpha(str[1]) || str[1] == '_')
 			{
-				const len_type id_len = identifier_len(++str);
+				const len_ty id_len = identifier_len(++str);
 
 				t.id = ID;
 				t.str.len += id_len;
@@ -243,7 +243,7 @@ deque *lex_str(const char *restrict str)
 			}
 			else if (isdigit(str[1]))
 			{
-				const len_type num_len = number_len(++str);
+				const len_ty num_len = number_len(++str);
 
 				t.id = NUMBER;
 				t.str.len += num_len;

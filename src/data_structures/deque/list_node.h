@@ -51,4 +51,4 @@ char *linked_list_tostr_reversed(
 	list_node const *const restrict tail, data_tostr *stringify_func
 ) ATTR_MALLOC;
 
-#endif /* DS_LIST_NODE_TYPE_H */
+#endif  // DS_LIST_NODE_TYPE_H

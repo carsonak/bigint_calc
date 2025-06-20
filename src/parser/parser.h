@@ -5,4 +5,4 @@
 
 deque *parse_tokens(deque *const restrict tokens);
 
-#endif /* PARSING_H */
+#endif  // PARSING_H

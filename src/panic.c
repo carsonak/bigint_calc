@@ -2,7 +2,7 @@
  * @file
  */
 
-#include <stdio.h> /* fprintf */
+#include <stdio.h>  // fprintf
 
 #include "main.h"
 

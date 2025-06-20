@@ -46,7 +46,7 @@ TEST_F_TEARDOWN(incorrect_length) { tau->output = bi_delete(tau->output); }
 
 TEST_F(incorrect_length, test_all_zeros)
 {
-	u_int in1[] = {0, 0, 0, 0, 0};
+	digit_ty in1[] = {0, 0, 0, 0, 0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -57,7 +57,7 @@ TEST_F(incorrect_length, test_all_zeros)
 
 TEST_F(incorrect_length, test_lsd_is1)
 {
-	u_int in1[] = {1, 0, 0, 0, 0};
+	digit_ty in1[] = {1, 0, 0, 0, 0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -68,7 +68,7 @@ TEST_F(incorrect_length, test_lsd_is1)
 
 TEST_F(incorrect_length, test_middle_is1)
 {
-	u_int in1[] = {0, 0, 1, 0, 0};
+	digit_ty in1[] = {0, 0, 1, 0, 0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -91,7 +91,7 @@ TEST_F_TEARDOWN(incorrect_length_and_negative)
 
 TEST_F(incorrect_length_and_negative, test_all_zeros)
 {
-	u_int in1[] = {0, 0, 0, 0, 0};
+	digit_ty in1[] = {0, 0, 0, 0, 0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -102,7 +102,7 @@ TEST_F(incorrect_length_and_negative, test_all_zeros)
 
 TEST_F(incorrect_length_and_negative, test_lsd_is1)
 {
-	u_int in1[] = {1, 0, 0, 0, 0};
+	digit_ty in1[] = {1, 0, 0, 0, 0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -113,7 +113,7 @@ TEST_F(incorrect_length_and_negative, test_lsd_is1)
 
 TEST_F(incorrect_length_and_negative, test_middle_is1)
 {
-	u_int in1[] = {0, 0, 1, 0, 0};
+	digit_ty in1[] = {0, 0, 1, 0, 0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -133,35 +133,39 @@ TEST_F_TEARDOWN(normal_input) { tau->output = bi_delete(tau->output); }
 
 TEST_F(normal_input, test_0)
 {
-	tau->num1 = (bigint){.len = 1, .is_negative = false, .num = (u_int[1]){0}};
+	tau->num1 =
+		(bigint){.len = 1, .is_negative = false, .num = (digit_ty[1]){0}};
 
 	CHECK(bi_iszero(&(tau->num1)) == true);
 }
 
 TEST_F(normal_input, test_neg0)
 {
-	tau->num1 = (bigint){.len = 1, .is_negative = true, .num = (u_int[1]){0}};
+	tau->num1 =
+		(bigint){.len = 1, .is_negative = true, .num = (digit_ty[1]){0}};
 
 	CHECK(bi_iszero(&(tau->num1)) == true);
 }
 
 TEST_F(normal_input, test_1)
 {
-	tau->num1 = (bigint){.len = 1, .is_negative = false, .num = (u_int[1]){1}};
+	tau->num1 =
+		(bigint){.len = 1, .is_negative = false, .num = (digit_ty[1]){1}};
 
 	CHECK(bi_iszero(&(tau->num1)) == false);
 }
 
 TEST_F(normal_input, test_neg1)
 {
-	tau->num1 = (bigint){.len = 1, .is_negative = true, .num = (u_int[1]){1}};
+	tau->num1 =
+		(bigint){.len = 1, .is_negative = true, .num = (digit_ty[1]){1}};
 
 	CHECK(bi_iszero(&(tau->num1)) == false);
 }
 
 TEST_F(normal_input, test_msd_is1)
 {
-	u_int in1[] = {0, 0, 0, 0, 1};
+	digit_ty in1[] = {0, 0, 0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -172,7 +176,7 @@ TEST_F(normal_input, test_msd_is1)
 
 TEST_F(normal_input, test_msd_is_neg1)
 {
-	u_int in1[] = {0, 0, 0, 0, 1};
+	digit_ty in1[] = {0, 0, 0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,

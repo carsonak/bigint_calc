@@ -5,4 +5,4 @@
 #include "bigint.h"
 #include "tests.h"
 
-#endif /* TEST_BIGINT_INTERNALS_H */
+#endif  // TEST_BIGINT_INTERNALS_H

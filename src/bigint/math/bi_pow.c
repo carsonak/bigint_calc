@@ -3,7 +3,7 @@
  * @brief methods for exponentiating bigint types.
  */
 
-#include <stdio.h> /* fprintf */
+#include <stdio.h>  // fprintf
 
 #include "_bi_internals.h"
 #include "bigint.h"
@@ -86,7 +86,7 @@ bigint *bi_power(bigint *const restrict base, const intmax_t exponent)
 		if (INT_IS_ODD(exp))
 		{
 			multiply_and_replace(&y, x);
-			--exp;
+			exp--;
 		}
 
 		multiply_and_replace(&x, x);

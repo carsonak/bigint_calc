@@ -15,7 +15,7 @@ TEST(memory_allocation_failure, test_bi_realloc)
 TEST(memory_allocation_failure, test_bi_dup)
 {
 	const bigint n = {
-		.len = 1, .is_negative = false, .num = (u_int[]){DUMMY_VALUE}
+		.len = 1, .is_negative = false, .num = (digit_ty[]){DUMMY_VALUE}
 	};
 
 	CHECK(_bi_dup(&n) == NULL);

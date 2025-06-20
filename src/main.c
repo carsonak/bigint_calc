@@ -3,7 +3,7 @@
  * @brief bigint_calc.
  */
 
-#include <stdlib.h> /* NULL */
+#include <stdlib.h>  // NULL
 
 #include "main.h"
 

@@ -30,4 +30,4 @@ typedef char *(data_tostr)(void const *const data);
 typedef struct list_node list_node;
 typedef struct deque deque;
 
-#endif /* BIGINT_LIST_TYPE_TYPEDEFS_H */
+#endif  // BIGINT_LIST_TYPE_TYPEDEFS_H

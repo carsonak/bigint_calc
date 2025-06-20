@@ -1,7 +1,7 @@
 #ifndef BIGINT_CHAR_TO_INT
 #define BIGINT_CHAR_TO_INT
 
-#include <ctype.h> /* isalnum, isdigit */
+#include <ctype.h>  // isalnum, isdigit
 
 static short int char_to_int(const char c);
 
@@ -23,4 +23,4 @@ static short int char_to_int(const char c)
 	return (toupper(c) - 'A' + 10);
 }
 
-#endif /* BIGINT_CHAR_TO_INT */
+#endif  // BIGINT_CHAR_TO_INT

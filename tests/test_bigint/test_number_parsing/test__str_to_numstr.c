@@ -3,7 +3,7 @@
 struct invalid_inputs
 {
 	numstr *output;
-	len_type processed;
+	len_ty processed;
 };
 
 TEST_F_SETUP(invalid_inputs) { memset(tau, 0, sizeof(*tau)); }
@@ -97,7 +97,7 @@ TEST_F(invalid_inputs, test_pos_leading_underscore)
 struct invalid_chars_in_str
 {
 	numstr *output;
-	len_type processed;
+	len_ty processed;
 };
 
 TEST_F_SETUP(invalid_chars_in_str) { memset(tau, 0, sizeof(*tau)); }
@@ -154,7 +154,7 @@ TEST(valid_chars, test_decimals1)
 
 	for (; s[0] <= '9'; s[0]++)
 	{
-		len_type processed = 0;
+		len_ty processed = 0;
 		numstr *output = _numstr_new(s, 10, &processed);
 
 		REQUIRE(output->len == 1);
@@ -171,7 +171,7 @@ TEST(valid_chars, test_uppercase_letters1)
 
 	for (; s[0] <= 'Z'; s[0]++)
 	{
-		len_type processed = 0;
+		len_ty processed = 0;
 		numstr *output = _numstr_new(s, 36, &processed);
 
 		REQUIRE(output->len == 1);
@@ -188,7 +188,7 @@ TEST(valid_chars, test_lowercase_letters1)
 
 	for (; s[0] <= 'z' && out[0] <= 'Z'; s[0]++, out[0]++)
 	{
-		len_type processed = 0;
+		len_ty processed = 0;
 		numstr *output = _numstr_new(s, 36, &processed);
 
 		REQUIRE(output->len == 1);
@@ -207,7 +207,7 @@ TEST(valid_chars, test_decimals2)
 	{
 		for (s[1] = '0'; s[1] <= '9'; s[1]++)
 		{
-			len_type processed = 0;
+			len_ty processed = 0;
 			numstr *output = _numstr_new(s, 36, &processed);
 
 			REQUIRE(output->len == 2);
@@ -227,7 +227,7 @@ TEST(valid_chars, test_uppercase_letters2)
 	{
 		for (s[1] = 'A'; s[1] <= 'Z'; s[1]++)
 		{
-			len_type processed = 0;
+			len_ty processed = 0;
 			numstr *output = _numstr_new(s, 36, &processed);
 
 			REQUIRE(output->len == 2);
@@ -248,7 +248,7 @@ TEST(valid_chars, test_lowercase_letters2)
 		for (s[1] = 'a', out[1] = 'A'; s[1] <= 'z' && out[1] <= 'Z';
 			 s[1]++, out[1]++)
 		{
-			len_type processed = 0;
+			len_ty processed = 0;
 			numstr *output = _numstr_new(s, 36, &processed);
 
 			REQUIRE(output->len == 2);
@@ -263,7 +263,7 @@ TEST(valid_chars, test_lowercase_letters2)
 struct valid_inputs
 {
 	numstr *output;
-	len_type processed;
+	len_ty processed;
 };
 
 TEST_F_SETUP(valid_inputs) { memset(tau, 0, sizeof(*tau)); }

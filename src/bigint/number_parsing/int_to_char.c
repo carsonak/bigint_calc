@@ -21,4 +21,4 @@ static char int_to_char(const unsigned short int num)
 	return ('A' + (num - 10));
 }
 
-#endif /* BIGINT_INT_TO_CHAR */
+#endif  // BIGINT_INT_TO_CHAR

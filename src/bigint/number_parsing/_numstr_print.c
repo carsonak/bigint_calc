@@ -9,13 +9,13 @@
  *
  * @return number of bytes printed.
  */
-len_type
+len_ty
 _numstr_print(FILE *const restrict stream, const numstr *const restrict num)
 {
 	if (!num || !num->str)
 		return (fprintf(stream, "NULL\n"));
 
-	len_type bytes_printed = fprintf(stream, "base%u ", num->base);
+	len_ty bytes_printed = fprintf(stream, "base%u ", num->base);
 	if (bytes_printed < 0)
 		return (bytes_printed);
 

@@ -1,81 +1,92 @@
 #ifndef BIGINT_TYPES_H
 #define BIGINT_TYPES_H
 
-#include <inttypes.h> /* *printf macros */
+#include <inttypes.h>  // *printf macros
 #include <limits.h>
-#include <stdint.h> /* fixed width types */
+#include <stdint.h>  // fixed width types
 
 #include "types.h"
 
 #if UINTMAX_MAX >= UINT64_MAX
 
-typedef uint32_t u_int;
-typedef int64_t l_int;
-typedef uint64_t ul_int;
+typedef int32_t digit_ty;
+typedef int64_t ldigit_ty;
+typedef uint32_t udigit_ty;
+typedef uint64_t uldigit_ty;
 
 	/* Minimums and maximums. */
 
-	#define U_INT_MAX UINT32_MAX
-	#define L_INT_MIN INT64_MIN
-	#define L_INT_MAX INT64_MAX
-	#define UL_INT_MAX UINT64_MAX
+	#define DIGIT_TY_max INT32_MAX
+	#define DIGIT_TY_min INT32_MIN
+	#define LDIGIT_TY_max INT64_MAX
+	#define LDIGIT_TY_min INT64_MIN
+	#define UDIGIT_TY_max UINT32_MAX
+	#define ULDIGIT_TY_max UINT64_MAX
 
 	/* *printf conversion specifiers. */
 
-	#define PRIu_int PRIu32
-	#define PRIl_int PRId64
-	#define PRIul_int PRIu64
+	#define PRI_digit PRIi32
+	#define PRI_ldigit PRId64
+	#define PRI_udigit PRIu32
+	#define PRI_uldigit PRIu64
 
-	/* Radix for the `bigint` type. */
-	#define BIGINT_BASE 1000000000U
+	#define BIGINT_BASE 1000000000  //!< Radix of a `bigint`.
 
-#elif UINTMAX_MAX == UINT32_MAX
+#elif UINTMAX_MAX >= UINT32_MAX
 
-typedef uint16_t u_int;
-typedef int32_t l_int;
-typedef uint32_t ul_int;
+typedef int16_t digit_ty;
+typedef int32_t ldigit_ty;
+typedef uint16_t udigit_ty;
+typedef uint32_t uldigit_ty;
 
 	/* Minimums and maximums. */
 
-	#define U_INT_MAX UINT16_MAX
-	#define L_INT_MIN INT32_MIN
-	#define L_INT_MAX INT32_MAX
-	#define UL_INT_MAX UINT32_MAX
+	#define DIGIT_TY_max INT16_MAX
+	#define DIGIT_TY_min INT16_MIN
+	#define LDIGIT_TY_max INT32_MAX
+	#define LDIGIT_TY_min INT32_MIN
+	#define UDIGIT_TY_max UINT16_MAX
+	#define ULDIGIT_TY_max UINT32_MAX
 
 	/* *printf conversion specifiers. */
 
-	#define PRIu_int PRIu16
-	#define PRIl_int PRId32
-	#define PRIul_int PRIu32
+	#define PRI_digit PRIi16
+	#define PRI_ldigit PRId32
+	#define PRI_udigit PRIu16
+	#define PRI_uldigit PRIu32
 
 	/* Radix for the `bigint` type. */
-	#define BIGINT_BASE 10000U
+	#define BIGINT_BASE 10000
 
-#elif UINTMAX_MAX == UINT16_MAX
+#elif UINTMAX_MAX >= UINT16_MAX
 
-typedef uint8_t u_int;
-typedef int16_t l_int;
-typedef uint16_t ul_int;
+typedef int8_t digit_ty;
+typedef int16_t ldigit_ty;
+typedef uint8_t udigit_ty;
+typedef uint16_t uldigit_ty;
 
 	/* Minimums and maximums. */
 
-	#define U_INT_MAX UINT8_MAX
-	#define L_INT_MIN INT16_MIN
-	#define L_INT_MAX INT16_MAX
-	#define UL_INT_MAX UINT16_MAX
+	#define DIGIT_TY_max INT8_MAX
+	#define DIGIT_TY_min INT8_MIN
+	#define LDIGIT_TY_max INT16_MAX
+	#define LDIGIT_TY_min INT16_MIN
+	#define UDIGIT_TY_max UINT8_MAX
+	#define ULDIGIT_TY_max UINT16_MAX
 
 	/* *printf conversion specifiers. */
 
-	#define PRIu_int PRIu8
-	#define PRIl_int PRId16
-	#define PRIul_int PRIu16
+	#define PRI_digit PRIi8
+	#define PRI_ldigit PRId16
+	#define PRI_udigit PRIu8
+	#define PRI_uldigit PRIu16
 
 	/* Radix for the `bigint` type. */
-	#define BIGINT_BASE 100U
+	#define BIGINT_BASE 100
 
 #else
-	#error "Unknown pointer size or missing integer size macros."
-#endif /* UINTMAX_MAX >= UINT64_MAX */
+	#error "uintmax_t types less than 16 bits wide are not supported."
+#endif  // UINTMAX_MAX >= UINT64_MAX
 
 typedef struct bigint bigint;
 
@@ -91,4 +102,4 @@ typedef struct bigint_division_result
 	bigint *restrict remainder;
 } bi_divmod_res;
 
-#endif /* BIGINT_TYPES_H */
+#endif  // BIGINT_TYPES_H

@@ -9,7 +9,7 @@
  *
  * @return a pointer to a `numstr`, NULL on failure.
  */
-numstr *_numstr_alloc(len_type len)
+numstr *_numstr_alloc(len_ty len)
 {
 	if (len < 0)
 		return (NULL);

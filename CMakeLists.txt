@@ -10,7 +10,7 @@ include(CheckIPOSupported)
 check_ipo_supported(RESULT LTO_available)
 if(LTO_available)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION
-        TRUE
+        "$<NOT:$<CONFIG:Debug>>"
         CACHE BOOL "Enable Interprocedural Optimisations."
     )
 endif()

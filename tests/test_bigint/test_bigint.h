@@ -6,4 +6,4 @@
 
 #include "tests.h"
 
-#endif /* TEST_BIGINT_H */
+#endif  // TEST_BIGINT_H

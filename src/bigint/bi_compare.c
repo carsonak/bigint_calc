@@ -15,7 +15,7 @@
  *
  * @return +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
-l_int bi_compare_int(bigint *const n1, const intmax_t n2)
+ldigit_ty bi_compare_int(bigint *const n1, const intmax_t n2)
 {
 	if (!n1 || n1->len < 0)
 		return (0);
@@ -32,12 +32,12 @@ l_int bi_compare_int(bigint *const n1, const intmax_t n2)
  *
  * @return +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
-l_int _bi_compare_int_const(const bigint *const n1, const intmax_t n2)
+ldigit_ty _bi_compare_int_const(const bigint *const n1, const intmax_t n2)
 {
 	if (!n1 || n1->len < 0)
 		return (0);
 
-	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (u_int[4]){0}};
+	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (digit_ty[6]){0}};
 
 	return (_bi_compare_const(n1, int_to_bi(&num2, n2)));
 }
@@ -51,7 +51,7 @@ l_int _bi_compare_int_const(const bigint *const n1, const intmax_t n2)
  *
  * @return +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
-l_int bi_compare(bigint *const n1, bigint *const n2)
+ldigit_ty bi_compare(bigint *const n1, bigint *const n2)
 {
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (0);
@@ -68,7 +68,7 @@ l_int bi_compare(bigint *const n1, bigint *const n2)
  *
  * @return +ve number if n1 > n2, -ve number if n1 < n2 else 0.
  */
-l_int _bi_compare_const(const bigint *const n1, const bigint *const n2)
+ldigit_ty _bi_compare_const(const bigint *const n1, const bigint *const n2)
 {
 	if ((!n1 || !n2) || (n1->len < 0 || n2->len < 0))
 		return (0);
@@ -106,26 +106,26 @@ l_int _bi_compare_const(const bigint *const n1, const bigint *const n2)
  *
  * @return +ve number if arr1 > arr2, -ve number if arr1 < arr2 else 0.
  */
-l_int _cmp_rev_uint_arr(
-	u_int const *const arr1, u_int const *const arr2, len_type len
+ldigit_ty _cmp_rev_uint_arr(
+	digit_ty const *const arr1, digit_ty const *const arr2, len_ty len
 )
 {
 	if ((!arr1 && !arr2) || len < 0)
 		return (0);
 
-	len_type i = len > 0 ? len - 1 : 0;
+	len_ty i = len > 0 ? len - 1 : 0;
 
 	if (!arr1)
-		return ((l_int)0 - arr2[i]);
+		return ((ldigit_ty)0 - arr2[i]);
 
 	if (!arr2)
 		return (arr1[i]);
 
 	for (; i > 0; i--)
 	{
-		if ((l_int)arr1[i] - arr2[i])
+		if ((ldigit_ty)arr1[i] - arr2[i])
 			break;
 	}
 
-	return ((l_int)arr1[i] - arr2[i]);
+	return ((ldigit_ty)arr1[i] - arr2[i]);
 }

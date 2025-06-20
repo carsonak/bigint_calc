@@ -20,7 +20,7 @@
  */
 bool bi_iszero(bigint const *const n)
 {
-	len_type i = 0;
+	len_ty i = 0;
 
 	if (!n || !n->num || n->len < 1)
 		return (false);

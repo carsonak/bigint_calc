@@ -2,9 +2,9 @@
 #define BIGINT_COUNT_DIGITS_C
 
 #include "bigint_types.h"
-#include <stdint.h> /* uintmax_t */
+#include <stdint.h>  // uintmax_t
 
-static unsigned int count_digits(uintmax_t num, const radix_type base);
+static unsigned int count_digits(uintmax_t num, const radix_ty base);
 
 /*!
  * @brief calculate how many digits can represent a number in the given base.
@@ -14,17 +14,17 @@ static unsigned int count_digits(uintmax_t num, const radix_type base);
  *
  * @return number of digits calculated.
  */
-static unsigned int count_digits(uintmax_t num, const radix_type base)
+static unsigned int count_digits(uintmax_t num, const radix_ty base)
 {
 	unsigned int d = 0;
 
 	while (num)
 	{
-		++d;
+		d++;
 		num /= base;
 	}
 
 	return (d);
 }
 
-#endif /* BIGINT_COUNT_DIGITS_C */
+#endif  // BIGINT_COUNT_DIGITS_C

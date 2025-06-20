@@ -5,9 +5,9 @@
 
 #include "xalloc.h"
 
-#include <inttypes.h> /* printf macros for variable stdint types. */
-#include <stdio.h>    /* perror */
-#include <string.h>   /* strcpy, strlen */
+#include <inttypes.h>  // printf macros for variable stdint types.
+#include <stdio.h>     // perror
+#include <string.h>    // strcpy, strlen
 
 /*!
  * @brief allocate memory with malloc and report errors.
@@ -16,7 +16,7 @@
  *
  * @return a pointer to the memory area, NULL on failure.
  */
-void *xmalloc(const len_type size)
+void *xmalloc(const len_ty size)
 {
 	if (size < 0)
 	{
@@ -40,7 +40,7 @@ void *xmalloc(const len_type size)
  *
  * @return a pointer to the memory area, NULL on failure.
  */
-void *xcalloc(const len_type items, const len_type sizeof_item)
+void *xcalloc(const len_ty items, const len_ty sizeof_item)
 {
 	if (items < 0)
 	{
@@ -72,7 +72,7 @@ void *xcalloc(const len_type items, const len_type sizeof_item)
  *
  * @return pointer to the resized memory area, NULL on failure.
  */
-void *xrealloc(void *nullable_ptr, const len_type size)
+void *xrealloc(void *nullable_ptr, const len_ty size)
 {
 	if (size < 0)
 	{
@@ -96,7 +96,7 @@ void *xrealloc(void *nullable_ptr, const len_type size)
  * @return pointer to the resized memory area, NULL on failure.
  *
  */
-void *xrealloc_free_on_fail(void *nullable_ptr, const len_type size)
+void *xrealloc_free_on_fail(void *nullable_ptr, const len_ty size)
 {
 	void *const restrict ptr = xrealloc(nullable_ptr, size);
 

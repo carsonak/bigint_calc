@@ -1,5 +1,5 @@
-#include <inttypes.h> /* strtoumax */
-#include <string.h>   /* strncpy */
+#include <inttypes.h>  // strtoumax
+#include <string.h>    // strncpy
 
 #include "_bi_internals.h"
 #include "bigint.h"
@@ -22,7 +22,7 @@ bigint *_numstr_to_bi(const numstr *const restrict nstr)
 	if (!nstr || nstr->len < 1 || !nstr->str || !isalnum(nstr->str[0]))
 		return (NULL);
 
-	len_type nstr_i = 0, bi_i = 0;
+	len_ty nstr_i = 0, bi_i = 0;
 	/* sizeof(`bigint`) == */
 	/* ceil(numstr.len / no. of digits that can represent BIGINT_BASE) */
 	unsigned int digits = count_digits(BIGINT_BASE - 1, 10);
@@ -71,8 +71,8 @@ bigint *_anybase_to_bi(const numstr *const restrict num)
 	if (!num || num->len < 1 || !num->str || !is_valid_radix(num->base))
 		return (NULL);
 
-	len_type i = 0;
-	bigint *bigint_final = _bi_alloc(1); /* num = 0 */
+	len_ty i = 0;
+	bigint *bigint_final = _bi_alloc(1);  // num = 0
 
 	if (!bigint_final)
 		return (NULL);
@@ -85,7 +85,7 @@ bigint *_anybase_to_bi(const numstr *const restrict num)
 		bigint_final = bi_multiply_int(bigint_final, num->base);
 		tmp = _bi_free(tmp);
 		int cval = char_to_int(num->str[i]);
-		if (cval < 0 || (u_int)cval >= num->base)
+		if (cval < 0 || (udigit_ty)cval >= num->base)
 		{
 			fprintf(
 				stderr, "ParsingError: Invalid character '%c' for base%u\n",

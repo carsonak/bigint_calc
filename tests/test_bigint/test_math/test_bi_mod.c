@@ -20,7 +20,7 @@ TEST_F(invalid_inputs, test_null_modulo_null)
 
 TEST_F(invalid_inputs, test_1_modulo_null)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -30,7 +30,7 @@ TEST_F(invalid_inputs, test_1_modulo_null)
 
 TEST_F(invalid_inputs, test_null_modulo_1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -40,7 +40,7 @@ TEST_F(invalid_inputs, test_null_modulo_1)
 
 TEST_F(invalid_inputs, test_0_modulo_null)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -50,7 +50,7 @@ TEST_F(invalid_inputs, test_0_modulo_null)
 
 TEST_F(invalid_inputs, test_null_modulo_0)
 {
-	u_int in2[1] = {0};
+	digit_ty in2[1] = {0};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -60,7 +60,7 @@ TEST_F(invalid_inputs, test_null_modulo_0)
 
 TEST_F(invalid_inputs, test_minus1_modulo_null)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -71,7 +71,7 @@ TEST_F(invalid_inputs, test_minus1_modulo_null)
 
 TEST_F(invalid_inputs, test_null_modulo_minus1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -95,7 +95,7 @@ TEST_F_TEARDOWN(zero_len_arrays) { tau->output = bi_delete(tau->output); };
 
 TEST_F(zero_len_arrays, test_null_modulo_largenum)
 {
-	u_int in2[] = {0, 5, 4, 3, 2, 1};
+	digit_ty in2[] = {0, 5, 4, 3, 2, 1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -121,7 +121,7 @@ TEST_F_TEARDOWN(division_by_zero) { tau->output = bi_delete(tau->output); };
 
 TEST_F(division_by_zero, test_0_mod_0)
 {
-	u_int in1[1] = {0}, in2[1] = {0};
+	digit_ty in1[1] = {0}, in2[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -133,7 +133,7 @@ TEST_F(division_by_zero, test_0_mod_0)
 
 TEST_F(division_by_zero, test_1_mod_0)
 {
-	u_int in1[] = {1}, in2[1] = {0};
+	digit_ty in1[] = {1}, in2[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;

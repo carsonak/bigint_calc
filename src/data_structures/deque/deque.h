@@ -28,4 +28,4 @@ char *dq_tostr(deque const *const restrict dq, data_tostr *print_data);
 char *
 dq_tostr_reversed(deque const *const restrict dq, data_tostr *print_data);
 
-#endif /* DS_DEQUE_TYPE_H */
+#endif  // DS_DEQUE_TYPE_H

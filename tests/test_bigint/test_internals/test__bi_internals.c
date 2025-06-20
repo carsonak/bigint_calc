@@ -2,7 +2,7 @@
 
 TEST(bigint_free, null_pointer) { CHECK_PTR_EQ(_bi_free(NULL), NULL); }
 
-#define TESTS_BIGINT_LENGTH (len_type)10
+#define TESTS_BIGINT_LENGTH (len_ty)10
 
 struct bigint_alloc
 {
@@ -122,7 +122,7 @@ TEST_F(bigint_resize_sized, resize_to_smaller_len_bigint)
 	tau->output->num[0] = DUMMY_VALUE;
 	tau->output->num[TESTS_BIGINT_LENGTH - 1] = DUMMY_VALUE;
 
-	const len_type new_len = TESTS_BIGINT_LENGTH - 6;
+	const len_ty new_len = TESTS_BIGINT_LENGTH - 6;
 	tau->output = _bi_resize(tau->output, new_len);
 
 	REQUIRE_PTR_NE(tau->output, NULL);
@@ -141,7 +141,7 @@ TEST_F(bigint_resize_sized, resize_to_bigger_len_bigint)
 	tau->output->num[0] = DUMMY_VALUE;
 	tau->output->num[TESTS_BIGINT_LENGTH - 1] = DUMMY_VALUE;
 
-	const len_type new_len = TESTS_BIGINT_LENGTH + 3;
+	const len_ty new_len = TESTS_BIGINT_LENGTH + 3;
 	tau->output = _bi_resize(tau->output, new_len);
 
 	REQUIRE_PTR_NE(tau->output, NULL);
@@ -161,7 +161,7 @@ TEST_F(bigint_resize_sized, resize_to_even_bigger_len_bigint)
 	tau->output->num[0] = DUMMY_VALUE;
 	tau->output->num[TESTS_BIGINT_LENGTH - 1] = DUMMY_VALUE;
 
-	const len_type new_len = TESTS_BIGINT_LENGTH * 10;
+	const len_ty new_len = TESTS_BIGINT_LENGTH * 10;
 	tau->output = _bi_resize(tau->output, new_len);
 
 	REQUIRE_PTR_NE(tau->output, NULL);
@@ -181,7 +181,7 @@ TEST_F(bigint_resize_sized, resize_to_even_bigger_len_bigint)
 
 TEST(trim_invalid_inputs, test_NULL)
 {
-	_bi_trim(NULL); /* should handle NULL safely */
+	_bi_trim(NULL);  // should handle NULL safely
 }
 
 struct trim_null_array
@@ -247,8 +247,8 @@ TEST_F_TEARDOWN(trim_trailing_zeros) { tau->output = bi_delete(tau->output); }
 
 TEST_F(trim_trailing_zeros, test_one_zero)
 {
-	u_int in1[] = {0};
-	u_int out[] = {0};
+	digit_ty in1[] = {0};
+	digit_ty out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -269,8 +269,8 @@ TEST_F(trim_trailing_zeros, test_one_zero)
 
 TEST_F(trim_trailing_zeros, test_several_zeros)
 {
-	u_int in1[] = {0, 0, 0, 0};
-	u_int out[] = {0};
+	digit_ty in1[] = {0, 0, 0, 0};
+	digit_ty out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -291,8 +291,8 @@ TEST_F(trim_trailing_zeros, test_several_zeros)
 
 TEST_F(trim_trailing_zeros, test_0001)
 {
-	u_int in1[] = {1, 0, 0, 0};
-	u_int out[] = {1};
+	digit_ty in1[] = {1, 0, 0, 0};
+	digit_ty out[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -313,8 +313,8 @@ TEST_F(trim_trailing_zeros, test_0001)
 
 TEST_F(trim_trailing_zeros, test_0100)
 {
-	u_int in1[] = {0, 0, 1, 0};
-	u_int out[] = {0, 0, 1};
+	digit_ty in1[] = {0, 0, 1, 0};
+	digit_ty out[] = {0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -347,8 +347,8 @@ TEST_F_TEARDOWN(trim_trailing_zeros_negative)
 
 TEST_F(trim_trailing_zeros_negative, test_one_zero)
 {
-	u_int in1[] = {0};
-	u_int out[] = {0};
+	digit_ty in1[] = {0};
+	digit_ty out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -369,8 +369,8 @@ TEST_F(trim_trailing_zeros_negative, test_one_zero)
 
 TEST_F(trim_trailing_zeros_negative, test_several_zeros)
 {
-	u_int in1[] = {0, 0, 0, 0};
-	u_int out[] = {0};
+	digit_ty in1[] = {0, 0, 0, 0};
+	digit_ty out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -391,8 +391,8 @@ TEST_F(trim_trailing_zeros_negative, test_several_zeros)
 
 TEST_F(trim_trailing_zeros_negative, test_0001)
 {
-	u_int in1[] = {1, 0, 0, 0};
-	u_int out[] = {1};
+	digit_ty in1[] = {1, 0, 0, 0};
+	digit_ty out[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -413,8 +413,8 @@ TEST_F(trim_trailing_zeros_negative, test_0001)
 
 TEST_F(trim_trailing_zeros_negative, test_0100)
 {
-	u_int in1[] = {0, 0, 1, 0};
-	u_int out[] = {0, 0, 1};
+	digit_ty in1[] = {0, 0, 1, 0};
+	digit_ty out[] = {0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -444,8 +444,8 @@ TEST_F_TEARDOWN(trim_normal_input) { tau->output = bi_delete(tau->output); }
 
 TEST_F(trim_normal_input, test_1)
 {
-	u_int in1[] = {1};
-	u_int out[] = {1};
+	digit_ty in1[] = {1};
+	digit_ty out[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -466,8 +466,8 @@ TEST_F(trim_normal_input, test_1)
 
 TEST_F(trim_normal_input, test_neg1)
 {
-	u_int in1[] = {1};
-	u_int out[] = {1};
+	digit_ty in1[] = {1};
+	digit_ty out[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -488,8 +488,8 @@ TEST_F(trim_normal_input, test_neg1)
 
 TEST_F(trim_normal_input, test_100)
 {
-	u_int in1[] = {0, 0, 1};
-	u_int out[] = {0, 0, 1};
+	digit_ty in1[] = {0, 0, 1};
+	digit_ty out[] = {0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -510,8 +510,8 @@ TEST_F(trim_normal_input, test_100)
 
 TEST_F(trim_normal_input, test_neg100)
 {
-	u_int in1[] = {0, 0, 1};
-	u_int out[] = {0, 0, 1};
+	digit_ty in1[] = {0, 0, 1};
+	digit_ty out[] = {0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,

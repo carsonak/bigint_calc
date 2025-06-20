@@ -1,7 +1,7 @@
 #ifndef NUMSTR_INTERNALS_H
 #define NUMSTR_INTERNALS_H
 
-#include <stdbool.h> /* bool */
+#include <stdbool.h>  // bool
 
 #include "attribute_macros.h"
 #include "types.h"
@@ -13,11 +13,11 @@
 struct numstr
 {
 	/*! @protected length of the string. */
-	len_type len;
+	len_ty len;
 	/*! @protected a bool indicating signedness of the number. */
 	bool is_negative;
 	/*! @protected an int in the range 2-36 indicating the radix of the number. */
-	radix_type base;
+	radix_ty base;
 	/*! @protected pointer to the string. */
 	char *restrict str;
 };
@@ -25,6 +25,6 @@ struct numstr
 typedef struct numstr numstr;
 
 void *_numstr_free(numstr *freeable_ptr);
-numstr *_numstr_alloc(len_type len) ATTR_MALLOC ATTR_MALLOC_FREE(_numstr_free);
+numstr *_numstr_alloc(len_ty len) ATTR_MALLOC ATTR_MALLOC_FREE(_numstr_free);
 
-#endif /* NUMSTR_INTERNALS_H */
+#endif  // NUMSTR_INTERNALS_H

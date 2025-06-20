@@ -22,7 +22,7 @@ TEST_F(invalid_inputs, test_null_times_null)
 
 TEST_F(invalid_inputs, test_1_times_null)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -33,7 +33,7 @@ TEST_F(invalid_inputs, test_1_times_null)
 
 TEST_F(invalid_inputs, test_null_times_1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -44,7 +44,7 @@ TEST_F(invalid_inputs, test_null_times_1)
 
 TEST_F(invalid_inputs, test_0_times_null)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -55,7 +55,7 @@ TEST_F(invalid_inputs, test_0_times_null)
 
 TEST_F(invalid_inputs, test_null_times_0)
 {
-	u_int in2[1] = {0};
+	digit_ty in2[1] = {0};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -66,7 +66,7 @@ TEST_F(invalid_inputs, test_null_times_0)
 
 TEST_F(invalid_inputs, test_neg1_times_null)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -78,7 +78,7 @@ TEST_F(invalid_inputs, test_neg1_times_null)
 
 TEST_F(invalid_inputs, test_null_times_neg1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -101,7 +101,7 @@ TEST_F(invalid_inputs, test_NaN_times_NaN)
 
 TEST_F(invalid_inputs, test_4490998_times_NaN)
 {
-	u_int in1[] = {4490998};
+	digit_ty in1[] = {4490998};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -115,7 +115,7 @@ TEST_F(invalid_inputs, test_4490998_times_NaN)
 
 TEST_F(invalid_inputs, test_NaN_times_largenum)
 {
-	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+	digit_ty in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = false,

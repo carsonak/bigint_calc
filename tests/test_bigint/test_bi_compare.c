@@ -16,7 +16,7 @@ TEST(invalid_inputs, test_NULL_cmp_NULL)
 
 TEST_F(invalid_inputs, test_0_cmp_NULL)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -25,7 +25,7 @@ TEST_F(invalid_inputs, test_0_cmp_NULL)
 
 TEST_F(invalid_inputs, test_NULL_cmp_0)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -34,7 +34,7 @@ TEST_F(invalid_inputs, test_NULL_cmp_0)
 
 TEST_F(invalid_inputs, test_1_cmp_NULL)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -43,7 +43,7 @@ TEST_F(invalid_inputs, test_1_cmp_NULL)
 
 TEST_F(invalid_inputs, test_NULL_cmp_1)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -76,7 +76,7 @@ TEST_F(null_arrays, test_NaN_cmp_NaN)
 
 TEST_F(null_arrays, test_0_cmp_NaN)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -85,7 +85,7 @@ TEST_F(null_arrays, test_0_cmp_NaN)
 
 TEST_F(null_arrays, test_NaN_cmp_0)
 {
-	u_int in2[1] = {0};
+	digit_ty in2[1] = {0};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -94,7 +94,7 @@ TEST_F(null_arrays, test_NaN_cmp_0)
 
 TEST_F(null_arrays, test_1_cmp_NaN)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -103,7 +103,7 @@ TEST_F(null_arrays, test_1_cmp_NaN)
 
 TEST_F(null_arrays, test_NaN_cmp_1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -122,8 +122,8 @@ TEST_F_TEARDOWN(trailing_zeros) { (void)tau; }
 TEST_F(trailing_zeros, test_long0_cmp_short0)
 {
 	/* clang-format off */
-	u_int in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476, 0, 0, 0, 0, 0, 0};
-	u_int in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 99990, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	digit_ty in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476, 0, 0, 0, 0, 0, 0};
+	digit_ty in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 99990, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	/* clang-format on */
 
 	tau->num1.len = (sizeof(in1) / sizeof(*in1));
@@ -137,8 +137,8 @@ TEST_F(trailing_zeros, test_long0_cmp_short0)
 TEST_F(trailing_zeros, test_long_cmp_short0)
 {
 	/* clang-format off */
-	u_int in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476};
-	u_int in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 9999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	digit_ty in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476};
+	digit_ty in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 9999, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	/* clang-format on */
 
 	tau->num1.len = (sizeof(in1) / sizeof(*in1));
@@ -152,8 +152,8 @@ TEST_F(trailing_zeros, test_long_cmp_short0)
 TEST_F(trailing_zeros, test_long0_cmp_short)
 {
 	/* clang-format off */
-	u_int in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476, 0, 0, 0, 0, 0, 0};
-	u_int in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 9999};
+	digit_ty in1[] = {1, 8272, 3, 4, 12345, 5, 6, 9, 7, 8, 9284, 1098, 38476, 0, 0, 0, 0, 0, 0};
+	digit_ty in2[] = {9, 8, 49247, 3, 2, 83749, 64154, 9999};
 	/* clang-format on */
 
 	tau->num1.len = (sizeof(in1) / sizeof(*in1));
@@ -175,8 +175,8 @@ TEST_F_TEARDOWN(compare_arrays) { (void)tau; }
 
 TEST_F(compare_arrays, test_0_cmp_0)
 {
-	u_int in1[1] = {0};
-	u_int in2[1] = {0};
+	digit_ty in1[1] = {0};
+	digit_ty in2[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -188,8 +188,8 @@ TEST_F(compare_arrays, test_0_cmp_0)
 
 TEST_F(compare_arrays, test_1_cmp_1)
 {
-	u_int in1[] = {1};
-	u_int in2[] = {1};
+	digit_ty in1[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -201,8 +201,8 @@ TEST_F(compare_arrays, test_1_cmp_1)
 
 TEST_F(compare_arrays, test_1_cmp_0)
 {
-	u_int in1[] = {1};
-	u_int in2[1] = {0};
+	digit_ty in1[] = {1};
+	digit_ty in2[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -214,8 +214,8 @@ TEST_F(compare_arrays, test_1_cmp_0)
 
 TEST_F(compare_arrays, test_0_cmp_1)
 {
-	u_int in1[1] = {0};
-	u_int in2[] = {1};
+	digit_ty in1[1] = {0};
+	digit_ty in2[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -227,8 +227,8 @@ TEST_F(compare_arrays, test_0_cmp_1)
 
 TEST_F(compare_arrays, test_2000000001_cmp_1000000002)
 {
-	u_int in1[] = {1, 2};
-	u_int in2[] = {2, 1};
+	digit_ty in1[] = {1, 2};
+	digit_ty in2[] = {2, 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -240,8 +240,8 @@ TEST_F(compare_arrays, test_2000000001_cmp_1000000002)
 
 TEST_F(compare_arrays, test_1000000002_cmp_2000000001)
 {
-	u_int in1[] = {2, 1};
-	u_int in2[] = {1, 2};
+	digit_ty in1[] = {2, 1};
+	digit_ty in2[] = {1, 2};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -262,8 +262,8 @@ TEST_F_TEARDOWN(compare_long_arrays) { (void)tau; }
 
 TEST_F(compare_long_arrays, test_eqlong_cmp_eqlong)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
-	u_int in2[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
+	digit_ty in2[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -275,8 +275,8 @@ TEST_F(compare_long_arrays, test_eqlong_cmp_eqlong)
 
 TEST_F(compare_long_arrays, test_biglong_cmp_smalllong)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
-	u_int in2[] = {9, 8, 7, 6, 5, 5, 4, 3, 2, 1};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
+	digit_ty in2[] = {9, 8, 7, 6, 5, 5, 4, 3, 2, 1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -288,8 +288,8 @@ TEST_F(compare_long_arrays, test_biglong_cmp_smalllong)
 
 TEST_F(compare_long_arrays, test_smalllong_cmp_biglong)
 {
-	u_int in1[] = {9, 8, 7, 6, 5, 5, 4, 3, 2, 1};
-	u_int in2[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
+	digit_ty in1[] = {9, 8, 7, 6, 5, 5, 4, 3, 2, 1};
+	digit_ty in2[] = {1, 2, 3, 4, 5, 5, 6, 7, 8, 9};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -310,8 +310,8 @@ TEST_F_TEARDOWN(compare_different_len_arrays) { (void)tau; }
 
 TEST_F(compare_different_len_arrays, test_long_cmp_short)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 5, 6, 9, 7, 8};
-	u_int in2[] = {9, 8, 4, 3, 2, 9};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 5, 6, 9, 7, 8};
+	digit_ty in2[] = {9, 8, 4, 3, 2, 9};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -323,8 +323,8 @@ TEST_F(compare_different_len_arrays, test_long_cmp_short)
 
 TEST_F(compare_different_len_arrays, test_short_cmp_long)
 {
-	u_int in1[] = {9, 8, 4, 3, 2, 9};
-	u_int in2[] = {1, 2, 3, 4, 5, 5, 6, 9, 7, 8};
+	digit_ty in1[] = {9, 8, 4, 3, 2, 9};
+	digit_ty in2[] = {1, 2, 3, 4, 5, 5, 6, 9, 7, 8};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -345,8 +345,8 @@ TEST_F_TEARDOWN(negative_numbers) { (void)tau; }
 
 TEST_F(negative_numbers, test_neg1_cmp_neg1)
 {
-	u_int in1[] = {1};
-	u_int in2[] = {1};
+	digit_ty in1[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -360,8 +360,8 @@ TEST_F(negative_numbers, test_neg1_cmp_neg1)
 
 TEST_F(negative_numbers, test_1_cmp_neg1)
 {
-	u_int in1[] = {1};
-	u_int in2[] = {1};
+	digit_ty in1[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -374,8 +374,8 @@ TEST_F(negative_numbers, test_1_cmp_neg1)
 
 TEST_F(negative_numbers, test_neg1_cmp_1)
 {
-	u_int in1[] = {1};
-	u_int in2[] = {1};
+	digit_ty in1[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -425,7 +425,7 @@ TEST_F_TEARDOWN(simple_compares) { (void)tau; }
 
 TEST_F(simple_compares, test_0_cmp_0i)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -434,7 +434,7 @@ TEST_F(simple_compares, test_0_cmp_0i)
 
 TEST_F(simple_compares, test_1_cmp_1i)
 {
-	u_int in1[1] = {1};
+	digit_ty in1[1] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -443,7 +443,7 @@ TEST_F(simple_compares, test_1_cmp_1i)
 
 TEST_F(simple_compares, test_neg1_cmp_neg1i)
 {
-	u_int in1[1] = {1};
+	digit_ty in1[1] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.is_negative = true;
@@ -453,7 +453,7 @@ TEST_F(simple_compares, test_neg1_cmp_neg1i)
 
 TEST_F(simple_compares, test_0_cmp_1i)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -462,7 +462,7 @@ TEST_F(simple_compares, test_0_cmp_1i)
 
 TEST_F(simple_compares, test_1_cmp_0i)
 {
-	u_int in1[1] = {1};
+	digit_ty in1[1] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -471,7 +471,7 @@ TEST_F(simple_compares, test_1_cmp_0i)
 
 TEST_F(simple_compares, test_0_cmp_neg1i)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -480,7 +480,7 @@ TEST_F(simple_compares, test_0_cmp_neg1i)
 
 TEST_F(simple_compares, test_neg1_cmp_0i)
 {
-	u_int in1[1] = {1};
+	digit_ty in1[1] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.is_negative = true;
@@ -490,7 +490,7 @@ TEST_F(simple_compares, test_neg1_cmp_0i)
 
 TEST_F(simple_compares, test_44_cmp_intmaxmaxi)
 {
-	u_int in1[1] = {44};
+	digit_ty in1[1] = {44};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -499,7 +499,7 @@ TEST_F(simple_compares, test_44_cmp_intmaxmaxi)
 
 TEST_F(simple_compares, test_44_cmp_intmaxmini)
 {
-	u_int in1[1] = {44};
+	digit_ty in1[1] = {44};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -508,7 +508,7 @@ TEST_F(simple_compares, test_44_cmp_intmaxmini)
 
 TEST_F(simple_compares, test_neg44_cmp_intmaxmaxi)
 {
-	u_int in1[1] = {44};
+	digit_ty in1[1] = {44};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.is_negative = true;
@@ -518,7 +518,7 @@ TEST_F(simple_compares, test_neg44_cmp_intmaxmaxi)
 
 TEST_F(simple_compares, test_neg44_cmp_intmaxmini)
 {
-	u_int in1[1] = {44};
+	digit_ty in1[1] = {44};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.is_negative = true;
@@ -528,7 +528,7 @@ TEST_F(simple_compares, test_neg44_cmp_intmaxmini)
 
 TEST_F(simple_compares, test_longnum_cmp_intmaxmaxi)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -537,7 +537,7 @@ TEST_F(simple_compares, test_longnum_cmp_intmaxmaxi)
 
 TEST_F(simple_compares, test_longnum_cmp_intmaxmini)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -546,7 +546,7 @@ TEST_F(simple_compares, test_longnum_cmp_intmaxmini)
 
 TEST_F(simple_compares, test_neglongnum_cmp_intmaxmaxi)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.is_negative = true;
@@ -556,7 +556,7 @@ TEST_F(simple_compares, test_neglongnum_cmp_intmaxmaxi)
 
 TEST_F(simple_compares, test_neglongnum_cmp_intmaxmini)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.is_negative = true;

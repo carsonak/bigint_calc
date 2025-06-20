@@ -1,14 +1,13 @@
-#include <string.h> /* strlen */
+#include <string.h>  // strlen
 
 #include "_bi_internals.h"
 #include "number_parsing.h"
 
 static ATTR_NONNULL bool check_is_negative(
-	char const *const restrict number, len_type *const restrict str_i
+	char const *const restrict number, len_ty *const restrict str_i
 );
 static ATTR_NONNULL_POS(2) char map_digits(const char c, void *radix);
-static len_type
-leading_chars_span(char const *const str, char const *const ch);
+static len_ty leading_chars_span(char const *const str, char const *const ch);
 
 #include "char_to_int.c"
 #include "int_to_char.c"
@@ -25,13 +24,13 @@ leading_chars_span(char const *const str, char const *const ch);
 static char map_digits(const char c, void *radix)
 {
 	short int a = char_to_int(c);
-	const radix_type base = *((const radix_type *)radix);
+	const radix_ty base = *((const radix_ty *)radix);
 
 	if (c == '_')
-		return (0); /* underscores should be ignored. */
+		return (0);  // underscores should be ignored.
 
-	if (a < 0 || (radix_type)a >= base)
-		return (-1); /* invalid character. */
+	if (a < 0 || (radix_ty)a >= base)
+		return (-1);  // invalid character.
 
 	return (int_to_char(a));
 }
@@ -60,7 +59,7 @@ static char map_digits(const char c, void *radix)
  * @return pointer to the filtered string, NULL on failure.
  */
 char *filter_str(
-	char const *const restrict str, len_type *const restrict processed,
+	char const *const restrict str, len_ty *const restrict processed,
 	const mapping_func map, void *const map_args
 )
 {
@@ -68,12 +67,12 @@ char *filter_str(
 		return (NULL);
 
 	char *output = NULL, c = 0;
-	len_type str_i = 0, out_len = 0;
+	len_ty str_i = 0, out_len = 0;
 	char buffer[FILTER_STR_BUFFER_SIZE];
 
 	while (str[str_i])
 	{
-		len_type buf_i = 0;
+		len_ty buf_i = 0;
 
 		for (buf_i = 0; buf_i < FILTER_STR_BUFFER_SIZE - 1 && str[str_i];
 			 ++str_i)
@@ -86,7 +85,7 @@ char *filter_str(
 				continue;
 
 			buffer[buf_i] = c;
-			++buf_i;
+			buf_i++;
 		}
 
 		buffer[buf_i] = '\0';
@@ -127,9 +126,9 @@ char *filter_str(
  *
  * @return number of leading characters.
  */
-static len_type leading_chars_span(char const *const str, char const *const ch)
+static len_ty leading_chars_span(char const *const str, char const *const ch)
 {
-	len_type count = 0;
+	len_ty count = 0;
 
 	if (str && ch && *ch)
 	{
@@ -150,7 +149,7 @@ static len_type leading_chars_span(char const *const str, char const *const ch)
  * @return true if the sign is negative, false otherwise.
  */
 static bool check_is_negative(
-	char const *const restrict number, len_type *const restrict str_i
+	char const *const restrict number, len_ty *const restrict str_i
 )
 {
 	bool is_neg = false;
@@ -177,12 +176,12 @@ static bool check_is_negative(
  * @return pointer to a `numstr`, NULL on failure.
  */
 numstr *_numstr_new(
-	char const *const restrict number, const radix_type base,
-	len_type *const restrict processed
+	char const *const restrict number, const radix_ty base,
+	len_ty *const restrict processed
 )
 {
 	numstr *ns = NULL;
-	len_type str_i = 0, p = 0;
+	len_ty str_i = 0, p = 0;
 
 	if (!number || !is_valid_radix(base))
 		return (NULL);
@@ -201,7 +200,7 @@ numstr *_numstr_new(
 
 	str_i += leading_chars_span(&number[str_i], "0");
 	{
-		radix_type b = base; /* Switch to modifiable type to avoid UB. */
+		radix_ty b = base;  // Switch to modifiable type to avoid UB.
 		ns->str = filter_str(&number[str_i], &p, map_digits, &b);
 	}
 
@@ -221,7 +220,7 @@ numstr *_numstr_new(
 	if (str_i && number[str_i - 1] == '_')
 	{
 		fprintf(stderr, "ParsingError: Trailing underscores not allowed.\n");
-		--str_i;
+		str_i--;
 parsing_error:
 		ns = _numstr_free(ns);
 	}

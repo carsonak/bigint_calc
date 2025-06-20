@@ -3,7 +3,7 @@
 
 #include "attribute_macros.h"
 
-#include <stdbool.h> /* bool */
+#include <stdbool.h>  // bool
 
 #include "bigint_types.h"
 
@@ -11,8 +11,8 @@
 
 void *bi_delete(bigint *const ptr);
 bigint *bi_new(
-	char const *const restrict number, const radix_type base,
-	len_type *const restrict processed
+	char const *const restrict number, const radix_ty base,
+	len_ty *const restrict processed
 ) ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete);
 
 bigint *int_to_bi(bigint *const dest, const intmax_t n);
@@ -23,8 +23,8 @@ int_to_new_bi(const intmax_t n) ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete);
 
 bigint *bi_dup(bigint *const n);
 char *bi_tostr(bigint const *const restrict n);
-l_int bi_compare_int(bigint *const n1, const intmax_t n2);
-l_int bi_compare(bigint *const n1, bigint *const n2);
+ldigit_ty bi_compare_int(bigint *const n1, const intmax_t n2);
+ldigit_ty bi_compare(bigint *const n1, bigint *const n2);
 
 /* `bigint` math */
 
@@ -53,4 +53,4 @@ bigint *bi_subtract_int(bigint *const restrict n1, const intmax_t n2);
 bigint *bi_iadd_int(bigint *const restrict n1, const intmax_t n2);
 bigint *bi_isubtract_int(bigint *const restrict n1, const intmax_t n2);
 
-#endif /* BIGINT_H */
+#endif  // BIGINT_H

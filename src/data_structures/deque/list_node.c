@@ -6,10 +6,10 @@
 /* snprintf, vsnprintf */
 #define _ISOC99_SOURCE
 
-#include <assert.h> /* asserts */
-#include <stdarg.h> /* va_arg, vsnprintf */
-#include <stdio.h>  /* vsnprintf */
-#include <string.h> /* strlen, strcat */
+#include <assert.h>  // asserts
+#include <stdarg.h>  // va_arg, vsnprintf
+#include <stdio.h>   // vsnprintf
+#include <string.h>  // strlen, strcat
 
 #include "list_node.h"
 #include "list_type_structs.h"

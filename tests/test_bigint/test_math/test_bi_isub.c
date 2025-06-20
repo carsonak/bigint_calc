@@ -1,5 +1,9 @@
 #include "test_math.h"
 
+/* ################################################################### */
+/* ########################### invalid_inputs ######################## */
+/* ################################################################### */
+
 struct invalid_inputs
 {
 	bigint num1, num2, expected, *output;
@@ -16,7 +20,7 @@ TEST(invalid_inputs, test_null_minus_null)
 
 TEST_F(invalid_inputs, test_1_minus_null)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -36,7 +40,7 @@ TEST_F(invalid_inputs, test_1_minus_null)
 
 TEST_F(invalid_inputs, test_null_minus_1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -46,7 +50,7 @@ TEST_F(invalid_inputs, test_null_minus_1)
 
 TEST_F(invalid_inputs, test_null_minus_0)
 {
-	u_int in2[1] = {0};
+	digit_ty in2[1] = {0};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -56,7 +60,7 @@ TEST_F(invalid_inputs, test_null_minus_0)
 
 TEST_F(invalid_inputs, test_neg1_minus_null)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -77,7 +81,7 @@ TEST_F(invalid_inputs, test_neg1_minus_null)
 
 TEST_F(invalid_inputs, test_null_minus_neg1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -93,7 +97,7 @@ TEST_F(invalid_inputs, test_NaN_minus_NaN)
 
 TEST_F(invalid_inputs, test_4490998_minus_NaN)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	digit_ty in1[] = {4490998}, out[] = {4490998};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -113,7 +117,7 @@ TEST_F(invalid_inputs, test_4490998_minus_NaN)
 
 TEST_F(invalid_inputs, test_NaN_minus_largenum)
 {
-	u_int in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+	digit_ty in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -121,18 +125,22 @@ TEST_F(invalid_inputs, test_NaN_minus_largenum)
 	CHECK_PTR_EQ(bi_isubtract(&(tau->num1), &(tau->num2)), NULL);
 }
 
-struct negations
+/* ################################################################### */
+/* ########################### negation ############################## */
+/* ################################################################### */
+
+struct negation
 {
 	bigint num1, num2, expected, *output;
 };
 
-TEST_F_SETUP(negations) { memset(tau, 0, sizeof(*tau)); }
+TEST_F_SETUP(negation) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(negations) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(negation) { tau->output = bi_delete(tau->output); }
 
 TEST_F(invalid_inputs, test_0_minus_null)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -151,9 +159,9 @@ TEST_F(invalid_inputs, test_0_minus_null)
 	);
 }
 
-TEST_F(negations, test_4490998_minus_NULL)
+TEST_F(negation, test_4490998_minus_NULL)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	digit_ty in1[] = {4490998}, out[] = {4490998};
 
 	tau->num1 = (bigint){.is_negative = false,
 						 .len = sizeof(in1) / sizeof(*in1),
@@ -172,9 +180,9 @@ TEST_F(negations, test_4490998_minus_NULL)
 	);
 }
 
-TEST_F(negations, test_neg_4490998_minus_NULL)
+TEST_F(negation, test_neg_4490998_minus_NULL)
 {
-	u_int in1[] = {4490998}, out[] = {4490998};
+	digit_ty in1[] = {4490998}, out[] = {4490998};
 
 	tau->num1 = (bigint){.is_negative = true,
 						 .len = sizeof(in1) / sizeof(*in1),
@@ -193,10 +201,10 @@ TEST_F(negations, test_neg_4490998_minus_NULL)
 	);
 }
 
-TEST_F(negations, test_long_minus_NULL)
+TEST_F(negation, test_long_minus_NULL)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-	u_int out[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	digit_ty out[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	tau->num1 = (bigint){.is_negative = false,
 						 .len = sizeof(in1) / sizeof(*in1),
@@ -215,10 +223,10 @@ TEST_F(negations, test_long_minus_NULL)
 	);
 }
 
-TEST_F(negations, test_neg_long_minus_NULL)
+TEST_F(negation, test_neg_long_minus_NULL)
 {
-	u_int in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
-	u_int out[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	digit_ty in1[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+	digit_ty out[] = {1, 2, 3, 4, 5, 6, 7, 8, 9};
 
 	tau->num1 = (bigint){.is_negative = true,
 						 .len = sizeof(in1) / sizeof(*in1),
@@ -236,671 +244,488 @@ TEST_F(negations, test_neg_long_minus_NULL)
 		sizeof(*(tau->expected.num)) * tau->expected.len
 	);
 }
+
+/* ################################################################### */
+/* ######################## simple_subtractions ###################### */
+/* ################################################################### */
 
 struct simple_subtractions
 {
-	bigint num1, num2, expected, *output;
+	bigint *restrict num1, *restrict num2;
+	char *restrict outstr;
 };
 
 TEST_F_SETUP(simple_subtractions) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(simple_subtractions) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(simple_subtractions)
+{
+	bi_delete(tau->num1);
+	bi_delete(tau->num2);
+	xfree(tau->outstr);
+}
 
 TEST_F(simple_subtractions, test_0_minus_0)
 {
-	u_int in1[1] = {0}, in2[1] = {0}, out[1] = {0};
+	const char expected[] = "0";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("0", 10, NULL);
+	tau->num2 = bi_new("0", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_subtractions, test_1_minus_0)
 {
-	u_int in1[] = {1}, in2[1] = {0}, out[] = {1};
+	const char expected[] = "1";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("1", 10, NULL);
+	tau->num2 = bi_new("0", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_subtractions, test_0_minus_1)
 {
-	u_int in1[1] = {0}, in2[] = {1}, out[] = {1};
+	const char expected[] = "-1";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = bi_new("0", 10, NULL);
+	tau->num2 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_subtractions, test_1_minus_1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[1] = {0};
+	const char expected[] = "0";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("1", 10, NULL);
+	tau->num2 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
-TEST_F(simple_subtractions, test_MAX_VAL_minus_neg50000)
+TEST_F(simple_subtractions, test_1_000000000_000000000_minus_50000)
 {
-	u_int in1[] = {0, 1}, in2[] = {50000}, out[] = {999950000};
+	const char expected[] = "999999999999950000";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("1_000000000_000000000", 10, NULL);
+	tau->num2 = bi_new("50000", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
-TEST_F(simple_subtractions, test_50000_minus_100000000)
+TEST_F(simple_subtractions, test_50000_minus_1_000000000_000000000)
 {
-	u_int in1[] = {50000}, in2[] = {0, 1}, out[] = {999950000};
+	const char expected[] = "-999999999999950000";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = _bi_resize(bi_new("50000", 10, NULL), 2);
+	tau->num2 = bi_new("1_000000000_000000000", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
+
+/* ################################################################### */
+/* ##################### same_number_subtractions #################### */
+/* ################################################################### */
 
 struct same_number_subtractions
 {
-	bigint num1, num2, expected, *output;
+	bigint *restrict num1, *restrict num2;
+	char *restrict outstr;
 };
 
 TEST_F_SETUP(same_number_subtractions) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(same_number_subtractions)
 {
-	tau->output = bi_delete(tau->output);
+	bi_delete(tau->num1);
+	bi_delete(tau->num2);
+	xfree(tau->outstr);
 }
 
 TEST_F(same_number_subtractions, test_1_minus_1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[] = {0};
+	const char expected[] = "0";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1 = bi_new("1", 10, NULL);
+	tau->num2 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(same_number_subtractions, test_1000000001_minus_1000000001)
 {
-	u_int in1[] = {1, 1}, in2[] = {1, 1}, out[] = {0};
+	const char expected[] = "0";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1 = bi_new("1000000001", 10, NULL);
+	tau->num2 = bi_new("1000000001", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(same_number_subtractions, test_longnum_minus_longnum)
 {
-	u_int in1[] = {1, 1, 1}, in2[] = {1, 1, 1}, out[] = {0};
+	const char expected[] = "0";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1 = bi_new("1_000000001_000000001", 10, NULL);
+	tau->num2 = bi_new("1_000000001_000000001", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(same_number_subtractions, test_largenum_minus_largenum)
 {
-	u_int in1[] = {1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1};
-	u_int in2[] = {1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1};
-	u_int out[] = {0};
+	/* clang-format off */
+	const char expected[] = "0";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1 = bi_new("1_000000001_000000001_000000001_000000001_000000000_000000000_000000000_000000001_000000001_000000001_000000001_000000001", 10, NULL);
+	tau->num2 = bi_new("1_000000001_000000001_000000001_000000001_000000000_000000000_000000000_000000001_000000001_000000001_000000001_000000001", 10, NULL);
+	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(same_number_subtractions, test_almostsame_minus_almostsame)
 {
-	u_int in1[] = {0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1};
-	u_int in2[] = {1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1};
-	u_int out[] = {1};
+	/* clang-format off */
+	const char expected[] = "-1";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = bi_new("1_000000001_000000001_000000001_000000001_000000000_000000000_000000000_000000001_000000001_000000001_000000001_000000000", 10, NULL);
+	tau->num2 = bi_new("1_000000001_000000001_000000001_000000001_000000000_000000000_000000000_000000001_000000001_000000001_000000001_000000001", 10, NULL);
+	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(same_number_subtractions, test_almostsame_minus_almostsame_reverse)
 {
-	u_int in1[] = {1, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1};
-	u_int in2[] = {0, 1, 1, 1, 1, 0, 0, 0, 1, 1, 1, 1, 1};
-	u_int out[] = {1};
+	/* clang-format off */
+	const char expected[] = "1";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = false,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1 = bi_new("1_000000001_000000001_000000001_000000001_000000000_000000000_000000000_000000001_000000001_000000001_000000001_000000001", 10, NULL);
+	tau->num2 = bi_new("1_000000001_000000001_000000001_000000001_000000000_000000000_000000000_000000001_000000001_000000001_000000001_000000000", 10, NULL);
+	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
+
+/* ################################################################### */
+/* ######################### long_subtractions ####################### */
+/* ################################################################### */
 
 struct long_subtractions
 {
-	bigint num1, num2, expected, *output;
+	bigint *restrict num1, *restrict num2;
+	char *restrict outstr;
 };
 
 TEST_F_SETUP(long_subtractions) { memset(tau, 0, sizeof(*tau)); }
 
-TEST_F_TEARDOWN(long_subtractions) { tau->output = bi_delete(tau->output); }
+TEST_F_TEARDOWN(long_subtractions)
+{
+	bi_delete(tau->num1);
+	bi_delete(tau->num2);
+	xfree(tau->outstr);
+}
 
 TEST_F(long_subtractions, test_long9s_minus_1)
 {
-	u_int in1[] = {
-		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
-		BIGINT_BASE - 1
-	};
-	u_int in2[] = {1};
-	u_int out[] = {
-		BIGINT_BASE - 2, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
-		BIGINT_BASE - 1
-	};
+	/* clang-format off */
+	const char expected[] = "999999999999999999999999999999999999999999998";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("999999999_999999999_999999999_999999999_999999999", 10, NULL);
+	tau->num2 = bi_new("1", 10, NULL);
+	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == 0);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(long_subtractions, test_1_minus_long9s)
 {
-	u_int in1[5] = {1, 0, 0, 0, 0};
-	u_int in2[] = {
-		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
-		BIGINT_BASE - 1
-	};
-	u_int out[5] = {
-		BIGINT_BASE - 2, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
-		BIGINT_BASE - 1
-	};
+	/* clang-format off */
+	const char expected[] = "-999999999999999999999999999999999999999999998";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = _bi_resize(bi_new("1", 10, NULL), 5);
+	tau->num2 = bi_new("999999999_999999999_999999999_999999999_999999999", 10, NULL);
+	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(long_subtractions, test_long_sparse_num1_minus_long_sparse_num2)
 {
-	u_int in1[10] = {0, 0, 0, 0, 999999999, 0, 0, 0, 0, 56789};
-	u_int in2[] = {0, 0, 0, 0, 111111111, 0, 0, 0, 0, 98765};
-	u_int out[10] = {0,         0,         0,         0,         111111112,
-	                 999999999, 999999999, 999999999, 999999999, 41975};
+	/* clang-format off */
+	const char expected[] = "-41975999999999999999999999999999999999999111111112000000000000000000000000000000000000";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = bi_new("56789_000000000_000000000_000000000_000000000_999999999_000000000_000000000_000000000_000000000", 10, NULL);
+	tau->num2 = bi_new("98765_000000000_000000000_000000000_000000000_111111111_000000000_000000000_000000000_000000000", 10, NULL);
+	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(long_subtractions, test_long_sparse_num2_minus_long_sparse_num1)
 {
-	u_int in1[10] = {0, 0, 0, 0, 111111111, 0, 0, 0, 0, 98765};
-	u_int in2[] = {0, 0, 0, 0, 999999999, 0, 0, 0, 0, 56789};
-	u_int out[10] = {0,         0,         0,         0,         111111112,
-	                 999999999, 999999999, 999999999, 999999999, 41975};
+	/* clang-format off */
+	const char expected[] = "41975999999999999999999999999999999999999111111112000000000000000000000000000000000000";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("98765_000000000_000000000_000000000_000000000_111111111_000000000_000000000_000000000_000000000", 10, NULL);
+	tau->num2 = bi_new("56789_000000000_000000000_000000000_000000000_999999999_000000000_000000000_000000000_000000000", 10, NULL);
+	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == 0);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(long_subtractions, test_4000000000678_minus_999999000)
 {
-	u_int in1[] = {678, 4000}, in2[] = {999999000}, out[] = {1678, 3999};
+	const char expected[] = "3999000001678";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("4000000000678", 10, NULL);
+	tau->num2 = bi_new("999999000", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(long_subtractions, test_999999000_minus_4000000000678)
 {
-	u_int in1[2] = {999999000}, in2[] = {678, 4000}, out[] = {1678, 3999};
+	char expected[] = "-3999000001678";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = _bi_resize(bi_new("999999000", 10, NULL), 2);
+	tau->num2 = bi_new("4000000000678", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
+
+/* ################################################################### */
+/* ###################### negative_subtractions ###################### */
+/* ################################################################### */
 
 struct negative_subtractions
 {
-	bigint num1, num2, expected, *output;
+	bigint *restrict num1, *restrict num2;
+	char *restrict outstr;
 };
 
 TEST_F_SETUP(negative_subtractions) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(negative_subtractions)
 {
-	tau->output = bi_delete(tau->output);
+	bi_delete(tau->num1);
+	bi_delete(tau->num2);
+	xfree(tau->outstr);
 }
 
 TEST_F(negative_subtractions, test_neg1_minus_neg1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[1] = {0};
+	const char expected[] = "0";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = true,
-						 .num = in1};
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = true,
-						 .num = in2};
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("-1", 10, NULL);
+	tau->num2 = bi_new("-1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(negative_subtractions, test_1_minus_neg1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[] = {2};
+	const char expected[] = "2";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
-						 .is_negative = true,
-						 .num = in2};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
-	bi_isubtract(&(tau->num1), &(tau->num2));
+	tau->num1 = bi_new("1", 10, NULL);
+	tau->num2 = bi_new("-1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(negative_subtractions, test_neg1_minus_1)
 {
-	u_int in1[] = {1}, in2[] = {1}, out[] = {2};
+	const char expected[] = "-2";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = true,
-						 .num = in1};
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = in2;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
-	bi_isubtract(&(tau->num1), &(tau->num2));
+	tau->num1 = bi_new("-1", 10, NULL);
+	tau->num2 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
+
+TEST_F(negative_subtractions, test_longnum_a_minus_neg_longnum_b)
+{
+	const char expected[] = "1000000000023456000";
+
+	tau->num1 = _bi_resize(bi_new("999999000_900000000", 10, NULL), 3);
+	tau->num2 = bi_new("-999_123456000", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
+
+	CHECK_STREQ(tau->outstr, expected);
+}
+
+/* ################################################################### */
+/* ######################## large_subtractions ####################### */
+/* ################################################################### */
 
 struct large_subtractions
 {
-	bigint num1, num2, expected, *output;
+	bigint *restrict num1, *restrict num2;
+	char *restrict outstr;
 };
 
 TEST_F_SETUP(large_subtractions) { memset(tau, 0, sizeof(*tau)); }
 
 TEST_F_TEARDOWN(large_subtractions)
 {
-	tau->output = bi_delete(tau->output);
-	free(tau->num1.num);
-	free(tau->num2.num);
+	bi_delete(tau->num1);
+	bi_delete(tau->num2);
+	xfree(tau->outstr);
 }
 
 TEST_F(large_subtractions, test_o1kb_minus_o1kc)
 {
 	/* clang-format off */
-	u_int in1[342] = {645836236, 108893430, 836208119, 270771001, 537613755, 373039867, 833294108, 898839418, 608485063, 546188873, 452231917, 687296422, 111111152, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 476411111, 5669047, 700035645, 893473278, 4493, 543630640, 324000, 568376700, 1394, 300000000, 378345892, 8, 734194700, 423768, 0, 445197384, 518101037, 109617878, 558156514, 983336821, 690076644, 693516675, 143226629, 76588580, 210759419, 973911560, 497333540, 14322213, 555048869, 815323758, 539167661, 458688023, 612425259, 624332483, 419554373, 679371075, 393235000, 236728315, 664373133, 150410609, 518660305, 359239326, 307363945, 571210805, 347785534, 563445710, 660409386, 228008317, 804462179, 233074148, 591937180, 160409198, 950235053, 962974549, 171857157, 523072994, 395079814, 321058488, 203652900, 126072395, 363107953, 630915068, 973080517, 612433363, 734409773, 377726669, 707225937, 627074076, 918808553, 941285428, 110569912, 430944738, 394600177, 990968620, 4498198, 265970467, 594659210, 881718792, 749254660, 489225907, 417635079, 182995180, 494838468, 16834009, 911110449, 948701330, 831191398, 792151714, 70940218, 627665839, 410612359, 202045867, 935804051, 937850141, 227018012, 991791152, 506752363, 406483698, 355792683, 47491630, 22359011, 919962818, 955165934, 399211808, 673319428, 319818160, 662785141, 175882430, 630322415, 735383534, 687650610, 46582669, 496678148, 491637987, 871575195, 116330034, 723314187, 385420689, 325094262, 12829142, 208703866, 120005690, 899921757, 77002169, 359486189, 753454258, 278911354, 694037307, 578519296, 494600786, 470779501, 768446187, 472669563, 716361937, 389127515, 976446119, 593192334, 617083917, 272976737, 418747631, 855714255, 226105187, 605917499, 696971445, 573117854, 99153257, 956645492, 728520292, 946389174, 245482697, 655465609, 470307816, 135416351, 729216591, 866144546, 888959338, 809402688, 527131609, 866613186, 419167460, 916600904, 633154349, 747140489, 315862951, 238759183, 148584074, 652667824, 161606397, 677427537, 590777629, 825244648, 835356427, 366982335, 748040826, 852122159, 4896, 900000000, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 385820199, 167580321, 134092496, 277075937, 872169008, 64325722, 827080282, 277960712, 655352740, 163131699, 448213684, 277128786, 514326330, 933871396, 63154105, 745922799, 490015860, 252229607, 711956623, 591788040, 954758766, 467124003, 644524713, 690634208, 510828673, 629041620, 704066384, 468512842, 590156377, 509105852, 101803594, 777808979, 519622805, 972925209, 333284887, 366099858, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
-	u_int in2[] = {120720357, 397122822, 391212010, 378636564, 527381951, 445364023, 899885040, 831438167, 289912154, 386356373, 467962926, 817125772, 778707749, 515723350, 20924616, 454178424, 114657544, 634432190, 904414952, 143603833, 256133844, 201619676, 377306056, 810451660, 815010674, 281198163, 584823824, 739934236, 774447920, 423387184, 43576798, 141865462, 637259085, 182422433, 869987549, 632282216, 515172654, 118746121, 691817195, 100642458, 401797429, 748808428, 97330459, 859095700, 77613379, 824691165, 375014971, 270261896, 971418347, 287776735, 687392807, 72844992, 808489120, 176184502, 298559149, 515082189, 290641249, 784406918, 18525880, 595556264, 662020707, 137836043, 32027777, 282126204, 398571429, 183240048, 893494027, 908475657, 210325195, 41368093, 567494670, 78549187, 829867982, 939611731, 556446171, 260470617, 388185363, 898568742, 584926832, 930685864, 974259747, 196534676, 548532814, 760521395, 176790149, 995282978, 514569063, 129660418, 873623608, 869739334, 116299016, 931525892, 602082336, 842229732, 82941119, 584280220, 738070679, 549296857, 554682269, 129930289, 352088067, 846285574, 807033108, 924619988, 410518654, 524776378, 210726853, 338324773, 234371231, 345598217, 215913853, 40125185, 169659817, 614457144, 263430597, 839552963, 357693985, 358911228, 31559180, 973973025, 529509086, 130265707, 902771569, 939005219, 909614411, 481137671, 453755527, 315076922, 190488385, 858980849, 914750855, 893492457, 44932638, 537640698, 831905869, 686543771, 164968285, 32694655, 549006585, 907130711, 937753741, 473161761, 60159427, 193787354, 490610706, 977776760, 692607694, 6731141, 102078922, 359416565, 975892579, 663415745, 486552688, 501065002, 401362961, 293547871, 954030315, 717222449, 171804201, 933246578, 628660373, 388008411, 546067821, 318550725, 990682255, 492064339, 647433279, 137385221, 703102597, 102835383, 283915020, 951593059, 607687526, 836935402, 684651719, 23912707, 349733186, 901432221, 855504886, 181532375, 353916766, 945868802, 361242525, 362433248, 541955437, 67937107, 539323500, 323672831, 966437313, 515041060, 651866030, 535923932, 530736394, 457121080, 34778553, 656344571, 766040938, 922800831, 880446217, 23307414, 859193718, 316040919, 995023505, 796297454, 417185715, 452307299, 839507981, 32105848, 520365290, 312607239, 836310795, 763091506, 397308051, 361243336, 973440977, 737772666, 670722593, 362707407, 891880855, 294128542, 811056991, 743094473, 39460017, 899096862, 700449819, 26597046, 259465921, 88171879, 774925466, 948922590, 41763507, 818299518, 949483846, 901683400, 91111044, 894870133, 483119139, 879215171, 907094021, 962766583, 741061235, 120204586, 193580405, 293785014, 701801};
-	u_int out[342] = {525115879, 711770608, 444996108, 892134437, 10231803, 927675844, 933409067, 67401250, 318572909, 159832500, 984268991, 870170649, 332403402, 595387760, 90186494, 656932687, 996453566, 476678920, 206696158, 967507277, 854977266, 909491434, 99105054, 195217387, 885024970, 612275114, 415180669, 803696403, 225876079, 144989515, 956424596, 158134537, 741086807, 817577574, 864207150, 368141551, 484827345, 326451262, 826283842, 8975419, 156359085, 234528393, 592746185, 834420975, 65613249, 251897415, 835744447, 703649663, 525915193, 726545477, 867656061, 742478765, 730678541, 282503520, 313866110, 109250294, 128913124, 894964157, 374709119, 641172051, 2352425, 12574566, 486632528, 77113122, 908792516, 387970756, 454291507, 654970052, 450084190, 186640224, 236967509, 154524961, 762069198, 220797466, 393788881, 702503932, 783671794, 624504251, 810152981, 390372623, 229393152, 929537718, 814575138, 870393672, 796290367, 617150385, 219840709, 248066251, 833602329, 757334741, 802509536, 9759536, 508487576, 588715005, 311659057, 406688400, 266427519, 716673609, 39976940, 751788503, 397166593, 642940333, 610601970, 258375191, 84319813, 492057631, 700383595, 610376557, 596820167, 446553497, 855026365, 587540653, 240952542, 587588723, 672373453, 98297178, 869324027, 632879923, 475193183, 432510673, 826283596, 917225922, 119587441, 980957598, 45551522, 918074137, 219563900, 4741238, 472296756, 316901581, 715571559, 841891076, 642717971, 508941971, 664772278, 805094215, 706606909, 83635379, 174307602, 478289978, 387340520, 539667380, 148544438, 926218336, 409311050, 99225409, 666878494, 746723116, 176832432, 334620742, 602626717, 831185040, 984226812, 267381184, 71306602, 422814066, 435097200, 259223669, 421388133, 683837339, 644316363, 30739219, 309646434, 907554462, 615235243, 204907105, 925684575, 961768035, 253542894, 625684909, 662474154, 293889638, 47778082, 633372414, 450764631, 705303883, 516411360, 987527117, 953897801, 345599233, 512696420, 473298658, 555358378, 270721101, 205185052, 247925844, 699435683, 824911242, 686230510, 646565336, 25561506, 54853697, 294508254, 378235347, 332203782, 91696255, 86081221, 77204065, 19553782, 976692585, 140806281, 683959080, 4976494, 203702545, 582814284, 547692700, 160492018, 967894151, 479634709, 73212960, 331269526, 371000989, 879767885, 510925671, 90884745, 89307615, 607238119, 292645332, 271250844, 154085141, 466071795, 771231856, 894411378, 164057243, 45472979, 463418814, 992763686, 623784743, 816862574, 5836175, 425360496, 826225195, 741150361, 609145272, 537930575, 809196251, 985393702, 710941205, 602011830, 139037010, 36747743, 399418219, 779344804, 39499873, 365398057, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
+	const char expected[] = "18229261729562381999943195364150791141310842462660658472794052519590847565789349402718324004839857142928212620403202777713783604366202070759555626401852588078440691829064124951508218929855914917618450280848912007284499268739280728777673597141834727026189637501497182469116507761337985909570009733045974880842840179742910064245869181719511874612151517265463228221686998754918242243363725908514186546204357679842338718477444792073993423658482382428119816381501067481045166037730605620161967625613384414360383390441495263443219011465754445417842402092461651572335077870774981712577246796292638635637328991215483143816789988504044536402352738195137863656439121201039712282212072035747723202909336516542736369239534563619774418024541935268238240138010931106827128463433638706953587774858293618793747247853007337951511006306768696205902321912271659743738793851605740584319133365398057039499873779344804399418219036747743139037010602011830710941205985393702809196251537930575609145272741150361826225195425360496005836175816862574623784743992763686463418814045472979164057243894411378771231856466071795154085141271250844292645332607238119089307615090884745510925671879767885371000989331269526073212960479634709967894151160492018547692700582814284203702545004976494683959080140806281976692585019553782077204065086081221091696255332203782378235347294508254054853697025561506646565336686230510824911242699435683247925844205185052270721101555358378473298658512696420345599233953897801987527117516411360705303883450764631633372414047778082293889638662474154625684909253542894961768035925684575204907105615235243907554462309646434030739219644316363683837339421388133259223669435097200422814066071306602267381184984226812831185040602626717334620742176832432746723116666878494099225409409311050926218336148544438539667380387340520478289978174307602083635379706606909805094215664772278508941971642717971841891076715571559316901581472296756004741238219563900918074137045551522980957598119587441917225922826283596432510673475193183632879923869324027098297178672373453587588723240952542587540653855026365446553497596820167610376557700383595492057631084319813258375191610601970642940333397166593751788503039976940716673609266427519406688400311659057588715005508487576009759536802509536757334741833602329248066251219840709617150385796290367870393672814575138929537718229393152390372623810152981624504251783671794702503932393788881220797466762069198154524961236967509186640224450084190654970052454291507387970756908792516077113122486632528012574566002352425641172051374709119894964157128913124109250294313866110282503520730678541742478765867656061726545477525915193703649663835744447251897415065613249834420975592746185234528393156359085008975419826283842326451262484827345368141551864207150817577574741086807158134537956424596144989515225876079803696403415180669612275114885024970195217387099105054909491434854977266967507277206696158476678920996453566656932687090186494595387760332403402870170649984268991159832500318572909067401250933409067927675844010231803892134437444996108711770608525115879";
+
+	tau->num1 = bi_new((const char[]){'1', '8', '2', '2', '9', '2', '6', '1', '7', '2', '9', '5', '6', '2', '3', '8', '1', '9', '9', '9', '9', '4', '3', '1', '9', '5', '3', '6', '4', '1', '5', '0', '7', '9', '1', '1', '4', '1', '3', '1', '0', '8', '4', '2', '4', '6', '2', '6', '6', '0', '6', '5', '8', '4', '7', '2', '7', '9', '4', '0', '5', '2', '5', '1', '9', '5', '9', '0', '8', '4', '7', '5', '6', '5', '7', '8', '9', '3', '4', '9', '4', '0', '2', '7', '1', '8', '3', '2', '4', '0', '0', '4', '8', '3', '9', '8', '5', '7', '1', '4', '2', '9', '2', '8', '2', '1', '2', '6', '2', '0', '4', '0', '3', '2', '0', '2', '7', '7', '7', '7', '1', '3', '7', '8', '3', '6', '0', '4', '3', '6', '6', '2', '0', '2', '0', '7', '0', '7', '5', '9', '5', '5', '5', '6', '2', '6', '4', '0', '1', '8', '5', '2', '5', '8', '8', '0', '7', '8', '4', '4', '0', '6', '9', '1', '8', '2', '9', '0', '6', '4', '1', '2', '4', '9', '5', '1', '5', '0', '8', '2', '1', '8', '9', '2', '9', '8', '5', '5', '9', '1', '4', '9', '1', '7', '6', '1', '8', '4', '5', '0', '2', '8', '0', '8', '4', '8', '9', '1', '2', '0', '0', '7', '2', '8', '4', '4', '9', '9', '2', '6', '8', '7', '3', '9', '2', '8', '0', '7', '2', '8', '7', '7', '7', '6', '7', '3', '5', '9', '7', '1', '4', '1', '8', '3', '4', '7', '2', '7', '0', '2', '6', '1', '8', '9', '6', '3', '7', '5', '0', '1', '4', '9', '7', '1', '8', '2', '4', '6', '9', '1', '1', '6', '5', '0', '7', '7', '6', '1', '3', '3', '7', '9', '8', '5', '9', '0', '9', '5', '7', '0', '0', '0', '9', '7', '3', '3', '0', '4', '5', '9', '7', '4', '8', '8', '0', '8', '4', '2', '8', '4', '0', '1', '7', '9', '7', '4', '2', '9', '1', '0', '0', '6', '4', '2', '4', '5', '8', '6', '9', '1', '8', '1', '7', '1', '9', '5', '1', '1', '8', '7', '4', '6', '1', '2', '1', '5', '1', '5', '1', '7', '2', '6', '5', '4', '6', '3', '2', '2', '8', '2', '2', '1', '6', '8', '6', '9', '9', '8', '7', '5', '4', '9', '1', '8', '2', '4', '2', '2', '4', '3', '3', '6', '3', '7', '2', '5', '9', '0', '8', '5', '1', '4', '1', '8', '6', '5', '4', '6', '2', '0', '4', '3', '5', '7', '6', '7', '9', '8', '4', '2', '3', '3', '8', '7', '1', '8', '4', '7', '7', '4', '4', '4', '7', '9', '2', '0', '7', '3', '9', '9', '3', '4', '2', '3', '6', '5', '8', '4', '8', '2', '3', '8', '2', '4', '2', '8', '1', '1', '9', '8', '1', '6', '3', '8', '1', '5', '0', '1', '0', '6', '7', '4', '8', '1', '0', '4', '5', '1', '6', '6', '0', '3', '7', '7', '3', '0', '6', '0', '5', '6', '2', '0', '1', '6', '1', '9', '6', '7', '6', '2', '5', '6', '1', '3', '3', '8', '4', '4', '1', '4', '3', '6', '0', '3', '8', '3', '3', '9', '0', '4', '4', '1', '4', '9', '5', '2', '6', '3', '4', '4', '3', '2', '1', '9', '0', '1', '1', '4', '6', '5', '7', '5', '4', '4', '4', '5', '4', '1', '7', '8', '4', '2', '4', '0', '2', '0', '9', '2', '4', '6', '1', '6', '5', '1', '5', '7', '2', '3', '3', '5', '0', '7', '7', '8', '7', '0', '7', '7', '4', '9', '8', '1', '7', '1', '2', '5', '7', '7', '2', '4', '6', '7', '9', '6', '2', '9', '2', '6', '3', '8', '6', '3', '5', '6', '3', '7', '3', '2', '8', '9', '9', '1', '2', '1', '5', '4', '8', '3', '1', '4', '3', '8', '1', '6', '7', '8', '9', '9', '8', '8', '5', '0', '4', '0', '4', '4', '5', '3', '6', '4', '0', '2', '3', '5', '2', '7', '3', '8', '1', '9', '5', '1', '3', '7', '8', '6', '3', '6', '5', '6', '4', '3', '9', '1', '2', '1', '2', '0', '1', '0', '3', '9', '7', '1', '2', '2', '8', '2', '2', '1', '2', '0', '7', '2', '0', '3', '5', '7', '4', '7', '7', '2', '3', '2', '0', '2', '9', '0', '9', '3', '3', '6', '5', '1', '6', '5', '4', '2', '7', '3', '6', '3', '6', '9', '2', '3', '9', '5', '3', '4', '5', '6', '3', '6', '1', '9', '7', '7', '4', '4', '1', '8', '0', '2', '4', '5', '4', '1', '9', '3', '5', '2', '6', '8', '2', '3', '8', '2', '4', '0', '1', '3', '8', '0', '1', '0', '9', '3', '1', '1', '0', '6', '8', '2', '7', '1', '2', '8', '4', '6', '3', '4', '3', '3', '6', '3', '8', '7', '0', '6', '9', '5', '3', '5', '8', '7', '7', '7', '4', '8', '5', '8', '2', '9', '3', '6', '1', '8', '7', '9', '3', '7', '4', '7', '2', '4', '7', '8', '5', '3', '0', '0', '7', '3', '3', '7', '9', '5', '1', '5', '1', '1', '0', '0', '6', '3', '0', '6', '7', '6', '8', '6', '9', '6', '2', '0', '5', '9', '0', '2', '3', '2', '1', '9', '1', '2', '2', '7', '1', '6', '5', '9', '7', '4', '3', '7', '3', '8', '7', '9', '3', '8', '5', '1', '6', '0', '5', '7', '4', '0', '5', '8', '4', '3', '1', '9', '1', '3', '3', '3', '6', '6', '0', '9', '9', '8', '5', '8', '3', '3', '3', '2', '8', '4', '8', '8', '7', '9', '7', '2', '9', '2', '5', '2', '0', '9', '5', '1', '9', '6', '2', '2', '8', '0', '5', '7', '7', '7', '8', '0', '8', '9', '7', '9', '1', '0', '1', '8', '0', '3', '5', '9', '4', '5', '0', '9', '1', '0', '5', '8', '5', '2', '5', '9', '0', '1', '5', '6', '3', '7', '7', '4', '6', '8', '5', '1', '2', '8', '4', '2', '7', '0', '4', '0', '6', '6', '3', '8', '4', '6', '2', '9', '0', '4', '1', '6', '2', '0', '5', '1', '0', '8', '2', '8', '6', '7', '3', '6', '9', '0', '6', '3', '4', '2', '0', '8', '6', '4', '4', '5', '2', '4', '7', '1', '3', '4', '6', '7', '1', '2', '4', '0', '0', '3', '9', '5', '4', '7', '5', '8', '7', '6', '6', '5', '9', '1', '7', '8', '8', '0', '4', '0', '7', '1', '1', '9', '5', '6', '6', '2', '3', '2', '5', '2', '2', '2', '9', '6', '0', '7', '4', '9', '0', '0', '1', '5', '8', '6', '0', '7', '4', '5', '9', '2', '2', '7', '9', '9', '0', '6', '3', '1', '5', '4', '1', '0', '5', '9', '3', '3', '8', '7', '1', '3', '9', '6', '5', '1', '4', '3', '2', '6', '3', '3', '0', '2', '7', '7', '1', '2', '8', '7', '8', '6', '4', '4', '8', '2', '1', '3', '6', '8', '4', '1', '6', '3', '1', '3', '1', '6', '9', '9', '6', '5', '5', '3', '5', '2', '7', '4', '0', '2', '7', '7', '9', '6', '0', '7', '1', '2', '8', '2', '7', '0', '8', '0', '2', '8', '2', '0', '6', '4', '3', '2', '5', '7', '2', '2', '8', '7', '2', '1', '6', '9', '0', '0', '8', '2', '7', '7', '0', '7', '5', '9', '3', '7', '1', '3', '4', '0', '9', '2', '4', '9', '6', '1', '6', '7', '5', '8', '0', '3', '2', '1', '3', '8', '5', '8', '2', '0', '1', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '4', '8', '9', '6', '8', '5', '2', '1', '2', '2', '1', '5', '9', '7', '4', '8', '0', '4', '0', '8', '2', '6', '3', '6', '6', '9', '8', '2', '3', '3', '5', '8', '3', '5', '3', '5', '6', '4', '2', '7', '8', '2', '5', '2', '4', '4', '6', '4', '8', '5', '9', '0', '7', '7', '7', '6', '2', '9', '6', '7', '7', '4', '2', '7', '5', '3', '7', '1', '6', '1', '6', '0', '6', '3', '9', '7', '6', '5', '2', '6', '6', '7', '8', '2', '4', '1', '4', '8', '5', '8', '4', '0', '7', '4', '2', '3', '8', '7', '5', '9', '1', '8', '3', '3', '1', '5', '8', '6', '2', '9', '5', '1', '7', '4', '7', '1', '4', '0', '4', '8', '9', '6', '3', '3', '1', '5', '4', '3', '4', '9', '9', '1', '6', '6', '0', '0', '9', '0', '4', '4', '1', '9', '1', '6', '7', '4', '6', '0', '8', '6', '6', '6', '1', '3', '1', '8', '6', '5', '2', '7', '1', '3', '1', '6', '0', '9', '8', '0', '9', '4', '0', '2', '6', '8', '8', '8', '8', '8', '9', '5', '9', '3', '3', '8', '8', '6', '6', '1', '4', '4', '5', '4', '6', '7', '2', '9', '2', '1', '6', '5', '9', '1', '1', '3', '5', '4', '1', '6', '3', '5', '1', '4', '7', '0', '3', '0', '7', '8', '1', '6', '6', '5', '5', '4', '6', '5', '6', '0', '9', '2', '4', '5', '4', '8', '2', '6', '9', '7', '9', '4', '6', '3', '8', '9', '1', '7', '4', '7', '2', '8', '5', '2', '0', '2', '9', '2', '9', '5', '6', '6', '4', '5', '4', '9', '2', '0', '9', '9', '1', '5', '3', '2', '5', '7', '5', '7', '3', '1', '1', '7', '8', '5', '4', '6', '9', '6', '9', '7', '1', '4', '4', '5', '6', '0', '5', '9', '1', '7', '4', '9', '9', '2', '2', '6', '1', '0', '5', '1', '8', '7', '8', '5', '5', '7', '1', '4', '2', '5', '5', '4', '1', '8', '7', '4', '7', '6', '3', '1', '2', '7', '2', '9', '7', '6', '7', '3', '7', '6', '1', '7', '0', '8', '3', '9', '1', '7', '5', '9', '3', '1', '9', '2', '3', '3', '4', '9', '7', '6', '4', '4', '6', '1', '1', '9', '3', '8', '9', '1', '2', '7', '5', '1', '5', '7', '1', '6', '3', '6', '1', '9', '3', '7', '4', '7', '2', '6', '6', '9', '5', '6', '3', '7', '6', '8', '4', '4', '6', '1', '8', '7', '4', '7', '0', '7', '7', '9', '5', '0', '1', '4', '9', '4', '6', '0', '0', '7', '8', '6', '5', '7', '8', '5', '1', '9', '2', '9', '6', '6', '9', '4', '0', '3', '7', '3', '0', '7', '2', '7', '8', '9', '1', '1', '3', '5', '4', '7', '5', '3', '4', '5', '4', '2', '5', '8', '3', '5', '9', '4', '8', '6', '1', '8', '9', '0', '7', '7', '0', '0', '2', '1', '6', '9', '8', '9', '9', '9', '2', '1', '7', '5', '7', '1', '2', '0', '0', '0', '5', '6', '9', '0', '2', '0', '8', '7', '0', '3', '8', '6', '6', '0', '1', '2', '8', '2', '9', '1', '4', '2', '3', '2', '5', '0', '9', '4', '2', '6', '2', '3', '8', '5', '4', '2', '0', '6', '8', '9', '7', '2', '3', '3', '1', '4', '1', '8', '7', '1', '1', '6', '3', '3', '0', '0', '3', '4', '8', '7', '1', '5', '7', '5', '1', '9', '5', '4', '9', '1', '6', '3', '7', '9', '8', '7', '4', '9', '6', '6', '7', '8', '1', '4', '8', '0', '4', '6', '5', '8', '2', '6', '6', '9', '6', '8', '7', '6', '5', '0', '6', '1', '0', '7', '3', '5', '3', '8', '3', '5', '3', '4', '6', '3', '0', '3', '2', '2', '4', '1', '5', '1', '7', '5', '8', '8', '2', '4', '3', '0', '6', '6', '2', '7', '8', '5', '1', '4', '1', '3', '1', '9', '8', '1', '8', '1', '6', '0', '6', '7', '3', '3', '1', '9', '4', '2', '8', '3', '9', '9', '2', '1', '1', '8', '0', '8', '9', '5', '5', '1', '6', '5', '9', '3', '4', '9', '1', '9', '9', '6', '2', '8', '1', '8', '0', '2', '2', '3', '5', '9', '0', '1', '1', '0', '4', '7', '4', '9', '1', '6', '3', '0', '3', '5', '5', '7', '9', '2', '6', '8', '3', '4', '0', '6', '4', '8', '3', '6', '9', '8', '5', '0', '6', '7', '5', '2', '3', '6', '3', '9', '9', '1', '7', '9', '1', '1', '5', '2', '2', '2', '7', '0', '1', '8', '0', '1', '2', '9', '3', '7', '8', '5', '0', '1', '4', '1', '9', '3', '5', '8', '0', '4', '0', '5', '1', '2', '0', '2', '0', '4', '5', '8', '6', '7', '4', '1', '0', '6', '1', '2', '3', '5', '9', '6', '2', '7', '6', '6', '5', '8', '3', '9', '0', '7', '0', '9', '4', '0', '2', '1', '8', '7', '9', '2', '1', '5', '1', '7', '1', '4', '8', '3', '1', '1', '9', '1', '3', '9', '8', '9', '4', '8', '7', '0', '1', '3', '3', '0', '9', '1', '1', '1', '1', '0', '4', '4', '9', '0', '1', '6', '8', '3', '4', '0', '0', '9', '4', '9', '4', '8', '3', '8', '4', '6', '8', '1', '8', '2', '9', '9', '5', '1', '8', '0', '4', '1', '7', '6', '3', '5', '0', '7', '9', '4', '8', '9', '2', '2', '5', '9', '0', '7', '7', '4', '9', '2', '5', '4', '6', '6', '0', '8', '8', '1', '7', '1', '8', '7', '9', '2', '5', '9', '4', '6', '5', '9', '2', '1', '0', '2', '6', '5', '9', '7', '0', '4', '6', '7', '0', '0', '4', '4', '9', '8', '1', '9', '8', '9', '9', '0', '9', '6', '8', '6', '2', '0', '3', '9', '4', '6', '0', '0', '1', '7', '7', '4', '3', '0', '9', '4', '4', '7', '3', '8', '1', '1', '0', '5', '6', '9', '9', '1', '2', '9', '4', '1', '2', '8', '5', '4', '2', '8', '9', '1', '8', '8', '0', '8', '5', '5', '3', '6', '2', '7', '0', '7', '4', '0', '7', '6', '7', '0', '7', '2', '2', '5', '9', '3', '7', '3', '7', '7', '7', '2', '6', '6', '6', '9', '7', '3', '4', '4', '0', '9', '7', '7', '3', '6', '1', '2', '4', '3', '3', '3', '6', '3', '9', '7', '3', '0', '8', '0', '5', '1', '7', '6', '3', '0', '9', '1', '5', '0', '6', '8', '3', '6', '3', '1', '0', '7', '9', '5', '3', '1', '2', '6', '0', '7', '2', '3', '9', '5', '2', '0', '3', '6', '5', '2', '9', '0', '0', '3', '2', '1', '0', '5', '8', '4', '8', '8', '3', '9', '5', '0', '7', '9', '8', '1', '4', '5', '2', '3', '0', '7', '2', '9', '9', '4', '1', '7', '1', '8', '5', '7', '1', '5', '7', '9', '6', '2', '9', '7', '4', '5', '4', '9', '9', '5', '0', '2', '3', '5', '0', '5', '3', '1', '6', '0', '4', '0', '9', '1', '9', '8', '5', '9', '1', '9', '3', '7', '1', '8', '0', '2', '3', '3', '0', '7', '4', '1', '4', '8', '8', '0', '4', '4', '6', '2', '1', '7', '9', '2', '2', '8', '0', '0', '8', '3', '1', '7', '6', '6', '0', '4', '0', '9', '3', '8', '6', '5', '6', '3', '4', '4', '5', '7', '1', '0', '3', '4', '7', '7', '8', '5', '5', '3', '4', '5', '7', '1', '2', '1', '0', '8', '0', '5', '3', '0', '7', '3', '6', '3', '9', '4', '5', '3', '5', '9', '2', '3', '9', '3', '2', '6', '5', '1', '8', '6', '6', '0', '3', '0', '5', '1', '5', '0', '4', '1', '0', '6', '0', '9', '6', '6', '4', '3', '7', '3', '1', '3', '3', '2', '3', '6', '7', '2', '8', '3', '1', '5', '3', '9', '3', '2', '3', '5', '0', '0', '0', '6', '7', '9', '3', '7', '1', '0', '7', '5', '4', '1', '9', '5', '5', '4', '3', '7', '3', '6', '2', '4', '3', '3', '2', '4', '8', '3', '6', '1', '2', '4', '2', '5', '2', '5', '9', '4', '5', '8', '6', '8', '8', '0', '2', '3', '5', '3', '9', '1', '6', '7', '6', '6', '1', '8', '1', '5', '3', '2', '3', '7', '5', '8', '5', '5', '5', '0', '4', '8', '8', '6', '9', '0', '1', '4', '3', '2', '2', '2', '1', '3', '4', '9', '7', '3', '3', '3', '5', '4', '0', '9', '7', '3', '9', '1', '1', '5', '6', '0', '2', '1', '0', '7', '5', '9', '4', '1', '9', '0', '7', '6', '5', '8', '8', '5', '8', '0', '1', '4', '3', '2', '2', '6', '6', '2', '9', '6', '9', '3', '5', '1', '6', '6', '7', '5', '6', '9', '0', '0', '7', '6', '6', '4', '4', '9', '8', '3', '3', '3', '6', '8', '2', '1', '5', '5', '8', '1', '5', '6', '5', '1', '4', '1', '0', '9', '6', '1', '7', '8', '7', '8', '5', '1', '8', '1', '0', '1', '0', '3', '7', '4', '4', '5', '1', '9', '7', '3', '8', '4', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '4', '2', '3', '7', '6', '8', '7', '3', '4', '1', '9', '4', '7', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '8', '3', '7', '8', '3', '4', '5', '8', '9', '2', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '3', '9', '4', '5', '6', '8', '3', '7', '6', '7', '0', '0', '0', '0', '0', '3', '2', '4', '0', '0', '0', '5', '4', '3', '6', '3', '0', '6', '4', '0', '0', '0', '0', '0', '0', '4', '4', '9', '3', '8', '9', '3', '4', '7', '3', '2', '7', '8', '7', '0', '0', '0', '3', '5', '6', '4', '5', '0', '0', '5', '6', '6', '9', '0', '4', '7', '4', '7', '6', '4', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '5', '2', '6', '8', '7', '2', '9', '6', '4', '2', '2', '4', '5', '2', '2', '3', '1', '9', '1', '7', '5', '4', '6', '1', '8', '8', '8', '7', '3', '6', '0', '8', '4', '8', '5', '0', '6', '3', '8', '9', '8', '8', '3', '9', '4', '1', '8', '8', '3', '3', '2', '9', '4', '1', '0', '8', '3', '7', '3', '0', '3', '9', '8', '6', '7', '5', '3', '7', '6', '1', '3', '7', '5', '5', '2', '7', '0', '7', '7', '1', '0', '0', '1', '8', '3', '6', '2', '0', '8', '1', '1', '9', '1', '0', '8', '8', '9', '3', '4', '3', '0', '6', '4', '5', '8', '3', '6', '2', '3', '6', 0}, 10, NULL);
+	tau->num2 = bi_new((const char[]){'7', '0', '1', '8', '0', '1', '2', '9', '3', '7', '8', '5', '0', '1', '4', '1', '9', '3', '5', '8', '0', '4', '0', '5', '1', '2', '0', '2', '0', '4', '5', '8', '6', '7', '4', '1', '0', '6', '1', '2', '3', '5', '9', '6', '2', '7', '6', '6', '5', '8', '3', '9', '0', '7', '0', '9', '4', '0', '2', '1', '8', '7', '9', '2', '1', '5', '1', '7', '1', '4', '8', '3', '1', '1', '9', '1', '3', '9', '8', '9', '4', '8', '7', '0', '1', '3', '3', '0', '9', '1', '1', '1', '1', '0', '4', '4', '9', '0', '1', '6', '8', '3', '4', '0', '0', '9', '4', '9', '4', '8', '3', '8', '4', '6', '8', '1', '8', '2', '9', '9', '5', '1', '8', '0', '4', '1', '7', '6', '3', '5', '0', '7', '9', '4', '8', '9', '2', '2', '5', '9', '0', '7', '7', '4', '9', '2', '5', '4', '6', '6', '0', '8', '8', '1', '7', '1', '8', '7', '9', '2', '5', '9', '4', '6', '5', '9', '2', '1', '0', '2', '6', '5', '9', '7', '0', '4', '6', '7', '0', '0', '4', '4', '9', '8', '1', '9', '8', '9', '9', '0', '9', '6', '8', '6', '2', '0', '3', '9', '4', '6', '0', '0', '1', '7', '7', '4', '3', '0', '9', '4', '4', '7', '3', '8', '1', '1', '0', '5', '6', '9', '9', '1', '2', '9', '4', '1', '2', '8', '5', '4', '2', '8', '9', '1', '8', '8', '0', '8', '5', '5', '3', '6', '2', '7', '0', '7', '4', '0', '7', '6', '7', '0', '7', '2', '2', '5', '9', '3', '7', '3', '7', '7', '7', '2', '6', '6', '6', '9', '7', '3', '4', '4', '0', '9', '7', '7', '3', '6', '1', '2', '4', '3', '3', '3', '6', '3', '9', '7', '3', '0', '8', '0', '5', '1', '7', '6', '3', '0', '9', '1', '5', '0', '6', '8', '3', '6', '3', '1', '0', '7', '9', '5', '3', '1', '2', '6', '0', '7', '2', '3', '9', '5', '2', '0', '3', '6', '5', '2', '9', '0', '0', '3', '2', '1', '0', '5', '8', '4', '8', '8', '3', '9', '5', '0', '7', '9', '8', '1', '4', '5', '2', '3', '0', '7', '2', '9', '9', '4', '1', '7', '1', '8', '5', '7', '1', '5', '7', '9', '6', '2', '9', '7', '4', '5', '4', '9', '9', '5', '0', '2', '3', '5', '0', '5', '3', '1', '6', '0', '4', '0', '9', '1', '9', '8', '5', '9', '1', '9', '3', '7', '1', '8', '0', '2', '3', '3', '0', '7', '4', '1', '4', '8', '8', '0', '4', '4', '6', '2', '1', '7', '9', '2', '2', '8', '0', '0', '8', '3', '1', '7', '6', '6', '0', '4', '0', '9', '3', '8', '6', '5', '6', '3', '4', '4', '5', '7', '1', '0', '3', '4', '7', '7', '8', '5', '5', '3', '4', '5', '7', '1', '2', '1', '0', '8', '0', '5', '3', '0', '7', '3', '6', '3', '9', '4', '5', '3', '5', '9', '2', '3', '9', '3', '2', '6', '5', '1', '8', '6', '6', '0', '3', '0', '5', '1', '5', '0', '4', '1', '0', '6', '0', '9', '6', '6', '4', '3', '7', '3', '1', '3', '3', '2', '3', '6', '7', '2', '8', '3', '1', '5', '3', '9', '3', '2', '3', '5', '0', '0', '0', '6', '7', '9', '3', '7', '1', '0', '7', '5', '4', '1', '9', '5', '5', '4', '3', '7', '3', '6', '2', '4', '3', '3', '2', '4', '8', '3', '6', '1', '2', '4', '2', '5', '2', '5', '9', '4', '5', '8', '6', '8', '8', '0', '2', '3', '5', '3', '9', '1', '6', '7', '6', '6', '1', '8', '1', '5', '3', '2', '3', '7', '5', '8', '5', '5', '5', '0', '4', '8', '8', '6', '9', '0', '1', '4', '3', '2', '2', '2', '1', '3', '4', '9', '7', '3', '3', '1', '8', '6', '0', '2', '3', '9', '1', '2', '7', '0', '7', '6', '8', '4', '6', '5', '1', '7', '1', '9', '8', '3', '6', '9', '3', '5', '4', '0', '2', '6', '0', '7', '6', '8', '7', '5', '2', '6', '9', '5', '1', '5', '9', '3', '0', '5', '9', '2', '8', '3', '9', '1', '5', '0', '2', '0', '1', '0', '2', '8', '3', '5', '3', '8', '3', '7', '0', '3', '1', '0', '2', '5', '9', '7', '1', '3', '7', '3', '8', '5', '2', '2', '1', '6', '4', '7', '4', '3', '3', '2', '7', '9', '4', '9', '2', '0', '6', '4', '3', '3', '9', '9', '9', '0', '6', '8', '2', '2', '5', '5', '3', '1', '8', '5', '5', '0', '7', '2', '5', '5', '4', '6', '0', '6', '7', '8', '2', '1', '3', '8', '8', '0', '0', '8', '4', '1', '1', '6', '2', '8', '6', '6', '0', '3', '7', '3', '9', '3', '3', '2', '4', '6', '5', '7', '8', '1', '7', '1', '8', '0', '4', '2', '0', '1', '7', '1', '7', '2', '2', '2', '4', '4', '9', '9', '5', '4', '0', '3', '0', '3', '1', '5', '2', '9', '3', '5', '4', '7', '8', '7', '1', '4', '0', '1', '3', '6', '2', '9', '6', '1', '5', '0', '1', '0', '6', '5', '0', '0', '2', '4', '8', '6', '5', '5', '2', '6', '8', '8', '6', '6', '3', '4', '1', '5', '7', '4', '5', '9', '7', '5', '8', '9', '2', '5', '7', '9', '3', '5', '9', '4', '1', '6', '5', '6', '5', '1', '0', '2', '0', '7', '8', '9', '2', '2', '0', '0', '6', '7', '3', '1', '1', '4', '1', '6', '9', '2', '6', '0', '7', '6', '9', '4', '9', '7', '7', '7', '7', '6', '7', '6', '0', '4', '9', '0', '6', '1', '0', '7', '0', '6', '1', '9', '3', '7', '8', '7', '3', '5', '4', '0', '6', '0', '1', '5', '9', '4', '2', '7', '4', '7', '3', '1', '6', '1', '7', '6', '1', '9', '3', '7', '7', '5', '3', '7', '4', '1', '9', '0', '7', '1', '3', '0', '7', '1', '1', '5', '4', '9', '0', '0', '6', '5', '8', '5', '0', '3', '2', '6', '9', '4', '6', '5', '5', '1', '6', '4', '9', '6', '8', '2', '8', '5', '6', '8', '6', '5', '4', '3', '7', '7', '1', '8', '3', '1', '9', '0', '5', '8', '6', '9', '5', '3', '7', '6', '4', '0', '6', '9', '8', '0', '4', '4', '9', '3', '2', '6', '3', '8', '8', '9', '3', '4', '9', '2', '4', '5', '7', '9', '1', '4', '7', '5', '0', '8', '5', '5', '8', '5', '8', '9', '8', '0', '8', '4', '9', '1', '9', '0', '4', '8', '8', '3', '8', '5', '3', '1', '5', '0', '7', '6', '9', '2', '2', '4', '5', '3', '7', '5', '5', '5', '2', '7', '4', '8', '1', '1', '3', '7', '6', '7', '1', '9', '0', '9', '6', '1', '4', '4', '1', '1', '9', '3', '9', '0', '0', '5', '2', '1', '9', '9', '0', '2', '7', '7', '1', '5', '6', '9', '1', '3', '0', '2', '6', '5', '7', '0', '7', '5', '2', '9', '5', '0', '9', '0', '8', '6', '9', '7', '3', '9', '7', '3', '0', '2', '5', '0', '3', '1', '5', '5', '9', '1', '8', '0', '3', '5', '8', '9', '1', '1', '2', '2', '8', '3', '5', '7', '6', '9', '3', '9', '8', '5', '8', '3', '9', '5', '5', '2', '9', '6', '3', '2', '6', '3', '4', '3', '0', '5', '9', '7', '6', '1', '4', '4', '5', '7', '1', '4', '4', '1', '6', '9', '6', '5', '9', '8', '1', '7', '0', '4', '0', '1', '2', '5', '1', '8', '5', '2', '1', '5', '9', '1', '3', '8', '5', '3', '3', '4', '5', '5', '9', '8', '2', '1', '7', '2', '3', '4', '3', '7', '1', '2', '3', '1', '3', '3', '8', '3', '2', '4', '7', '7', '3', '2', '1', '0', '7', '2', '6', '8', '5', '3', '5', '2', '4', '7', '7', '6', '3', '7', '8', '4', '1', '0', '5', '1', '8', '6', '5', '4', '9', '2', '4', '6', '1', '9', '9', '8', '8', '8', '0', '7', '0', '3', '3', '1', '0', '8', '8', '4', '6', '2', '8', '5', '5', '7', '4', '3', '5', '2', '0', '8', '8', '0', '6', '7', '1', '2', '9', '9', '3', '0', '2', '8', '9', '5', '5', '4', '6', '8', '2', '2', '6', '9', '5', '4', '9', '2', '9', '6', '8', '5', '7', '7', '3', '8', '0', '7', '0', '6', '7', '9', '5', '8', '4', '2', '8', '0', '2', '2', '0', '0', '8', '2', '9', '4', '1', '1', '1', '9', '8', '4', '2', '2', '2', '9', '7', '3', '2', '6', '0', '2', '0', '8', '2', '3', '3', '6', '9', '3', '1', '5', '2', '5', '8', '9', '2', '1', '1', '6', '2', '9', '9', '0', '1', '6', '8', '6', '9', '7', '3', '9', '3', '3', '4', '8', '7', '3', '6', '2', '3', '6', '0', '8', '1', '2', '9', '6', '6', '0', '4', '1', '8', '5', '1', '4', '5', '6', '9', '0', '6', '3', '9', '9', '5', '2', '8', '2', '9', '7', '8', '1', '7', '6', '7', '9', '0', '1', '4', '9', '7', '6', '0', '5', '2', '1', '3', '9', '5', '5', '4', '8', '5', '3', '2', '8', '1', '4', '1', '9', '6', '5', '3', '4', '6', '7', '6', '9', '7', '4', '2', '5', '9', '7', '4', '7', '9', '3', '0', '6', '8', '5', '8', '6', '4', '5', '8', '4', '9', '2', '6', '8', '3', '2', '8', '9', '8', '5', '6', '8', '7', '4', '2', '3', '8', '8', '1', '8', '5', '3', '6', '3', '2', '6', '0', '4', '7', '0', '6', '1', '7', '5', '5', '6', '4', '4', '6', '1', '7', '1', '9', '3', '9', '6', '1', '1', '7', '3', '1', '8', '2', '9', '8', '6', '7', '9', '8', '2', '0', '7', '8', '5', '4', '9', '1', '8', '7', '5', '6', '7', '4', '9', '4', '6', '7', '0', '0', '4', '1', '3', '6', '8', '0', '9', '3', '2', '1', '0', '3', '2', '5', '1', '9', '5', '9', '0', '8', '4', '7', '5', '6', '5', '7', '8', '9', '3', '4', '9', '4', '0', '2', '7', '1', '8', '3', '2', '4', '0', '0', '4', '8', '3', '9', '8', '5', '7', '1', '4', '2', '9', '2', '8', '2', '1', '2', '6', '2', '0', '4', '0', '3', '2', '0', '2', '7', '7', '7', '7', '1', '3', '7', '8', '3', '6', '0', '4', '3', '6', '6', '2', '0', '2', '0', '7', '0', '7', '5', '9', '5', '5', '5', '6', '2', '6', '4', '0', '1', '8', '5', '2', '5', '8', '8', '0', '7', '8', '4', '4', '0', '6', '9', '1', '8', '2', '9', '0', '6', '4', '1', '2', '4', '9', '5', '1', '5', '0', '8', '2', '1', '8', '9', '2', '9', '8', '5', '5', '9', '1', '4', '9', '1', '7', '6', '1', '8', '4', '5', '0', '2', '8', '0', '8', '4', '8', '9', '1', '2', '0', '0', '7', '2', '8', '4', '4', '9', '9', '2', '6', '8', '7', '3', '9', '2', '8', '0', '7', '2', '8', '7', '7', '7', '6', '7', '3', '5', '9', '7', '1', '4', '1', '8', '3', '4', '7', '2', '7', '0', '2', '6', '1', '8', '9', '6', '3', '7', '5', '0', '1', '4', '9', '7', '1', '8', '2', '4', '6', '9', '1', '1', '6', '5', '0', '7', '7', '6', '1', '3', '3', '7', '9', '8', '5', '9', '0', '9', '5', '7', '0', '0', '0', '9', '7', '3', '3', '0', '4', '5', '9', '7', '4', '8', '8', '0', '8', '4', '2', '8', '4', '0', '1', '7', '9', '7', '4', '2', '9', '1', '0', '0', '6', '4', '2', '4', '5', '8', '6', '9', '1', '8', '1', '7', '1', '9', '5', '1', '1', '8', '7', '4', '6', '1', '2', '1', '5', '1', '5', '1', '7', '2', '6', '5', '4', '6', '3', '2', '2', '8', '2', '2', '1', '6', '8', '6', '9', '9', '8', '7', '5', '4', '9', '1', '8', '2', '4', '2', '2', '4', '3', '3', '6', '3', '7', '2', '5', '9', '0', '8', '5', '1', '4', '1', '8', '6', '5', '4', '6', '2', '0', '4', '3', '5', '7', '6', '7', '9', '8', '4', '2', '3', '3', '8', '7', '1', '8', '4', '7', '7', '4', '4', '4', '7', '9', '2', '0', '7', '3', '9', '9', '3', '4', '2', '3', '6', '5', '8', '4', '8', '2', '3', '8', '2', '4', '2', '8', '1', '1', '9', '8', '1', '6', '3', '8', '1', '5', '0', '1', '0', '6', '7', '4', '8', '1', '0', '4', '5', '1', '6', '6', '0', '3', '7', '7', '3', '0', '6', '0', '5', '6', '2', '0', '1', '6', '1', '9', '6', '7', '6', '2', '5', '6', '1', '3', '3', '8', '4', '4', '1', '4', '3', '6', '0', '3', '8', '3', '3', '9', '0', '4', '4', '1', '4', '9', '5', '2', '6', '3', '4', '4', '3', '2', '1', '9', '0', '1', '1', '4', '6', '5', '7', '5', '4', '4', '4', '5', '4', '1', '7', '8', '4', '2', '4', '0', '2', '0', '9', '2', '4', '6', '1', '6', '5', '1', '5', '7', '2', '3', '3', '5', '0', '7', '7', '8', '7', '0', '7', '7', '4', '9', '8', '1', '7', '1', '2', '5', '7', '7', '2', '4', '6', '7', '9', '6', '2', '9', '2', '6', '3', '8', '6', '3', '5', '6', '3', '7', '3', '2', '8', '9', '9', '1', '2', '1', '5', '4', '8', '3', '1', '4', '3', '8', '1', '6', '7', '8', '9', '9', '8', '8', '5', '0', '4', '0', '4', '4', '5', '3', '6', '4', '0', '2', '3', '5', '2', '7', '3', '8', '1', '9', '5', '1', '3', '7', '8', '6', '3', '6', '5', '6', '4', '3', '9', '1', '2', '1', '2', '0', '1', '0', '3', '9', '7', '1', '2', '2', '8', '2', '2', '1', '2', '0', '7', '2', '0', '3', '5', '7', 0}, 10, NULL);
 	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = malloc(sizeof(in1));
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = malloc(sizeof(in2));
-	REQUIRE(tau->num1.num && tau->num2.num);
-	memcpy(tau->num1.num, in1, sizeof(in1));
-	memcpy(tau->num2.num, in2, sizeof(in2));
-
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == 0);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(large_subtractions, test_o1kb_minus_o1ka)
 {
 	/* clang-format off */
-	u_int in1[342] = {120720357, 397122822, 391212010, 378636564, 527381951, 445364023, 899885040, 831438167, 289912154, 386356373, 467962926, 817125772, 778707749, 515723350, 20924616, 454178424, 114657544, 634432190, 904414952, 143603833, 256133844, 201619676, 377306056, 810451660, 815010674, 281198163, 584823824, 739934236, 774447920, 423387184, 43576798, 141865462, 637259085, 182422433, 869987549, 632282216, 515172654, 118746121, 691817195, 100642458, 401797429, 748808428, 97330459, 859095700, 77613379, 824691165, 375014971, 270261896, 971418347, 287776735, 687392807, 72844992, 808489120, 176184502, 298559149, 515082189, 290641249, 784406918, 18525880, 595556264, 662020707, 137836043, 32027777, 282126204, 398571429, 183240048, 893494027, 908475657, 210325195, 41368093, 567494670, 78549187, 829867982, 939611731, 556446171, 260470617, 388185363, 898568742, 584926832, 930685864, 974259747, 196534676, 548532814, 760521395, 176790149, 995282978, 514569063, 129660418, 873623608, 869739334, 116299016, 931525892, 602082336, 842229732, 82941119, 584280220, 738070679, 549296857, 554682269, 129930289, 352088067, 846285574, 807033108, 924619988, 410518654, 524776378, 210726853, 338324773, 234371231, 345598217, 215913853, 40125185, 169659817, 614457144, 263430597, 839552963, 357693985, 358911228, 31559180, 973973025, 529509086, 130265707, 902771569, 939005219, 909614411, 481137671, 453755527, 315076922, 190488385, 858980849, 914750855, 893492457, 44932638, 537640698, 831905869, 686543771, 164968285, 32694655, 549006585, 907130711, 937753741, 473161761, 60159427, 193787354, 490610706, 977776760, 692607694, 6731141, 102078922, 359416565, 975892579, 663415745, 486552688, 501065002, 401362961, 293547871, 954030315, 717222449, 171804201, 933246578, 628660373, 388008411, 546067821, 318550725, 990682255, 492064339, 647433279, 137385221, 703102597, 102835383, 283915020, 951593059, 607687526, 836935402, 684651719, 23912707, 349733186, 901432221, 855504886, 181532375, 353916766, 945868802, 361242525, 362433248, 541955437, 67937107, 539323500, 323672831, 966437313, 515041060, 651866030, 535923932, 530736394, 457121080, 34778553, 656344571, 766040938, 922800831, 880446217, 23307414, 859193718, 316040919, 995023505, 796297454, 417185715, 452307299, 839507981, 32105848, 520365290, 312607239, 836310795, 763091506, 397308051, 361243336, 973440977, 737772666, 670722593, 362707407, 891880855, 294128542, 811056991, 743094473, 39460017, 899096862, 700449819, 26597046, 259465921, 88171879, 774925466, 948922590, 41763507, 818299518, 949483846, 901683400, 91111044, 894870133, 483119139, 879215171, 907094021, 962766583, 741061235, 120204586, 193580405, 293785014, 701801};
-	u_int in2[] = {645836236, 108893430, 836208119, 270771001, 537613755, 373039867, 833294108, 898839418, 608485063, 546188873, 452231917, 687296422, 111111152, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 476411111, 5669047, 700035645, 893473278, 4493, 543630640, 324000, 568376700, 1394, 300000000, 378345892, 8, 734194700, 423768, 0, 445197384, 518101037, 109617878, 558156514, 983336821, 690076644, 693516675, 143226629, 76588580, 210759419, 973911560, 497333540, 14322213, 555048869, 815323758, 539167661, 458688023, 612425259, 624332483, 419554373, 679371075, 393235000, 236728315, 664373133, 150410609, 518660305, 359239326, 307363945, 571210805, 347785534, 563445710, 660409386, 228008317, 804462179, 233074148, 591937180, 160409198, 950235053, 962974549, 171857157, 523072994, 395079814, 321058488, 203652900, 126072395, 363107953, 630915068, 973080517, 612433363, 734409773, 377726669, 707225937, 627074076, 918808553, 941285428, 110569912, 430944738, 394600177, 990968620, 4498198, 265970467, 594659210, 881718792, 749254660, 489225907, 417635079, 182995180, 494838468, 16834009, 911110449, 948701330, 831191398, 792151714, 70940218, 627665839, 410612359, 202045867, 935804051, 937850141, 227018012, 991791152, 506752363, 406483698, 355792683, 47491630, 22359011, 919962818, 955165934, 399211808, 673319428, 319818160, 662785141, 175882430, 630322415, 735383534, 687650610, 46582669, 496678148, 491637987, 871575195, 116330034, 723314187, 385420689, 325094262, 12829142, 208703866, 120005690, 899921757, 77002169, 359486189, 753454258, 278911354, 694037307, 578519296, 494600786, 470779501, 768446187, 472669563, 716361937, 389127515, 976446119, 593192334, 617083917, 272976737, 418747631, 855714255, 226105187, 605917499, 696971445, 573117854, 99153257, 956645492, 728520292, 946389174, 245482697, 655465609, 470307816, 135416351, 729216591, 866144546, 888959338, 809402688, 527131609, 866613186, 419167460, 916600904, 633154349, 747140489, 315862951, 238759183, 148584074, 652667824, 161606397, 677427537, 590777629, 825244648, 835356427, 366982335, 748040826, 852122159, 4896, 900000000, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 385820199, 167580321, 134092496, 277075937, 872169008, 64325722, 827080282, 277960712, 655352740, 163131699, 448213684, 277128786, 514326330, 933871396, 63154105, 745922799, 490015860, 252229607, 711956623, 591788040, 954758766, 467124003, 644524713, 690634208, 510828673, 629041620, 704066384, 468512842, 590156377, 509105852, 101803594, 777808979, 519622805, 972925209, 333284887, 366099858, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
-	u_int out[342] = {525115879, 711770608, 444996108, 892134437, 10231803, 927675844, 933409067, 67401250, 318572909, 159832500, 984268991, 870170649, 332403402, 595387760, 90186494, 656932687, 996453566, 476678920, 206696158, 967507277, 854977266, 909491434, 99105054, 195217387, 885024970, 612275114, 415180669, 803696403, 225876079, 144989515, 956424596, 158134537, 741086807, 817577574, 864207150, 368141551, 484827345, 326451262, 826283842, 8975419, 156359085, 234528393, 592746185, 834420975, 65613249, 251897415, 835744447, 703649663, 525915193, 726545477, 867656061, 742478765, 730678541, 282503520, 313866110, 109250294, 128913124, 894964157, 374709119, 641172051, 2352425, 12574566, 486632528, 77113122, 908792516, 387970756, 454291507, 654970052, 450084190, 186640224, 236967509, 154524961, 762069198, 220797466, 393788881, 702503932, 783671794, 624504251, 810152981, 390372623, 229393152, 929537718, 814575138, 870393672, 796290367, 617150385, 219840709, 248066251, 833602329, 757334741, 802509536, 9759536, 508487576, 588715005, 311659057, 406688400, 266427519, 716673609, 39976940, 751788503, 397166593, 642940333, 610601970, 258375191, 84319813, 492057631, 700383595, 610376557, 596820167, 446553497, 855026365, 587540653, 240952542, 587588723, 672373453, 98297178, 869324027, 632879923, 475193183, 432510673, 826283596, 917225922, 119587441, 980957598, 45551522, 918074137, 219563900, 4741238, 472296756, 316901581, 715571559, 841891076, 642717971, 508941971, 664772278, 805094215, 706606909, 83635379, 174307602, 478289978, 387340520, 539667380, 148544438, 926218336, 409311050, 99225409, 666878494, 746723116, 176832432, 334620742, 602626717, 831185040, 984226812, 267381184, 71306602, 422814066, 435097200, 259223669, 421388133, 683837339, 644316363, 30739219, 309646434, 907554462, 615235243, 204907105, 925684575, 961768035, 253542894, 625684909, 662474154, 293889638, 47778082, 633372414, 450764631, 705303883, 516411360, 987527117, 953897801, 345599233, 512696420, 473298658, 555358378, 270721101, 205185052, 247925844, 699435683, 824911242, 686230510, 646565336, 25561506, 54853697, 294508254, 378235347, 332203782, 91696255, 86081221, 77204065, 19553782, 976692585, 140806281, 683959080, 4976494, 203702545, 582814284, 547692700, 160492018, 967894151, 479634709, 73212960, 331269526, 371000989, 879767885, 510925671, 90884745, 89307615, 607238119, 292645332, 271250844, 154085141, 466071795, 771231856, 894411378, 164057243, 45472979, 463418814, 992763686, 623784743, 816862574, 5836175, 425360496, 826225195, 741150361, 609145272, 537930575, 809196251, 985393702, 710941205, 602011830, 139037010, 36747743, 399418219, 779344804, 39499873, 365398057, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
+	const char expected[] = {'-', '6', '2', '7', '3', '5', '6', '4', '7', '4', '8', '1', '4', '3', '5', '0', '6', '2', '0', '1', '7', '1', '1', '3', '4', '8', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '9', '2', '7', '4', '3', '4', '3', '8', '8', '1', '5', '4', '6', '8', '3', '3', '0', '3', '2', '4', '3', '8', '5', '2', '1', '3', '1', '7', '9', '4', '9', '7', '8', '5', '5', '8', '1', '5', '5', '8', '5', '1', '0', '5', '8', '8', '6', '0', '7', '6', '6', '5', '6', '0', '0', '5', '4', '8', '5', '6', '5', '9', '5', '3', '7', '1', '4', '6', '6', '4', '0', '2', '2', '3', '5', '9', '2', '0', '4', '5', '2', '5', '7', '7', '0', '1', '4', '2', '4', '6', '0', '0', '1', '0', '0', '6', '0', '3', '3', '5', '9', '2', '2', '8', '0', '2', '9', '0', '0', '9', '4', '5', '6', '9', '8', '2', '8', '3', '0', '0', '7', '1', '3', '4', '8', '2', '7', '5', '3', '4', '2', '4', '3', '3', '1', '0', '6', '2', '5', '2', '1', '1', '5', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '5', '3', '6', '9', '4', '4', '1', '0', '0', '3', '9', '1', '3', '6', '3', '7', '4', '1', '9', '1', '6', '4', '9', '3', '2', '6', '0', '1', '8', '7', '8', '1', '2', '3', '6', '2', '0', '7', '6', '6', '4', '4', '9', '0', '1', '7', '1', '9', '9', '2', '1', '2', '9', '4', '6', '5', '4', '9', '5', '4', '2', '0', '5', '2', '7', '1', '3', '3', '5', '7', '2', '6', '1', '8', '4', '6', '5', '6', '6', '1', '2', '9', '7', '7', '8', '0', '8', '5', '5', '7', '0', '0', '0', '0', '4', '3', '6', '8', '2', '8', '5', '4', '9', '0', '0', '8', '8', '0', '7', '7', '7', '3', '7', '5', '5', '7', '9', '8', '1', '1', '1', '8', '1', '8', '7', '2', '5', '1', '7', '5', '3', '9', '4', '6', '0', '1', '2', '4', '8', '3', '4', '7', '4', '8', '8', '2', '8', '6', '0', '8', '9', '3', '8', '7', '2', '1', '7', '8', '9', '8', '4', '7', '3', '8', '4', '0', '0', '5', '9', '2', '5', '6', '8', '6', '9', '5', '1', '4', '2', '6', '6', '7', '7', '1', '8', '4', '7', '4', '6', '3', '3', '4', '4', '8', '3', '1', '4', '0', '1', '7', '5', '8', '4', '9', '1', '8', '9', '8', '8', '4', '8', '9', '4', '4', '4', '6', '9', '6', '8', '7', '4', '1', '1', '0', '5', '0', '4', '1', '6', '1', '7', '5', '0', '8', '7', '3', '5', '0', '9', '3', '5', '8', '5', '2', '8', '8', '3', '1', '2', '3', '2', '9', '8', '0', '3', '6', '4', '8', '0', '4', '3', '7', '8', '9', '9', '5', '2', '9', '1', '3', '7', '1', '0', '6', '6', '6', '0', '4', '0', '0', '8', '0', '6', '0', '0', '7', '7', '6', '0', '1', '5', '7', '5', '8', '6', '9', '1', '5', '2', '4', '3', '8', '0', '5', '5', '2', '8', '8', '6', '4', '2', '3', '1', '6', '7', '5', '2', '9', '5', '9', '6', '2', '3', '6', '9', '6', '9', '9', '0', '4', '3', '8', '9', '0', '7', '3', '6', '4', '0', '8', '8', '4', '1', '1', '8', '2', '8', '8', '6', '1', '7', '8', '6', '8', '8', '0', '6', '5', '6', '7', '1', '7', '9', '7', '6', '8', '4', '5', '8', '9', '7', '1', '4', '6', '1', '2', '2', '6', '9', '7', '3', '1', '5', '2', '6', '5', '7', '4', '6', '0', '3', '5', '9', '5', '6', '5', '7', '9', '7', '9', '2', '8', '7', '1', '0', '5', '9', '6', '4', '1', '9', '5', '8', '4', '6', '3', '1', '1', '4', '2', '5', '6', '2', '4', '5', '9', '4', '9', '8', '2', '3', '4', '5', '6', '9', '0', '5', '0', '9', '5', '1', '6', '6', '1', '9', '8', '6', '9', '7', '5', '3', '8', '7', '1', '3', '2', '9', '6', '5', '8', '1', '7', '5', '8', '6', '7', '5', '7', '1', '0', '3', '2', '2', '6', '2', '9', '5', '2', '3', '6', '2', '4', '0', '0', '0', '1', '4', '3', '1', '2', '9', '1', '1', '1', '5', '7', '8', '0', '3', '1', '0', '2', '6', '6', '6', '2', '6', '9', '4', '9', '9', '5', '8', '0', '5', '1', '4', '6', '4', '1', '3', '5', '7', '1', '0', '4', '4', '5', '9', '1', '9', '9', '3', '8', '5', '3', '8', '9', '7', '6', '6', '2', '6', '6', '9', '7', '1', '9', '2', '7', '4', '9', '8', '6', '4', '4', '2', '8', '3', '1', '7', '8', '1', '2', '3', '2', '2', '5', '0', '2', '8', '2', '4', '8', '1', '5', '8', '7', '2', '9', '6', '9', '1', '5', '8', '8', '3', '0', '5', '7', '4', '5', '7', '0', '6', '1', '1', '2', '0', '9', '8', '0', '6', '5', '6', '6', '6', '3', '1', '4', '3', '3', '5', '5', '4', '2', '5', '1', '3', '7', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '3', '9', '6', '7', '8', '1', '0', '8', '3', '6', '6', '5', '9', '3', '6', '2', '0', '6', '5', '6', '2', '4', '8', '6', '0', '9', '8', '0', '2', '6', '8', '1', '3', '7', '8', '4', '8', '8', '0', '8', '4', '4', '5', '2', '5', '9', '1', '7', '4', '1', '2', '7', '3', '7', '1', '1', '8', '2', '4', '1', '9', '2', '5', '7', '2', '1', '1', '1', '5', '4', '7', '0', '9', '2', '1', '0', '4', '5', '1', '6', '7', '7', '6', '2', '9', '0', '9', '6', '5', '4', '7', '3', '5', '4', '7', '3', '6', '2', '3', '1', '7', '8', '0', '9', '3', '4', '7', '7', '4', '4', '7', '9', '3', '7', '3', '3', '1', '6', '3', '3', '1', '7', '3', '1', '0', '2', '0', '7', '5', '5', '6', '0', '4', '0', '5', '1', '3', '8', '2', '3', '2', '2', '9', '4', '7', '1', '2', '6', '3', '1', '0', '7', '2', '7', '8', '0', '8', '5', '5', '5', '1', '8', '2', '6', '8', '9', '8', '4', '2', '7', '7', '0', '7', '7', '6', '5', '5', '8', '0', '6', '3', '8', '4', '2', '2', '3', '5', '7', '6', '6', '6', '4', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '2', '5', '9', '0', '8', '6', '7', '3', '8', '5', '0', '5', '7', '2', '4', '6', '8', '2', '9', '0', '3', '3', '7', '7', '2', '2', '6', '3', '0', '5', '3', '5', '0', '1', '7', '6', '0', '8', '8', '2', '5', '7', '5', '0', '2', '3', '3', '3', '0', '0', '4', '1', '5', '1', '2', '1', '1', '4', '3', '4', '9', '4', '4', '5', '7', '3', '6', '4', '1', '8', '2', '5', '3', '4', '8', '4', '4', '9', '7', '4', '9', '8', '7', '1', '5', '6', '9', '9', '0', '0', '3', '7', '8', '5', '4', '2', '8', '3', '7', '4', '4', '8', '4', '4', '6', '9', '7', '8', '8', '9', '3', '5', '2', '1', '6', '9', '0', '4', '6', '5', '9', '6', '7', '5', '2', '1', '1', '8', '5', '0', '9', '2', '7', '2', '3', '8', '7', '0', '1', '7', '1', '5', '7', '1', '5', '5', '4', '9', '0', '4', '7', '6', '3', '9', '8', '8', '0', '6', '7', '1', '5', '4', '6', '3', '3', '2', '7', '4', '8', '9', '5', '5', '0', '2', '7', '2', '8', '7', '6', '7', '3', '7', '8', '5', '3', '9', '5', '4', '6', '6', '8', '1', '5', '8', '1', '7', '1', '6', '1', '3', '5', '6', '2', '6', '9', '6', '8', '0', '9', '8', '5', '6', '8', '0', '9', '2', '6', '1', '6', '5', '2', '1', '7', '6', '5', '0', '6', '7', '1', '6', '8', '0', '4', '0', '3', '7', '9', '1', '9', '5', '2', '2', '6', '5', '1', '3', '6', '5', '5', '9', '6', '3', '1', '8', '1', '1', '7', '5', '0', '7', '2', '7', '0', '0', '0', '5', '2', '8', '7', '5', '1', '9', '3', '2', '8', '5', '5', '1', '9', '6', '6', '7', '1', '3', '7', '7', '9', '1', '9', '7', '0', '2', '0', '5', '9', '2', '1', '8', '2', '4', '4', '7', '4', '3', '2', '5', '3', '5', '3', '2', '6', '0', '6', '1', '4', '0', '4', '9', '6', '6', '2', '8', '2', '1', '0', '5', '0', '7', '6', '3', '5', '0', '5', '8', '2', '1', '3', '7', '8', '0', '4', '9', '6', '9', '4', '0', '3', '4', '5', '9', '4', '2', '4', '3', '9', '4', '6', '2', '1', '1', '5', '2', '5', '4', '1', '6', '9', '7', '3', '4', '1', '7', '9', '7', '3', '2', '1', '2', '0', '9', '8', '1', '1', '8', '3', '5', '4', '1', '6', '0', '3', '3', '1', '4', '5', '6', '0', '5', '5', '2', '5', '7', '3', '8', '3', '8', '9', '7', '6', '6', '9', '0', '3', '6', '1', '1', '9', '8', '8', '3', '6', '2', '2', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '6', '7', '6', '6', '1', '3', '1', '0', '6', '4', '5', '4', '7', '8', '5', '5', '4', '4', '6', '1', '9', '5', '4', '9', '6', '3', '2', '6', '2', '4', '6', '8', '4', '0', '9', '3', '4', '5', '7', '1', '4', '1', '8', '7', '4', '7', '6', '7', '0', '0', '4', '9', '9', '8', '1', '9', '0', '3', '5', '4', '1', '4', '9', '7', '6', '9', '4', '7', '3', '3', '0', '9', '6', '4', '9', '1', '9', '4', '4', '9', '3', '1', '5', '1', '5', '5', '6', '0', '1', '4', '6', '3', '2', '2', '1', '4', '7', '9', '1', '7', '4', '4', '9', '1', '4', '8', '3', '8', '2', '7', '0', '0', '6', '1', '4', '4', '3', '0', '3', '4', '8', '1', '9', '9', '4', '6', '7', '2', '9', '2', '0', '2', '9', '5', '9', '8', '5', '3', '0', '7', '8', '9', '8', '4', '9', '9', '3', '5', '5', '1', '2', '4', '9', '0', '0', '5', '7', '8', '5', '0', '2', '2', '6', '8', '9', '2', '7', '5', '8', '4', '5', '0', '2', '7', '6', '3', '0', '1', '3', '7', '0', '5', '5', '7', '4', '6', '5', '1', '5', '0', '1', '8', '8', '7', '7', '9', '4', '3', '2', '1', '6', '3', '5', '7', '7', '2', '9', '9', '9', '6', '8', '6', '4', '1', '0', '5', '6', '8', '5', '0', '8', '9', '7', '7', '5', '0', '5', '7', '5', '0', '2', '9', '1', '4', '6', '8', '3', '0', '2', '8', '9', '7', '1', '7', '0', '1', '7', '4', '7', '4', '5', '9', '1', '8', '7', '5', '8', '3', '2', '4', '5', '0', '6', '0', '4', '7', '5', '8', '1', '7', '6', '8', '5', '8', '2', '4', '5', '4', '9', '0', '2', '3', '3', '9', '1', '8', '2', '8', '5', '9', '1', '1', '3', '6', '4', '2', '5', '1', '2', '1', '0', '4', '7', '3', '1', '8', '9', '2', '9', '7', '9', '4', '3', '6', '3', '4', '6', '9', '7', '1', '5', '2', '2', '3', '9', '4', '8', '9', '5', '8', '4', '2', '9', '1', '7', '4', '5', '3', '3', '9', '2', '3', '7', '4', '6', '3', '9', '9', '4', '4', '2', '6', '7', '9', '7', '3', '8', '0', '4', '5', '5', '4', '7', '1', '4', '5', '2', '6', '5', '1', '2', '2', '0', '3', '1', '5', '3', '8', '0', '8', '1', '0', '3', '4', '6', '6', '9', '7', '3', '4', '9', '6', '9', '3', '8', '1', '1', '4', '7', '3', '9', '1', '8', '0', '1', '6', '6', '1', '4', '9', '1', '8', '5', '4', '6', '9', '3', '9', '4', '1', '3', '8', '7', '9', '3', '3', '0', '8', '5', '0', '1', '7', '0', '5', '2', '5', '4', '6', '6', '2', '1', '0', '5', '7', '6', '4', '4', '1', '3', '9', '1', '5', '4', '2', '2', '4', '3', '2', '6', '8', '1', '5', '6', '4', '0', '4', '8', '0', '8', '1', '4', '5', '2', '8', '7', '2', '4', '8', '3', '1', '4', '4', '9', '2', '6', '3', '6', '9', '8', '8', '6', '6', '1', '4', '7', '6', '6', '6', '1', '0', '2', '7', '2', '5', '6', '7', '4', '2', '4', '8', '2', '0', '7', '6', '8', '6', '0', '1', '1', '7', '4', '2', '7', '0', '1', '2', '6', '6', '7', '5', '3', '4', '6', '0', '5', '6', '4', '3', '3', '6', '3', '9', '2', '8', '9', '3', '2', '8', '8', '4', '9', '3', '4', '3', '8', '1', '1', '4', '1', '2', '8', '1', '9', '4', '1', '6', '9', '2', '1', '6', '7', '3', '5', '4', '6', '3', '5', '6', '1', '0', '8', '7', '1', '5', '8', '9', '3', '3', '8', '5', '3', '2', '9', '4', '4', '8', '5', '1', '6', '8', '1', '5', '8', '3', '9', '6', '2', '7', '5', '4', '3', '3', '3', '8', '8', '5', '0', '9', '6', '9', '2', '9', '3', '7', '8', '4', '6', '1', '7', '6', '7', '4', '2', '1', '5', '9', '6', '3', '5', '0', '9', '5', '1', '6', '8', '0', '0', '0', '2', '1', '6', '0', '8', '1', '3', '5', '7', '6', '3', '0', '7', '3', '2', '4', '2', '7', '5', '7', '1', '5', '9', '7', '1', '3', '2', '8', '4', '5', '4', '1', '7', '5', '0', '5', '9', '0', '0', '5', '9', '3', '5', '8', '6', '9', '1', '8', '5', '1', '8', '1', '5', '5', '4', '8', '2', '4', '1', '8', '0', '9', '8', '3', '1', '2', '8', '2', '4', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '8', '8', '3', '6', '7', '4', '5', '5', '4', '9', '4', '8', '9', '0', '8', '6', '6', '7', '1', '2', '6', '1', '7', '8', '6', '2', '7', '2', '5', '6', '4', '5', '3', '2', '2', '8', '3', '9', '2', '6', '3', '2', '4', '1', '4', '7', '8', '3', '1', '5', '3', '6', '8', '9', '5', '3', '0', '9', '2', '1', '7', '4', '1', '1', '5', '0', '7', '1', '8', '1', '9', '1', '0', '6', '3', '8', '2', '5', '5', '0', '5', '4', '6', '8', '3', '8', '1', '2', '9', '0', '5', '3', '5', '7', '4', '4', '7', '5', '3', '5', '1', '9', '5', '4', '0', '4', '9', '2', '2', '7', '9', '1', '4', '8', '7', '6', '9', '7', '0', '2', '6', '3', '7', '1', '9', '9', '7', '5', '2', '9', '3', '7', '1', '2', '0', '4', '6', '6', '7', '8', '4', '0', '0', '1', '0', '3', '8', '5', '4', '7', '3', '8', '1', '7', '9', '1', '1', '4', '2', '5', '4', '4', '0', '2', '4', '0', '9', '0', '8', '3', '0', '4', '7', '8', '4', '4', '5', '0', '0', '8', '6', '8', '0', '9', '2', '6', '9', '9', '7', '3', '6', '4', '7', '2', '2', '5', '5', '9', '9', '5', '2', '5', '5', '9', '4', '2', '7', '7', '2', '0', '7', '0', '3', '6', '9', '0', '0', '9', '2', '4', '3', '0', '3', '2', '4', '5', '1', '0', '3', '3', '0', '2', '1', '6', '8', '1', '3', '4', '8', '9', '5', '6', '3', '5', '8', '5', '1', '3', '6', '7', '3', '2', '4', '9', '4', '5', '1', '0', '0', '2', '1', '6', '4', '3', '2', '2', '7', '3', '1', '3', '0', '3', '0', '1', '9', '6', '3', '7', '4', '5', '8', '7', '1', '4', '9', '7', '1', '5', '8', '7', '2', '4', '5', '3', '3', '8', '0', '4', '3', '4', '4', '0', '1', '8', '7', '5', '2', '1', '4', '9', '7', '3', '9', '7', '7', '2', '5', '4', '9', '0', '0', '2', '7', '8', '8', '3', '9', '2', '6', '2', '8', '5', '9', '2', '7', '3', '7', '7', '7', '4', '3', '3', '9', '3', '4', '5', '5', '3', '4', '5', '9', '7', '4', '9', '8', '6', '2', '5', '3', '2', '4', '0', '5', '6', '9', '2', '5', '6', '6', '0', '4', '7', '5', '0', '7', '1', '0', '1', '0', '7', '5', '0', '1', '6', '2', '4', '4', '3', '6', '8', '6', '0', '6', '6', '0', '1', '2', '6', '4', '9', '8', '0', '8', '8', '2', '5', '2', '6', '4', '7', '4', '9', '4', '4', '0', '1', '4', '1', '3', '9', '3', '6', '8', '0', '2', '6', '8', '4', '8', '9', '3', '0', '7', '1', '4', '6', '0', '3', '5', '4', '8', '1', '5', '6', '0', '3', '5', '6', '0', '3', '3', '8', '8', '0', '4', '3', '9', '0', '7', '9', '3', '5', '6', '5', '8', '4', '9', '2', '0', '8', '8', '5', '8', '6', '8', '9', '1', '5', '7', '5', '3', '7', '3', '3', '9', '3', '4', '1', '5', '2', '7', '2', '0', '5', '9', '4', '7', '4', '8', '0', '4', '0', '9', '1', '5', '2', '4', '3', '4', '2', '1', '0', '6', '5', '0', '5', '9', '7', '2', '8', '1', '6', '7', '5', '9', '9', '5', '1', '6', '0', '1', '4', '2', '8', '5', '7', '0', '7', '1', '7', '8', '7', '3', '7', '9', '5', '9', '6', '7', '9', '7', '2', '2', '2', '2', '8', '6', '2', '1', '6', '3', '9', '5', '6', '3', '3', '7', '9', '7', '9', '2', '9', '2', '4', '0', '4', '4', '4', '3', '7', '3', '5', '9', '8', '1', '4', '7', '4', '1', '1', '9', '2', '1', '5', '5', '9', '3', '0', '8', '1', '7', '0', '9', '3', '5', '8', '7', '5', '0', '4', '8', '4', '9', '1', '7', '8', '1', '0', '7', '0', '1', '4', '4', '0', '8', '5', '0', '8', '2', '3', '8', '1', '5', '4', '9', '7', '1', '9', '1', '5', '1', '0', '9', '4', '4', '1', '4', '6', '2', '9', '7', '4', '4', '2', '2', '2', '7', '3', '9', '6', '6', '5', '4', '4', '8', '1', '6', '9', '9', '7', '3', '4', '6', '8', '5', '3', '9', '3', '1', '1', '9', '8', '7', '9', '3', '5', '1', '6', '0', '1', '6', '0', '6', '6', '9', '7', '9', '6', '2', '2', '2', '0', '8', '4', '6', '3', '1', '1', '1', '6', '7', '6', '5', '0', '2', '2', '5', '9', '7', '8', '2', '3', '3', '1', '9', '0', '2', '3', '2', '5', '8', '8', '6', '7', '4', '7', '1', '8', '4', '4', '7', '0', '9', '4', '6', '0', '5', '1', '5', '7', '3', '8', '3', '3', '7', '2', '4', '9', '7', '7', '6', '4', '9', '6', '9', '8', '1', '6', '6', '3', '5', '0', '0', '2', '4', '5', '6', '5', '7', '2', '2', '9', '0', '9', '3', '4', '9', '1', '0', '8', '9', '1', '2', '2', '9', '3', '0', '9', '3', '9', '5', '9', '5', '4', '8', '9', '5', '7', '8', '5', '5', '3', '2', '8', '4', '4', '6', '8', '2', '2', '3', '7', '7', '8', '3', '8', '0', '8', '5', '0', '8', '0', '2', '7', '0', '9', '1', '8', '2', '4', '3', '9', '4', '2', '8', '2', '2', '1', '3', '7', '6', '1', '4', '6', '0', '8', '3', '3', '6', '1', '5', '0', '1', '5', '9', '4', '1', '5', '0', '2', '8', '6', '9', '9', '8', '6', '2', '7', '4', '5', '8', '9', '4', '7', '3', '7', '0', '3', '6', '8', '4', '1', '3', '1', '0', '6', '3', '9', '6', '2', '5', '3', '3', '2', '5', '5', '6', '7', '5', '6', '9', '8', '6', '3', '5', '4', '2', '5', '8', '4', '8', '5', '6', '9', '7', '9', '6', '5', '2', '2', '5', '4', '0', '4', '6', '3', '6', '1', '2', '1', '2', '2', '0', '7', '6', '7', '4', '4', '5', '2', '2', '9', '0', '4', '5', '7', '0', '8', '6', '0', '4', '3', '6', '1', '0', '5', '2', '6', '5', '5', '1', '7', '3', '3', '8', '1', '6', '6', '1', '3', '5', '1', '4', '5', '6', '2', '7', '8', '3', '9', '6', '9', '4', '4', '5', '5', '9', '6', '2', '5', '7', '0', '0', '5', '1', '9', '3', '3', '5', '8', '9', '9', '5', '0', '3', '3', '1', '2', '7', '6', '2', '6', '8', '4', '2', '3', '0', '0', '4', '7', '1', '8', '1', '9', '0', '7', '3', '5', '7', '5', '2', '1', '1', '9', '7', '3', '3', '3', '9', '6', '7', '7', '3', '1', '8', '2', '4', '8', '0', '1', '0', '9', '1', '6', '1', '3', '5', '5', '5', '5', '0', '0', '3', '2', '7', '4', '7', '4', '4', '8', '1', '1', '9', '1', '4', '4', '6', '2', '1', '2', '1', '6', '2', '0', '4', '5', '6', '9', '2', '1', '6', '6', '4', '9', '8', '8', '1', '2', '8', '1', '6', '4', '4', '5', '2', '4', '7', '6', '9', '9', '7', '2', '9', '0', '8', '6', '3', '6', '8', '3', '6', '5', '7', '4', '6', '3', '8', '3', '0', '9', '6', '0', '6', '6', '5', '6', '3', '6', '5', '8', '0', '4', '2', '5', '7', '8', '2', '1', '7', '5', '6', '5', '8', '2', '6', '4', '9', '3', '1', '9', '6', '1', '9', '6', '0', '0', '6', '2', '1', '8', '9', '2', '6', '8', '9', '1', '3', '2', '1', '1', '7', '0', '7', '1', '6', '4', '1', '8', '1', '4', '2', '8', '1', '4', '8', '9', '1', '4', '1', '7', '1', '6', '5', '3', '4', '6', '6', '8', '3', '1', '6', '4', '6', '6', '5', '9', '0', '0', '0', '9', '8', '8', '2', '8', '4', '8', '4', '9', '5', '0', '6', '2', '4', '5', '5', '1', '3', '3', '4', '8', '3', '3', '0', '0', '7', '0', '9', '5', '0', '1', '3', '2', '2', '7', '2', '9', '6', '4', '1', '1', '3', '7', '1', '8', '2', '9', '3', '4', '5', '5', '9', '5', '0', '5', '1', '5', '8', '0', '0', '7', '0', '4', '1', '8', '7', '3', '9', '4', '3', '1', '9', '2', '3', '9', '7', '9', '7', '4', '0', '0', '7', '5', '4', '5', '5', '9', '9', '3', '6', '4', '5', '1', '6', '8', '4', '6', '6', '8', '6', '1', '6', '5', '0', '2', '1', '0', '9', '2', '4', '5', '2', '0', '7', '8', '8', '1', '9', '2', '8', '6', '8', '4', '2', '7', '7', '7', '6', '8', '2', '1', '9', '8', '2', '4', '8', '3', '1', '6', '4', '3', '5', '0', '4', '9', '3', '6', '8', '3', '9', '1', '1', '9', '7', '2', '2', '7', '4', '1', '7', '3', '5', '0', '0', '9', '3', '8', '3', '0', '9', '4', '2', '9', '9', '2', '2', '2', '2', '5', '3', '9', '4', '2', '7', '5', '3', '8', '2', '6', '6', '6', '4', '7', '2', '8', '3', '2', '5', '5', '8', '3', '8', '6', '1', '0', '2', '8', '4', '6', '0', '5', '6', '2', '9', '4', '6', '0', '5', '9', '5', '0', '6', '2', '9', '0', '2', '4', '1', '3', '0', '0', '8', '4', '5', '0', '3', '4', '0', '1', '5', '4', '7', '8', '3', '0', '6', '8', '5', '3', '6', '4', '8', '6', '1', '0', '7', '0', '7', '3', '6', '8', '4', '9', '0', '0', '0', '3', '7', '8', '4', '5', '1', '1', '4', '6', '0', '6', '7', '2', '4', '7', '7', '4', '3', '3', '5', '7', '9', '6', '7', '1', '9', '3', '8', '3', '2', '7', '0', '2', '0', '3', '1', '5', '5', '4', '2', '9', '3', '8', '5', '8', '4', '2', '7', '9', '4', '2', '7', '9', '4', '9', '5', '1', '7', '2', '6', '8', '1', '8', '3', '0', '3', '0', '0', '4', '6', '5', '1', '7', '3', '6', '3', '1', '2', '8', '8', '2', '0', '1', '6', '8', '8', '3', '4', '8', '9', '7', '7', '3', '4', '2', '6', '3', '4', '6', '4', '0', '3', '2', '9', '7', '5', '5', '6', '4', '9', '3', '8', '4', '9', '6', '9', '0', '5', '3', '9', '9', '3', '5', '8', '8', '2', '8', '2', '8', '7', '9', '4', '9', '2', '7', '0', '9', '9', '8', '1', '4', '3', '3', '8', '6', '5', '5', '3', '7', '2', '5', '7', '2', '2', '5', '5', '3', '1', '4', '8', '9', '6', '4', '1', '3', '7', '8', '9', '4', '9', '9', '1', '0', '2', '5', '0', '8', '7', '0', '3', '8', '1', '5', '0', '0', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '5', '1', '0', '3', '1', '4', '7', '8', '7', '7', '8', '4', '2', '4', '6', '0', '5', '5', '8', '4', '6', '4', '6', '5', '0', '6', '7', '1', '1', '1', '2', '6', '7', '3', '8', '8', '5', '6', '2', '3', '1', '6', '6', '6', '1', '3', '1', '0', '2', '8', '3', '9', '7', '3', '9', '6', '0', '9', '1', '3', '9', '8', '4', '3', '2', '8', '6', '0', '5', '4', '7', '5', '6', '9', '5', '8', '0', '0', '0', '1', '2', '2', '9', '3', '9', '7', '5', '9', '8', '1', '9', '6', '2', '4', '5', '4', '3', '5', '5', '4', '6', '2', '8', '4', '8', '1', '7', '2', '0', '8', '0', '7', '4', '9', '9', '2', '2', '4', '9', '6', '4', '4', '4', '3', '0', '0', '8', '8', '7', '0', '4', '5', '5', '9', '3', '9', '9', '6', '9', '9', '9', '5', '3', '1', '7', '4', '4', '2', '6', '8', '3', '5', '8', '6', '7', '2', '5', '2', '2', '4', '7', '9', '2', '9', '0', '2', '0', '3', '7', '6', '4', '6', '0', '5', '4', '9', '1', '9', '3', '9', '9', '7', '6', '4', '9', '3', '5', '5', '4', '4', '3', '9', '0', '4', '8', '1', '3', '4', '7', '0', '3', '2', '3', '4', '0', '5', '1', '3', '2', '8', '2', '9', '6', '2', '1', '9', '7', '7', '1', '2', '2', '5', '4', '5', '9', '1', '8', '3', '9', '8', '1', '0', '4', '3', '5', '6', '2', '2', '5', '6', '1', '4', '9', '2', '8', '5', '2', '9', '0', '6', '4', '9', '3', '3', '6', '3', '1', '3', '5', '3', '3', '2', '2', '2', '4', '3', '4', '6', '9', '7', '2', '2', '5', '6', '4', '3', '6', '8', '8', '9', '5', '8', '5', '5', '5', '1', '6', '8', '8', '4', '2', '8', '1', '3', '1', '7', '1', '1', '5', '4', '8', '2', '8', '5', '6', '7', '1', '0', '4', '9', '2', '3', '2', '3', '6', '2', '2', '2', '4', '4', '2', '7', '0', '5', '4', '0', '0', '5', '5', '9', '7', '9', '1', '8', '7', '2', '1', '2', '4', '6', '4', '7', '0', '1', '8', '9', '6', '9', '1', '1', '5', '6', '5', '9', '3', '7', '8', '0', '5', '9', '0', '6', '6', '8', '7', '6', '6', '1', '2', '2', '8', '9', '1', '7', '3', '2', '4', '2', '6', '1', '1', '5', '0', '4', '1', '2', '1', '3', '1', '4', '9', '3', '7', '8', '1', '7', '8', '9', '0', '6', '1', '2', '8', '3', '9', '5', '7', '3', '5', '4', '4', '8', '7', '4', '7', '9', '8', '2', '5', '2', '9', '5', '2', '9', '9', '1', '8', '5', '1', '1', '3', '0', '3', '4', '5', '6', '4', '6', '8', '6', '5', '0', '5', '3', '9', '7', '3', '3', '6', '5', '0', '9', '8', '1', '5', '6', '9', '5', '9', '7', '8', '5', '9', '5', '7', '6', '0', '6', '2', '5', '3', '8', '3', '8', '8', '2', '9', '3', '8', '7', '9', '6', '3', '1', '7', '8', '3', '8', '8', '1', '3', '3', '0', '1', '7', '2', '5', '7', '4', '1', '7', '8', '3', '6', '1', '6', '6', '9', '0', '0', '6', '4', '9', '6', '8', '5', '5', '2', '7', '2', '5', '9', '1', '0', '2', '6', '2', '7', '4', '8', '1', '9', '9', '9', '4', '8', '9', '5', '0', '9', '9', '9', '3', '2', '9', '4', '4', '3', '9', '0', '8', '0', '6', '4', '1', '1', '7', '4', '1', '8', '1', '6', '6', '9', '6', '2', '3', '7', '2', '8', '8', '6', '8', '0', '6', '0', '7', '9', '5', '5', '0', '8', '3', '7', '4', '5', '6', '3', '0', '1', '0', '5', '0', '3', '4', '4', '0', '6', '8', '6', '4', '8', '8', '5', '4', '1', '0', '6', '0', '3', '2', '5', '5', '1', '7', '3', '9', '1', '1', '3', '6', '1', '4', '3', '2', '6', '4', '9', '1', '6', '8', '5', '7', '0', '8', '6', '1', '3', '6', '6', '3', '1', '5', '7', '6', '1', '0', '6', '5', '0', '3', '9', '4', '3', '8', '9', '4', '2', '9', '7', '5', '7', '5', '2', '3', '1', '5', '1', '8', '2', '7', '3', '1', '6', '6', '2', '6', '6', '8', '4', '5', '3', '8', '0', '6', '3', '2', '5', '2', '5', '2', '7', '5', '6', '1', '8', '6', '1', '3', '6', '0', '2', '0', '3', '6', '9', '7', '7', '1', '0', '2', '5', '4', '1', '3', '7', '8', '5', '9', '8', '6', '6', '2', '5', '5', '5', '0', '7', '5', '9', '7', '6', '4', '8', '3', '9', '9', '2', '7', '6', '3', '5', '8', '4', '1', '9', '7', '3', '7', '2', '6', '5', '7', '5', '7', '3', '1', '9', '1', '0', '3', '6', '7', '1', '6', '5', '4', '1', '8', '1', '5', '0', '1', '1', '1', '9', '3', '8', '7', '0', '6', '8', '3', '7', '5', '5', '8', '9', '8', '5', '6', '2', '6', '0', '6', '2', '9', '4', '6', '5', '8', '6', '3', '7', '8', '8', '2', '9', '0', '7', '6', '4', '4', '6', '8', '6', '6', '6', '6', '7', '3', '2', '8', '7', '6', '0', '9', '4', '3', '7', '6', '8', '2', '8', '2', '9', '3', '9', '3', '0', '9', '5', '9', '4', '7', '8', '2', '5', '9', '7', '3', '6', '0', '1', '4', '2', '6', '9', '8', '2', '8', '8', '5', '5', '1', '8', '7', '0', '0', '2', '8', '5', '2', '3', '1', '1', '6', '8', '9', '6', '0', '5', '8', '9', '8', '5', '1', '8', '3', '1', '1', '8', '5', '6', '7', '5', '1', '1', '8', '0', '7', '3', '1', '0', '7', '7', '3', '2', '7', '9', '5', '7', '8', '7', '8', '6', '8', '0', '9', '1', '5', '7', '3', '7', '5', '3', '9', '9', '8', '2', '2', '5', '6', '9', '0', '5', '5', '2', '6', '1', '8', '8', '9', '4', '3', '0', '0', '8', '7', '0', '5', '8', '7', '1', '4', '5', '7', '8', '8', '5', '8', '9', '6', '9', '2', '2', '4', '1', '5', '0', '7', '0', '3', '7', '0', '1', '0', '7', '0', '5', '5', '1', '8', '4', '0', '4', '0', '0', '0', '5', '1', '1', '0', '8', '0', '4', '3', '3', '6', '8', '0', '0', '4', '1', '6', '5', '3', '4', '4', '4', '1', '3', '8', '0', '4', '6', '9', '7', '2', '6', '0', '1', '4', '6', '8', '6', '2', '7', '0', '9', '4', '1', '4', '6', '6', '9', '8', '2', '4', '6', '5', '1', '7', '0', '5', '3', '8', '2', '5', '7', '4', '1', '2', '4', '8', '7', '7', '4', '5', '6', '7', '1', '9', '2', '8', '9', '3', '8', '2', '6', '9', '7', '9', '6', '3', '2', '5', '4', '7', '0', '4', '7', '8', '3', '6', '0', '5', '9', '2', '0', '6', '1', '9', '8', '1', '4', '8', '0', '3', '2', '2', '7', '8', '2', '7', '5', '4', '2', '7', '2', '4', '6', '1', '7', '3', '6', '8', '5', '7', '9', '1', '8', '5', '8', '4', '0', '5', '9', '7', '5', '4', '4', '7', '0', '3', '6', '2', '8', '9', '7', '3', '3', '1', '5', '5', '9', '8', '5', '4', '9', '7', '6', '9', '4', '6', '0', '1', '1', '7', '3', '6', '8', '3', '9', '1', '2', '1', '4', '3', '3', '2', '0', '6', '7', '4', '2', '9', '9', '9', '2', '2', '4', '3', '2', '0', '6', '5', '6', '6', '9', '7', '2', '4', '7', '0', '4', '1', '3', '8', '3', '2', '4', '1', '8', '5', '3', '6', '0', '1', '0', '2', '2', '4', '0', '2', '9', '3', '2', '3', '8', '4', '0', '1', '0', '6', '9', '8', '2', '6', '6', '7', '9', '2', '4', '6', '7', '0', '2', '7', '1', '2', '7', '2', '6', '5', '3', '3', '4', '9', '7', '7', '4', '9', '1', '3', '0', '5', '0', '8', '3', '1', '0', '4', '1', '5', '0', '3', '7', '1', '4', '3', '6', '4', '2', '1', '1', '1', '1', '6', '0', '2', '0', '6', '1', '9', '5', '1', '3', '4', '7', '7', '7', '8', '5', '8', '3', '0', '0', '7', '5', '0', '7', '2', '0', '0', '3', '8', '2', '5', '3', '7', '9', '5', '7', '2', '5', '9', '6', '7', '5', '5', '7', '8', '0', '0', '7', '6', '8', '9', '2', '8', '3', '4', '7', '7', '0', '8', '2', '4', '8', '2', '0', '1', '7', '5', '9', '8', '7', '3', '7', '5', '3', '6', '8', '2', '8', '3', '0', '6', '2', '3', '9', '5', '6', '2', '8', '0', '9', '8', '0', '1', '9', '8', '5', '6', '7', '7', '3', '3', '7', '0', '3', '0', '6', '4', '8', '3', '3', '2', '4', '3', '0', '9', '9', '2', '3', '3', '5', '5', '0', '1', '6', '6', '6', '3', '1', '7', '8', '4', '4', '1', '8', '4', '3', '4', '8', '5', '8', '9', '0', '3', '8', '2', '1', '2', '1', '4', '8', '1', '8', '9', '8', '9', '6', '2', '5', '5', '4', '8', '0', '2', '6', '1', '5', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '5', '7', '6', '2', '3', '1', '2', '6', '5', '8', '0', '5', '2', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '1', '6', '2', '1', '6', '5', '4', '1', '0', '7', '6', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '8', '6', '0', '5', '4', '3', '1', '6', '2', '3', '2', '9', '9', '9', '9', '9', '6', '7', '5', '9', '9', '9', '4', '5', '6', '3', '6', '9', '3', '5', '9', '9', '9', '9', '9', '9', '5', '5', '0', '6', '1', '0', '6', '5', '2', '6', '7', '2', '1', '2', '9', '9', '9', '6', '4', '3', '5', '4', '9', '9', '4', '3', '3', '0', '9', '5', '2', '5', '2', '3', '5', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '9', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '3', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '4', '7', '3', '1', '2', '7', '0', '3', '5', '7', '7', '5', '4', '7', '7', '6', '8', '0', '8', '2', '4', '5', '3', '8', '1', '1', '1', '2', '6', '3', '9', '1', '5', '1', '4', '9', '3', '6', '1', '0', '1', '1', '6', '0', '5', '8', '1', '1', '6', '6', '7', '0', '5', '9', '1', '3', '2', '4', '0', '8', '2', '2', '1', '4', '2', '4', '5', '1', '6', '2', '3', '9', '6', '9', '6', '8', '1', '6', '1', '9', '8', '0', '2', '2', '9', '6', '2', '4', '7', '9', '1', '1', '6', '9', '3', '7', '7', '7', '9', '1', '9', '4', '8', '5', '8', '8', '6', '1', '3', '6', 0};
+
+	tau->num1 = bi_new((const char[]){'1', '8', '2', '2', '9', '2', '6', '1', '7', '2', '9', '5', '6', '2', '3', '8', '1', '9', '9', '9', '9', '4', '3', '1', '9', '5', '3', '6', '4', '1', '5', '0', '7', '9', '1', '1', '4', '1', '3', '1', '0', '8', '4', '2', '4', '6', '2', '6', '6', '0', '6', '5', '8', '4', '7', '2', '7', '9', '4', '0', '5', '2', '5', '1', '9', '5', '9', '0', '8', '4', '7', '5', '6', '5', '7', '8', '9', '3', '4', '9', '4', '0', '2', '7', '1', '8', '3', '2', '4', '0', '0', '4', '8', '3', '9', '8', '5', '7', '1', '4', '2', '9', '2', '8', '2', '1', '2', '6', '2', '0', '4', '0', '3', '2', '0', '2', '7', '7', '7', '7', '1', '3', '7', '8', '3', '6', '0', '4', '3', '6', '6', '2', '0', '2', '0', '7', '0', '7', '5', '9', '5', '5', '5', '6', '2', '6', '4', '0', '1', '8', '5', '2', '5', '8', '8', '0', '7', '8', '4', '4', '0', '6', '9', '1', '8', '2', '9', '0', '6', '4', '1', '2', '4', '9', '5', '1', '5', '0', '8', '2', '1', '8', '9', '2', '9', '8', '5', '5', '9', '1', '4', '9', '1', '7', '6', '1', '8', '4', '5', '0', '2', '8', '0', '8', '4', '8', '9', '1', '2', '0', '0', '7', '2', '8', '4', '4', '9', '9', '2', '6', '8', '7', '3', '9', '2', '8', '0', '7', '2', '8', '7', '7', '7', '6', '7', '3', '5', '9', '7', '1', '4', '1', '8', '3', '4', '7', '2', '7', '0', '2', '6', '1', '8', '9', '6', '3', '7', '5', '0', '1', '4', '9', '7', '1', '8', '2', '4', '6', '9', '1', '1', '6', '5', '0', '7', '7', '6', '1', '3', '3', '7', '9', '8', '5', '9', '0', '9', '5', '7', '0', '0', '0', '9', '7', '3', '3', '0', '4', '5', '9', '7', '4', '8', '8', '0', '8', '4', '2', '8', '4', '0', '1', '7', '9', '7', '4', '2', '9', '1', '0', '0', '6', '4', '2', '4', '5', '8', '6', '9', '1', '8', '1', '7', '1', '9', '5', '1', '1', '8', '7', '4', '6', '1', '2', '1', '5', '1', '5', '1', '7', '2', '6', '5', '4', '6', '3', '2', '2', '8', '2', '2', '1', '6', '8', '6', '9', '9', '8', '7', '5', '4', '9', '1', '8', '2', '4', '2', '2', '4', '3', '3', '6', '3', '7', '2', '5', '9', '0', '8', '5', '1', '4', '1', '8', '6', '5', '4', '6', '2', '0', '4', '3', '5', '7', '6', '7', '9', '8', '4', '2', '3', '3', '8', '7', '1', '8', '4', '7', '7', '4', '4', '4', '7', '9', '2', '0', '7', '3', '9', '9', '3', '4', '2', '3', '6', '5', '8', '4', '8', '2', '3', '8', '2', '4', '2', '8', '1', '1', '9', '8', '1', '6', '3', '8', '1', '5', '0', '1', '0', '6', '7', '4', '8', '1', '0', '4', '5', '1', '6', '6', '0', '3', '7', '7', '3', '0', '6', '0', '5', '6', '2', '0', '1', '6', '1', '9', '6', '7', '6', '2', '5', '6', '1', '3', '3', '8', '4', '4', '1', '4', '3', '6', '0', '3', '8', '3', '3', '9', '0', '4', '4', '1', '4', '9', '5', '2', '6', '3', '4', '4', '3', '2', '1', '9', '0', '1', '1', '4', '6', '5', '7', '5', '4', '4', '4', '5', '4', '1', '7', '8', '4', '2', '4', '0', '2', '0', '9', '2', '4', '6', '1', '6', '5', '1', '5', '7', '2', '3', '3', '5', '0', '7', '7', '8', '7', '0', '7', '7', '4', '9', '8', '1', '7', '1', '2', '5', '7', '7', '2', '4', '6', '7', '9', '6', '2', '9', '2', '6', '3', '8', '6', '3', '5', '6', '3', '7', '3', '2', '8', '9', '9', '1', '2', '1', '5', '4', '8', '3', '1', '4', '3', '8', '1', '6', '7', '8', '9', '9', '8', '8', '5', '0', '4', '0', '4', '4', '5', '3', '6', '4', '0', '2', '3', '5', '2', '7', '3', '8', '1', '9', '5', '1', '3', '7', '8', '6', '3', '6', '5', '6', '4', '3', '9', '1', '2', '1', '2', '0', '1', '0', '3', '9', '7', '1', '2', '2', '8', '2', '2', '1', '2', '0', '7', '2', '0', '3', '5', '7', '4', '7', '7', '2', '3', '2', '0', '2', '9', '0', '9', '3', '3', '6', '5', '1', '6', '5', '4', '2', '7', '3', '6', '3', '6', '9', '2', '3', '9', '5', '3', '4', '5', '6', '3', '6', '1', '9', '7', '7', '4', '4', '1', '8', '0', '2', '4', '5', '4', '1', '9', '3', '5', '2', '6', '8', '2', '3', '8', '2', '4', '0', '1', '3', '8', '0', '1', '0', '9', '3', '1', '1', '0', '6', '8', '2', '7', '1', '2', '8', '4', '6', '3', '4', '3', '3', '6', '3', '8', '7', '0', '6', '9', '5', '3', '5', '8', '7', '7', '7', '4', '8', '5', '8', '2', '9', '3', '6', '1', '8', '7', '9', '3', '7', '4', '7', '2', '4', '7', '8', '5', '3', '0', '0', '7', '3', '3', '7', '9', '5', '1', '5', '1', '1', '0', '0', '6', '3', '0', '6', '7', '6', '8', '6', '9', '6', '2', '0', '5', '9', '0', '2', '3', '2', '1', '9', '1', '2', '2', '7', '1', '6', '5', '9', '7', '4', '3', '7', '3', '8', '7', '9', '3', '8', '5', '1', '6', '0', '5', '7', '4', '0', '5', '8', '4', '3', '1', '9', '1', '3', '3', '3', '6', '6', '0', '9', '9', '8', '5', '8', '3', '3', '3', '2', '8', '4', '8', '8', '7', '9', '7', '2', '9', '2', '5', '2', '0', '9', '5', '1', '9', '6', '2', '2', '8', '0', '5', '7', '7', '7', '8', '0', '8', '9', '7', '9', '1', '0', '1', '8', '0', '3', '5', '9', '4', '5', '0', '9', '1', '0', '5', '8', '5', '2', '5', '9', '0', '1', '5', '6', '3', '7', '7', '4', '6', '8', '5', '1', '2', '8', '4', '2', '7', '0', '4', '0', '6', '6', '3', '8', '4', '6', '2', '9', '0', '4', '1', '6', '2', '0', '5', '1', '0', '8', '2', '8', '6', '7', '3', '6', '9', '0', '6', '3', '4', '2', '0', '8', '6', '4', '4', '5', '2', '4', '7', '1', '3', '4', '6', '7', '1', '2', '4', '0', '0', '3', '9', '5', '4', '7', '5', '8', '7', '6', '6', '5', '9', '1', '7', '8', '8', '0', '4', '0', '7', '1', '1', '9', '5', '6', '6', '2', '3', '2', '5', '2', '2', '2', '9', '6', '0', '7', '4', '9', '0', '0', '1', '5', '8', '6', '0', '7', '4', '5', '9', '2', '2', '7', '9', '9', '0', '6', '3', '1', '5', '4', '1', '0', '5', '9', '3', '3', '8', '7', '1', '3', '9', '6', '5', '1', '4', '3', '2', '6', '3', '3', '0', '2', '7', '7', '1', '2', '8', '7', '8', '6', '4', '4', '8', '2', '1', '3', '6', '8', '4', '1', '6', '3', '1', '3', '1', '6', '9', '9', '6', '5', '5', '3', '5', '2', '7', '4', '0', '2', '7', '7', '9', '6', '0', '7', '1', '2', '8', '2', '7', '0', '8', '0', '2', '8', '2', '0', '6', '4', '3', '2', '5', '7', '2', '2', '8', '7', '2', '1', '6', '9', '0', '0', '8', '2', '7', '7', '0', '7', '5', '9', '3', '7', '1', '3', '4', '0', '9', '2', '4', '9', '6', '1', '6', '7', '5', '8', '0', '3', '2', '1', '3', '8', '5', '8', '2', '0', '1', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '4', '8', '9', '6', '8', '5', '2', '1', '2', '2', '1', '5', '9', '7', '4', '8', '0', '4', '0', '8', '2', '6', '3', '6', '6', '9', '8', '2', '3', '3', '5', '8', '3', '5', '3', '5', '6', '4', '2', '7', '8', '2', '5', '2', '4', '4', '6', '4', '8', '5', '9', '0', '7', '7', '7', '6', '2', '9', '6', '7', '7', '4', '2', '7', '5', '3', '7', '1', '6', '1', '6', '0', '6', '3', '9', '7', '6', '5', '2', '6', '6', '7', '8', '2', '4', '1', '4', '8', '5', '8', '4', '0', '7', '4', '2', '3', '8', '7', '5', '9', '1', '8', '3', '3', '1', '5', '8', '6', '2', '9', '5', '1', '7', '4', '7', '1', '4', '0', '4', '8', '9', '6', '3', '3', '1', '5', '4', '3', '4', '9', '9', '1', '6', '6', '0', '0', '9', '0', '4', '4', '1', '9', '1', '6', '7', '4', '6', '0', '8', '6', '6', '6', '1', '3', '1', '8', '6', '5', '2', '7', '1', '3', '1', '6', '0', '9', '8', '0', '9', '4', '0', '2', '6', '8', '8', '8', '8', '8', '9', '5', '9', '3', '3', '8', '8', '6', '6', '1', '4', '4', '5', '4', '6', '7', '2', '9', '2', '1', '6', '5', '9', '1', '1', '3', '5', '4', '1', '6', '3', '5', '1', '4', '7', '0', '3', '0', '7', '8', '1', '6', '6', '5', '5', '4', '6', '5', '6', '0', '9', '2', '4', '5', '4', '8', '2', '6', '9', '7', '9', '4', '6', '3', '8', '9', '1', '7', '4', '7', '2', '8', '5', '2', '0', '2', '9', '2', '9', '5', '6', '6', '4', '5', '4', '9', '2', '0', '9', '9', '1', '5', '3', '2', '5', '7', '5', '7', '3', '1', '1', '7', '8', '5', '4', '6', '9', '6', '9', '7', '1', '4', '4', '5', '6', '0', '5', '9', '1', '7', '4', '9', '9', '2', '2', '6', '1', '0', '5', '1', '8', '7', '8', '5', '5', '7', '1', '4', '2', '5', '5', '4', '1', '8', '7', '4', '7', '6', '3', '1', '2', '7', '2', '9', '7', '6', '7', '3', '7', '6', '1', '7', '0', '8', '3', '9', '1', '7', '5', '9', '3', '1', '9', '2', '3', '3', '4', '9', '7', '6', '4', '4', '6', '1', '1', '9', '3', '8', '9', '1', '2', '7', '5', '1', '5', '7', '1', '6', '3', '6', '1', '9', '3', '7', '4', '7', '2', '6', '6', '9', '5', '6', '3', '7', '6', '8', '4', '4', '6', '1', '8', '7', '4', '7', '0', '7', '7', '9', '5', '0', '1', '4', '9', '4', '6', '0', '0', '7', '8', '6', '5', '7', '8', '5', '1', '9', '2', '9', '6', '6', '9', '4', '0', '3', '7', '3', '0', '7', '2', '7', '8', '9', '1', '1', '3', '5', '4', '7', '5', '3', '4', '5', '4', '2', '5', '8', '3', '5', '9', '4', '8', '6', '1', '8', '9', '0', '7', '7', '0', '0', '2', '1', '6', '9', '8', '9', '9', '9', '2', '1', '7', '5', '7', '1', '2', '0', '0', '0', '5', '6', '9', '0', '2', '0', '8', '7', '0', '3', '8', '6', '6', '0', '1', '2', '8', '2', '9', '1', '4', '2', '3', '2', '5', '0', '9', '4', '2', '6', '2', '3', '8', '5', '4', '2', '0', '6', '8', '9', '7', '2', '3', '3', '1', '4', '1', '8', '7', '1', '1', '6', '3', '3', '0', '0', '3', '4', '8', '7', '1', '5', '7', '5', '1', '9', '5', '4', '9', '1', '6', '3', '7', '9', '8', '7', '4', '9', '6', '6', '7', '8', '1', '4', '8', '0', '4', '6', '5', '8', '2', '6', '6', '9', '6', '8', '7', '6', '5', '0', '6', '1', '0', '7', '3', '5', '3', '8', '3', '5', '3', '4', '6', '3', '0', '3', '2', '2', '4', '1', '5', '1', '7', '5', '8', '8', '2', '4', '3', '0', '6', '6', '2', '7', '8', '5', '1', '4', '1', '3', '1', '9', '8', '1', '8', '1', '6', '0', '6', '7', '3', '3', '1', '9', '4', '2', '8', '3', '9', '9', '2', '1', '1', '8', '0', '8', '9', '5', '5', '1', '6', '5', '9', '3', '4', '9', '1', '9', '9', '6', '2', '8', '1', '8', '0', '2', '2', '3', '5', '9', '0', '1', '1', '0', '4', '7', '4', '9', '1', '6', '3', '0', '3', '5', '5', '7', '9', '2', '6', '8', '3', '4', '0', '6', '4', '8', '3', '6', '9', '8', '5', '0', '6', '7', '5', '2', '3', '6', '3', '9', '9', '1', '7', '9', '1', '1', '5', '2', '2', '2', '7', '0', '1', '8', '0', '1', '2', '9', '3', '7', '8', '5', '0', '1', '4', '1', '9', '3', '5', '8', '0', '4', '0', '5', '1', '2', '0', '2', '0', '4', '5', '8', '6', '7', '4', '1', '0', '6', '1', '2', '3', '5', '9', '6', '2', '7', '6', '6', '5', '8', '3', '9', '0', '7', '0', '9', '4', '0', '2', '1', '8', '7', '9', '2', '1', '5', '1', '7', '1', '4', '8', '3', '1', '1', '9', '1', '3', '9', '8', '9', '4', '8', '7', '0', '1', '3', '3', '0', '9', '1', '1', '1', '1', '0', '4', '4', '9', '0', '1', '6', '8', '3', '4', '0', '0', '9', '4', '9', '4', '8', '3', '8', '4', '6', '8', '1', '8', '2', '9', '9', '5', '1', '8', '0', '4', '1', '7', '6', '3', '5', '0', '7', '9', '4', '8', '9', '2', '2', '5', '9', '0', '7', '7', '4', '9', '2', '5', '4', '6', '6', '0', '8', '8', '1', '7', '1', '8', '7', '9', '2', '5', '9', '4', '6', '5', '9', '2', '1', '0', '2', '6', '5', '9', '7', '0', '4', '6', '7', '0', '0', '4', '4', '9', '8', '1', '9', '8', '9', '9', '0', '9', '6', '8', '6', '2', '0', '3', '9', '4', '6', '0', '0', '1', '7', '7', '4', '3', '0', '9', '4', '4', '7', '3', '8', '1', '1', '0', '5', '6', '9', '9', '1', '2', '9', '4', '1', '2', '8', '5', '4', '2', '8', '9', '1', '8', '8', '0', '8', '5', '5', '3', '6', '2', '7', '0', '7', '4', '0', '7', '6', '7', '0', '7', '2', '2', '5', '9', '3', '7', '3', '7', '7', '7', '2', '6', '6', '6', '9', '7', '3', '4', '4', '0', '9', '7', '7', '3', '6', '1', '2', '4', '3', '3', '3', '6', '3', '9', '7', '3', '0', '8', '0', '5', '1', '7', '6', '3', '0', '9', '1', '5', '0', '6', '8', '3', '6', '3', '1', '0', '7', '9', '5', '3', '1', '2', '6', '0', '7', '2', '3', '9', '5', '2', '0', '3', '6', '5', '2', '9', '0', '0', '3', '2', '1', '0', '5', '8', '4', '8', '8', '3', '9', '5', '0', '7', '9', '8', '1', '4', '5', '2', '3', '0', '7', '2', '9', '9', '4', '1', '7', '1', '8', '5', '7', '1', '5', '7', '9', '6', '2', '9', '7', '4', '5', '4', '9', '9', '5', '0', '2', '3', '5', '0', '5', '3', '1', '6', '0', '4', '0', '9', '1', '9', '8', '5', '9', '1', '9', '3', '7', '1', '8', '0', '2', '3', '3', '0', '7', '4', '1', '4', '8', '8', '0', '4', '4', '6', '2', '1', '7', '9', '2', '2', '8', '0', '0', '8', '3', '1', '7', '6', '6', '0', '4', '0', '9', '3', '8', '6', '5', '6', '3', '4', '4', '5', '7', '1', '0', '3', '4', '7', '7', '8', '5', '5', '3', '4', '5', '7', '1', '2', '1', '0', '8', '0', '5', '3', '0', '7', '3', '6', '3', '9', '4', '5', '3', '5', '9', '2', '3', '9', '3', '2', '6', '5', '1', '8', '6', '6', '0', '3', '0', '5', '1', '5', '0', '4', '1', '0', '6', '0', '9', '6', '6', '4', '3', '7', '3', '1', '3', '3', '2', '3', '6', '7', '2', '8', '3', '1', '5', '3', '9', '3', '2', '3', '5', '0', '0', '0', '6', '7', '9', '3', '7', '1', '0', '7', '5', '4', '1', '9', '5', '5', '4', '3', '7', '3', '6', '2', '4', '3', '3', '2', '4', '8', '3', '6', '1', '2', '4', '2', '5', '2', '5', '9', '4', '5', '8', '6', '8', '8', '0', '2', '3', '5', '3', '9', '1', '6', '7', '6', '6', '1', '8', '1', '5', '3', '2', '3', '7', '5', '8', '5', '5', '5', '0', '4', '8', '8', '6', '9', '0', '1', '4', '3', '2', '2', '2', '1', '3', '4', '9', '7', '3', '3', '3', '5', '4', '0', '9', '7', '3', '9', '1', '1', '5', '6', '0', '2', '1', '0', '7', '5', '9', '4', '1', '9', '0', '7', '6', '5', '8', '8', '5', '8', '0', '1', '4', '3', '2', '2', '6', '6', '2', '9', '6', '9', '3', '5', '1', '6', '6', '7', '5', '6', '9', '0', '0', '7', '6', '6', '4', '4', '9', '8', '3', '3', '3', '6', '8', '2', '1', '5', '5', '8', '1', '5', '6', '5', '1', '4', '1', '0', '9', '6', '1', '7', '8', '7', '8', '5', '1', '8', '1', '0', '1', '0', '3', '7', '4', '4', '5', '1', '9', '7', '3', '8', '4', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '4', '2', '3', '7', '6', '8', '7', '3', '4', '1', '9', '4', '7', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '8', '3', '7', '8', '3', '4', '5', '8', '9', '2', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '3', '9', '4', '5', '6', '8', '3', '7', '6', '7', '0', '0', '0', '0', '0', '3', '2', '4', '0', '0', '0', '5', '4', '3', '6', '3', '0', '6', '4', '0', '0', '0', '0', '0', '0', '4', '4', '9', '3', '8', '9', '3', '4', '7', '3', '2', '7', '8', '7', '0', '0', '0', '3', '5', '6', '4', '5', '0', '0', '5', '6', '6', '9', '0', '4', '7', '4', '7', '6', '4', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '5', '2', '6', '8', '7', '2', '9', '6', '4', '2', '2', '4', '5', '2', '2', '3', '1', '9', '1', '7', '5', '4', '6', '1', '8', '8', '8', '7', '3', '6', '0', '8', '4', '8', '5', '0', '6', '3', '8', '9', '8', '8', '3', '9', '4', '1', '8', '8', '3', '3', '2', '9', '4', '1', '0', '8', '3', '7', '3', '0', '3', '9', '8', '6', '7', '5', '3', '7', '6', '1', '3', '7', '5', '5', '2', '7', '0', '7', '7', '1', '0', '0', '1', '8', '3', '6', '2', '0', '8', '1', '1', '9', '1', '0', '8', '8', '9', '3', '4', '3', '0', '6', '4', '5', '8', '3', '6', '2', '3', '6', 0}, 10, NULL);
+	tau->num2 = bi_new((const char[]){'6', '2', '7', '3', '5', '6', '4', '7', '4', '8', '1', '4', '3', '5', '0', '6', '2', '0', '1', '7', '1', '1', '3', '4', '8', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '8', '7', '6', '5', '4', '3', '2', '1', '0', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '9', '9', '2', '7', '4', '3', '4', '3', '8', '8', '1', '5', '4', '6', '8', '3', '3', '0', '3', '2', '4', '3', '8', '5', '2', '1', '3', '1', '7', '9', '4', '9', '7', '8', '5', '5', '8', '1', '5', '5', '8', '5', '1', '0', '5', '8', '8', '6', '0', '7', '6', '6', '5', '6', '0', '0', '5', '4', '8', '5', '6', '5', '9', '5', '3', '7', '1', '4', '6', '6', '4', '0', '2', '2', '3', '5', '9', '2', '0', '4', '5', '2', '5', '7', '7', '0', '1', '4', '2', '4', '6', '0', '0', '1', '0', '0', '6', '0', '3', '3', '5', '9', '2', '2', '8', '0', '2', '9', '0', '0', '9', '4', '5', '6', '9', '8', '2', '8', '3', '0', '0', '7', '1', '3', '4', '8', '2', '7', '5', '3', '4', '2', '4', '3', '3', '1', '0', '6', '2', '5', '2', '1', '1', '5', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '5', '3', '6', '9', '4', '4', '1', '0', '0', '3', '9', '1', '3', '6', '3', '7', '4', '1', '9', '1', '6', '4', '9', '3', '2', '6', '0', '1', '8', '7', '8', '1', '2', '3', '6', '2', '0', '7', '6', '6', '4', '4', '9', '0', '1', '7', '1', '9', '9', '2', '1', '2', '9', '4', '6', '5', '4', '9', '5', '4', '2', '0', '5', '2', '7', '1', '3', '3', '5', '7', '2', '6', '1', '8', '4', '6', '5', '6', '6', '1', '2', '9', '7', '7', '8', '0', '8', '5', '5', '7', '0', '0', '0', '0', '4', '3', '6', '8', '2', '8', '5', '4', '9', '0', '0', '8', '8', '0', '7', '7', '7', '3', '7', '5', '5', '7', '9', '8', '1', '1', '1', '8', '1', '8', '7', '2', '5', '1', '7', '5', '3', '9', '4', '6', '0', '1', '2', '4', '8', '3', '4', '7', '4', '8', '8', '2', '8', '6', '0', '8', '9', '3', '8', '7', '2', '1', '7', '8', '9', '8', '4', '7', '3', '8', '4', '0', '0', '5', '9', '2', '5', '6', '8', '6', '9', '5', '1', '4', '2', '6', '6', '7', '7', '1', '8', '4', '7', '4', '6', '3', '3', '4', '4', '8', '3', '1', '4', '0', '1', '7', '5', '8', '4', '9', '1', '8', '9', '8', '8', '4', '8', '9', '4', '4', '4', '6', '9', '6', '8', '7', '4', '1', '1', '0', '5', '0', '4', '1', '6', '1', '7', '5', '0', '8', '7', '3', '5', '0', '9', '3', '5', '8', '5', '2', '8', '8', '3', '1', '2', '3', '2', '9', '8', '0', '3', '6', '4', '8', '0', '4', '3', '7', '8', '9', '9', '5', '2', '9', '1', '3', '7', '1', '0', '6', '6', '6', '0', '4', '0', '0', '8', '0', '6', '0', '0', '7', '7', '6', '0', '1', '5', '7', '5', '8', '6', '9', '1', '5', '2', '4', '3', '8', '0', '5', '5', '2', '8', '8', '6', '4', '2', '3', '1', '6', '7', '5', '2', '9', '5', '9', '6', '2', '3', '6', '9', '6', '9', '9', '0', '4', '3', '8', '9', '0', '7', '3', '6', '4', '0', '8', '8', '4', '1', '1', '8', '2', '8', '8', '6', '1', '7', '8', '6', '8', '8', '0', '6', '5', '6', '7', '1', '7', '9', '7', '6', '8', '4', '5', '8', '9', '7', '1', '4', '6', '1', '2', '2', '6', '9', '7', '3', '1', '5', '2', '6', '5', '7', '4', '6', '0', '3', '5', '9', '5', '6', '5', '7', '9', '7', '9', '2', '8', '7', '1', '0', '5', '9', '6', '4', '1', '9', '5', '8', '4', '6', '3', '1', '1', '4', '2', '5', '6', '2', '4', '5', '9', '4', '9', '8', '2', '3', '4', '5', '6', '9', '0', '5', '0', '9', '5', '1', '6', '6', '1', '9', '8', '6', '9', '7', '5', '3', '8', '7', '1', '3', '2', '9', '6', '5', '8', '1', '7', '5', '8', '6', '7', '5', '7', '1', '0', '3', '2', '2', '6', '2', '9', '5', '2', '3', '6', '2', '4', '0', '0', '0', '1', '4', '3', '1', '2', '9', '1', '1', '1', '5', '7', '8', '0', '3', '1', '0', '2', '6', '6', '6', '2', '6', '9', '4', '9', '9', '5', '8', '0', '5', '1', '4', '6', '4', '1', '3', '5', '7', '1', '0', '4', '4', '5', '9', '1', '9', '9', '3', '8', '5', '3', '8', '9', '7', '6', '6', '2', '6', '6', '9', '7', '1', '9', '2', '7', '4', '9', '8', '6', '4', '4', '2', '8', '3', '1', '7', '8', '1', '2', '3', '2', '2', '5', '0', '2', '8', '2', '4', '8', '1', '5', '8', '7', '2', '9', '6', '9', '1', '5', '8', '8', '3', '0', '5', '7', '4', '5', '7', '0', '6', '1', '1', '2', '0', '9', '8', '0', '6', '5', '6', '6', '6', '3', '1', '4', '3', '3', '5', '5', '4', '2', '5', '1', '3', '7', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '4', '3', '9', '6', '7', '8', '1', '0', '8', '3', '6', '6', '5', '9', '3', '6', '2', '0', '6', '5', '6', '2', '4', '8', '6', '0', '9', '8', '0', '2', '6', '8', '1', '3', '7', '8', '4', '8', '8', '0', '8', '4', '4', '5', '2', '5', '9', '1', '7', '4', '1', '2', '7', '3', '7', '1', '1', '8', '2', '4', '1', '9', '2', '5', '7', '2', '1', '1', '1', '5', '4', '7', '0', '9', '2', '1', '0', '4', '5', '1', '6', '7', '7', '6', '2', '9', '0', '9', '6', '5', '4', '7', '3', '5', '4', '7', '3', '6', '2', '3', '1', '7', '8', '0', '9', '3', '4', '7', '7', '4', '4', '7', '9', '3', '7', '3', '3', '1', '6', '3', '3', '1', '7', '3', '1', '0', '2', '0', '7', '5', '5', '6', '0', '4', '0', '5', '1', '3', '8', '2', '3', '2', '2', '9', '4', '7', '1', '2', '6', '3', '1', '0', '7', '2', '7', '8', '0', '8', '5', '5', '5', '1', '8', '2', '6', '8', '9', '8', '4', '2', '7', '7', '0', '7', '7', '6', '5', '5', '8', '0', '6', '3', '8', '4', '2', '2', '3', '5', '7', '6', '6', '6', '4', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '2', '5', '9', '0', '8', '6', '7', '3', '8', '5', '0', '5', '7', '2', '4', '6', '8', '2', '9', '0', '3', '3', '7', '7', '2', '2', '6', '3', '0', '5', '3', '5', '0', '1', '7', '6', '0', '8', '8', '2', '5', '7', '5', '0', '2', '3', '3', '3', '0', '0', '4', '1', '5', '1', '2', '1', '1', '4', '3', '4', '9', '4', '4', '5', '7', '3', '6', '4', '1', '8', '2', '5', '3', '4', '8', '4', '4', '9', '7', '4', '9', '8', '7', '1', '5', '6', '9', '9', '0', '0', '3', '7', '8', '5', '4', '2', '8', '3', '7', '4', '4', '8', '4', '4', '6', '9', '7', '8', '8', '9', '3', '5', '2', '1', '6', '9', '0', '4', '6', '5', '9', '6', '7', '5', '2', '1', '1', '8', '5', '0', '9', '2', '7', '2', '3', '8', '7', '0', '1', '7', '1', '5', '7', '1', '5', '5', '4', '9', '0', '4', '7', '6', '3', '9', '8', '8', '0', '6', '7', '1', '5', '4', '6', '3', '3', '2', '7', '4', '8', '9', '5', '5', '0', '2', '7', '2', '8', '7', '6', '7', '3', '7', '8', '5', '3', '9', '5', '4', '6', '6', '8', '1', '5', '8', '1', '7', '1', '6', '1', '3', '5', '6', '2', '6', '9', '6', '8', '0', '9', '8', '5', '6', '8', '0', '9', '2', '6', '1', '6', '5', '2', '1', '7', '6', '5', '0', '6', '7', '1', '6', '8', '0', '4', '0', '3', '7', '9', '1', '9', '5', '2', '2', '6', '5', '1', '3', '6', '5', '5', '9', '6', '3', '1', '8', '1', '1', '7', '5', '0', '7', '2', '7', '0', '0', '0', '5', '2', '8', '7', '5', '1', '9', '3', '2', '8', '5', '5', '1', '9', '6', '6', '7', '1', '3', '7', '7', '9', '1', '9', '7', '0', '2', '0', '5', '9', '2', '1', '8', '2', '4', '4', '7', '4', '3', '2', '5', '3', '5', '3', '2', '6', '0', '6', '1', '4', '0', '4', '9', '6', '6', '2', '8', '2', '1', '0', '5', '0', '7', '6', '3', '5', '0', '5', '8', '2', '1', '3', '7', '8', '0', '4', '9', '6', '9', '4', '0', '3', '4', '5', '9', '4', '2', '4', '3', '9', '4', '6', '2', '1', '1', '5', '2', '5', '4', '1', '6', '9', '7', '3', '4', '1', '7', '9', '7', '3', '2', '1', '2', '0', '9', '8', '1', '1', '8', '3', '5', '4', '1', '6', '0', '3', '3', '1', '4', '5', '6', '0', '5', '5', '2', '5', '7', '3', '8', '3', '8', '9', '7', '6', '6', '9', '0', '3', '6', '1', '1', '9', '8', '8', '3', '6', '2', '2', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '3', '0', '0', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '6', '7', '6', '6', '1', '3', '1', '0', '6', '4', '5', '4', '7', '8', '5', '5', '4', '4', '6', '1', '9', '5', '4', '9', '6', '3', '2', '6', '2', '4', '6', '8', '4', '0', '9', '3', '4', '5', '7', '1', '4', '1', '8', '7', '4', '7', '6', '7', '0', '0', '4', '9', '9', '8', '1', '9', '0', '3', '5', '4', '1', '4', '9', '7', '6', '9', '4', '7', '3', '3', '0', '9', '6', '4', '9', '1', '9', '4', '4', '9', '3', '1', '5', '1', '5', '5', '6', '0', '1', '4', '6', '3', '2', '2', '1', '4', '7', '9', '1', '7', '4', '4', '9', '1', '4', '8', '3', '8', '2', '7', '0', '0', '6', '1', '4', '4', '3', '0', '3', '4', '8', '1', '9', '9', '4', '6', '7', '2', '9', '2', '0', '2', '9', '5', '9', '8', '5', '3', '0', '7', '8', '9', '8', '4', '9', '9', '3', '5', '5', '1', '2', '4', '9', '0', '0', '5', '7', '8', '5', '0', '2', '2', '6', '8', '9', '2', '7', '5', '8', '4', '5', '0', '2', '7', '6', '3', '0', '1', '3', '7', '0', '5', '5', '7', '4', '6', '5', '1', '5', '0', '1', '8', '8', '7', '7', '9', '4', '3', '2', '1', '6', '3', '5', '7', '7', '2', '9', '9', '9', '6', '8', '6', '4', '1', '0', '5', '6', '8', '5', '0', '8', '9', '7', '7', '5', '0', '5', '7', '5', '0', '2', '9', '1', '4', '6', '8', '3', '0', '2', '8', '9', '7', '1', '7', '0', '1', '7', '4', '7', '4', '5', '9', '1', '8', '7', '5', '8', '3', '2', '4', '5', '0', '6', '0', '4', '7', '5', '8', '1', '7', '6', '8', '5', '8', '2', '4', '5', '4', '9', '0', '2', '3', '3', '9', '1', '8', '2', '8', '5', '9', '1', '1', '3', '6', '4', '2', '5', '1', '2', '1', '0', '4', '7', '3', '1', '8', '9', '2', '9', '7', '9', '4', '3', '6', '3', '4', '6', '9', '7', '1', '5', '2', '2', '3', '9', '4', '8', '9', '5', '8', '4', '2', '9', '1', '7', '4', '5', '3', '3', '9', '2', '3', '7', '4', '6', '3', '9', '9', '4', '4', '2', '6', '7', '9', '7', '3', '8', '0', '4', '5', '5', '4', '7', '1', '4', '5', '2', '6', '5', '1', '2', '2', '0', '3', '1', '5', '3', '8', '0', '8', '1', '0', '3', '4', '6', '6', '9', '7', '3', '4', '9', '6', '9', '3', '8', '1', '1', '4', '7', '3', '9', '1', '8', '0', '1', '6', '6', '1', '4', '9', '1', '8', '5', '4', '6', '9', '3', '9', '4', '1', '3', '8', '7', '9', '3', '3', '0', '8', '5', '0', '1', '7', '0', '5', '2', '5', '4', '6', '6', '2', '1', '0', '5', '7', '6', '4', '4', '1', '3', '9', '1', '5', '4', '2', '2', '4', '3', '2', '6', '8', '1', '5', '6', '4', '0', '4', '8', '0', '8', '1', '4', '5', '2', '8', '7', '2', '4', '8', '3', '1', '4', '4', '9', '2', '6', '3', '6', '9', '8', '8', '6', '6', '1', '4', '7', '6', '6', '6', '1', '0', '2', '7', '2', '5', '6', '7', '4', '2', '4', '8', '2', '0', '7', '6', '8', '6', '0', '1', '1', '7', '4', '2', '7', '0', '1', '2', '6', '6', '7', '5', '3', '4', '6', '0', '5', '6', '4', '3', '3', '6', '3', '9', '2', '8', '9', '3', '2', '8', '8', '4', '9', '3', '4', '3', '8', '1', '1', '4', '1', '2', '8', '1', '9', '4', '1', '6', '9', '2', '1', '6', '7', '3', '5', '4', '6', '3', '5', '6', '1', '0', '8', '7', '1', '5', '8', '9', '3', '3', '8', '5', '3', '2', '9', '4', '4', '8', '5', '1', '6', '8', '1', '5', '8', '3', '9', '6', '2', '7', '5', '4', '3', '3', '3', '8', '8', '5', '0', '9', '6', '9', '2', '9', '3', '7', '8', '4', '6', '1', '7', '6', '7', '4', '2', '1', '5', '9', '6', '3', '5', '0', '9', '5', '1', '6', '8', '0', '0', '0', '2', '1', '6', '0', '8', '1', '3', '5', '7', '6', '3', '0', '7', '3', '2', '4', '2', '7', '5', '7', '1', '5', '9', '7', '1', '3', '2', '8', '4', '5', '4', '1', '7', '5', '0', '5', '9', '0', '0', '5', '9', '3', '5', '8', '6', '9', '1', '8', '5', '1', '8', '1', '5', '5', '4', '8', '2', '4', '1', '8', '0', '9', '8', '3', '1', '2', '8', '2', '4', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '0', '0', '0', '0', '6', '9', '6', '9', '8', '8', '3', '6', '7', '4', '5', '5', '4', '9', '4', '8', '9', '0', '8', '6', '6', '7', '1', '2', '6', '1', '7', '8', '6', '2', '7', '2', '5', '6', '4', '5', '3', '2', '2', '8', '3', '9', '2', '6', '3', '2', '4', '1', '4', '7', '8', '3', '1', '5', '3', '6', '8', '9', '5', '3', '0', '9', '2', '1', '7', '4', '1', '1', '5', '0', '7', '1', '8', '1', '9', '1', '0', '6', '3', '8', '2', '5', '5', '0', '5', '4', '6', '8', '3', '8', '1', '2', '9', '0', '5', '3', '5', '7', '4', '4', '7', '5', '3', '5', '1', '9', '5', '4', '0', '4', '9', '2', '2', '7', '9', '1', '4', '8', '7', '6', '9', '7', '0', '2', '6', '3', '7', '1', '9', '9', '7', '5', '2', '9', '3', '7', '1', '2', '0', '4', '6', '6', '7', '8', '4', '0', '0', '1', '0', '3', '8', '5', '4', '7', '3', '8', '1', '7', '9', '1', '1', '4', '2', '5', '4', '4', '0', '2', '4', '0', '9', '0', '8', '3', '0', '4', '7', '8', '4', '4', '5', '0', '0', '8', '6', '8', '0', '9', '2', '6', '9', '9', '7', '3', '6', '4', '7', '2', '2', '5', '5', '9', '9', '5', '2', '5', '5', '9', '4', '2', '7', '7', '2', '0', '7', '0', '3', '6', '9', '0', '0', '9', '2', '4', '3', '0', '3', '2', '4', '5', '1', '0', '3', '3', '0', '2', '1', '6', '8', '1', '3', '4', '8', '9', '5', '6', '3', '5', '8', '5', '1', '3', '6', '7', '3', '2', '4', '9', '4', '5', '1', '0', '0', '2', '1', '6', '4', '3', '2', '2', '7', '3', '1', '3', '0', '3', '0', '1', '9', '6', '3', '7', '4', '5', '8', '7', '1', '4', '9', '7', '1', '5', '8', '7', '2', '4', '5', '3', '3', '8', '0', '4', '3', '4', '4', '0', '1', '8', '7', '5', '2', '1', '4', '9', '7', '3', '9', '7', '7', '2', '5', '4', '9', '0', '0', '2', '7', '8', '8', '3', '9', '2', '6', '2', '8', '5', '9', '2', '7', '3', '7', '7', '7', '4', '3', '3', '9', '3', '4', '5', '5', '3', '4', '5', '9', '7', '4', '9', '8', '6', '2', '5', '3', '2', '4', '0', '5', '6', '9', '2', '5', '6', '6', '0', '4', '7', '5', '0', '7', '1', '0', '1', '0', '7', '5', '0', '1', '6', '2', '4', '4', '3', '6', '8', '6', '0', '6', '6', '0', '1', '2', '6', '4', '9', '8', '0', '8', '8', '2', '5', '2', '6', '4', '7', '4', '9', '4', '4', '0', '1', '4', '1', '3', '9', '3', '6', '8', '0', '2', '6', '8', '4', '8', '9', '3', '0', '7', '1', '4', '7', '8', '5', '8', '4', '0', '7', '7', '3', '3', '3', '1', '2', '2', '7', '2', '0', '8', '0', '4', '3', '3', '3', '9', '8', '8', '9', '3', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '6', '4', '2', '1', '9', '1', '4', '2', '4', '3', '4', '9', '1', '4', '7', '8', '9', '4', '6', '1', '7', '6', '9', '4', '7', '6', '4', '7', '0', '6', '5', '6', '8', '1', '1', '4', '6', '7', '1', '4', '9', '6', '1', '3', '4', '9', '7', '9', '8', '1', '7', '1', '2', '9', '3', '4', '0', '4', '5', '5', '3', '7', '4', '7', '6', '2', '4', '5', '2', '6', '3', '6', '0', '5', '8', '3', '7', '3', '2', '8', '8', '9', '0', '3', '2', '9', '9', '1', '9', '1', '3', '4', '4', '6', '7', '2', '5', '5', '5', '2', '3', '0', '0', '6', '9', '5', '4', '8', '1', '2', '4', '7', '3', '1', '4', '0', '2', '2', '3', '6', '6', '1', '6', '3', '3', '8', '3', '0', '1', '2', '1', '2', '0', '2', '6', '9', '3', '8', '0', '6', '1', '0', '7', '5', '6', '5', '5', '2', '3', '5', '1', '1', '5', '2', '6', '2', '6', '5', '9', '4', '2', '4', '4', '4', '9', '6', '7', '9', '5', '5', '2', '7', '8', '3', '1', '9', '4', '9', '6', '8', '6', '8', '9', '5', '0', '3', '7', '3', '4', '8', '9', '1', '3', '5', '4', '0', '1', '1', '9', '2', '7', '0', '5', '6', '0', '0', '9', '4', '6', '2', '3', '5', '2', '8', '1', '5', '3', '5', '7', '5', '5', '8', '7', '5', '7', '3', '9', '4', '5', '4', '8', '1', '0', '0', '9', '8', '8', '7', '0', '6', '7', '1', '8', '6', '7', '4', '9', '9', '1', '4', '1', '7', '3', '8', '7', '7', '2', '9', '8', '4', '9', '1', '6', '0', '5', '3', '0', '0', '4', '6', '9', '1', '6', '2', '7', '4', '6', '8', '2', '4', '6', '0', '5', '2', '6', '5', '6', '3', '8', '4', '6', '0', '7', '2', '1', '5', '9', '5', '5', '9', '8', '1', '1', '5', '9', '4', '7', '5', '5', '3', '9', '0', '0', '3', '0', '5', '0', '5', '5', '0', '7', '6', '2', '8', '0', '9', '9', '7', '1', '5', '1', '6', '5', '9', '0', '1', '5', '6', '0', '7', '0', '2', '4', '4', '3', '5', '5', '4', '1', '7', '8', '0', '6', '7', '4', '1', '2', '7', '7', '8', '0', '1', '7', '5', '0', '7', '1', '5', '7', '2', '2', '7', '9', '9', '2', '3', '9', '1', '9', '4', '8', '0', '9', '3', '6', '1', '0', '9', '1', '4', '8', '0', '6', '4', '7', '9', '0', '6', '9', '5', '1', '1', '7', '1', '5', '6', '4', '6', '7', '3', '0', '6', '7', '5', '2', '0', '5', '5', '4', '5', '2', '5', '3', '7', '9', '0', '7', '7', '4', '1', '4', '6', '9', '8', '8', '2', '6', '7', '5', '5', '7', '0', '9', '0', '1', '2', '4', '2', '8', '2', '1', '4', '9', '6', '6', '3', '3', '9', '4', '7', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '2', '0', '0', '0', '2', '0', '0', '3', '8', '8', '3', '5', '6', '2', '7', '6', '1', '5', '0', '6', '6', '8', '5', '5', '8', '6', '7', '7', '5', '9', '4', '2', '8', '3', '2', '5', '1', '2', '5', '2', '6', '5', '4', '5', '2', '7', '4', '8', '2', '3', '6', '1', '3', '7', '8', '5', '6', '8', '4', '4', '1', '9', '7', '0', '2', '4', '3', '5', '4', '6', '3', '6', '8', '3', '9', '6', '4', '6', '3', '3', '8', '1', '7', '5', '2', '8', '6', '0', '2', '5', '9', '8', '9', '9', '5', '3', '1', '9', '9', '6', '8', '9', '3', '0', '9', '6', '5', '2', '3', '0', '9', '9', '2', '7', '9', '7', '8', '6', '3', '8', '3', '7', '3', '1', '6', '3', '5', '0', '0', '6', '1', '2', '8', '9', '3', '2', '2', '1', '3', '3', '9', '6', '5', '7', '5', '9', '3', '8', '2', '6', '0', '2', '1', '7', '3', '2', '0', '5', '0', '9', '8', '5', '6', '9', '0', '9', '0', '7', '7', '8', '6', '0', '8', '1', '3', '6', '2', '7', '2', '8', '9', '3', '0', '6', '8', '4', '2', '3', '3', '6', '6', '1', '3', '1', '4', '3', '0', '7', '6', '3', '2', '5', '6', '5', '4', '4', '5', '8', '0', '1', '3', '9', '4', '0', '1', '2', '1', '3', '5', '9', '1', '9', '7', '3', '3', '0', '8', '2', '6', '1', '6', '4', '4', '4', '4', '6', '0', '8', '7', '3', '3', '7', '2', '8', '5', '0', '2', '9', '7', '3', '2', '8', '1', '5', '2', '4', '6', '4', '5', '1', '7', '7', '0', '4', '8', '2', '6', '0', '9', '8', '0', '7', '8', '2', '8', '2', '0', '1', '2', '8', '0', '1', '6', '5', '7', '2', '6', '7', '7', '0', '7', '9', '1', '4', '3', '4', '3', '6', '6', '4', '4', '7', '1', '4', '5', '3', '2', '9', '1', '2', '8', '9', '0', '6', '6', '9', '3', '8', '6', '1', '7', '3', '9', '4', '5', '4', '3', '8', '7', '3', '9', '4', '7', '9', '0', '6', '0', '0', '2', '2', '1', '5', '4', '5', '5', '8', '0', '6', '7', '6', '3', '7', '5', '6', '6', '2', '2', '7', '4', '7', '4', '1', '1', '1', '2', '7', '6', '0', '4', '8', '7', '0', '0', '0', '8', '4', '6', '0', '9', '9', '0', '7', '5', '9', '3', '4', '4', '4', '4', '3', '4', '1', '0', '8', '8', '4', '4', '9', '4', '5', '5', '7', '7', '6', '9', '9', '0', '3', '2', '7', '1', '7', '4', '1', '1', '0', '8', '9', '1', '2', '6', '9', '9', '0', '3', '0', '9', '9', '3', '0', '7', '2', '9', '7', '9', '6', '8', '0', '2', '1', '4', '1', '0', '8', '1', '4', '9', '2', '7', '0', '9', '9', '8', '1', '4', '3', '3', '8', '6', '5', '5', '3', '7', '2', '5', '7', '2', '2', '5', '5', '3', '1', '4', '8', '9', '6', '4', '1', '3', '7', '8', '9', '4', '9', '9', '1', '0', '2', '5', '0', '8', '7', '0', '3', '8', '1', '5', '0', '0', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '2', '2', '0', '8', '5', '9', '9', '2', '9', '1', '0', '1', '7', '6', '5', '3', '4', '4', '8', '5', '0', '9', '2', '4', '2', '0', '5', '0', '9', '9', '1', '8', '5', '7', '7', '5', '1', '4', '3', '0', '5', '1', '7', '2', '3', '8', '8', '1', '7', '2', '7', '0', '8', '2', '3', '2', '1', '6', '3', '6', '3', '3', '5', '5', '6', '5', '2', '7', '9', '0', '7', '6', '3', '9', '0', '8', '4', '0', '3', '6', '9', '8', '7', '8', '2', '3', '1', '3', '8', '1', '1', '7', '9', '7', '5', '8', '3', '7', '5', '9', '2', '4', '6', '3', '6', '5', '4', '5', '4', '0', '7', '6', '1', '6', '3', '2', '2', '0', '3', '7', '2', '5', '4', '0', '8', '7', '4', '4', '1', '4', '4', '8', '4', '9', '0', '3', '5', '5', '0', '1', '9', '9', '9', '1', '1', '7', '5', '1', '9', '2', '4', '5', '1', '1', '8', '4', '7', '0', '4', '8', '7', '4', '3', '8', '0', '8', '3', '5', '9', '1', '0', '3', '8', '0', '1', '6', '8', '8', '9', '3', '7', '2', '1', '0', '5', '6', '3', '6', '2', '3', '4', '7', '5', '9', '2', '9', '6', '3', '4', '4', '3', '2', '5', '0', '5', '5', '2', '8', '9', '1', '0', '0', '5', '7', '4', '4', '9', '0', '5', '5', '9', '1', '8', '3', '2', '0', '5', '0', '7', '8', '8', '2', '0', '2', '7', '6', '3', '5', '0', '1', '3', '6', '5', '6', '0', '9', '1', '9', '7', '7', '7', '1', '6', '4', '4', '6', '1', '2', '5', '5', '1', '4', '0', '1', '0', '0', '0', '7', '4', '4', '0', '2', '4', '8', '6', '5', '9', '8', '7', '3', '7', '3', '7', '6', '2', '9', '0', '4', '7', '5', '1', '1', '7', '7', '6', '2', '3', '7', '0', '8', '8', '0', '7', '6', '4', '7', '9', '8', '4', '5', '8', '0', '1', '6', '3', '6', '8', '7', '0', '8', '9', '5', '4', '5', '8', '8', '6', '3', '5', '5', '4', '1', '0', '7', '2', '8', '4', '3', '4', '8', '9', '2', '8', '7', '5', '7', '0', '3', '6', '7', '8', '8', '1', '5', '5', '2', '5', '0', '4', '0', '7', '4', '4', '8', '7', '8', '8', '0', '5', '2', '5', '1', '3', '8', '8', '2', '7', '1', '3', '1', '4', '6', '6', '2', '5', '0', '9', '3', '5', '9', '9', '1', '7', '5', '2', '3', '6', '9', '4', '3', '3', '4', '8', '7', '6', '9', '1', '0', '8', '0', '4', '9', '2', '1', '5', '2', '0', '5', '3', '4', '0', '7', '6', '3', '7', '4', '7', '5', '6', '1', '8', '9', '4', '4', '8', '7', '1', '0', '5', '2', '3', '9', '9', '2', '9', '0', '8', '4', '0', '4', '8', '6', '5', '3', '0', '6', '4', '7', '0', '8', '2', '8', '8', '2', '1', '5', '6', '3', '6', '7', '5', '1', '7', '8', '9', '5', '7', '1', '5', '3', '8', '8', '7', '6', '4', '4', '0', '1', '9', '1', '1', '9', '0', '8', '1', '1', '3', '3', '1', '5', '9', '1', '1', '1', '7', '6', '5', '8', '0', '1', '1', '7', '1', '5', '9', '9', '8', '1', '3', '4', '1', '8', '2', '0', '1', '1', '4', '2', '9', '9', '6', '7', '8', '1', '5', '9', '6', '6', '0', '0', '1', '9', '0', '3', '3', '7', '9', '8', '0', '4', '1', '9', '2', '9', '1', '5', '4', '3', '6', '7', '2', '7', '1', '9', '0', '6', '2', '4', '7', '7', '1', '3', '9', '6', '2', '4', '0', '8', '4', '0', '4', '1', '7', '9', '4', '1', '4', '9', '5', '2', '0', '7', '8', '2', '5', '7', '7', '9', '1', '3', '7', '6', '0', '4', '5', '7', '4', '1', '4', '6', '5', '7', '3', '9', '6', '8', '9', '8', '6', '7', '3', '1', '5', '3', '4', '6', '8', '5', '7', '4', '4', '1', '6', '0', '2', '7', '6', '8', '4', '8', '3', '9', '4', '1', '0', '8', '9', '1', '0', '6', '7', '2', '2', '7', '8', '0', '0', '0', '7', '5', '4', '0', '2', '1', '6', '7', '9', '5', '0', '1', '2', '9', '7', '9', '5', '5', '6', '0', '8', '5', '4', '8', '8', '6', '9', '5', '4', '2', '5', '0', '4', '0', '6', '8', '2', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '5', '3', '3', '6', '7', '4', '2', '6', '8', '9', '6', '2', '8', '9', '9', '0', '5', '1', '7', '5', '9', '2', '3', '3', '2', '2', '9', '7', '8', '0', '3', '5', '0', '8', '0', '0', '0', '9', '6', '8', '7', '4', '3', '0', '0', '9', '9', '1', '3', '7', '3', '0', '2', '0', '2', '1', '1', '6', '9', '2', '3', '2', '6', '8', '7', '3', '7', '8', '3', '5', '4', '4', '8', '5', '0', '4', '2', '3', '1', '9', '3', '8', '7', '3', '7', '2', '4', '4', '5', '1', '8', '0', '9', '8', '6', '1', '1', '1', '7', '1', '4', '8', '7', '1', '9', '4', '8', '9', '6', '3', '5', '5', '3', '1', '0', '8', '2', '8', '9', '4', '5', '9', '0', '7', '1', '5', '6', '9', '8', '4', '3', '2', '2', '1', '5', '3', '7', '1', '6', '9', '6', '1', '2', '8', '6', '9', '2', '8', '4', '9', '3', '8', '2', '1', '8', '1', '4', '7', '0', '4', '6', '8', '6', '6', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '2', '1', '6', '1', '3', '8', '6', '2', '0', '0', '9', '9', '8', '9', '2', '3', '7', '7', '2', '4', '9', '5', '2', '3', '9', '0', '8', '0', '4', '1', '3', '2', '4', '5', '6', '0', '3', '0', '8', '0', '2', '6', '7', '1', '3', '5', '0', '1', '3', '1', '7', '2', '2', '3', '7', '2', 0}, 10, NULL);
 	/* clang-format on */
+	tau->num1 = _bi_resize(tau->num1, 775);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = malloc(sizeof(in1));
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = malloc(sizeof(in2));
-	REQUIRE(tau->num1.num && tau->num2.num);
-	memcpy(tau->num1.num, in1, sizeof(in1));
-	memcpy(tau->num2.num, in2, sizeof(in2));
-
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.is_negative = true;
-	tau->expected.num = out;
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(large_subtractions, test_o500c_minus_o500d)
 {
 	/* clang-format off */
-	u_int in1[66] = {555555555, 55555555, 0, 0, 0, 0, 222222, 0, 0, 0, 0, 0, 0, 0, 0, 888888888, 888888888, 888888888, 888888888, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110000000, 111111111, 111111111, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 770000000, 777777777, 777777777, 777777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 999000000, 99999999};
-	u_int in2[] = {470282653, 363502795, 428381283, 187482382, 467199043, 93190808, 0, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 737842756, 975675668, 665546560, 147030781, 113541635, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 746086661, 442022266, 249623720, 646946071, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 44149526, 436038339, 561338441, 16196762, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4};
-	u_int out[66] = {85272902, 692052760, 571618716, 812517617, 532800956, 906809191, 222221, 0, 0, 600000000, 866013663, 181327354, 671447170, 532155906, 761049123, 151046131, 913213220, 223342327, 741858107, 886458365, 327078340, 113385545, 111104066, 111111111, 111111111, 111111111, 731111111, 839019059, 681347286, 363913338, 669088844, 861487390, 353054039, 475339039, 770282267, 428205947, 383938455, 320370736, 828742275, 212922501, 842766492, 790753834, 458215759, 853424555, 655678098, 725850473, 341739438, 216439336, 984581015, 226939437, 895483396, 849893251, 588018361, 555555555, 555555555, 555555555, 555555555, 555555555, 555555555, 999999995, 999999999, 999999999, 999999999, 999999999, 998999999, 99999999};
+	const char expected[] = "2769315567803400000000000000000000007608363883953254006036722809375820000000000000000946001900602100087560002500051243171865731050750745462388288171212746300721613469564396741836389979086904304472475224061238205255674131396893464663867829125664459890000000000000000000000000000000000000000000000000000000000000000000000055751571788169002287927112563608472464633056032554997220900156740475785919449000000000000000000000000093870073695755688436933812779613089249764460305002386268274730485837806748795573874707795014946007865785192966940373072789113547534542583594861890770021698776997999999999999999999999999999999999999944444444444444444";
+
+	tau->num1 = bi_new((const char[]){'2', '7', '6', '9', '3', '1', '5', '5', '6', '7', '8', '0', '3', '4', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '7', '6', '0', '8', '3', '6', '3', '9', '8', '3', '9', '5', '3', '2', '5', '4', '0', '0', '5', '0', '3', '6', '7', '2', '2', '8', '0', '9', '3', '7', '5', '8', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '9', '4', '6', '0', '0', '1', '9', '0', '0', '6', '0', '2', '1', '0', '0', '0', '8', '7', '5', '6', '0', '0', '0', '2', '5', '0', '0', '0', '5', '1', '2', '4', '3', '1', '7', '1', '8', '6', '5', '7', '3', '1', '0', '5', '0', '7', '5', '0', '7', '4', '5', '4', '6', '2', '3', '8', '8', '2', '8', '8', '1', '7', '1', '2', '1', '2', '7', '4', '6', '3', '0', '0', '7', '2', '1', '6', '1', '3', '4', '6', '9', '5', '6', '4', '3', '9', '6', '7', '4', '1', '8', '3', '6', '3', '8', '9', '9', '7', '9', '0', '8', '6', '9', '0', '4', '3', '0', '4', '4', '7', '2', '4', '7', '6', '0', '0', '1', '8', '3', '9', '0', '1', '5', '9', '8', '3', '0', '3', '3', '4', '5', '1', '9', '0', '9', '1', '7', '4', '6', '6', '3', '4', '6', '4', '6', '6', '3', '8', '6', '7', '8', '2', '9', '1', '2', '5', '6', '6', '4', '4', '5', '9', '8', '9', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '5', '5', '7', '5', '1', '5', '7', '1', '7', '8', '8', '1', '6', '9', '0', '0', '2', '2', '8', '7', '9', '2', '7', '1', '1', '2', '6', '7', '4', '7', '1', '9', '5', '8', '3', '5', '7', '5', '7', '4', '4', '1', '6', '7', '1', '4', '3', '6', '6', '4', '9', '9', '7', '2', '2', '0', '9', '0', '0', '1', '5', '6', '7', '4', '0', '4', '7', '5', '7', '8', '5', '9', '1', '9', '4', '4', '9', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '9', '3', '8', '7', '0', '0', '7', '3', '6', '9', '5', '7', '5', '5', '6', '8', '8', '4', '3', '6', '9', '3', '3', '8', '1', '2', '7', '7', '9', '6', '1', '3', '0', '8', '9', '2', '4', '9', '7', '6', '4', '4', '6', '1', '1', '9', '3', '8', '9', '1', '2', '7', '5', '1', '5', '7', '1', '6', '3', '6', '1', '9', '3', '7', '4', '7', '2', '6', '6', '9', '5', '6', '3', '7', '6', '8', '4', '4', '6', '1', '8', '7', '4', '7', '0', '7', '7', '9', '5', '0', '1', '4', '9', '4', '6', '0', '0', '7', '8', '6', '5', '7', '8', '5', '1', '9', '2', '9', '6', '6', '9', '4', '0', '3', '7', '3', '0', '7', '2', '7', '8', '9', '1', '1', '3', '5', '4', '7', '5', '3', '4', '5', '4', '2', '5', '8', '3', '5', '9', '4', '8', '6', '1', '8', '9', '0', '7', '7', '0', '0', '2', '1', '6', '9', '8', '9', '9', '9', '2', '1', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', 0}, 10, NULL);
+	tau->num2 = bi_new((const char[]){'9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '9', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '7', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '1', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '8', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '2', '2', '2', '2', '2', '2', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '0', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', '5', 0}, 10, NULL);
 	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = malloc(sizeof(in1));
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = malloc(sizeof(in2));
-	REQUIRE(tau->num1.num && tau->num2.num);
-	memcpy(tau->num1.num, in1, sizeof(in1));
-	memcpy(tau->num2.num, in2, sizeof(in2));
-
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == 0);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(large_subtractions, test_o500d_minus_o500c)
 {
 	/* clang-format off */
-	u_int in1[66] = {470282653, 363502795, 428381283, 187482382, 467199043, 93190808, 0, 0, 0, 400000000, 133986336, 818672645, 328552829, 467844093, 238950876, 737842756, 975675668, 665546560, 147030781, 113541635, 672921659, 886614454, 888895933, 888888888, 888888888, 888888888, 268888888, 160980940, 318652713, 746086661, 442022266, 249623720, 646946071, 524660960, 229717732, 571794052, 616061544, 679629263, 171257724, 787077498, 157233507, 209246165, 541784240, 146575444, 344321901, 44149526, 436038339, 561338441, 16196762, 773060562, 104516603, 150106748, 411981638, 444444444, 444444444, 444444444, 444444444, 444444444, 444444444, 4};
-	u_int in2[] = {555555555, 55555555, 0, 0, 0, 0, 222222, 0, 0, 0, 0, 0, 0, 0, 0, 888888888, 888888888, 888888888, 888888888, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 110000000, 111111111, 111111111, 111, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 770000000, 777777777, 777777777, 777777, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 999000000, 99999999};
-	u_int out[66] = {85272902, 692052760, 571618716, 812517617, 532800956, 906809191, 222221, 0, 0, 600000000, 866013663, 181327354, 671447170, 532155906, 761049123, 151046131, 913213220, 223342327, 741858107, 886458365, 327078340, 113385545, 111104066, 111111111, 111111111, 111111111, 731111111, 839019059, 681347286, 363913338, 669088844, 861487390, 353054039, 475339039, 770282267, 428205947, 383938455, 320370736, 828742275, 212922501, 842766492, 790753834, 458215759, 853424555, 655678098, 725850473, 341739438, 216439336, 984581015, 226939437, 895483396, 849893251, 588018361, 555555555, 555555555, 555555555, 555555555, 555555555, 555555555, 999999995, 999999999, 999999999, 999999999, 999999999, 998999999, 99999999};
+	const char expected[] = "-2769315567803400000000000000000000007608363883953254006036722809375820000000000000000946001900602100087560002500051243171865731050750745462388288171212746300721613469564396741836389979086904304472475224061238205255674131396893464663867829125664459890000000000000000000000000000000000000000000000000000000000000000000000055751571788169002287927112563608472464633056032554997220900156740475785919449000000000000000000000000093870073695755688436933812779613089249764460305002386268274730485837806748795573874707795014946007865785192966940373072789113547534542583594861890770021698776997999999999999999999999999999999999999944444444444444444";
+
+	tau->num1 = bi_new("99999999999000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000777777777777777777777777770000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000111111111111111111111110000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000888888888888888888888888888888888888000000000000000000000000000000000000000000000000000000000000000000000000000222222000000000000000000000000000000000000055555555555555555", 10, NULL);
+	tau->num2 = bi_new("2769315567803400000000000000000000007608363983953254005036722809375820000000000000000946001900602100087560002500051243171865731050750745462388288171212746300721613469564396741836389979086904304472476001839015983033451909174663464663867829125664459890000000000000000000000000000000000000000000000000000000000000000000000055751571788169002287927112674719583575744167143664997220900156740475785919449000000000000000000000000093870073695755688436933812779613089249764461193891275157163619374726695637684461874707795014946007865785192966940373072789113547534542583594861890770021698999219999999999999999999999999999999999999999999999999999999", 10, NULL);
 	/* clang-format on */
+	tau->num1 = _bi_resize(tau->num1, 71);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	REQUIRE_PTR_NE(tau->num2, NULL);
+	tau->outstr = bi_tostr(bi_isubtract(tau->num1, tau->num2));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = malloc(sizeof(in1));
-	tau->num2.len = sizeof(in2) / sizeof(*in2);
-	tau->num2.num = malloc(sizeof(in2));
-	REQUIRE(tau->num1.num && tau->num2.num);
-	memcpy(tau->num1.num, in1, sizeof(in1));
-	memcpy(tau->num2.num, in2, sizeof(in2));
-
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.is_negative = true;
-	tau->expected.num = out;
-	bi_isubtract(&(tau->num1), &(tau->num2));
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 /* ################################################################### */
@@ -940,350 +765,216 @@ TEST_F(invalid_inputs, test_NaN_minus_490998i)
 
 TEST_F(simple_subtractions, test_0_minus_0i)
 {
-	u_int in1[1] = {0}, out[1] = {0};
+	const char expected[] = "0";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("0", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 0));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 0);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_subtractions, test_1_minus_0i)
 {
-	u_int in1[] = {1}, out[] = {1};
+	const char expected[] = "1";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 0));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 0);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_subtractions, test_0_minus_1i)
 {
-	u_int in1[1] = {0}, out[] = {1};
+	const char expected[] = "-1";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = bi_new("0", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 1));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 1);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_subtractions, test_1_minus_1i)
 {
-	u_int in1[] = {1}, out[1] = {0};
+	const char expected[] = "0";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 1));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 1);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
-TEST_F(simple_subtractions, test_MAX_VAL_minus_neg50000i)
+TEST_F(simple_subtractions, test_1000000000_minus_50000i)
 {
-	u_int in1[] = {0, 1}, out[] = {999950000};
+	const char expected[] = "999950000";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("1_000000000", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 50000));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 50000);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(simple_subtractions, test_50000_minus_100000000i)
 {
-	u_int in1[] = {50000}, out[] = {999950000};
+	const char expected[] = "-999950000";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = bi_new("50000", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 1000000000));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 1000000000);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 /* same_number_subtractions */
 
 TEST_F(same_number_subtractions, test_1000000001_minus_1000000001i)
 {
-	u_int in1[] = {1, 1}, out[] = {0};
+	const char expected[] = "0";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1 = bi_new("1000000001", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 1000000001));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 1000000001);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(same_number_subtractions, test_longnum_minus_longi)
 {
-	u_int in1[] = {1, 1, 1}, out[] = {0};
+	const char expected[] = "0";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = false,
-						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
+	tau->num1 = bi_new("1000000001000000001", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 1000000001000000001));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 1000000001000000001);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 /* long_subtractions */
 
 TEST_F(long_subtractions, test_long9s_minus_1i)
 {
-	u_int in1[] = {
-		BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
-		BIGINT_BASE - 1
-	};
-	u_int out[] = {
-		BIGINT_BASE - 2, BIGINT_BASE - 1, BIGINT_BASE - 1, BIGINT_BASE - 1,
-		BIGINT_BASE - 1
-	};
+	/* clang-format off */
+	const char expected[] = "999999999999999999999999999999999999999999998";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("999999999_999999999_999999999_999999999_999999999", 10, NULL);
+	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 1));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 1);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == 0);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(long_subtractions, test_1_minus_long9si)
 {
-	u_int in1[2] = {1};
-	u_int out[2] = {BIGINT_BASE - 2, BIGINT_BASE - 1};
+	const char expected[] = "-999999999999999998";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = _bi_resize(bi_new("1", 10, NULL), 2);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 999999999999999999));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 999999999999999999);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(long_subtractions, test_4000000000678_minus_999999000i)
 {
-	u_int in1[] = {678, 4000}, out[] = {1678, 3999};
+	const char expected[] = "3999000001678";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("4000000000678", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 999999000));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 999999000);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
+
+/****************** REVERSE OF PREVIOUS *******************/
 
 TEST_F(long_subtractions, test_999999000_minus_4000000000678i)
 {
-	u_int in1[2] = {999999000}, out[] = {1678, 3999};
+	const char expected[] = "-3999000001678";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
+	tau->num1 = _bi_resize(bi_new("999999000", 10, NULL), 2);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 4000000000678));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), 4000000000678);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 /* negative_subtractions */
 
 TEST_F(negative_subtractions, test_neg1_minus_neg1i)
 {
-	u_int in1[] = {1}, out[1] = {0};
+	const char expected[] = "0";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = true,
-						 .num = in1};
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
+	tau->num1 = bi_new("-1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, -1));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	bi_isubtract_int(&(tau->num1), -1);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(negative_subtractions, test_1_minus_neg1i)
 {
-	u_int in1[] = {1}, out[] = {2};
+	const char expected[] = "2";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
-	bi_isubtract_int(&(tau->num1), -1);
+	tau->num1 = bi_new("1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, -1));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(negative_subtractions, test_neg1_minus_1i)
 {
-	u_int in1[] = {1}, out[] = {2};
+	const char expected[] = "-2";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = true,
-						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
-	bi_isubtract_int(&(tau->num1), 1);
+	tau->num1 = bi_new("-1", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 1));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(negative_subtractions, test_5_minus_neg1i)
 {
-	u_int in1[] = {5}, out[] = {6};
+	const char expected[] = "6";
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = false,
-							 .num = out};
-	bi_isubtract_int(&(tau->num1), -1);
+	tau->num1 = bi_new("5", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, -1));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 TEST_F(negative_subtractions, test_neg5_minus_1i)
 {
-	u_int in1[] = {5}, out[] = {6};
+	const char expected[] = "-6";
 
-	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
-						 .is_negative = true,
-						 .num = in1};
-	tau->expected = (bigint){.len = sizeof(out) / sizeof(*out),
-							 .is_negative = true,
-							 .num = out};
-	bi_isubtract_int(&(tau->num1), 1);
+	tau->num1 = bi_new("-5", 10, NULL);
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, 1));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == tau->expected.is_negative);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
+	CHECK_STREQ(tau->outstr, expected);
 }
 
 /* large_subtractions */
@@ -1291,22 +982,13 @@ TEST_F(negative_subtractions, test_neg5_minus_1i)
 TEST_F(large_subtractions, test_o1kb_minus_longmax)
 {
 	/* clang-format off */
-	u_int in1[342] = {645836236, 108893430, 836208119, 270771001, 537613755, 373039867, 833294108, 898839418, 608485063, 546188873, 452231917, 687296422, 111111152, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 476411111, 5669047, 700035645, 893473278, 4493, 543630640, 324000, 568376700, 1394, 300000000, 378345892, 8, 734194700, 423768, 0, 445197384, 518101037, 109617878, 558156514, 983336821, 690076644, 693516675, 143226629, 76588580, 210759419, 973911560, 497333540, 14322213, 555048869, 815323758, 539167661, 458688023, 612425259, 624332483, 419554373, 679371075, 393235000, 236728315, 664373133, 150410609, 518660305, 359239326, 307363945, 571210805, 347785534, 563445710, 660409386, 228008317, 804462179, 233074148, 591937180, 160409198, 950235053, 962974549, 171857157, 523072994, 395079814, 321058488, 203652900, 126072395, 363107953, 630915068, 973080517, 612433363, 734409773, 377726669, 707225937, 627074076, 918808553, 941285428, 110569912, 430944738, 394600177, 990968620, 4498198, 265970467, 594659210, 881718792, 749254660, 489225907, 417635079, 182995180, 494838468, 16834009, 911110449, 948701330, 831191398, 792151714, 70940218, 627665839, 410612359, 202045867, 935804051, 937850141, 227018012, 991791152, 506752363, 406483698, 355792683, 47491630, 22359011, 919962818, 955165934, 399211808, 673319428, 319818160, 662785141, 175882430, 630322415, 735383534, 687650610, 46582669, 496678148, 491637987, 871575195, 116330034, 723314187, 385420689, 325094262, 12829142, 208703866, 120005690, 899921757, 77002169, 359486189, 753454258, 278911354, 694037307, 578519296, 494600786, 470779501, 768446187, 472669563, 716361937, 389127515, 976446119, 593192334, 617083917, 272976737, 418747631, 855714255, 226105187, 605917499, 696971445, 573117854, 99153257, 956645492, 728520292, 946389174, 245482697, 655465609, 470307816, 135416351, 729216591, 866144546, 888959338, 809402688, 527131609, 866613186, 419167460, 916600904, 633154349, 747140489, 315862951, 238759183, 148584074, 652667824, 161606397, 677427537, 590777629, 825244648, 835356427, 366982335, 748040826, 852122159, 4896, 900000000, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 385820199, 167580321, 134092496, 277075937, 872169008, 64325722, 827080282, 277960712, 655352740, 163131699, 448213684, 277128786, 514326330, 933871396, 63154105, 745922799, 490015860, 252229607, 711956623, 591788040, 954758766, 467124003, 644524713, 690634208, 510828673, 629041620, 704066384, 468512842, 590156377, 509105852, 101803594, 777808979, 519622805, 972925209, 333284887, 366099858, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
-	u_int out[342] = {791060429, 885521393, 836208109, 270771001, 537613755, 373039867, 833294108, 898839418, 608485063, 546188873, 452231917, 687296422, 111111152, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 111111111, 476411111, 5669047, 700035645, 893473278, 4493, 543630640, 324000, 568376700, 1394, 300000000, 378345892, 8, 734194700, 423768, 0, 445197384, 518101037, 109617878, 558156514, 983336821, 690076644, 693516675, 143226629, 76588580, 210759419, 973911560, 497333540, 14322213, 555048869, 815323758, 539167661, 458688023, 612425259, 624332483, 419554373, 679371075, 393235000, 236728315, 664373133, 150410609, 518660305, 359239326, 307363945, 571210805, 347785534, 563445710, 660409386, 228008317, 804462179, 233074148, 591937180, 160409198, 950235053, 962974549, 171857157, 523072994, 395079814, 321058488, 203652900, 126072395, 363107953, 630915068, 973080517, 612433363, 734409773, 377726669, 707225937, 627074076, 918808553, 941285428, 110569912, 430944738, 394600177, 990968620, 4498198, 265970467, 594659210, 881718792, 749254660, 489225907, 417635079, 182995180, 494838468, 16834009, 911110449, 948701330, 831191398, 792151714, 70940218, 627665839, 410612359, 202045867, 935804051, 937850141, 227018012, 991791152, 506752363, 406483698, 355792683, 47491630, 22359011, 919962818, 955165934, 399211808, 673319428, 319818160, 662785141, 175882430, 630322415, 735383534, 687650610, 46582669, 496678148, 491637987, 871575195, 116330034, 723314187, 385420689, 325094262, 12829142, 208703866, 120005690, 899921757, 77002169, 359486189, 753454258, 278911354, 694037307, 578519296, 494600786, 470779501, 768446187, 472669563, 716361937, 389127515, 976446119, 593192334, 617083917, 272976737, 418747631, 855714255, 226105187, 605917499, 696971445, 573117854, 99153257, 956645492, 728520292, 946389174, 245482697, 655465609, 470307816, 135416351, 729216591, 866144546, 888959338, 809402688, 527131609, 866613186, 419167460, 916600904, 633154349, 747140489, 315862951, 238759183, 148584074, 652667824, 161606397, 677427537, 590777629, 825244648, 835356427, 366982335, 748040826, 852122159, 4896, 900000000, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 999999999, 385820199, 167580321, 134092496, 277075937, 872169008, 64325722, 827080282, 277960712, 655352740, 163131699, 448213684, 277128786, 514326330, 933871396, 63154105, 745922799, 490015860, 252229607, 711956623, 591788040, 954758766, 467124003, 644524713, 690634208, 510828673, 629041620, 704066384, 468512842, 590156377, 509105852, 101803594, 777808979, 519622805, 972925209, 333284887, 366099858, 584319133, 851605740, 743738793, 912271659, 205902321, 306768696, 951511006, 853007337, 793747247, 858293618, 953587774, 433638706, 827128463, 10931106, 238240138, 541935268, 774418024, 534563619, 736369239, 336516542, 723202909, 72035747, 712282212, 121201039, 863656439, 738195137, 536402352, 988504044, 143816789, 991215483, 635637328, 796292638, 712577246, 870774981, 572335077, 92461651, 417842402, 465754445, 443219011, 441495263, 360383390, 613384414, 161967625, 730605620, 45166037, 501067481, 119816381, 482382428, 993423658, 444792073, 338718477, 357679842, 186546204, 725908514, 242243363, 998754918, 228221686, 517265463, 874612151, 181719511, 64245869, 179742910, 880842840, 733045974, 909570009, 761337985, 469116507, 501497182, 26189637, 141834727, 777673597, 739280728, 284499268, 848912007, 618450280, 855914917, 508218929, 64124951, 440691829, 852588078, 555626401, 202070759, 783604366, 202777713, 212620403, 857142928, 324004839, 349402718, 847565789, 52519590, 658472794, 842462660, 791141310, 195364150, 381999943, 261729562, 18229};
+	const char expected[] = "18229261729562381999943195364150791141310842462660658472794052519590847565789349402718324004839857142928212620403202777713783604366202070759555626401852588078440691829064124951508218929855914917618450280848912007284499268739280728777673597141834727026189637501497182469116507761337985909570009733045974880842840179742910064245869181719511874612151517265463228221686998754918242243363725908514186546204357679842338718477444792073993423658482382428119816381501067481045166037730605620161967625613384414360383390441495263443219011465754445417842402092461651572335077870774981712577246796292638635637328991215483143816789988504044536402352738195137863656439121201039712282212072035747723202909336516542736369239534563619774418024541935268238240138010931106827128463433638706953587774858293618793747247853007337951511006306768696205902321912271659743738793851605740584319133366099858333284887972925209519622805777808979101803594509105852590156377468512842704066384629041620510828673690634208644524713467124003954758766591788040711956623252229607490015860745922799063154105933871396514326330277128786448213684163131699655352740277960712827080282064325722872169008277075937134092496167580321385820199999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999900000000000004896852122159748040826366982335835356427825244648590777629677427537161606397652667824148584074238759183315862951747140489633154349916600904419167460866613186527131609809402688888959338866144546729216591135416351470307816655465609245482697946389174728520292956645492099153257573117854696971445605917499226105187855714255418747631272976737617083917593192334976446119389127515716361937472669563768446187470779501494600786578519296694037307278911354753454258359486189077002169899921757120005690208703866012829142325094262385420689723314187116330034871575195491637987496678148046582669687650610735383534630322415175882430662785141319818160673319428399211808955165934919962818022359011047491630355792683406483698506752363991791152227018012937850141935804051202045867410612359627665839070940218792151714831191398948701330911110449016834009494838468182995180417635079489225907749254660881718792594659210265970467004498198990968620394600177430944738110569912941285428918808553627074076707225937377726669734409773612433363973080517630915068363107953126072395203652900321058488395079814523072994171857157962974549950235053160409198591937180233074148804462179228008317660409386563445710347785534571210805307363945359239326518660305150410609664373133236728315393235000679371075419554373624332483612425259458688023539167661815323758555048869014322213497333540973911560210759419076588580143226629693516675690076644983336821558156514109617878518101037445197384000000000000423768734194700000000008378345892300000000000001394568376700000324000543630640000004493893473278700035645005669047476411111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111152687296422452231917546188873608485063898839418833294108373039867537613755270771001836208109885521393791060429";
+
+	tau->num1 = bi_new("18229261729562381999943195364150791141310842462660658472794052519590847565789349402718324004839857142928212620403202777713783604366202070759555626401852588078440691829064124951508218929855914917618450280848912007284499268739280728777673597141834727026189637501497182469116507761337985909570009733045974880842840179742910064245869181719511874612151517265463228221686998754918242243363725908514186546204357679842338718477444792073993423658482382428119816381501067481045166037730605620161967625613384414360383390441495263443219011465754445417842402092461651572335077870774981712577246796292638635637328991215483143816789988504044536402352738195137863656439121201039712282212072035747723202909336516542736369239534563619774418024541935268238240138010931106827128463433638706953587774858293618793747247853007337951511006306768696205902321912271659743738793851605740584319133366099858333284887972925209519622805777808979101803594509105852590156377468512842704066384629041620510828673690634208644524713467124003954758766591788040711956623252229607490015860745922799063154105933871396514326330277128786448213684163131699655352740277960712827080282064325722872169008277075937134092496167580321385820199999999999999999999999999999999999999999999999999999999999999999999999999999999999999999999900000000000004896852122159748040826366982335835356427825244648590777629677427537161606397652667824148584074238759183315862951747140489633154349916600904419167460866613186527131609809402688888959338866144546729216591135416351470307816655465609245482697946389174728520292956645492099153257573117854696971445605917499226105187855714255418747631272976737617083917593192334976446119389127515716361937472669563768446187470779501494600786578519296694037307278911354753454258359486189077002169899921757120005690208703866012829142325094262385420689723314187116330034871575195491637987496678148046582669687650610735383534630322415175882430662785141319818160673319428399211808955165934919962818022359011047491630355792683406483698506752363991791152227018012937850141935804051202045867410612359627665839070940218792151714831191398948701330911110449016834009494838468182995180417635079489225907749254660881718792594659210265970467004498198990968620394600177430944738110569912941285428918808553627074076707225937377726669734409773612433363973080517630915068363107953126072395203652900321058488395079814523072994171857157962974549950235053160409198591937180233074148804462179228008317660409386563445710347785534571210805307363945359239326518660305150410609664373133236728315393235000679371075419554373624332483612425259458688023539167661815323758555048869014322213497333540973911560210759419076588580143226629693516675690076644983336821558156514109617878518101037445197384000000000000423768734194700000000008378345892300000000000001394568376700000324000543630640000004493893473278700035645005669047476411111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111152687296422452231917546188873608485063898839418833294108373039867537613755270771001836208119108893430645836236", 10, NULL);
 	/* clang-format on */
+	REQUIRE_PTR_NE(tau->num1, NULL);
+	tau->outstr = bi_tostr(bi_isubtract_int(tau->num1, LLONG_MAX));
+	REQUIRE_PTR_NE(tau->outstr, NULL);
 
-	tau->num1.len = sizeof(in1) / sizeof(*in1);
-	tau->num1.num = in1;
-	tau->expected.len = sizeof(out) / sizeof(*out);
-	tau->expected.num = out;
-
-	bi_isubtract_int(&(tau->num1), LLONG_MAX);
-
-	CHECK(tau->num1.len == tau->expected.len);
-	CHECK(tau->num1.is_negative == 0);
-	CHECK_BUF_EQ(
-		tau->num1.num, tau->expected.num,
-		sizeof(*(tau->expected.num)) * tau->expected.len
-	);
-	tau->num1.num = NULL;
+	CHECK_STREQ(tau->outstr, expected);
 }

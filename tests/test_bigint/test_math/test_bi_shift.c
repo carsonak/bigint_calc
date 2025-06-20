@@ -43,7 +43,7 @@ TEST_F(invalid_inputs, test_NaN_shift_r_1)
 
 TEST_F(invalid_inputs, test_shift_r_neg1)
 {
-	u_int in1[1] = {1};
+	digit_ty in1[1] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -330,7 +330,7 @@ TEST_F(invalid_inputs, test_NaN_shift_l_1)
 
 TEST_F(invalid_inputs, test_shift_l_neg1)
 {
-	u_int in1[1] = {1};
+	digit_ty in1[1] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;

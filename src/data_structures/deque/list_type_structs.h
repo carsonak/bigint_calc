@@ -1,7 +1,7 @@
 #ifndef BIGINT_LIST_TYPE_STRUCTS_H
 #define BIGINT_LIST_TYPE_STRUCTS_H
 
-#include <stdint.h> /* intmax_t */
+#include <stdint.h>  // intmax_t
 
 #include "list_type_typedefs.h"
 
@@ -31,4 +31,4 @@ struct list_node
 	void *data;
 };
 
-#endif /* BIGINT_LIST_TYPE_STRUCTS_H */
+#endif  // BIGINT_LIST_TYPE_STRUCTS_H

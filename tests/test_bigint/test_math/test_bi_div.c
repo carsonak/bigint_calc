@@ -20,7 +20,7 @@ TEST(invalid_inputs, test_null_over_null)
 
 TEST_F(invalid_inputs, test_1_over_null)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -31,7 +31,7 @@ TEST_F(invalid_inputs, test_1_over_null)
 
 TEST_F(invalid_inputs, test_null_over_1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -42,7 +42,7 @@ TEST_F(invalid_inputs, test_null_over_1)
 
 TEST_F(invalid_inputs, test_0_over_null)
 {
-	u_int in1[1] = {0};
+	digit_ty in1[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -53,7 +53,7 @@ TEST_F(invalid_inputs, test_0_over_null)
 
 TEST_F(invalid_inputs, test_null_over_0)
 {
-	u_int in2[1] = {0};
+	digit_ty in2[1] = {0};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -64,7 +64,7 @@ TEST_F(invalid_inputs, test_null_over_0)
 
 TEST_F(invalid_inputs, test_neg1_over_null)
 {
-	u_int in1[] = {1};
+	digit_ty in1[] = {1};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -76,7 +76,7 @@ TEST_F(invalid_inputs, test_neg1_over_null)
 
 TEST_F(invalid_inputs, test_null_over_neg1)
 {
-	u_int in2[] = {1};
+	digit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -110,7 +110,7 @@ TEST_F(zero_len_arrays, test_NaN_over_NaN)
 
 TEST_F(zero_len_arrays, test_4490998_over_NaN)
 {
-	u_int in1[] = {4490998};
+	digit_ty in1[] = {4490998};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -123,7 +123,7 @@ TEST_F(zero_len_arrays, test_4490998_over_NaN)
 
 TEST_F(zero_len_arrays, test_NaN_over_largenum)
 {
-	u_int in2[] = {0, 5, 4, 3, 2, 1};
+	digit_ty in2[] = {0, 5, 4, 3, 2, 1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -149,7 +149,7 @@ TEST_F_TEARDOWN(division_by_zero) { tau->output = bi_delete(tau->output); }
 
 TEST_F(division_by_zero, test_0_over_0)
 {
-	u_int in1[1] = {0}, in2[1] = {0};
+	digit_ty in1[1] = {0}, in2[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -163,7 +163,7 @@ TEST_F(division_by_zero, test_0_over_0)
 
 TEST_F(division_by_zero, test_1_over_0)
 {
-	u_int in1[] = {1}, in2[1] = {0};
+	digit_ty in1[] = {1}, in2[1] = {0};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;

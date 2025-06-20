@@ -35,7 +35,7 @@ static void *dup_str(void const *const str)
 	unsigned int len = 0;
 
 	while (s[len] && len <= MAX_STRING_LENGTH)
-		++len;
+		len++;
 
 	char *const s_dup = malloc(sizeof(*s_dup) * (len + 1));
 

@@ -1,4 +1,4 @@
-#include <string.h> /* memmove, memset, memcpy */
+#include <string.h>  // memmove, memset, memcpy
 
 #include "_bi_internals.h"
 
@@ -6,22 +6,30 @@
  * @brief allocate memory for a `bigint` of given length.
  * @protected @memberof bigint
  *
- * @param[in] len length of the array, length 0 returns the struct with a NULL array.
+ * Only the most significant and least significant digits of the returned
+ * `bigint` will be initialised to 0.
+ *
+ * @param[in] len length of the array. A length of 0 returns a `bigint`
+ * pointer with a NULLed "digit" array.
  *
  * @return a pointer to a `bigint` struct, NULL on failure.
  */
-bigint *_bi_alloc(const len_type len)
+bigint *_bi_alloc(const len_ty len)
 {
 	if (len < 0)
 		return (NULL);
 
-	bigint *bn = NULL;
-	const size_t size = sizeof(*bn->num) * len;
+	bigint *restrict bn = NULL;
+	const size_t arr_size = sizeof(*bn->num) * len;
 
-	if (len > 0 && size / len != sizeof(*bn->num))
+	if (len > 0 && arr_size / len != sizeof(*bn->num))  // overflow error.
 		return (NULL);
 
-	bn = xmalloc(sizeof(*bn) + size);
+	/*!
+	 * The `bigint` struct and its array of "digits" will be stored in one
+	 * continuos memory block.
+	 */
+	bn = xmalloc(sizeof(*bn) + arr_size);
 	if (!bn)
 		return (NULL);
 
@@ -29,7 +37,7 @@ bigint *_bi_alloc(const len_type len)
 	bn->len = len;
 	if (len > 0)
 	{
-		bn->num = (u_int *)(bn + 1);
+		bn->num = (digit_ty *)(bn + 1);
 		bn->num[0] = 0;
 		bn->num[len - 1] = 0;
 	}
@@ -38,43 +46,56 @@ bigint *_bi_alloc(const len_type len)
 }
 
 /*!
- * @brief resizes memory of a `bigint` array.
+ * @brief resizes the capacity of a `bigint`'s internal array.
  * @protected @memberof bigint
  *
- * If `bi` is NULL, returns pointer to a new `bigint`, otherwise
- * resize to len. If len is 0 the resized `bigint` will not be able
- * to store any numbers.
- * On failure `bi` is freed.
+ * All added memory will be initialised to 0.
+ *
+ * If any of the resizing operations fail `bi` will be freed and NULL returned.
  *
  * @param[in] bi pointer to the `bigint`.
  * @param[in] len length to resize the array to.
  *
  * @return pointer to the resized `bigint`, NULL on failure.
  */
-bigint *_bi_resize(bigint *bi, const len_type len)
+bigint *_bi_resize(bigint *bi, const len_ty len)
 {
-	if (len < 0)
+	if (len < 0 || (bi && bi->len < 0))
 		return (_bi_free(bi));
 
-	const size_t new_size = sizeof(*bi->num) * len;
+	const size_t arr_size = sizeof(*bi->num) * len;
 
-	if (len > 0 && new_size / len != sizeof(*bi->num))
+	/* overflow error. */
+	if (len > 0 && arr_size / len != sizeof(*bi->num))
 		return (_bi_free(bi));
 
-	if (bi)
-		bi = xrealloc_free_on_fail(bi, sizeof(*bi) + new_size);
-	else
+	if (!bi)
+	{
+		/*!
+		 * If `bi` is NULL, a pointer to a new `bigint` of size `len`.
+		 */
 		bi = _bi_alloc(len);
+		if (bi && bi->num)
+			memset(bi->num, 0, sizeof(*bi->num) * len);
 
+		return (bi);
+	}
+
+	/*!
+	 * Otherwise, resize the `bi` to `len` "digits".
+	 */
+	bi = xrealloc_free_on_fail(bi, sizeof(*bi) + arr_size);
 	if (!bi)
 		return (NULL);
 
+	/*!
+	 * If `len` is 0, the `bigint` will have its "digit" array freed and NULLed.
+	 */
 	if (len > 0)
-		bi->num = (u_int *)(bi + 1);
+		bi->num = (digit_ty *)(bi + 1);
 	else
 		bi->num = NULL;
 
-	/* If the `bigint` is being enlarged, set the added memory to 0. */
 	if (len > bi->len)
 		memset(&(bi->num[bi->len]), 0, sizeof(*bi->num) * (len - bi->len));
 
@@ -121,10 +142,10 @@ bigint *_bi_trim(bigint *const restrict n)
 	if (!n->num)
 		n->len = 0;
 
-	while (n->len > 1 && !n->num[n->len - 1])
+	while (n->len > 1 && n->num[n->len - 1] == 0)
 		--n->len;
 
-	if (!n->num || (n->len == 1 && !n->num[0]))
+	if (!n->num || (n->len == 1 && n->num[0] == 0))
 		n->is_negative = false;
 
 	return (n);
@@ -156,12 +177,13 @@ bigint *_bi_dup(bigint const *const restrict bi)
 }
 
 /*!
- * @brief copy contents of a `bigint` to another `bigint`.
+ * @brief copy contents of a `bigint` into another `bigint`.
  * @protected @memberof bigint
  *
  * All pointers in dest should reference memory areas large enough to hold
  * the corresponding data in src.
- * If pointers in src are NULL, pointers in dest will not be affected.
+ * The move will fail if any pointers are NULL or the length of `src` is less
+ * than 1.
  *
  * @param[out] dest where to copy to.
  * @param[in] src the `bigint` to be copied.
@@ -170,7 +192,7 @@ bigint *_bi_dup(bigint const *const restrict bi)
  */
 bigint *_bi_move(bigint *const dest, bigint const *const src)
 {
-	if (!src || !dest || (src->len > 0 && src->num && !dest->num))
+	if ((!src || src->len < 1 || !src->num) || (!dest || !dest->num))
 		return (NULL);
 
 	dest->len = src->len;

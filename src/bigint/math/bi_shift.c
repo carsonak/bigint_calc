@@ -3,7 +3,7 @@
  * @brief methods for shifting "digits" of bigints.
  */
 
-#include <string.h> /* memmove */
+#include <string.h>  // memmove
 
 #include "_bi_internals.h"
 #include "bigint.h"
@@ -36,7 +36,7 @@ static bigint *_bi_shift(bigint *const restrict n, const intmax_t d)
 
 	bigint *restrict res = NULL;
 
-	if (d < 0) /* left shift */
+	if (d < 0)  // left shift
 	{
 		const intmax_t digits = -d;
 		const uintmax_t final_len = (uintmax_t)n->len + digits;
@@ -48,12 +48,12 @@ static bigint *_bi_shift(bigint *const restrict n, const intmax_t d)
 			memcpy(&(res->num[digits]), n->num, sizeof(*n->num) * n->len);
 		}
 	}
-	else /* right shift */
+	else  // right shift
 	{
 		const uintmax_t final_len = d < n->len ? (uintmax_t)n->len - d : 1;
 
 		res = _bi_alloc(final_len);
-		if (d >= n->len) /* result == 0 */
+		if (d >= n->len)  // result == 0
 			return (res);
 
 		if (res)
@@ -126,7 +126,7 @@ static bigint *_bi_ishift(bigint *const restrict n, const intmax_t d)
 
 	uintmax_t final_len = 0;
 
-	if (d < 0) /* left shift */
+	if (d < 0)  // left shift
 	{
 		const intmax_t digits = -d;
 
@@ -134,7 +134,7 @@ static bigint *_bi_ishift(bigint *const restrict n, const intmax_t d)
 		memmove(&(n->num[digits]), n->num, sizeof(*n->num) * n->len);
 		memset(n->num, 0, sizeof(*n->num) * digits);
 	}
-	else /* right shift */
+	else  // right shift
 	{
 
 		final_len = n->len > d ? (uintmax_t)n->len - d : 1;
