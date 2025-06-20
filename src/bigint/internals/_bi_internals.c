@@ -6,6 +6,8 @@
  * @brief allocate memory for a `bigint` of given length.
  * @protected @memberof bigint
  *
+ * The `bigint` struct and its array of "digits" will be stored in one
+ * continuos memory block.
  * Only the most significant and least significant digits of the returned
  * `bigint` will be initialised to 0.
  *
@@ -22,13 +24,10 @@ bigint *_bi_alloc(const len_ty len)
 	bigint *restrict bn = NULL;
 	const size_t arr_size = sizeof(*bn->num) * len;
 
-	if (len > 0 && arr_size / len != sizeof(*bn->num))  // overflow error.
+	// overflow error.
+	if (len > 0 && arr_size / len != sizeof(*bn->num))
 		return (NULL);
 
-	/*!
-	 * The `bigint` struct and its array of "digits" will be stored in one
-	 * continuos memory block.
-	 */
 	bn = xmalloc(sizeof(*bn) + arr_size);
 	if (!bn)
 		return (NULL);
@@ -51,6 +50,10 @@ bigint *_bi_alloc(const len_ty len)
  *
  * All added memory will be initialised to 0.
  *
+ * If `bi` is NULL, a pointer to a new `bigint` of size `len` is returned.
+ * Otherwise, resize the `bi` to `len` "digits".
+ * If `len` is 0, the `bigint` will have its "digit" array freed and NULLed.
+ *
  * If any of the resizing operations fail `bi` will be freed and NULL returned.
  *
  * @param[in] bi pointer to the `bigint`.
@@ -65,15 +68,12 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
 
 	const size_t arr_size = sizeof(*bi->num) * len;
 
-	/* overflow error. */
+	// overflow error.
 	if (len > 0 && arr_size / len != sizeof(*bi->num))
 		return (_bi_free(bi));
 
 	if (!bi)
 	{
-		/*!
-		 * If `bi` is NULL, a pointer to a new `bigint` of size `len`.
-		 */
 		bi = _bi_alloc(len);
 		if (bi && bi->num)
 			memset(bi->num, 0, sizeof(*bi->num) * len);
@@ -81,16 +81,10 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
 		return (bi);
 	}
 
-	/*!
-	 * Otherwise, resize the `bi` to `len` "digits".
-	 */
 	bi = xrealloc_free_on_fail(bi, sizeof(*bi) + arr_size);
 	if (!bi)
 		return (NULL);
 
-	/*!
-	 * If `len` is 0, the `bigint` will have its "digit" array freed and NULLed.
-	 */
 	if (len > 0)
 		bi->num = (digit_ty *)(bi + 1);
 	else

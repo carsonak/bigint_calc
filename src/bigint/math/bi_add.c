@@ -21,9 +21,6 @@ static bigint *iadd_negatives(
  * @invariant
  * Numbers to be added are never negative.
  *
- * @invariant
- * `n1` is always large enough to hold the results of the addition.
- *
  * @param[in out] n1 the first number.
  * @param[in] n2 the second number.
  *
@@ -90,10 +87,15 @@ iadd_negatives(bigint *const restrict n1, bigint *const restrict n2)
  * @brief add two `bigint`s and store results in first number.
  * @public @memberof bigint
  *
- * The results of the addittion will be stored in n1. No extra memory
- * will be allocated via calls to *alloc family functions.
+ * The results of the addittion will be stored in `n1`. No extra memory will
+ * be allocated via calls to *alloc family functions.
  *
- * @param[in out] n1 the first number, should have enough space to store the result.
+ * @invariant
+ * If `n1` has less "digits" than the result, then the extra memory in `n1`
+ * should be initialised to 0.
+ *
+ * @param[in out] n1 the first number, should have enough space to store the
+ * result.
  * @param[in] n2 the second number.
  *
  * @return pointer to `n1` on success, NULL on failure.
@@ -124,10 +126,11 @@ bigint *bi_iadd(bigint *const restrict n1, bigint *const restrict n2)
  * @brief add an int to a `bigint` inplace.
  * @public @memberof bigint
  *
- * The results of the addittion will be stored in n1. No extra memory
- * will be allocated via calls to *alloc family functions.
+ * The results of the addittion will be stored in n1. No extra memory will be
+ * allocated via calls to *alloc family functions.
  *
- * @param[in out] n1 the first number, must have enough memory allocated to hold the answer.
+ * @param[in out] n1 the first number, must have enough memory allocated to
+ * hold the answer.
  * @param[in] n2 the second number.
  *
  * @return pointer to `n1` on success, NULL on failure.

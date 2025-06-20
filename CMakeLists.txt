@@ -11,7 +11,7 @@ check_ipo_supported(RESULT LTO_available)
 if(LTO_available)
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION
         "$<NOT:$<CONFIG:Debug>>"
-        CACHE BOOL "Enable Interprocedural Optimisations."
+        CACHE BOOL "Enable Interprocedural Optimisations for non-debug builds."
     )
 endif()
 

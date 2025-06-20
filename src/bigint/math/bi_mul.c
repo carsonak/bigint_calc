@@ -29,11 +29,6 @@ typedef struct bigint_karatsuba_split
 	bigint lo;
 } bi_split;
 
-/*! zero as a `bigint`. */
-static const bigint zero = {
-	.len = 1, .is_negative = false, .num = (digit_ty[1]){0}
-};
-
 static bigint *long_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
 ) ATTR_NONNULL;
@@ -59,12 +54,12 @@ static bigint *multiply_negatives(
 static bigint *
 long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
 {
-	/* Multiplication by zero. */
+	// Multiplication by zero.
 	if (bi_iszero(n1) || bi_iszero(n2))
 		return (_bi_alloc(1));
 
 	len_ty n2_i = 0;
-	/* Length of product = length of n1 + length of n2 */
+	// Length of product = length of n1 + length of n2
 	bigint *restrict product = _bi_resize(NULL, n1->len + n2->len);
 	bigint *const restrict current_mul = _bi_alloc(n1->len + n2->len);
 
@@ -72,21 +67,24 @@ long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
 		goto cleanup;
 
 	product->len = 1;
-	/* Multiply every "digit" in `n2` with `n1`. */
+	// Multiply every "digit" in `n2` with `n1`.
 	for (n2_i = 0; n2_i < n2->len; ++n2_i)
 	{
 		len_ty n1_i = 0;
 		ldigit_ty byt_prod = 0;
 
-		/* Skip multiplication by zero */
+		// Skip multiplication by zero.
 		if (n2->num[n2_i] == 0)
+		{
+			// Ensure least significant "digits" for the next iteration are
+			// set to 0.
+			current_mul->num[n2_i] = 0;
 			continue;
+		}
 
-		/* Length of current_mul = */
-		/* length of n1 + (number of "digits" upto n2_i) */
+		// Length of current_mul =
+		// length of n1 + (number of "digits" upto n2_i)
 		current_mul->len = n1->len + (n2_i + 1);
-		/* Set the least significant digits to 0. */
-		memset(current_mul->num, 0, sizeof(*current_mul->num) * n2_i);
 		for (n1_i = 0; n1_i < n1->len; ++n1_i)
 		{
 			byt_prod += (ldigit_ty)n2->num[n2_i] * n1->num[n1_i];
@@ -96,6 +94,9 @@ long_multiply(const bigint *const restrict n1, const bigint *const restrict n2)
 
 		current_mul->num[n2_i + n1_i] = byt_prod;
 		bi_iadd(product, current_mul);  // inplace addition should not fail.
+		// Ensure least significant "digits" for the next iteration are set
+		// to 0.
+		current_mul->num[n2_i] = 0;
 	}
 
 	if (n2_i < n2->len)
@@ -107,6 +108,11 @@ cleanup:
 	_bi_free(current_mul);
 	return (product);
 }
+
+/*! zero as a `bigint`. */
+static const bigint zero = {
+	.len = 1, .is_negative = false, .num = (digit_ty[1]){0}
+};
 
 /*!
  * @brief split the "digits" of a `bigint` at the given index.
@@ -219,16 +225,18 @@ static bigint *karatsuba_multiply(
 	if ((!n1 || !n2) || (n1->len < 1 || n2->len < 1) || (!n1->num || !n2->num))
 		return (NULL);
 
-	/* The Karatsuba algorithm only shows a significant speed up compared to */
-	/* the long multiplication algorithm if the number of "digits" in the */
-	/* `bigint`s is greater than `KARATSUBA_GAIN_CUTOFF` */
+	/**
+	 * The Karatsuba algorithm only shows a significant speed up compared to
+	 * the long multiplication algorithm if the number of "digits" in the
+	 * `bigint`s is greater than `KARATSUBA_GAIN_CUTOFF`.
+	 */
 	if (n1->len < KARATSUBA_GAIN_CUTOFF || n2->len < KARATSUBA_GAIN_CUTOFF)
 		return (_bi_trim(long_multiply(n1, n2)));
 
-	const len_ty i = (n1->len > n2->len ? n1->len / 2 : n2->len / 2);
+	const len_ty mid = (n1->len > n2->len ? n1->len / 2 : n2->len / 2);
 	bigint *restrict result = NULL;
-	bi_split x = bi_split_at(n1, i);
-	bi_split y = bi_split_at(n2, i);
+	bi_split x = bi_split_at(n1, mid);
+	bi_split y = bi_split_at(n2, mid);
 	bigint *const restrict z0 = karatsuba_multiply(&x.lo, &y.lo);
 	bigint *const restrict z2 = karatsuba_multiply(&x.hi, &y.hi);
 	bigint *const restrict xhi_plus_xlo = bi_add(&x.hi, &x.lo);
@@ -238,26 +246,26 @@ static bigint *karatsuba_multiply(
 	if (!z0 || !z2 || !z3)
 		goto cleanup;
 
-	/* (z3 - z2 - z0) * BIGINT_BASE^i */
+	// (z3 - z2 - z0) * BIGINT_BASE^mid
 	bi_isubtract(z3, z2);
 	bi_isubtract(z3, z0);
-	z3 = _bi_resize(z3, z3->len + i);
+	z3 = _bi_resize(z3, z3->len + mid);
 	if (!z3)
 		goto cleanup;
 
-	z3->len -= i;
-	bi_ishift_l(z3, i);
+	z3->len -= mid;
+	bi_ishift_l(z3, mid);
 	const len_ty z2_len = z2->len;
 
-	/* z2 * BIGINT_BASE^(2*i) */
-	result = _bi_resize(z2, max_of_3(z2_len + i * 2, z3->len, z0->len) + 1);
+	// z2 * BIGINT_BASE^(2*mid)
+	result = _bi_resize(z2, max_of_3(z2_len + mid * 2, z3->len, z0->len) + 1);
 	if (!result)
 		goto cleanup;
 
 	result->len = z2_len;
-	bi_ishift_l(result, i * 2);
+	bi_ishift_l(result, mid * 2);
 
-	/* z2 * BIGINT_BASE^(2*i) + (z3 - z2 - z0) * BIGINT_BASE^i + z0 */
+	// z2 * BIGINT_BASE^(2*mid) + (z3 - z2 - z0) * BIGINT_BASE^mid + z0
 	bi_iadd(result, z3);
 	bi_iadd(result, z0);
 cleanup:
@@ -280,8 +288,8 @@ cleanup:
 static bigint *
 multiply_negatives(bigint *const restrict n1, bigint *const restrict n2)
 {
-	bool neg1 = n1->is_negative, neg2 = n2->is_negative;
-	bigint *result = NULL;
+	const bool neg1 = n1->is_negative, neg2 = n2->is_negative;
+	bigint *restrict result = NULL;
 
 	n1->is_negative = false;
 	n2->is_negative = false;

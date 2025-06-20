@@ -4,7 +4,7 @@
  */
 
 #include <stdio.h>   // fprintf
-#include <string.h>  // memmove
+#include <string.h>  // memcpy
 
 #include "_bi_internals.h"
 #include "bigint.h"
@@ -342,8 +342,8 @@ divide_negatives(bigint *const restrict n1, bigint *const restrict n2)
 
 	if (neg1 || neg2)
 	{
-		/* -8 / 5 = -((8 / 5) + 1) */
-		/* 8 / -5 = -((8 / 5) + 1) */
+		// -8 / 5 = -((8 / 5) + 1)
+		// 8 / -5 = -((8 / 5) + 1)
 		bigint one = {.len = 1, .is_negative = false, .num = (digit_ty[1]){1}};
 
 		res.quotient = _bi_resize(res.quotient, res.quotient->len + 1);
@@ -430,10 +430,10 @@ error_cleanup:
 
 	if (res.quotient->is_negative)
 	{
-		/* for case: -7 // 4 == -2 or 7 // -4 == -2 then; */
-		/* -7 % 4 = 1 and 7 % -4 = -1 */
-		bool neg2 = n2->is_negative;
-		bigint *old_rem = res.remainder;
+		// for case: -7 / 4 == -2 or 7 / -4 == -2 then;
+		// 	-7 % 4 = 1 and 7 % -4 = -1
+		const bool neg2 = n2->is_negative;
+		bigint *const restrict old_rem = res.remainder;
 
 		n2->is_negative = false;
 		res.remainder = bi_subtract(n2, old_rem);
