@@ -3,10 +3,10 @@
 #include "_bi_internals.h"
 #include "number_parsing.h"
 
-static ATTR_NONNULL bool check_is_negative(
+static _nonnull bool check_is_negative(
 	char const *const restrict number, len_ty *const restrict str_i
 );
-static ATTR_NONNULL_POS(2) char map_digits(const char c, void *radix);
+static _nonnull_pos(2) char map_digits(const char c, void *radix);
 static len_ty leading_chars_span(char const *const str, char const *const ch);
 
 #include "char_to_int.c"

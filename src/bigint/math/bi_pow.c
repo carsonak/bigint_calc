@@ -10,7 +10,7 @@
 
 static void multiply_and_replace(
 	bigint *restrict *const restrict n1, bigint *const restrict n2
-) ATTR_NONNULL;
+) _nonnull;
 
 /*! Check if an integer is odd. */
 #define INT_IS_ODD(num_to_test) (num_to_test % 2)

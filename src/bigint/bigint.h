@@ -13,11 +13,10 @@ void *bi_delete(bigint *const ptr);
 bigint *bi_new(
 	char const *const restrict number, const radix_ty base,
 	len_ty *const restrict processed
-) ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete);
+) _malloc _malloc_free(bi_delete);
 
 bigint *int_to_bi(bigint *const dest, const intmax_t n);
-bigint *
-int_to_new_bi(const intmax_t n) ATTR_MALLOC ATTR_MALLOC_FREE(bi_delete);
+bigint *int_to_new_bi(const intmax_t n) _malloc _malloc_free(bi_delete);
 
 /* `bigint` manipulation */
 

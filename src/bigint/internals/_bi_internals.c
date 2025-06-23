@@ -1,4 +1,5 @@
-#include <string.h>  // memmove, memset, memcpy
+#include <stdalign.h>  // alignof
+#include <string.h>    // memmove, memset, memcpy
 
 #include "_bi_internals.h"
 
@@ -21,27 +22,30 @@ bigint *_bi_alloc(const len_ty len)
 	if (len < 0)
 		return (NULL);
 
-	bigint *restrict bn = NULL;
-	const size_t arr_size = sizeof(*bn->num) * len;
+	bigint *restrict bi = NULL;
+	const size_t alignof_digit_ty = alignof(digit_ty);
+	const size_t arr_size = sizeof(*bi->num) * len;
 
 	// overflow error.
-	if (len > 0 && arr_size / len != sizeof(*bn->num))
+	if (len > 0 && arr_size / len != sizeof(*bi->num))
 		return (NULL);
 
-	bn = xmalloc(sizeof(*bn) + arr_size);
-	if (!bn)
+	bi = xmalloc(sizeof(*bi) + arr_size + alignof_digit_ty);
+	if (!bi)
 		return (NULL);
 
-	*bn = (bigint){0};
-	bn->len = len;
+	*bi = (bigint){0};
+	bi->len = len;
 	if (len > 0)
 	{
-		bn->num = (digit_ty *)(bn + 1);
-		bn->num[0] = 0;
-		bn->num[len - 1] = 0;
+		char *const mem = (char *)(bi + 1);
+		bi->num = (digit_ty *)(mem + alignof_digit_ty -
+							   ((size_t)mem % alignof_digit_ty));
+		bi->num[0] = 0;
+		bi->num[len - 1] = 0;
 	}
 
-	return (bn);
+	return (bi);
 }
 
 /*!
@@ -66,6 +70,7 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
 	if (len < 0 || (bi && bi->len < 0))
 		return (_bi_free(bi));
 
+	const size_t alignof_digit_ty = alignof(digit_ty);
 	const size_t arr_size = sizeof(*bi->num) * len;
 
 	// overflow error.
@@ -81,17 +86,21 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
 		return (bi);
 	}
 
-	bi = xrealloc_free_on_fail(bi, sizeof(*bi) + arr_size);
+	bi = xrealloc_free_on_fail(bi, sizeof(*bi) + arr_size + alignof_digit_ty);
 	if (!bi)
 		return (NULL);
 
-	if (len > 0)
-		bi->num = (digit_ty *)(bi + 1);
-	else
+	if (len < 1)
 		bi->num = NULL;
+	else
+	{
+		char *const mem = (char *)(bi + 1);
+		bi->num = (digit_ty *)(mem + alignof_digit_ty -
+							   ((size_t)mem % alignof_digit_ty));
 
-	if (len > bi->len)
-		memset(&(bi->num[bi->len]), 0, sizeof(*bi->num) * (len - bi->len));
+		if (len > bi->len)
+			memset(&(bi->num[bi->len]), 0, sizeof(*bi->num) * (len - bi->len));
+	}
 
 	bi->len = len;
 	return (bi);

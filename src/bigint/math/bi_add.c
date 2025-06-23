@@ -9,10 +9,9 @@
 #include "bigint.h"
 
 static bigint *
-iadd(bigint *const restrict n1, bigint const *const restrict n2) ATTR_NONNULL;
-static bigint *iadd_negatives(
-	bigint *const restrict n1, bigint *const restrict n2
-) ATTR_NONNULL;
+iadd(bigint *const restrict n1, bigint const *const restrict n2) _nonnull;
+static bigint *
+iadd_negatives(bigint *const restrict n1, bigint *const restrict n2) _nonnull;
 
 /*!
  * @brief add two `bigint`s inplace.

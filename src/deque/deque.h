@@ -7,7 +7,7 @@
 /* alloc and free */
 
 void *dq_del(deque *const restrict dq, free_func *free_data);
-deque *dq_new(void) ATTR_MALLOC ATTR_MALLOC_FREE(dq_del);
+deque *dq_new(void) _malloc _malloc_free(dq_del);
 
 /* manipulate */
 

@@ -31,14 +31,14 @@ typedef struct bigint_karatsuba_split
 
 static bigint *long_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
-) ATTR_NONNULL;
+) _nonnull;
 static bi_split bi_split_at(const bigint *const restrict n, const len_ty i);
 static bigint *karatsuba_multiply(
 	const bigint *const restrict n1, const bigint *const restrict n2
 );
 static bigint *multiply_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
-) ATTR_NONNULL;
+) _nonnull;
 
 /*!
  * @brief multiply two `bigint`s.

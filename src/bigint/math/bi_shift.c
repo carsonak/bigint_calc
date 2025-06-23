@@ -8,10 +8,8 @@
 #include "_bi_internals.h"
 #include "bigint.h"
 
-static bigint *
-_bi_shift(bigint *const restrict n, const intmax_t d) ATTR_NONNULL;
-static bigint *
-_bi_ishift(bigint *const restrict n, const intmax_t d) ATTR_NONNULL;
+static bigint *_bi_shift(bigint *const restrict n, const intmax_t d) _nonnull;
+static bigint *_bi_ishift(bigint *const restrict n, const intmax_t d) _nonnull;
 
 /*!
  * @brief shift "digits" of a `bigint`.

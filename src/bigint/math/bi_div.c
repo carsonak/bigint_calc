@@ -9,14 +9,14 @@
 #include "_bi_internals.h"
 #include "bigint.h"
 
-static bool check_division_by_0(const bigint *const n2) ATTR_NONNULL;
+static bool check_division_by_0(const bigint *const n2) _nonnull;
 static bool quotient_is_less_than_1(
 	const bigint *const restrict n1, const bigint *const restrict n2
-) ATTR_NONNULL;
+) _nonnull;
 static bigint *get_remainder(
 	const bigint *const restrict n1, const bigint *const restrict n2,
 	bigint *const restrict quotient
-) ATTR_NONNULL;
+) _nonnull;
 static ldigit_ty get_current_quotient(
 	bigint *const restrict slice, const bigint *const restrict n2,
 	bigint *restrict *const restrict rem
@@ -25,13 +25,13 @@ static len_ty drop_next(
 	bigint *const restrict slice, const bigint *const restrict rem,
 	const bigint *const restrict n1, len_ty n1_i,
 	const bigint *const restrict n2
-) ATTR_NONNULL_POS(1, 3, 5);
+) _nonnull_pos(1, 3, 5);
 static bi_divmod_res divide(
 	const bigint *const restrict n1, const bigint *const restrict n2
-) ATTR_NONNULL;
+) _nonnull;
 static bi_divmod_res divide_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
-) ATTR_NONNULL;
+) _nonnull;
 
 /*!
  * @brief check if the denominator is zero.
@@ -89,13 +89,14 @@ static bigint *get_remainder(
 {
 	bigint num1 = *n1, num2 = *n2;
 	bigint *const restrict multiple = bi_multiply(&num2, quotient);
-	bigint *restrict rem = NULL;
 
-	if (multiple)
-		rem = bi_subtract(&num1, multiple);
+	if (!multiple)
+		return (NULL);
+
+	bigint *const restrict remainder = bi_subtract(&num1, multiple);
 
 	_bi_free(multiple);
-	return (rem);
+	return (remainder);
 }
 
 /*!
@@ -116,41 +117,41 @@ static ldigit_ty get_current_quotient(
 	bigint q_estimate = {
 		.len = 1, .is_negative = false, .num = (digit_ty[2]){0}
 	};
-	bool rem_gteq_divisor = 0;
-	ldigit_ty msd_slice = 0;
+	ldigit_ty msd_slice = slice->num[slice->len - 1];
 
-	*rem = _bi_free(*rem);
-	msd_slice = slice->num[slice->len - 1];
 	if (slice->len > n2->len)
 		msd_slice = (msd_slice * BIGINT_BASE) + slice->num[slice->len - 2];
 
-	/* quotient ≈ most significant "digit" of slice / m.s.d of denominator. */
+	// quotient ≈ most significant "digit" (m.s.d) of slice / m.s.d of denominator.
 	q_estimate.num[0] = msd_slice / n2->num[n2->len - 1];
+	*rem = _bi_free(*rem);
 	*rem = get_remainder(slice, n2, &q_estimate);
 	if (!(*rem))
 		return (-1);
 
-	/* 0 <= (slice - (q_estimate * denominator)) < denominator */
-	rem_gteq_divisor = _bi_compare_const(*rem, n2) >= 0;
-	while ((*rem)->is_negative || rem_gteq_divisor)
+	/**
+	 * The remainder is calculated as:
+	 * remainder = (slice - (q_estimate * denominator))
+	 * To get the correct quotient the following condition must be satisfied:
+	 * 0 <= remainder < denominator
+	 */
+	while ((*rem)->is_negative || _bi_compare_const(*rem, n2) >= 0)
 	{
-		if ((*rem)->is_negative)
+		if ((*rem)->is_negative)  // quotient estimate was too big.
 		{
-			/* q_estimate was too big. */
-			/* over_shoot = ceil(m.s.d remainder / m.s.d denominator) */
+			/* over shoot ≈ ceil(m.s.d remainder / m.s.d denominator) */
 			/* CAUTION: Possible case => overshoot.len > n2.len. */
 			digit_ty over_shoot =
-				(*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1];
+				((*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1]);
 
 			if ((*rem)->num[(*rem)->len - 1] % n2->num[n2->len - 1])
 				over_shoot++;
 
 			bi_isubtract_int(&q_estimate, over_shoot);
 		}
-		else
+		else  // quotient estimate was too small.
 		{
-			/* q_estimate was too small. */
-			/* under_shoot = floor(m.s.d remainder / m.s.d denominator) */
+			/* under shoot ≈ floor(m.s.d remainder / m.s.d denominator) */
 			digit_ty under_shoot =
 				(*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1];
 
@@ -161,8 +162,6 @@ static ldigit_ty get_current_quotient(
 		*rem = get_remainder(slice, n2, &q_estimate);
 		if (!(*rem))
 			return (-1);
-
-		rem_gteq_divisor = _bi_compare_const(*rem, n2) >= 0;
 	}
 
 	return (q_estimate.num[0]);
@@ -186,46 +185,50 @@ static len_ty drop_next(
 	const bigint *const restrict n2
 )
 {
-	len_ty due = n2->len, offset = 1;
+	len_ty due_digits = n2->len;
+	const len_ty offset = 1;
 
-	if (rem)  // Move "digits" from remainder into slice.
+	if (rem)  // Copy "digits" from remainder into slice.
 	{
 		memcpy(
 			&slice->num[slice->len - rem->len], rem->num,
 			sizeof(*rem->num) * rem->len
 		);
-		due = n2->len - rem->len;
+		due_digits = n2->len - rem->len;
 	}
-	/* If !remainder then; n2.len "digits" will be dropped from n1. */
+	// If !remainder then; n2.len "digits" will be dropped from `n1`.
 
-	/* Drop in as many "digits" as possible from n1. */
-	/* n1_i should not wrap. */
-	/* calling function must also detect this condition. */
-	if (due > (n1_i + 1))
+	// Drop in as many "digits" as possible from `n1`.
+	// n1_i should not wrap.
+	// calling function must also detect this condition.
+	if (due_digits > (n1_i + 1))
 	{
-		offset += due - (n1_i + 1);
-		due = n1_i + 1;
-		n1_i = 0;
-		memcpy(&slice->num[offset], &n1->num[n1_i], sizeof(*n1->num) * due);
-		return (due);
+		const len_ty new_offset = offset + due_digits - (n1_i + 1);
+		due_digits = n1_i + 1;
+		memcpy(
+			&slice->num[new_offset], &n1->num[0], sizeof(*n1->num) * due_digits
+		);
+		return (due_digits);
 	}
 
-	/* Drop in "digits" from n1 until due == 0. */
-	if (due)
+	// Drop in "digits" from `n1` until `due_digits` == 0.
+	if (due_digits > 0)
 	{
-		n1_i -= due - 1;  // n1_i is already included.
-		memcpy(&slice->num[offset], &n1->num[n1_i], sizeof(*n1->num) * due);
-		/* n1_i should point to the index of the next "digit" to drop. */
+		n1_i -= due_digits - 1;  // n1_i is already included.
+		memcpy(
+			&slice->num[offset], &n1->num[n1_i], sizeof(*n1->num) * due_digits
+		);
+		// `n1_i` should point to the index of the next "digit" to drop.
 		n1_i--;
 	}
 
 	if (_cmp_rev_uint_arr(&slice->num[offset], n2->num, n2->len) < 0)
 	{  // If slice < n2 then; drop an extra "digit".
 		slice->num[0] = n1->num[n1_i];
-		due++;
+		due_digits++;
 	}
 
-	return (due);
+	return (due_digits);
 }
 
 /*!
@@ -241,7 +244,6 @@ static len_ty drop_next(
 static bi_divmod_res
 divide(const bigint *const restrict n1, const bigint *const restrict n2)
 {
-	bigint *current_slice = NULL;
 	len_ty slice_offset = 1, q_i = 0, n1_i = 0, dropped = 0;
 	ldigit_ty current_q = 0;
 	bi_divmod_res res = {0};
@@ -250,13 +252,13 @@ divide(const bigint *const restrict n1, const bigint *const restrict n2)
 	/* quotient "digits" = numerator "digits" - denominator "digits" + */
 	/* (0 or 1). */
 	if (n1->num[n1->len - 1] < n2->num[n2->len - 1])
-		/* If m.s.d of numerator < m.s.d denominator. */
-		res.quotient = _bi_alloc((n1->len - n2->len ? n1->len - n2->len : 1));
+		res.quotient = _bi_alloc((n1->len == n2->len ? 1 : n1->len - n2->len));
 	else
 		res.quotient = _bi_alloc(n1->len - n2->len + 1);
 
 	/* len_slice = len of n2, +1 for an extra dropdown. */
-	current_slice = _bi_alloc(n2->len + 1);
+	bigint *current_slice = _bi_alloc(n2->len + 1);
+
 	if (!current_slice || !res.quotient)
 		goto error_cleanup;
 
@@ -264,7 +266,7 @@ divide(const bigint *const restrict n1, const bigint *const restrict n2)
 	dropped = drop_next(current_slice, NULL, n1, n1_i, n2);
 	if (n1_i < dropped)
 		n1_i = 0;
-	else  // n1_i should point to the index of the next "digit" to drop.
+	else  // `n1_i` should point to the index of the next "digit" to drop.
 		n1_i -= dropped;
 
 	slice_offset = current_slice->len - dropped;
@@ -291,18 +293,17 @@ divide(const bigint *const restrict n1, const bigint *const restrict n2)
 		if (dropped > 0)
 		{
 			slice_offset = current_slice->len - (dropped + res.remainder->len);
-			/* One drop is discounted after every division. */
-			q_i -= dropped - 1;
-			/* For every index "i" dropped into current_slice */
-			/* set quotient[i] to 0. */
+			// One drop is discounted after every division.
+			q_i -= --dropped;
+			// For every "digit" dropped into `current_slice` set quotient[i] to 0.
 			memset(
 				&(res.quotient->num[q_i]), 0,
-				sizeof(*(res.quotient->num)) * (dropped - 1)
+				sizeof(*(res.quotient->num)) * dropped
 			);
 		}
 	}
 
-	if (0)
+	if (q_i > 0)
 	{
 error_cleanup:
 		res.quotient = _bi_free(res.quotient);

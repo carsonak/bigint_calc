@@ -11,7 +11,7 @@
 
 #include "safe_imaxabs.c"
 
-static len_ty uint_to_array(digit_ty *const dest, uintmax_t num) ATTR_NONNULL;
+static len_ty uint_to_array(digit_ty *const dest, uintmax_t num) _nonnull;
 
 /*!
  * @brief convert an unsigned int to a `bigint` array.

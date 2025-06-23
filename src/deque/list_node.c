@@ -15,9 +15,8 @@
 #include "list_type_structs.h"
 #include "xalloc.h"
 
-static char *format_str(
-	const char *const restrict fmt, ...
-) ATTR_NONNULL ATTR_FORMAT(printf, 1, 2);
+static char *
+format_str(const char *const restrict fmt, ...) _nonnull _format(printf, 1, 2);
 
 /*!
  * @brief get next node.

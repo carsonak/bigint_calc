@@ -25,6 +25,6 @@ struct numstr
 typedef struct numstr numstr;
 
 void *_numstr_free(numstr *freeable_ptr);
-numstr *_numstr_alloc(len_ty len) ATTR_MALLOC ATTR_MALLOC_FREE(_numstr_free);
+numstr *_numstr_alloc(len_ty len) _malloc _malloc_free(_numstr_free);
 
 #endif  // NUMSTR_INTERNALS_H

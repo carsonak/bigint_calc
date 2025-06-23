@@ -7,11 +7,11 @@
 
 #include "lexer.h"
 
-static len_ty block_comment_len(const char *const str) ATTR_NONNULL;
-static len_ty identifier_len(const char *const str) ATTR_NONNULL;
-static len_ty line_comment_len(const char *const str) ATTR_NONNULL;
-static len_ty number_len(const char *const str) ATTR_NONNULL;
-static len_ty sign_len(const char *const str) ATTR_NONNULL;
+static len_ty block_comment_len(const char *const str) _nonnull;
+static len_ty identifier_len(const char *const str) _nonnull;
+static len_ty line_comment_len(const char *const str) _nonnull;
+static len_ty number_len(const char *const str) _nonnull;
+static len_ty sign_len(const char *const str) _nonnull;
 
 /*!
  * @brief allocate and initialise memory for `lexer_token`.

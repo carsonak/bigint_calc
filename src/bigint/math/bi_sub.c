@@ -8,12 +8,11 @@
 #include "_bi_internals.h"
 #include "bigint.h"
 
-static bigint *isubtract(
-	bigint *const restrict n1, const bigint *const restrict n2
-) ATTR_NONNULL;
+static bigint *
+isubtract(bigint *const restrict n1, const bigint *const restrict n2) _nonnull;
 static bigint *isubtract_negatives(
 	bigint *const restrict n1, bigint *const restrict n2
-) ATTR_NONNULL;
+) _nonnull;
 
 /*!
  * @brief subtract two `bigint`s inplace.

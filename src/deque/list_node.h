@@ -8,26 +8,25 @@
 
 list_node *lstnode_pop(list_node *const restrict node);
 void *lstnode_del(list_node *const restrict node);
-list_node *lstnode_new(
-	void *data, dup_func *copy_func
-) ATTR_MALLOC ATTR_MALLOC_FREE(lstnode_del);
+list_node *
+lstnode_new(void *data, dup_func *copy_func) _malloc _malloc_free(lstnode_del);
 
 void *linked_list_del(list_node *const head, free_func *delete_func);
 
 /* access */
 
-list_node *lstnode_get_next(const list_node *const node) ATTR_NONNULL;
-list_node *lstnode_get_prev(const list_node *const node) ATTR_NONNULL;
-void *lstnode_get_data(const list_node *const node) ATTR_NONNULL;
+list_node *lstnode_get_next(const list_node *const node) _nonnull;
+list_node *lstnode_get_prev(const list_node *const node) _nonnull;
+void *lstnode_get_data(const list_node *const node) _nonnull;
 
 /* manipulate */
 
 list_node *lstnode_set_next(
 	list_node *const restrict this_node, list_node *const restrict new_node
-) ATTR_NONNULL_POS(1);
+) _nonnull_pos(1);
 list_node *lstnode_set_prev(
 	list_node *const restrict this_node, list_node *const restrict new_node
-) ATTR_NONNULL_POS(1);
+) _nonnull_pos(1);
 void *lstnode_set_data(
 	list_node *const restrict node, void *const restrict new_data
 );
@@ -46,9 +45,9 @@ list_node *lstnode_swap(
 
 char *linked_list_tostr(
 	list_node const *const restrict tail, data_tostr *stringify_func
-) ATTR_MALLOC;
+) _malloc;
 char *linked_list_tostr_reversed(
 	list_node const *const restrict tail, data_tostr *stringify_func
-) ATTR_MALLOC;
+) _malloc;
 
 #endif  // DS_LIST_NODE_TYPE_H
