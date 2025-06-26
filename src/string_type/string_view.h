@@ -14,4 +14,14 @@ typedef struct string_view
 	const char *s;
 } string_view;
 
+/*!
+ * @brief string type.
+ */
+typedef struct string
+{
+	len_ty len;
+	len_ty cursor;
+	char s[];
+};
+
 #endif  // DS_STRING_VIEW_H
