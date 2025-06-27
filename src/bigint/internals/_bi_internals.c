@@ -1,7 +1,7 @@
-#include <stdalign.h>  // alignof
-#include <string.h>    // memmove, memset, memcpy
+#include <string.h>  // memmove, memset, memcpy
 
 #include "_bi_internals.h"
+#include "attribute_macros.h"
 
 /*!
  * @brief allocate memory for a `bigint` of given length.
@@ -9,8 +9,8 @@
  *
  * The `bigint` struct and its array of "digits" will be stored in one
  * continuos memory block.
- * Only the most significant and least significant digits of the returned
- * `bigint` will be initialised to 0.
+ * Only the least significant digit of the returned `bigint` will be
+ * initialised to 0.
  *
  * @param[in] len length of the array. A length of 0 returns a `bigint`
  * pointer with a NULLed "digit" array.
@@ -23,7 +23,7 @@ bigint *_bi_alloc(const len_ty len)
 		return (NULL);
 
 	bigint *restrict bi = NULL;
-	const size_t alignof_digit_ty = alignof(digit_ty);
+	const size_t alignof_digit_ty = _alignof(digit_ty);
 	const size_t arr_size = sizeof(*bi->num) * len;
 
 	// overflow error.
@@ -42,7 +42,6 @@ bigint *_bi_alloc(const len_ty len)
 		bi->num = (digit_ty *)(mem + alignof_digit_ty -
 							   ((size_t)mem % alignof_digit_ty));
 		bi->num[0] = 0;
-		bi->num[len - 1] = 0;
 	}
 
 	return (bi);
@@ -70,7 +69,7 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
 	if (len < 0 || (bi && bi->len < 0))
 		return (_bi_free(bi));
 
-	const size_t alignof_digit_ty = alignof(digit_ty);
+	const size_t alignof_digit_ty = _alignof(digit_ty);
 	const size_t arr_size = sizeof(*bi->num) * len;
 
 	// overflow error.

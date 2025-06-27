@@ -1,5 +1,3 @@
-set_directory_properties(PROPERTIES LABELS "test_bigint_internals")
-
 add_executable(test__bi_internals test__bi_internals.c test_main.c)
 target_link_libraries(test__bi_internals PRIVATE bigint)
 add_test(NAME test__bi_internals COMMAND test__bi_internals

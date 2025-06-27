@@ -127,4 +127,19 @@
 	#define _format(archetype, string_position, va_position)
 #endif  // _has_attribute(format)
 
+#if _has_attribute(assume_aligned)
+	/*!
+	 * @brief indicates pointer returned by function is aligned on the given
+	 * boundary.
+	 *
+	 * assume_aligned(alignment[, offset])
+	 *
+	 * @alignment: a power of 2 greater than 1.
+	 * @offset: a number less than alignment indicating offset from alignment.
+	 */
+	#define _assume_aligned(...) __attribute__((assume_aligned(__VA_ARGS__)))
+#else
+	#define _assume_aligned(...)
+#endif
+
 #endif  // ATTRIBUTE_MACROS_H

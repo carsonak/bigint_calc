@@ -154,17 +154,14 @@ static len_ty line_comment_len(const char *const str)
  *
  * @return a `deque` of tokens on success, NULL otherwise.
  */
-deque *lex_str(const char *restrict str)
+lexer_token next_token(FILE *const stream)
 {
+	lexer_token tok = {0};
+
 	if (!str)
-		return (NULL);
+		return ((lexer_token){0});
 
 	const char KEYWORD_EXIT[] = "exit";
-	lexer_token t = {0};
-	deque *restrict tokens = dq_new();
-
-	if (!tokens)
-		return (NULL);
 
 	for (; *str; ++str)
 	{

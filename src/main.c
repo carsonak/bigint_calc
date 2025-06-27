@@ -3,7 +3,8 @@
  * @brief bigint_calc.
  */
 
-#include <stdlib.h>  // NULL
+#include <stddef.h>  // NULL
+#include <stdlib.h>  // EXIT_FAILURE
 
 #include "main.h"
 
@@ -17,19 +18,15 @@
  */
 int main(int argc, char *argv[])
 {
-	char *answer = NULL;
+	const char *const restrict program_name = argv[0];
+	const char *restrict src_file = NULL;
+	FILE *stream = stdin;
 
-	if (argc < 3)
+	if (argc > 1)
 	{
-		panic((const char *)NULL);
-		return (EXIT_FAILURE);
+		src_file = argv[1];
+		stream = fopen(src_file, "r");
 	}
 
-	answer = parse_expression(argv[1], argv[2], argv[3]);
-	if (!answer)
-		return (EXIT_FAILURE);
-
-	printf("%s\n", answer);
-	answer = xfree(answer);
 	return (EXIT_SUCCESS);
 }

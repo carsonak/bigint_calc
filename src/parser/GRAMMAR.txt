@@ -1,76 +1,72 @@
 # Bigint Calculator Grammar Specification.
 #
-# Specification Syntax.
-#
-# A "#" symbol indicates a line comment.
-# Rules can be concatenated with zero or more spaces unless a space is
-# explicitly included or excluded in a rule.
-#
-# rule_name = rule rule ... : Syntax of a rule definitions.
-# ...+      : one or more occurrences of the preceding sequence.
-# ...*      : zero or more occurrences of the preceding sequence.
-# ...?      : indicates that the preceding sequence is optional.
-# ... | ... : indicates an option of two rules. Can also be chained together to
-#             indicate more options.
-# (...)     : rules enclosed in parenthesis are grouped together and operators
-#             are applied to the whole group.
-# "..."     : literal character sequence that can be found in the program,
-#             such as keywords.
-# '...'     : same as above.
-# [...]     : a set of literal characters to choose from.
-# [...-...] : indicates a range of characters, for example [A-Z] indicates
-#             capital English alphabet characters.
-# !...      : negates the sequence that follows, i.e. the following sequence
-#             should not match for the rule.
-# .         : a single period means any character can be placed in that position.
+# Specification Syntax:
+# This specification uses a dialect of Parsing Expression Grammar (PEG) syntax.
 
-# Expressions have their value printed to stdout if free standing.
-program     = (statement | expression terminator | "\n")*
+program     = (statement spacing?)*
 
-# Statements do not return any value.
-statement   = block_stmt | simple_stmt terminator
-block_stmt  = block
-            | "def" identifier "(" identifier ("," "\n"? identifier)* ")" "\n"? block
+# Statements
+statement   = block
+            | declaration
+            | assignment terminator
             | if_stmt
-            | "else" ( "\n"? block | if_stmt)
-            | "while" "(" test ")" "\n"? block
-simple_stmt = identifier "=" expression
-            | "print" !space "(" expr_list ")"
-            | "break"
-            | "exit"
-            | "return" expression?
-terminator  = "\n" | ";"
-block       = "{" "\n"* statement* "\n"* "}"
-identifier  = [a-zA-Z_] !space [a-zA-Z0-9_]*
-if_stmt     = "if" "("  test ")" "\n"? block
+            | while_stmt
+            | for_stmt
+            | "break" terminator
+            | "return" expression? terminator
+            | "exit" terminator
+            | expression terminator
+block       = "{" spacing? statement* "}" spacing?
+declaration = identifier ("=" spacing? expression)? terminator
+            | "def" spacing? identifier spacing? "(" spacing? (identifier (separator identifier)*)? ")" spacing? block
+assignment  = identifier subscript_op? assignment_op expression
+if_stmt     = "if" spacing? boolean_expr block ("elif" spacing? boolean_expr block)? ("else" spacing? block)?
+while_stmt  = "while" spacing? boolean_expr block
+for_stmt    = "for" spacing? identifier "in" spacing? identifier block
 
-# Expressions return values.
-expression  = "(" expression ")"
-            | identifier !space "(" expr_list ")" # Function call
-            | unary_op !space expression
-            | (identifier ("[" !array expression "]")? | number) (binary_op !array expression)*
-            | test
+# Expressions
+expression  = "(" spacing? expression ")" spacing?
+            | func_call
+            | access
+            | prefix_op expression
+            | expression infix_op expression
+            | expression postfix_op
+            | list
             | string
-            | array
-            | "number" !space "(" string "," ("2"-"36") ")"
-space       = " " | "\t"
-expr_list   = !test expression ("," "\n"? !test expression)*
-test        = expression (condition_op expression)?
-unary_op    = ("++" | "--") space | ([+-] !space)+
-binary_op   = space [+-] space | [*/%^]
-number      = [0-9] !space [a-zA-Z0-9_]*
-string      = '"' (. !'"')* '"'
-array       = "[" expr_list "]"
-condition_op= [><] | "==" | "<=" | ">="
+            | number
+            | bool
+func_call   = (access | identifier) "(" spacing? (expression (separator expression)*)? ")" spacing?
+access      = identifier "." spacing? identifier
 
-# Comments can be placed anywhere in the program. They will make the parser
-# ignore any commented out sequence.
-comment     = line_comment | block_comment
+# Operators
+assignment_op= [+-*/%^]? "=" spacing?
+prefix_op   = ("not" | [+-]) spacing?
+infix_op    = ([+-*/%^] spacing? | boolean_op)
+boolean_op  = ([><]
+            | "<="
+            | ">="
+            | "=="
+            | "!="
+            | "and"
+            | "or"
+            | "if" spacing? boolean_expr "else") spacing?
+postfix_op  = subscript_op
+subscript_op= ("[" spacing? expression "]" spacing?)+
 
-# Line comments comment out everything in between the opening character and the
-# next newline character.
-line_comment    = "#" (. !"\n")* "\n"
+# Types
+list        = "[" spacing (expression (separator expression)*)? "]" spacing?
+number      = NUM (alphanum | "_")* spacing?
+string      = (["] (!["] .*) ["] | ['] (!['] .*) [']) spacing?
+bool        = ("true" | "false") spacing?
 
-# Block comments comment out everything in between the opening and closing characters,
-# including newlines.
-block_comment   = "/*" (. !"*/")* "*/"
+identifier  = (ALPHA | "_") (alphanum | "_")* spacing?
+terminator  = ";" spacing?
+separator   = "," spacing?
+spacing     = (SPACE | LINE_END | comment)*
+comment     = "#" (!LINE_END .*) LINE_END spacing? | block_comment
+block_comment= "/*" (!"*/" .*) block_comment? "*/" spacing?
+alphanum    = ALPHA | NUM
+ALPHA       = [a-zA-Z]
+NUM         = [0-9]
+SPACE       = " " | "\t"
+LINE_END    = "\r"? "\n" | "\r"
