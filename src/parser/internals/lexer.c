@@ -258,7 +258,7 @@ lexer_token next_token(FILE *const stream)
 			t = (lexer_token){.id = SYM_ASSIGN, .str = slice};
 		else if (str[0] == '/' && str[1] == '*')
 		{
-			t = (lexer_token){.id = SYM_BCOMMENT, .str = slice};
+			t = (lexer_token){.id = SYM_COMMENT_B, .str = slice};
 			t.str.len = block_comment_len(str);
 			str += (t.str.len - 1);
 			if (!(*(str - 1) == '*' && *str == '/'))

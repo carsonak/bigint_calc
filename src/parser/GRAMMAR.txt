@@ -40,7 +40,7 @@ access      = identifier "." spacing? identifier
 
 # Operators
 assignment_op= [+-*/%^]? "=" spacing?
-prefix_op   = ("not" | [+-]) spacing?
+prefix_op   = ("not" spacing?)+ | [+-]+ spacing?
 infix_op    = ([+-*/%^] spacing? | boolean_op)
 boolean_op  = ([><]
             | "<="

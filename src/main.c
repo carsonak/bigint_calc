@@ -28,5 +28,8 @@ int main(int argc, char *argv[])
 		stream = fopen(src_file, "r");
 	}
 
+	if (src_file)
+		fclose(stream);
+
 	return (EXIT_SUCCESS);
 }
