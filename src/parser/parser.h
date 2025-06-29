@@ -1,8 +1,8 @@
 #ifndef PARSING_H
 #define PARSING_H
 
-#include "deque.h"
+#include "reader.h"
 
-deque *parse_tokens(deque *const restrict tokens);
+void parse(reader *const restrict r);
 
 #endif  // PARSING_H

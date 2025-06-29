@@ -24,7 +24,7 @@ string_view *string_to_string_view(
 		return (NULL);
 
 	*dest = (string_view){0};
-	if (src && src->s && src->len > 0)
+	if (src && src->len > 0)
 		*dest = (string_view){.len = src->len, .s = src->s};
 
 	return (dest);

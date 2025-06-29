@@ -7,11 +7,27 @@
 #include "lexer.h"
 #include "xalloc.h"
 
-/*!
- * @brief parse tokens of a program.
- *
- * @param[in] tokens pointer to a deque of tokens.
- *
- * @return ???, NULL on failure.
- */
-deque *parse_tokens(deque *const restrict tokens) { return (NULL); }
+void parse(reader *const restrict r)
+{
+	if (!r)
+		return;
+
+	while (!feof(r->stream))
+	{
+		lexer_token tok = {0};
+
+		if (!next_token(&tok, r))
+			return;
+
+		const char *restrict tok_str = lexer_token_tostr(tok);
+
+		tok.str = string_delete(tok.str);
+		if (!tok_str)
+			return;
+
+		printf("%s\n", tok_str);
+		tok_str = xfree((void *)tok_str);
+	}
+
+	printf("Done!\n");
+}

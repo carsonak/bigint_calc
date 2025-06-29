@@ -21,7 +21,7 @@ static void _reader_update_stream(
 {
 	const char *const restrict curr_line = readline(prompt);
 
-	if (!stream || !curr_line)
+	if (!curr_line)
 		return;
 
 	if (*curr_line == '\0')
@@ -64,7 +64,7 @@ static void _reader_update_stream(
 	stream_offset = strlen(curr_line) + 1;
 	fseek(stream, -stream_offset, SEEK_CUR);
 cleanup:
-	xfree(curr_line);
+	xfree((void *)curr_line);
 }
 
 /*!
@@ -81,13 +81,13 @@ char reader_getc(reader *const restrict self)
 
 	char c = fgetc(self->stream);
 
-	if (self->is_interactive && feof(self->stream))
+	if (self->is_interactive && c == EOF)
 	{
 		_reader_update_stream(self->prompt, self->stream);
 		c = fgetc(self->stream);
 	}
 
-	if (feof(self->stream))
+	if (c == EOF)
 		return (EOF);
 
 	self->column++;
@@ -113,7 +113,7 @@ char reader_peekc(reader *const restrict self)
 		return (EOF);
 
 	const char c = reader_getc(self);
-	if (!feof(self->stream))
+	if (c != EOF)
 		ungetc(c, self->stream);
 
 	return (c);

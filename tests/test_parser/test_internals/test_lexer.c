@@ -1,1 +1,1 @@
-#include "tests.h"
+#include "test_internals.h"

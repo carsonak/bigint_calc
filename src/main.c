@@ -3,10 +3,18 @@
  * @brief bigint_calc.
  */
 
+#define _POSIX_C_SOURCE 200809L
+#include <unistd.h>  // fileno
+
+#include <errno.h>  // errno
 #include <stddef.h>  // NULL
+#include <stdio.h>   // FILE
 #include <stdlib.h>  // EXIT_FAILURE
+#include <string.h>  // strerror
 
 #include "main.h"
+#include "parser.h"
+#include "reader.h"
 
 /*!
  * @brief entry point.
@@ -18,18 +26,40 @@
  */
 int main(int argc, char *argv[])
 {
-	const char *const restrict program_name = argv[0];
-	const char *restrict src_file = NULL;
-	FILE *stream = stdin;
+	program context = {.invoke_name = argv[0]};
+	reader r = {.stream = stdin, .prompt = "> "};
 
 	if (argc > 1)
 	{
-		src_file = argv[1];
-		stream = fopen(src_file, "r");
+		context.src_file = argv[1];
+		r.stream = fopen(context.src_file, "r");
+		if (!r.stream)
+		{
+			fprintf(
+				stderr, "ERROR: Failed to open '%s': %s\n", context.src_file,
+				strerror(errno)
+			);
+
+			return (EXIT_FAILURE);
+		}
+	}
+	else if (isatty(fileno(stdin)))
+	{
+		r.stream = tmpfile();
+		if (!r.stream)
+		{
+			fprintf(
+				stderr, "ERROR: Failed to open temporary file: %s\n",
+				strerror(errno)
+			);
+
+			return (EXIT_FAILURE);
+		}
 	}
 
-	if (src_file)
-		fclose(stream);
+	parse(&r);
+	if (r.stream != stdin)
+		fclose(r.stream);
 
 	return (EXIT_SUCCESS);
 }
