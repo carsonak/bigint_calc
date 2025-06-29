@@ -3,6 +3,8 @@
  * @brief String type implementation in C.
  */
 
+#include <string.h>
+
 #include "string_ty.h"
 #include "xalloc.h"
 

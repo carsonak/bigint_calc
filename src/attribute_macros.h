@@ -1,15 +1,15 @@
 #ifndef ATTRIBUTE_MACROS_H
 #define ATTRIBUTE_MACROS_H
 
+/*! https://gcc.gnu.org/onlinedocs/cpp/_005f_005fhas_005fattribute.html */
 #if defined(__has_attribute)
-	/*! https://gcc.gnu.org/onlinedocs/cpp/_005f_005fhas_005fattribute.html */
 	#define _has_attribute(attribute_name) __has_attribute(attribute_name)
 #else
 	#define _has_attribute(attribute_name)
 #endif  // defined(__has_attribute)
 
+/*! https://gcc.gnu.org/onlinedocs/cpp/_005f_005fhas_005finclude.html */
 #if defined(__has_include)
-	/*! https://gcc.gnu.org/onlinedocs/cpp/_005f_005fhas_005finclude.html */
 	#define _has_include(header) __has_include(header)
 #else
 	#define _has_include(header)
@@ -49,6 +49,28 @@
 
 /* https://gcc.gnu.org/onlinedocs/gcc/Common-Function-Attributes.html */
 
+#if _has_attribute(access)
+	/*!
+	 * @brief enables the detection of invalid or unsafe accesses by functions
+	 * or their callers, as well as write-only accesses to objects that are
+	 * never read from.
+	 *
+	 * @mode: [read_only, read_write, write_only, none] mode which pointer is
+	 * accessed by.
+	 * @ptr_pos: position of the pointer，counting from 1.
+	 * @size_ptr: position of the size of the array.
+	 */
+	#define _access_arr(mode, ptr_pos, size_ptr)                              \
+		__attribute__((access(mode, ptr_pos, size_ptr)))
+	/*!
+	 * @brief same as `_access_arr`, but for pointers to only one object.
+	 */
+	#define _access(mode, ptr_pos) __attribute__((access(mode, ptr_pos)))
+#else
+	#define _access(mode, pos)
+	#define _access_arr(mode, pos, size)
+#endif
+
 #if _has_attribute(alloc_size)
 	/**
 	 * @brief indicates that a function returns a pointer to a memory block of
@@ -61,6 +83,51 @@
 #else
 	#define _alloc_size(...)
 #endif  // _has_attribute(alloc_size)
+
+#if _has_attribute(assume_aligned)
+	/*!
+	 * @brief indicates pointer returned by function is aligned on the given
+	 * boundary.
+	 *
+	 * assume_aligned(alignment[, offset])
+	 *
+	 * @alignment: a power of 2 greater than 1.
+	 * @offset: a number less than alignment indicating offset from alignment.
+	 */
+	#define _assume_aligned(...) __attribute__((assume_aligned(__VA_ARGS__)))
+#else
+	#define _assume_aligned(...)
+#endif
+
+#if _has_attribute(diagnose_if)
+	/*!
+	 * @brief emit warnings or errors at compile-time if calls to the
+	 * attributed function meet certain criteria.
+	 *
+	 * @condition: the criteria to emit diagnostics for.
+	 * @message: the message to be printed for the diagnostic.
+	 * @type: [warning, error] type of diagnostic to emit.
+	 */
+	#define _diagnose_if(condition, message, type)                            \
+		__attribute__((diagnose_if(condition, message, type)))
+#else
+	#define _diagnose_if(condition, message, type)
+#endif
+
+#if _has_attribute(format)
+	/**
+	 * @brief specifies that a function takes printf/scanf/strftime/strfmon style arguments.
+	 *
+	 * @archetype: determines how the format string is interpreted.
+	 * Valid archetypes include printf, scanf, strftime or strfmon.
+	 * @string_position: parameter position, counting from 1, of the format string.
+	 * @va_position: parameter position of the first variadic argument.
+	 */
+	#define _format(archetype, string_position, va_position)                  \
+		__attribute__((format(archetype, string_position, va_position)))
+#else
+	#define _format(archetype, string_position, va_position)
+#endif  // _has_attribute(format)
 
 #if _has_attribute(malloc)
 	/*!
@@ -111,35 +178,5 @@
 	#define _nonnull
 	#define _nonnull_pos(...)
 #endif  // _has_attribute(nonnull)
-
-#if _has_attribute(format)
-	/**
-	 * @brief specifies that a function takes printf/scanf/strftime/strfmon style arguments.
-	 *
-	 * @archetype: determines how the format string is interpreted.
-	 * Valid archetypes include printf, scanf, strftime or strfmon.
-	 * @string_position: parameter position, counting from 1, of the format string.
-	 * @va_position: parameter position of the first variadic argument.
-	 */
-	#define _format(archetype, string_position, va_position)                  \
-		__attribute__((format(archetype, string_position, va_position)))
-#else
-	#define _format(archetype, string_position, va_position)
-#endif  // _has_attribute(format)
-
-#if _has_attribute(assume_aligned)
-	/*!
-	 * @brief indicates pointer returned by function is aligned on the given
-	 * boundary.
-	 *
-	 * assume_aligned(alignment[, offset])
-	 *
-	 * @alignment: a power of 2 greater than 1.
-	 * @offset: a number less than alignment indicating offset from alignment.
-	 */
-	#define _assume_aligned(...) __attribute__((assume_aligned(__VA_ARGS__)))
-#else
-	#define _assume_aligned(...)
-#endif
 
 #endif  // ATTRIBUTE_MACROS_H

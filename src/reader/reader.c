@@ -4,6 +4,10 @@
 #include <readline/history.h>   // history
 #include <readline/readline.h>  // readline
 
+static void _reader_update_stream(
+	const char *const restrict prompt, FILE *const restrict stream
+) _nonnull_pos(2);
+
 /*!
  * @brief prompt the user for more input and update history.
  * @private @memberof reader

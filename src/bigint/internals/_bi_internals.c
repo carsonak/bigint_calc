@@ -109,20 +109,20 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
  * @brief frees memory of a `bigint`.
  * @protected @memberof bigint
  *
- * @param[in] freeable_ptr pointer to the `bigint` to free.
+ * @param[in] freeable_bigint pointer to the `bigint` to free.
  *
  * @return NULL always.
  */
-void *_bi_free(bigint *const freeable_ptr)
+void *_bi_free(bigint *const freeable_bigint)
 {
-	if (freeable_ptr)
+	if (freeable_bigint)
 	{
-		freeable_ptr->len = 0;
-		/* freeable_ptr->num = xfree(freeable_ptr->num); */
-		freeable_ptr->num = NULL;
+		freeable_bigint->len = 0;
+		/* freeable_bigint->num = xfree(freeable_bigint->num); */
+		freeable_bigint->num = NULL;
 	}
 
-	return (xfree(freeable_ptr));
+	return (xfree(freeable_bigint));
 }
 
 /*!
