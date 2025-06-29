@@ -65,6 +65,7 @@ cleanup:
 
 /*!
  * @brief read one character from the stream.
+ * @public @memberof reader
  *
  * @param self pointer to a `reader` to use.
  * @return the character read, EOF on error.
@@ -97,6 +98,7 @@ char reader_getc(reader *const restrict self)
 
 /*!
  * @brief get the next character in the stream without advancing the stream.
+ * @public @memberof reader
  *
  * @param self pointer to a `reader` to use.
  * @return the next character in the stream, EOF on error.
