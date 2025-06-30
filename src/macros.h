@@ -1,0 +1,7 @@
+#ifndef BIGINT_CALC_MACROS_H
+#define BIGINT_CALC_MACROS_H
+
+#define PROMPT_NORMAL "> "
+#define PROMPT_PENDING "  "
+
+#endif  // BIGINT_CALC_MACROS_H

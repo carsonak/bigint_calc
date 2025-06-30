@@ -115,10 +115,14 @@ void *xrealloc_free_on_fail(void *nullable_ptr, const len_ty size)
  */
 char *xstrdup(char const *const str)
 {
-	char *const restrict s = xmalloc(sizeof(*s) * (strlen(str) + 1));
+	if (!str)
+		return (NULL);
+
+	const size_t s_size = strlen(str) + 1;
+	char *const restrict s = xmalloc(sizeof(*s) * s_size);
 
 	if (str)
-		strcpy(s, str);
+		strncpy(s, str, s_size);
 
 	return (s);
 }

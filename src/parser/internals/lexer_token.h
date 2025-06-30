@@ -69,4 +69,9 @@ typedef struct lexer_token
 	enum lexer_token_type id;
 } lexer_token;
 
+lexer_token *lexer_token_delete(lexer_token *const restrict freeable_token);
+lexer_token *lexer_token_new(void) _malloc _malloc_free(lexer_token_delete);
+
+char *lexer_token_tostr(lexer_token token) _malloc;
+
 #endif  // BIGINT_CALC_LEXER_TOKEN_H

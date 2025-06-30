@@ -50,7 +50,7 @@ string *string_new(const char *const restrict s, const len_ty s_len)
 
 	*str = (string){.len = s_len};
 	if (s)
-		strncpy(&str->s[0], s, s_len);
+		strncpy(str->s, s, s_len);
 
 	str->s[s_len] = 0;
 	return (str);
@@ -83,7 +83,7 @@ string *string_dup(const string_view s)
 	if (!s.s)
 		return (NULL);
 
-	return (string_new(&s.s[0], s.len));
+	return (string_new(s.s, s.len));
 }
 
 /*!
@@ -94,23 +94,20 @@ string *string_dup(const string_view s)
  * @param src second `string`.
  * @return pointer to the joined strings, NULL on failure.
  */
-string *string_cat(const string_view dest, const string_view src)
+string *string_cat(string_view dest, string_view src)
 {
-	if (dest.len < 0 || src.len < 0)
+	if (dest.len < 0 || src.len < 0 || (!dest.s && !src.s))
 		return (NULL);
 
-	const len_ty s_len = (dest.s ? dest.len : 0) + (src.s ? src.len : 0) + 1;
-
-	if (s_len == 1)
-		return (NULL);
-
-	string *const restrict str = string_new(dest.s, dest.len + src.len + 1);
+	src.len = src.s ? src.len : 0;
+	dest.len = dest.s ? dest.len : 0;
+	string *const restrict str = string_new(dest.s, dest.len + src.len);
 
 	if (!str)
 		return (NULL);
 
 	if (src.s)
-		strncpy(&str->s[dest.len], &src.s[0], src.len);
+		strncpy(&str->s[dest.len], src.s, src.len);
 
 	str->s[str->len] = 0;
 	return (str);
@@ -119,6 +116,8 @@ string *string_cat(const string_view dest, const string_view src)
 /*!
  * @brief resize the length of a `string`.
  * @public @memberof string
+ *
+ * On failure the function frees the old `string`.
  *
  * @param s pointer to the `string`.
  * @param s_len new length of the `string`.

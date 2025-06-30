@@ -34,6 +34,7 @@ string_view *string_to_string_view(
 
 string *string_delete(string *const restrict freeable_string);
 /* clang-format off */
+
 string *string_new(const char *const restrict s, const len_ty s_len)
 _malloc _malloc_free(string_delete)
 _diagnose_if(s_len < 0, "s_len should not be negative.", "warning");

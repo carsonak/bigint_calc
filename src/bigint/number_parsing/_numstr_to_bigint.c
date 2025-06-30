@@ -80,10 +80,10 @@ bigint *_anybase_to_bi(const numstr *const restrict num)
 	/* while str[i]; num = (base * num) + str[i]; ++i; */
 	for (i = 0; i < num->len && bigint_final; ++i)
 	{
-		bigint *tmp = bigint_final;
+		bigint *old = bigint_final;
 
 		bigint_final = bi_multiply_int(bigint_final, num->base);
-		tmp = _bi_free(tmp);
+		_bi_free(old);
 		int cval = char_to_int(num->str[i]);
 		if (cval < 0 || (udigit_ty)cval >= num->base)
 		{
@@ -94,9 +94,9 @@ bigint *_anybase_to_bi(const numstr *const restrict num)
 			return (_bi_free(bigint_final));
 		}
 
-		tmp = bigint_final;
+		old = bigint_final;
 		bigint_final = bi_add_int(bigint_final, cval);
-		tmp = _bi_free(tmp);
+		old = _bi_free(old);
 	}
 
 	return (bigint_final);

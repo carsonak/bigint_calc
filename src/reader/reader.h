@@ -5,6 +5,7 @@
 #include <stdio.h>    // FILE
 
 #include "attribute_macros.h"
+#include "string_ty.h"
 #include "types.h"
 
 struct reader
@@ -21,6 +22,9 @@ char reader_peekc(reader *const restrict self) _diagnose_if(
 	self == NULL, "self should not be a NULL pointer.", "warning"
 );
 char reader_getc(reader *const restrict self) _diagnose_if(
+	self == NULL, "self should not be a NULL pointer.", "warning"
+);
+string *reader_getline(reader *const restrict self) _diagnose_if(
 	self == NULL, "self should not be a NULL pointer.", "warning"
 );
 

@@ -1,7 +1,10 @@
 #ifndef BIGINT_IS_VALID_RADIX
 #define BIGINT_IS_VALID_RADIX
 
+#include <stdbool.h>  // bool
+
 #include "bigint_types.h"
+#include "number_parsing.h"
 
 static bool is_valid_radix(const radix_ty base);
 

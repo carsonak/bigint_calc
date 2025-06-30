@@ -95,7 +95,7 @@ char *filter_str(
 		if (!output)
 			break;
 
-		strcpy(&output[out_len], buffer);
+		strncpy(&output[out_len], buffer, buf_i + 1);
 		out_len += buf_i;
 		if (c < 0)
 			break;

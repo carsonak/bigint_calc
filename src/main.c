@@ -12,6 +12,7 @@
 #include <stdlib.h>  // EXIT_FAILURE
 #include <string.h>  // strerror
 
+#include "macros.h"
 #include "main.h"
 #include "parser.h"
 #include "reader.h"
@@ -27,7 +28,7 @@
 int main(int argc, char *argv[])
 {
 	program context = {.invoke_name = argv[0]};
-	reader r = {.stream = stdin, .prompt = "> "};
+	reader r = {.stream = stdin, .prompt = PROMPT_NORMAL};
 
 	if (argc > 1)
 	{
@@ -45,6 +46,7 @@ int main(int argc, char *argv[])
 	}
 	else if (isatty(fileno(stdin)))
 	{
+		r.is_interactive = true;
 		r.stream = tmpfile();
 		if (!r.stream)
 		{

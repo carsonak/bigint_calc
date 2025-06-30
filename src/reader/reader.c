@@ -1,8 +1,8 @@
-#include "reader.h"
-#include "xalloc.h"
-
 #include <readline/history.h>   // history
 #include <readline/readline.h>  // readline
+
+#include "reader.h"
+#include "xalloc.h"
 
 static void _reader_update_stream(
 	const char *const restrict prompt, FILE *const restrict stream
@@ -32,10 +32,11 @@ static void _reader_update_stream(
 
 	long int stream_offset = 0;
 	int i = 1;
+	HIST_ENTRY *const *restrict hist = history_list();
 
-	for (; i <= 3; i++)
+	for (; i <= 3 && history_length - i >= 0; i++)
 	{
-		const HIST_ENTRY *restrict h = history_get(history_length - i);
+		HIST_ENTRY *restrict h = hist[history_length - i];
 
 		if (!h)
 			break;
@@ -51,14 +52,16 @@ static void _reader_update_stream(
 
 	add_history(curr_line);
 	fseek(stream, -stream_offset, SEEK_CUR);
-	if (history_length - i < history_base)
+	if (history_length - i < 0)
 		i--;
 
+	hist = history_list();
 	for (int h_i = history_length - i; h_i < history_length; h_i++)
 	{
-		const HIST_ENTRY *restrict h = history_get(h_i);
+		HIST_ENTRY *restrict h = hist[h_i];
 
-		fprintf(stream, "%s\n", h->line);
+		if (h)
+			fprintf(stream, "%s\n", h->line);
 	}
 
 	stream_offset = strlen(curr_line) + 1;
@@ -112,9 +115,65 @@ char reader_peekc(reader *const restrict self)
 	if (!self)
 		return (EOF);
 
+	const len_ty line = self->line, column = self->column;
 	const char c = reader_getc(self);
+
+	self->line = line;
+	self->column = column;
 	if (c != EOF)
 		ungetc(c, self->stream);
 
 	return (c);
+}
+
+string *reader_getline(reader *const restrict self)
+{
+	if (!self)
+		return (NULL);
+
+	char buffer[512], c;
+	string_view l = {0};
+	string *restrict line = NULL;
+	unsigned int buf_i = 0;
+
+	do
+	{
+		c = reader_getc(self);
+		if (c == EOF)
+			break;
+
+		if (buf_i >= sizeof(buffer) - 1)
+		{
+			buffer[buf_i] = 0;
+			string *const old = line;
+
+			line = string_cat(
+				*string_to_string_view(&l, old),
+				(string_view){.len = buf_i, .s = buffer}
+			);
+			string_delete(old);
+			buf_i = 0;
+			if (!line)
+				goto error;
+		}
+
+		buffer[buf_i++] = c;
+	} while (c != '\n');
+
+	buffer[buf_i] = 0;
+	string *const old = line;
+
+	line = string_cat(
+		*string_to_string_view(&l, old),
+		(string_view){.len = buf_i, .s = buffer}
+	);
+	string_delete(old);
+	buf_i = 0;
+	if (!line)
+	{
+error:
+		self->got_error = true;
+	}
+
+	return (line);
 }
