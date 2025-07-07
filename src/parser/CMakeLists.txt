@@ -1,3 +1,5 @@
+add_library(parser STATIC)
+
 add_subdirectory(internals)
 
 target_sources(parser PRIVATE parser.c)

@@ -1,11 +1,3 @@
-add_library(bigint_common OBJECT)
-add_library(bigint)
-add_library(deque)
-add_library(hash_table)
-add_library(parser)
-add_library(reader)
-add_library(string_type)
-
 add_subdirectory(bigint)
 add_subdirectory(deque)
 add_subdirectory(hash_table)
@@ -23,5 +15,5 @@ target_include_directories(string_type PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 
 target_link_libraries(bigint PUBLIC bigint_common)
 
-add_executable(calc main.c )
+target_sources(calc PRIVATE main.c)
 target_link_libraries(calc PRIVATE bigint deque hash_table parser reader string_type)

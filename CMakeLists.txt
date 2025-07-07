@@ -33,6 +33,9 @@ add_link_options(
     "$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>"
 )
 
+# Main program
+add_executable(calc)
+
 add_subdirectory(src)
 
 # Tests are automatically built if this is the main project

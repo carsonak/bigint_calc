@@ -1,3 +1,6 @@
+add_library(bigint_common OBJECT)
+add_library(bigint)
+
 add_subdirectory(internals)
 add_subdirectory(math)
 add_subdirectory(number_parsing)
