@@ -25,6 +25,7 @@ add_compile_options(
     -Wshadow
     "$<$<C_COMPILER_ID:GNU>:-Wduplicated-branches>"
     "$<$<C_COMPILER_ID:GNU>:-Wduplicated-cond>"
+    "$<$<C_COMPILER_ID:Clang>:-Wno-gcc-compat>"
     -Werror
     "$<$<CONFIG:Debug,RelWithDebInfo>:-fsanitize=address,undefined>"
     "$<$<AND:$<C_COMPILER_ID:GNU,Clang>,$<CONFIG:Debug>>:-Og>"

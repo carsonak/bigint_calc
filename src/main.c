@@ -28,7 +28,7 @@
 int main(int argc, char *argv[])
 {
 	program context = {.invoke_name = argv[0]};
-	reader r = {.stream = stdin, .prompt = PROMPT_NORMAL};
+	reader r = {.stream = stdin, .line = 1, .prompt = PROMPT_NORMAL};
 
 	if (argc > 1)
 	{

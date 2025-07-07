@@ -19,13 +19,13 @@ struct reader
 typedef struct reader reader;
 
 char reader_peekc(reader *const restrict self) _diagnose_if(
-	self == NULL, "self should not be a NULL pointer.", "warning"
+	!self, "self should not be a NULL pointer.", "warning"
 );
 char reader_getc(reader *const restrict self) _diagnose_if(
-	self == NULL, "self should not be a NULL pointer.", "warning"
+	!self, "self should not be a NULL pointer.", "warning"
 );
 string *reader_getline(reader *const restrict self) _diagnose_if(
-	self == NULL, "self should not be a NULL pointer.", "warning"
+	!self, "self should not be a NULL pointer.", "warning"
 );
 
 #endif  // READER_H

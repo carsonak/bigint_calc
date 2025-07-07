@@ -23,14 +23,14 @@ bigint *_bi_alloc(const len_ty len)
 		return (NULL);
 
 	bigint *restrict bi = NULL;
-	const size_t alignof_digit_ty = _alignof(udigit_ty);
+	const size_t alignof_udigit_ty = _alignof(udigit_ty);
 	const size_t arr_size = sizeof(*bi->num) * len;
 
 	// overflow error.
 	if (len > 0 && arr_size / len != sizeof(*bi->num))
 		return (NULL);
 
-	bi = xmalloc(sizeof(*bi) + arr_size + alignof_digit_ty);
+	bi = xmalloc(sizeof(*bi) + arr_size + alignof_udigit_ty);
 	if (!bi)
 		return (NULL);
 
@@ -39,8 +39,8 @@ bigint *_bi_alloc(const len_ty len)
 	if (len > 0)
 	{
 		char *const mem = (char *)(bi + 1);
-		bi->num = (udigit_ty *)(mem + alignof_digit_ty -
-								((size_t)mem % alignof_digit_ty));
+		bi->num = (udigit_ty *)(mem + alignof_udigit_ty -
+								((size_t)mem % alignof_udigit_ty));
 		bi->num[0] = 0;
 	}
 
@@ -69,7 +69,7 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
 	if (len < 0 || (bi && bi->len < 0))
 		return (_bi_free(bi));
 
-	const size_t alignof_digit_ty = _alignof(udigit_ty);
+	const size_t alignof_udigit_ty = _alignof(udigit_ty);
 	const size_t arr_size = sizeof(*bi->num) * len;
 
 	// overflow error.
@@ -85,7 +85,7 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
 		return (bi);
 	}
 
-	bi = xrealloc_free_on_fail(bi, sizeof(*bi) + arr_size + alignof_digit_ty);
+	bi = xrealloc_free_on_fail(bi, sizeof(*bi) + arr_size + alignof_udigit_ty);
 	if (!bi)
 		return (NULL);
 
@@ -94,8 +94,8 @@ bigint *_bi_resize(bigint *bi, const len_ty len)
 	else
 	{
 		char *const mem = (char *)(bi + 1);
-		bi->num = (udigit_ty *)(mem + alignof_digit_ty -
-								((size_t)mem % alignof_digit_ty));
+		bi->num = (udigit_ty *)(mem + alignof_udigit_ty -
+								((size_t)mem % alignof_udigit_ty));
 
 		if (len > bi->len)
 			memset(&(bi->num[bi->len]), 0, sizeof(*bi->num) * (len - bi->len));

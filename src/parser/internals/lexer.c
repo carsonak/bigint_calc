@@ -10,6 +10,18 @@
 #include "list_type_structs.h"
 #include "macros.h"
 
+static char skip_spaces(reader *const restrict r) _nonnull;
+static string *
+get_id_or_num(reader *const restrict r, const char start) _nonnull;
+static string *
+get_id(reader *const restrict r, const char start) _nonnull _malloc;
+static string *
+get_num(reader *const restrict r, const char start) _nonnull _malloc;
+static char skip_block_comment(reader *const restrict r) _nonnull;
+static char skip_line_comment(reader *const restrict r) _nonnull;
+static string *
+get_string(reader *const restrict r, const char start) _nonnull _malloc;
+
 static bool is_id_start(const char c) { return (isalpha(c) || c == '_'); }
 
 static bool is_alnum_(const char c) { return (isalnum(c) || c == '_'); }

@@ -49,10 +49,15 @@ string *string_new(const char *const restrict s, const len_ty s_len)
 		return (NULL);
 
 	*str = (string){.len = s_len};
+	if (s_len > 0)
+	{
+		str->s = (char *)(str + 1);
+		str->s[s_len] = 0;
+	}
+
 	if (s)
 		strncpy(str->s, s, s_len);
 
-	str->s[s_len] = 0;
 	return (str);
 }
 
@@ -109,7 +114,6 @@ string *string_cat(string_view dest, string_view src)
 	if (src.s)
 		strncpy(&str->s[dest.len], src.s, src.len);
 
-	str->s[str->len] = 0;
 	return (str);
 }
 
@@ -135,6 +139,11 @@ string *string_resize(string *const restrict s, const len_ty s_len)
 		return (NULL);
 
 	*str = (string){.len = s_len};
-	str->s[s_len] = 0;
+	if (s_len > 0)
+	{
+		str->s = (char *)(str + 1);
+		str->s[s_len] = 0;
+	}
+
 	return (str);
 }

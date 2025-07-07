@@ -12,9 +12,9 @@ typedef struct string
 	/*! @public number of characters in the string，excluding the terminating null byte. */
 	len_ty len;
 	/*! @public cursor into the string. */
-	len_ty i;
+	len_ty p;
 	/*! @public the string. */
-	char s[];
+	char *restrict s;
 } string;
 
 /*!
@@ -30,7 +30,7 @@ typedef struct string_view
 
 string_view *string_to_string_view(
 	string_view *const restrict dest, const string *const restrict src
-) _diagnose_if(dest == NULL, "dest should not be a NULL pointer.", "warning");
+) _diagnose_if(!dest, "dest should be non-null.", "warning");
 
 string *string_delete(string *const restrict freeable_string);
 /* clang-format off */
