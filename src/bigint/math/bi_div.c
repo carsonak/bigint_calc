@@ -115,7 +115,7 @@ static ldigit_ty get_current_quotient(
 )
 {
 	bigint q_estimate = {
-		.len = 1, .is_negative = false, .num = (digit_ty[2]){0}
+		.len = 1, .is_negative = false, .num = (udigit_ty[2]){0}
 	};
 	ldigit_ty msd_slice = slice->num[slice->len - 1];
 
@@ -141,7 +141,7 @@ static ldigit_ty get_current_quotient(
 		{
 			/* over shoot ≈ ceil(m.s.d remainder / m.s.d denominator) */
 			/* CAUTION: Possible case => overshoot.len > n2.len. */
-			digit_ty over_shoot =
+			udigit_ty over_shoot =
 				((*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1]);
 
 			if ((*rem)->num[(*rem)->len - 1] % n2->num[n2->len - 1])
@@ -152,7 +152,7 @@ static ldigit_ty get_current_quotient(
 		else  // quotient estimate was too small.
 		{
 			/* under shoot ≈ floor(m.s.d remainder / m.s.d denominator) */
-			digit_ty under_shoot =
+			udigit_ty under_shoot =
 				(*rem)->num[(*rem)->len - 1] / n2->num[n2->len - 1];
 
 			bi_iadd_int(&q_estimate, under_shoot);
@@ -345,7 +345,9 @@ divide_negatives(bigint *const restrict n1, bigint *const restrict n2)
 	{
 		// -8 / 5 = -((8 / 5) + 1)
 		// 8 / -5 = -((8 / 5) + 1)
-		bigint one = {.len = 1, .is_negative = false, .num = (digit_ty[1]){1}};
+		bigint one = {
+			.len = 1, .is_negative = false, .num = (udigit_ty[1]){1}
+		};
 
 		res.quotient = _bi_resize(res.quotient, res.quotient->len + 1);
 		if (!res.quotient)

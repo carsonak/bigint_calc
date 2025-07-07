@@ -20,7 +20,7 @@ TEST(invalid_inputs, test_null_plus_null)
 
 TEST_F(invalid_inputs, test_1_plus_null)
 {
-	digit_ty in1[] = {1};
+	udigit_ty in1[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -38,7 +38,7 @@ TEST_F(invalid_inputs, test_1_plus_null)
 
 TEST_F(invalid_inputs, test_null_plus_1)
 {
-	digit_ty in2[] = {1};
+	udigit_ty in2[] = {1};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -48,7 +48,7 @@ TEST_F(invalid_inputs, test_null_plus_1)
 
 TEST_F(invalid_inputs, test_0_plus_null)
 {
-	digit_ty in1[1] = {0};
+	udigit_ty in1[1] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -66,7 +66,7 @@ TEST_F(invalid_inputs, test_0_plus_null)
 
 TEST_F(invalid_inputs, test_null_plus_0)
 {
-	digit_ty in2[1] = {0};
+	udigit_ty in2[1] = {0};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;
@@ -76,7 +76,7 @@ TEST_F(invalid_inputs, test_null_plus_0)
 
 TEST_F(invalid_inputs, test_neg1_plus_null)
 {
-	digit_ty in1[] = {1};
+	udigit_ty in1[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -94,7 +94,7 @@ TEST_F(invalid_inputs, test_neg1_plus_null)
 
 TEST_F(invalid_inputs, test_null_plus_neg1)
 {
-	digit_ty in2[] = {1};
+	udigit_ty in2[] = {1};
 
 	tau->num2 = (bigint){.len = sizeof(in2) / sizeof(*in2),
 						 .is_negative = true,
@@ -123,7 +123,7 @@ TEST_F(zero_len_arrays, test_NaN_plus_NaN)
 
 TEST_F(zero_len_arrays, test_4490998_plus_NaN)
 {
-	digit_ty in1[] = {4490998}, out[] = {4490998};
+	udigit_ty in1[] = {4490998}, out[] = {4490998};
 
 	tau->num1.len = sizeof(in1) / sizeof(*in1);
 	tau->num1.num = in1;
@@ -141,7 +141,7 @@ TEST_F(zero_len_arrays, test_4490998_plus_NaN)
 
 TEST_F(zero_len_arrays, test_NaN_plus_largenum)
 {
-	digit_ty in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
+	udigit_ty in2[] = {238542068, 232509426, 6086, 0, 0, 712000569, 99992175};
 
 	tau->num2.len = sizeof(in2) / sizeof(*in2);
 	tau->num2.num = in2;

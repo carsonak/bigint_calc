@@ -37,7 +37,7 @@ ldigit_ty _bi_compare_int_const(const bigint *const n1, const intmax_t n2)
 	if (!n1 || n1->len < 0)
 		return (0);
 
-	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (digit_ty[6]){0}};
+	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (udigit_ty[6]){0}};
 
 	return (_bi_compare_const(n1, int_to_bi(&num2, n2)));
 }
@@ -107,7 +107,7 @@ ldigit_ty _bi_compare_const(const bigint *const n1, const bigint *const n2)
  * @return +ve number if arr1 > arr2, -ve number if arr1 < arr2 else 0.
  */
 ldigit_ty _cmp_rev_uint_arr(
-	digit_ty const *const arr1, digit_ty const *const arr2, len_ty len
+	udigit_ty const *const arr1, udigit_ty const *const arr2, len_ty len
 )
 {
 	if ((!arr1 && !arr2) || len < 0)

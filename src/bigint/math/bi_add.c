@@ -139,7 +139,7 @@ bigint *bi_iadd_int(bigint *const restrict n1, const intmax_t n2)
 	if (!n1 || n1->len < 0)
 		return (false);
 
-	bigint num2 = {.len = 4, .is_negative = 0, .num = (digit_ty[6]){0}};
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (udigit_ty[6]){0}};
 
 	return (bi_iadd(n1, int_to_bi(&num2, n2)));
 }
@@ -192,7 +192,7 @@ bigint *bi_add_int(bigint *const restrict n1, const intmax_t n2)
 	if (!n1 || n1->len < 0)
 		return (NULL);
 
-	bigint num2 = {.len = 4, .is_negative = 0, .num = (digit_ty[6]){0}};
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (udigit_ty[6]){0}};
 
 	return (bi_add(n1, int_to_bi(&num2, n2)));
 }

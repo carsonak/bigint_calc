@@ -19,7 +19,7 @@ struct bigint
 	/*! @protected number of "digits" in the number. */
 	len_ty len : sizeof(len_ty) * CHAR_BIT - 1;
 	/*! @protected pointer to an array of unsigned ints. */
-	digit_ty *restrict num;
+	udigit_ty *restrict num;
 };
 
 /* memory manipulation */
@@ -38,7 +38,7 @@ bigint *_bi_trim(bigint *const restrict n);
 ldigit_ty _bi_compare_int_const(const bigint *const n1, const intmax_t n2);
 ldigit_ty _bi_compare_const(const bigint *const n1, const bigint *const n2);
 ldigit_ty _cmp_rev_uint_arr(
-	digit_ty const *const arr1, digit_ty const *const arr2, len_ty len
+	udigit_ty const *const arr1, udigit_ty const *const arr2, len_ty len
 );
 bigint *_bi_move(bigint *const dest, bigint const *const src);
 

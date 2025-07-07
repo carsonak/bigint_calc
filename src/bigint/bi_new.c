@@ -11,7 +11,7 @@
 
 #include "safe_imaxabs.c"
 
-static len_ty uint_to_array(digit_ty *const dest, uintmax_t num) _nonnull;
+static len_ty uint_to_array(udigit_ty *const dest, uintmax_t num) _nonnull;
 
 /*!
  * @brief convert an unsigned int to a `bigint` array.
@@ -22,7 +22,7 @@ static len_ty uint_to_array(digit_ty *const dest, uintmax_t num) _nonnull;
  *
  * @return number of used slots of the array.
  */
-static len_ty uint_to_array(digit_ty *const dest, uintmax_t num)
+static len_ty uint_to_array(udigit_ty *const dest, uintmax_t num)
 {
 	len_ty i = 0;
 
@@ -46,7 +46,7 @@ static len_ty uint_to_array(digit_ty *const dest, uintmax_t num)
  */
 bigint *int_to_new_bi(const intmax_t n)
 {
-	digit_ty tmp[6] = {0};
+	udigit_ty tmp[6] = {0};
 	const len_ty i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
 	bigint *const num = _bi_alloc(i);
 
@@ -78,7 +78,7 @@ bigint *int_to_bi(bigint *const dest, const intmax_t n)
 	if (!dest || !dest->num)
 		return (NULL);
 
-	digit_ty tmp[6] = {0};
+	udigit_ty tmp[6] = {0};
 	const len_ty i = (n == 0) ? 1 : uint_to_array(tmp, safe_imaxabs(n));
 
 	if (n < 0)

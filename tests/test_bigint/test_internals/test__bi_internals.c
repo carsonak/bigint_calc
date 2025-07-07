@@ -247,8 +247,8 @@ TEST_F_TEARDOWN(trim_trailing_zeros) { tau->output = bi_delete(tau->output); }
 
 TEST_F(trim_trailing_zeros, test_one_zero)
 {
-	digit_ty in1[] = {0};
-	digit_ty out[] = {0};
+	udigit_ty in1[] = {0};
+	udigit_ty out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -269,8 +269,8 @@ TEST_F(trim_trailing_zeros, test_one_zero)
 
 TEST_F(trim_trailing_zeros, test_several_zeros)
 {
-	digit_ty in1[] = {0, 0, 0, 0};
-	digit_ty out[] = {0};
+	udigit_ty in1[] = {0, 0, 0, 0};
+	udigit_ty out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -291,8 +291,8 @@ TEST_F(trim_trailing_zeros, test_several_zeros)
 
 TEST_F(trim_trailing_zeros, test_0001)
 {
-	digit_ty in1[] = {1, 0, 0, 0};
-	digit_ty out[] = {1};
+	udigit_ty in1[] = {1, 0, 0, 0};
+	udigit_ty out[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -313,8 +313,8 @@ TEST_F(trim_trailing_zeros, test_0001)
 
 TEST_F(trim_trailing_zeros, test_0100)
 {
-	digit_ty in1[] = {0, 0, 1, 0};
-	digit_ty out[] = {0, 0, 1};
+	udigit_ty in1[] = {0, 0, 1, 0};
+	udigit_ty out[] = {0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -347,8 +347,8 @@ TEST_F_TEARDOWN(trim_trailing_zeros_negative)
 
 TEST_F(trim_trailing_zeros_negative, test_one_zero)
 {
-	digit_ty in1[] = {0};
-	digit_ty out[] = {0};
+	udigit_ty in1[] = {0};
+	udigit_ty out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -369,8 +369,8 @@ TEST_F(trim_trailing_zeros_negative, test_one_zero)
 
 TEST_F(trim_trailing_zeros_negative, test_several_zeros)
 {
-	digit_ty in1[] = {0, 0, 0, 0};
-	digit_ty out[] = {0};
+	udigit_ty in1[] = {0, 0, 0, 0};
+	udigit_ty out[] = {0};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -391,8 +391,8 @@ TEST_F(trim_trailing_zeros_negative, test_several_zeros)
 
 TEST_F(trim_trailing_zeros_negative, test_0001)
 {
-	digit_ty in1[] = {1, 0, 0, 0};
-	digit_ty out[] = {1};
+	udigit_ty in1[] = {1, 0, 0, 0};
+	udigit_ty out[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -413,8 +413,8 @@ TEST_F(trim_trailing_zeros_negative, test_0001)
 
 TEST_F(trim_trailing_zeros_negative, test_0100)
 {
-	digit_ty in1[] = {0, 0, 1, 0};
-	digit_ty out[] = {0, 0, 1};
+	udigit_ty in1[] = {0, 0, 1, 0};
+	udigit_ty out[] = {0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -444,8 +444,8 @@ TEST_F_TEARDOWN(trim_normal_input) { tau->output = bi_delete(tau->output); }
 
 TEST_F(trim_normal_input, test_1)
 {
-	digit_ty in1[] = {1};
-	digit_ty out[] = {1};
+	udigit_ty in1[] = {1};
+	udigit_ty out[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -466,8 +466,8 @@ TEST_F(trim_normal_input, test_1)
 
 TEST_F(trim_normal_input, test_neg1)
 {
-	digit_ty in1[] = {1};
-	digit_ty out[] = {1};
+	udigit_ty in1[] = {1};
+	udigit_ty out[] = {1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,
@@ -488,8 +488,8 @@ TEST_F(trim_normal_input, test_neg1)
 
 TEST_F(trim_normal_input, test_100)
 {
-	digit_ty in1[] = {0, 0, 1};
-	digit_ty out[] = {0, 0, 1};
+	udigit_ty in1[] = {0, 0, 1};
+	udigit_ty out[] = {0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = false,
@@ -510,8 +510,8 @@ TEST_F(trim_normal_input, test_100)
 
 TEST_F(trim_normal_input, test_neg100)
 {
-	digit_ty in1[] = {0, 0, 1};
-	digit_ty out[] = {0, 0, 1};
+	udigit_ty in1[] = {0, 0, 1};
+	udigit_ty out[] = {0, 0, 1};
 
 	tau->num1 = (bigint){.len = sizeof(in1) / sizeof(*in1),
 						 .is_negative = true,

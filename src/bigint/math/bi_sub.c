@@ -72,7 +72,7 @@ isubtract(bigint *const restrict n1, const bigint *const restrict n2)
 	{
 		n1->num[n_i] -= borrow;
 		borrow = 0;
-		if (n1->num[n_i] < 0)
+		if (n1->num[n_i] >= (udigit_ty)DIGIT_TY_min)
 		{
 			n1->num[n_i] += BIGINT_BASE;
 			borrow = 1;
@@ -174,7 +174,7 @@ bigint *bi_isubtract_int(bigint *const restrict n1, const intmax_t n2)
 	if (!n1 || n1->len < 0)
 		return (NULL);
 
-	bigint num2 = {.len = 4, .is_negative = 0, .num = (digit_ty[6]){0}};
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (udigit_ty[6]){0}};
 
 	return (bi_isubtract(n1, int_to_bi(&num2, n2)));
 }
@@ -224,7 +224,7 @@ bigint *bi_subtract(bigint *const restrict n1, bigint *const restrict n2)
  */
 bigint *bi_subtract_int(bigint *const restrict n1, const intmax_t n2)
 {
-	bigint num2 = {.len = 4, .is_negative = 0, .num = (digit_ty[6]){0}};
+	bigint num2 = {.len = 4, .is_negative = 0, .num = (udigit_ty[6]){0}};
 
 	if (!n1 || n1->len < 0)
 		return (NULL);

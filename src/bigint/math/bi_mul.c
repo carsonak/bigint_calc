@@ -111,7 +111,7 @@ cleanup:
 
 /*! zero as a `bigint`. */
 static const bigint zero = {
-	.len = 1, .is_negative = false, .num = (digit_ty[1]){0}
+	.len = 1, .is_negative = false, .num = (udigit_ty[1]){0}
 };
 
 /*!
@@ -352,7 +352,7 @@ bigint *bi_multiply_int(bigint *const restrict n1, const intmax_t n2)
 	if (!n1 || n1->len < 0)
 		return (NULL);
 
-	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (digit_ty[6]){0}};
+	bigint num2 = {.len = 4, .is_negative = n2 < 0, .num = (udigit_ty[6]){0}};
 
 	return (bi_multiply(n1, int_to_bi(&num2, n2)));
 }
