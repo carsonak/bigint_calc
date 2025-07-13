@@ -7,7 +7,7 @@ add_subdirectory("String")
 add_subdirectory(xalloc)
 
 target_include_directories(Bigint_common PUBLIC ${CMAKE_CURRENT_LIST_DIR})
-target_include_directories(Deque PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(Deque INTERFACE ${CMAKE_CURRENT_LIST_DIR})
 target_include_directories(hash_table PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_include_directories(parser PUBLIC ${CMAKE_CURRENT_LIST_DIR})
 target_include_directories(reader PUBLIC ${CMAKE_CURRENT_LIST_DIR})
