@@ -1,0 +1,22 @@
+#include "test_internals.h"
+
+TEST(memory_allocation_failure, test_bi_alloc)
+{
+	CHECK(_bi_alloc(10) == NULL);
+}
+
+TEST(memory_allocation_failure, test_bi_realloc)
+{
+	Bigint *n = NULL;
+
+	CHECK(_bi_resize(n, 10) == NULL);
+}
+
+TEST(memory_allocation_failure, test_bi_dup)
+{
+	const Bigint n = {
+		.len = 1, .is_negative = false, .num = (udigit_ty[]){DUMMY_VALUE}
+	};
+
+	CHECK(_bi_dup(&n) == NULL);
+}

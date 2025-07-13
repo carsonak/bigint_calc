@@ -126,14 +126,14 @@ char reader_peekc(reader *const restrict self)
 	return (c);
 }
 
-string *reader_getline(reader *const restrict self)
+String *reader_getline(reader *const restrict self)
 {
 	if (!self)
 		return (NULL);
 
 	char buffer[512], c;
-	string_view l = {0};
-	string *restrict line = NULL;
+	StringView l = {0};
+	String *restrict line = NULL;
 	unsigned int buf_i = 0;
 
 	do
@@ -145,11 +145,11 @@ string *reader_getline(reader *const restrict self)
 		if (buf_i >= sizeof(buffer) - 1)
 		{
 			buffer[buf_i] = 0;
-			string *const old = line;
+			String *const old = line;
 
 			line = string_cat(
-				*string_to_string_view(&l, old),
-				(string_view){.len = buf_i, .s = buffer}
+				*stringview_from_string(&l, old),
+				(StringView){.len = buf_i, .s = buffer}
 			);
 			string_delete(old);
 			buf_i = 0;
@@ -161,11 +161,11 @@ string *reader_getline(reader *const restrict self)
 	} while (c != '\n');
 
 	buffer[buf_i] = 0;
-	string *const old = line;
+	String *const old = line;
 
 	line = string_cat(
-		*string_to_string_view(&l, old),
-		(string_view){.len = buf_i, .s = buffer}
+		*stringview_from_string(&l, old),
+		(StringView){.len = buf_i, .s = buffer}
 	);
 	string_delete(old);
 	buf_i = 0;
