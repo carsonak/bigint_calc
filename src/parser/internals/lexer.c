@@ -51,6 +51,8 @@ static char skip_block_comment(reader *const restrict r)
 			c0 = skip_block_comment(r);
 			if (c0 != '/')
 				return (c0);
+
+			c0 = reader_getc(r);
 		}
 	}
 
@@ -256,7 +258,6 @@ bool next_token(lexer_token *const restrict tok, reader *const restrict r)
 	const char c = reader_getc(r);
 
 	*tok = (lexer_token){.line = r->line, .column = r->column, .id = INVALID};
-
 	if (c == '+')
 	{
 		tok->id = OP_ADD;
@@ -268,7 +269,6 @@ bool next_token(lexer_token *const restrict tok, reader *const restrict r)
 	}
 	else if (c == '/')
 	{
-		tok->id = OP_DIV;
 		if (reader_peekc(r) == '=')
 		{
 			reader_getc(r);
@@ -277,12 +277,14 @@ bool next_token(lexer_token *const restrict tok, reader *const restrict r)
 		else if (reader_peekc(r) == '*')
 		{
 			reader_getc(r);
-			tok->id = COMMENT_BLOCK;
-			if (skip_block_comment(r) != '/')
-				goto error_cleanup;
-
-			reader_getc(r);
+			if (skip_block_comment(r) == '/')
+			{
+				tok->id = COMMENT_BLOCK;
+				reader_getc(r);
+			}
 		}
+		else
+			tok->id = OP_DIV;
 	}
 	else if (c == '%')
 	{
@@ -331,21 +333,20 @@ bool next_token(lexer_token *const restrict tok, reader *const restrict r)
 	}
 	else if (c == '#')
 	{
-		tok->id = COMMENT_LINE;
-		if (skip_line_comment(r) != '\n')
-			goto error_cleanup;
+		if (skip_line_comment(r) == '\n')
+			tok->id = COMMENT_LINE;
 	}
 	else if (is_id_start(c))
 	{
-		String *const restrict id = get_id(r, c);
+		String *const restrict identifier = get_id(r, c);
 
-		if (!id)
+		if (!identifier)
 			goto error_cleanup;
 
-		tok->id = identifier_type(id->s, id->len);
-		tok->str = id;
+		tok->id = identifier_type(identifier->s, identifier->len);
+		tok->str = identifier;
 		if (tok->id != ID)
-			tok->str = string_delete(id);
+			tok->str = string_delete(identifier);
 	}
 	else if (isdigit(c))
 	{
@@ -381,16 +382,14 @@ bool next_token(lexer_token *const restrict tok, reader *const restrict r)
 	}
 	else if (c == '"')
 	{
-		tok->id = STRING;
 		tok->str = get_string(r, c);
 		if (!tok->str)
 			goto error_cleanup;
 
 		if (reader_getc(r) != '"')
-		{
 			tok->str = string_delete(tok->str);
-			goto error_cleanup;
-		}
+		else
+			tok->id = STRING;
 	}
 	else if (c == '\\')
 	{
