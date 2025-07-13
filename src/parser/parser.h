@@ -1,8 +1,8 @@
-#ifndef PARSING_H
-#define PARSING_H
+#ifndef CALC_PARSER_H
+#define CALC_PARSER_H
 
 #include "reader.h"
 
 void parse(reader *const restrict r);
 
-#endif  // PARSING_H
+#endif  // CALC_PARSER_H

@@ -3,28 +3,27 @@
  * @brief lexer.
  */
 
-#include <ctype.h>  // isdigit
+#include <assert.h>  // assert
+#include <ctype.h>   // isdigit
 #include <string.h>  // strcmp
 
 #include "lexer.h"
-#include "list_type_structs.h"
 #include "macros.h"
+#include "tokens_Deque.h"
 
 static char skip_spaces(reader *const restrict r) _nonnull;
-static string *
-get_id_or_num(reader *const restrict r, const char start) _nonnull;
-static string *
-get_id(reader *const restrict r, const char start) _nonnull _malloc;
-static string *
-get_num(reader *const restrict r, const char start) _nonnull _malloc;
 static char skip_block_comment(reader *const restrict r) _nonnull;
 static char skip_line_comment(reader *const restrict r) _nonnull;
-static string *
+static String *
+get_id_or_num(reader *const restrict r, const char start) _nonnull;
+static String *
+get_id(reader *const restrict r, const char start) _nonnull _malloc;
+static String *
+get_num(reader *const restrict r, const char start) _nonnull _malloc;
+static enum lexer_token_type
+identifier_type(const char *const restrict id, const len_ty len) _nonnull;
+static String *
 get_string(reader *const restrict r, const char start) _nonnull _malloc;
-
-static bool is_id_start(const char c) { return (isalpha(c) || c == '_'); }
-
-static bool is_alnum_(const char c) { return (isalnum(c) || c == '_'); }
 
 static char skip_spaces(reader *const restrict r)
 {
@@ -34,59 +33,6 @@ static char skip_spaces(reader *const restrict r)
 		reader_getc(r);
 
 	return (c1);
-}
-
-static string *get_id_or_num(reader *const restrict r, const char start)
-{
-	char buf[256];
-	string_view s1 = {0};
-	string *restrict s = NULL;
-	unsigned int i = 0;
-
-	buf[i++] = start;
-	for (char c1 = reader_peekc(r); c1 != EOF && is_alnum_(c1);
-		 c1 = reader_peekc(r))
-	{
-		if (i >= sizeof(buf) - 1)
-		{
-			string *const old_s = s;
-
-			s = string_cat(
-				*string_to_string_view(&s1, old_s),
-				(string_view){.len = i, .s = buf}
-			);
-			string_delete(old_s);
-			i = 0;
-			if (!s)
-				return (NULL);
-		}
-
-		buf[i++] = reader_getc(r);
-	}
-
-	string *const old_s = s;
-
-	s = string_cat(
-		*string_to_string_view(&s1, old_s), (string_view){.len = i, .s = buf}
-	);
-	string_delete(old_s);
-	return (s);
-}
-
-static string *get_id(reader *const restrict r, const char start)
-{
-	if (!is_id_start(start))
-		return (NULL);
-
-	return (get_id_or_num(r, start));
-}
-
-static string *get_num(reader *const restrict r, const char start)
-{
-	if (!isdigit(start))
-		return (NULL);
-
-	return (get_id_or_num(r, start));
 }
 
 static char skip_block_comment(reader *const restrict r)
@@ -122,27 +68,28 @@ static char skip_line_comment(reader *const restrict r)
 	return (c1);
 }
 
-static string *get_string(reader *const restrict r, const char start)
+static bool is_id_start(const char c) { return (isalpha(c) || c == '_'); }
+
+static bool is_alnum_(const char c) { return (isalnum(c) || c == '_'); }
+
+static String *get_id_or_num(reader *const restrict r, const char start)
 {
 	char buf[256];
-	string_view s1 = {0};
-	string *restrict s = NULL;
+	StringView s1 = {0};
+	String *restrict s = NULL;
 	unsigned int i = 0;
 
-	if (start != '"')
-		return (NULL);
-
-	for (char c1 = reader_peekc(r); c1 != EOF && c1 != '\n' && c1 != '"';
+	buf[i++] = start;
+	for (char c1 = reader_peekc(r); c1 != EOF && is_alnum_(c1);
 		 c1 = reader_peekc(r))
 	{
 		if (i >= sizeof(buf) - 1)
 		{
-			string *const old_s = s;
+			String *const old_s = s;
 
-			buf[i] = 0;
 			s = string_cat(
-				*string_to_string_view(&s1, old_s),
-				(string_view){.len = i, .s = buf}
+				*stringview_from_string(&s1, old_s),
+				(StringView){.len = i, .s = buf}
 			);
 			string_delete(old_s);
 			i = 0;
@@ -153,21 +100,154 @@ static string *get_string(reader *const restrict r, const char start)
 		buf[i++] = reader_getc(r);
 	}
 
-	string *const old_s = s;
+	String *const old_s = s;
 
-	buf[i] = 0;
 	s = string_cat(
-		*string_to_string_view(&s1, old_s), (string_view){.len = i, .s = buf}
+		*stringview_from_string(&s1, old_s), (StringView){.len = i, .s = buf}
 	);
 	string_delete(old_s);
 	return (s);
 }
 
-static void free_lexer_token(void *token_ptr)
+static String *get_id(reader *const restrict r, const char start)
 {
-	lexer_token_delete(token_ptr);
+	if (!is_id_start(start))
+		return (NULL);
+
+	return (get_id_or_num(r, start));
 }
 
+static String *get_num(reader *const restrict r, const char start)
+{
+	if (!isdigit(start))
+		return (NULL);
+
+	return (get_id_or_num(r, start));
+}
+
+/*!
+ * @brief determine the type of identifier in the given string.
+ *
+ * @param id non-null pointer to the string.
+ * @param len number of characters in the string.
+ * @return the identifier type.
+ */
+static enum lexer_token_type
+identifier_type(const char *restrict id, const len_ty len)
+{
+	char c = *id++;
+
+	if (c == 'b')
+	{
+		if (len == sizeof("break") - 1 && strcmp("reak", id) == 0)
+			return (KW_BREAK);
+	}
+	else if (c == 'e')
+	{
+		if (len == 4)
+		{
+			c = *id++;
+			if (c == 'l')
+			{
+				if (strcmp("if", id) == 0)
+					return (KW_ELIF);
+
+				if (strcmp("se", id) == 0)
+					return (KW_ELSE);
+			}
+			else if (c == 'x')
+			{
+				if (strcmp("it", id) == 0)
+					return (KW_EXIT);
+			}
+		}
+	}
+	else if (c == 'f')
+	{
+		if (len == sizeof("false") - 1 && strcmp("alse", id) == 0)
+			return (KW_FALSE);
+		else if (len == sizeof("fn") - 1 && *id == 'n')
+			return (KW_FN);
+		else if (len == sizeof("for") - 1 && strcmp("or", id) == 0)
+			return (KW_FOR);
+	}
+	else if (c == 'i')
+	{
+		if (len == 2)
+		{
+			if (*id == 'f')
+				return (KW_IF);
+			else if (*id == 'n')
+				return (KW_IN);
+		}
+	}
+	else if (c == 'r')
+	{
+		if (len == sizeof("return") - 1 && strcmp("eturn", id) == 0)
+			return (KW_RETURN);
+	}
+	else if (c == 't')
+	{
+		if (len == sizeof("true") - 1 && strcmp("rue", id) == 0)
+			return (KW_TRUE);
+	}
+	else if (c == 'w')
+	{
+		if (len == sizeof("while") - 1 && strcmp("hile", id) == 0)
+			return (KW_WHILE);
+	}
+
+	return (ID);
+}
+
+static String *get_string(reader *const restrict r, const char start)
+{
+	char buf[256];
+	StringView s1 = {0};
+	String *restrict s = NULL;
+	unsigned int i = 0;
+
+	if (start != '"')
+		return (NULL);
+
+	for (char c1 = reader_peekc(r); c1 != EOF && c1 != '\n' && c1 != '"';
+		 c1 = reader_peekc(r))
+	{
+		if (i >= sizeof(buf) - 1)
+		{
+			String *const old_s = s;
+
+			buf[i] = 0;
+			s = string_cat(
+				*stringview_from_string(&s1, old_s),
+				(StringView){.len = i, .s = buf}
+			);
+			string_delete(old_s);
+			i = 0;
+			if (!s)
+				return (NULL);
+		}
+
+		buf[i++] = reader_getc(r);
+	}
+
+	String *const old_s = s;
+
+	buf[i] = 0;
+	s = string_cat(
+		*stringview_from_string(&s1, old_s), (StringView){.len = i, .s = buf}
+	);
+	string_delete(old_s);
+	return (s);
+}
+
+/*!
+ * @brief retrieve the next token in the stream.
+ *
+ * @param tok address to store the token.
+ * @param r pointer to a stream reader context struct.
+ * @return true on success, false on error.
+ */
 bool next_token(lexer_token *const restrict tok, reader *const restrict r)
 {
 	if (!tok || !r || reader_peekc(r) == EOF)
@@ -175,12 +255,7 @@ bool next_token(lexer_token *const restrict tok, reader *const restrict r)
 
 	const char c = reader_getc(r);
 
-	*tok = (lexer_token){.line = r->line,
-						 .column = r->column,
-						 .offset = ftell(r->stream),
-						 .id = INVALID};
-	if (tok->offset < 0)
-		perror("ERROR: ftell");
+	*tok = (lexer_token){.line = r->line, .column = r->column, .id = INVALID};
 
 	if (c == '+')
 	{
@@ -262,47 +337,19 @@ bool next_token(lexer_token *const restrict tok, reader *const restrict r)
 	}
 	else if (is_id_start(c))
 	{
-		string *const restrict id = get_id(r, c);
+		String *const restrict id = get_id(r, c);
 
 		if (!id)
 			goto error_cleanup;
 
-		if (strcmp(id->s, "break") == 0)
-			tok->id = KW_BREAK;
-		else if (strcmp(id->s, "def") == 0)
-			tok->id = KW_DEF;
-		else if (strcmp(id->s, "elif") == 0)
-			tok->id = KW_ELIF;
-		else if (strcmp(id->s, "else") == 0)
-			tok->id = KW_ELSE;
-		else if (strcmp(id->s, "exit") == 0)
-			tok->id = KW_EXIT;
-		else if (strcmp(id->s, "false") == 0)
-			tok->id = KW_FALSE;
-		else if (strcmp(id->s, "for") == 0)
-			tok->id = KW_FOR;
-		else if (strcmp(id->s, "if") == 0)
-			tok->id = KW_IF;
-		else if (strcmp(id->s, "IN") == 0)
-			tok->id = KW_IN;
-		else if (strcmp(id->s, "return") == 0)
-			tok->id = KW_RETURN;
-		else if (strcmp(id->s, "true") == 0)
-			tok->id = KW_TRUE;
-		else if (strcmp(id->s, "while") == 0)
-			tok->id = KW_WHILE;
-		else
-		{
-			tok->id = ID;
-			tok->str = id;
-		}
-
+		tok->id = identifier_type(id->s, id->len);
+		tok->str = id;
 		if (tok->id != ID)
-			string_delete(id);
+			tok->str = string_delete(id);
 	}
 	else if (isdigit(c))
 	{
-		string *const restrict num = get_num(r, c);
+		String *const restrict num = get_num(r, c);
 
 		if (!num)
 			goto error_cleanup;
@@ -393,32 +440,29 @@ error_cleanup:
 	return (false);
 }
 
-bool lex_line(deque *const restrict dq, reader *const restrict r)
+bool lex_line(Deque_tok *const restrict dq, reader *const restrict r)
 {
 	if (!dq)
 		return (false);
 
-	*dq = (deque){0};
+	*dq = (Deque_tok){0};
 	if (!r)
 		return (false);
 
 	for (char c = skip_spaces(r); c != EOF && c != '\n'; c = skip_spaces(r))
 	{
-		lexer_token *const restrict tok = lexer_token_new();
+		lexer_token tok;
 
-		if (!tok || !next_token(tok, r))
-		{
-			lexer_token_delete(tok);
+		if (!next_token(&tok, r))
 			goto error_cleanup;
-		}
 
-		if (!dq_push_tail(dq, tok, NULL))
+		if (!dq_tok_push_tail(dq, tok, NULL))
 			goto error_cleanup;
 	}
 
 	reader_getc(r);
 	return (true);
 error_cleanup:
-	dq_clear(dq, free_lexer_token);
+	dq_tok_clear(dq, NULL);
 	return (false);
 }
