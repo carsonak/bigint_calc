@@ -3,11 +3,10 @@
  * @brief memory manipulation functions.
  */
 
-#include "xalloc.h"
-
-#include <inttypes.h>  // printf macros for variable stdint types.
 #include <stdio.h>     // perror
-#include <string.h>    // strcpy, strlen
+#include <string.h>    // strncpy, strlen
+
+#include "xalloc.h"
 
 /*!
  * @brief allocate memory with malloc and report errors.
@@ -20,7 +19,7 @@ void *xmalloc(const len_ty size)
 {
 	if (size < 0)
 	{
-		fprintf(stderr, "xmalloc error: negative size %" PRIdMAX, size);
+		fprintf(stderr, "xmalloc error: negative size %" PRI_len, size);
 		return (NULL);
 	}
 
@@ -44,14 +43,14 @@ void *xcalloc(const len_ty items, const len_ty sizeof_item)
 {
 	if (items < 0)
 	{
-		fprintf(stderr, "xcalloc error: negative parameter %" PRIdMAX, items);
+		fprintf(stderr, "xcalloc error: negative parameter %" PRI_len, items);
 		return (NULL);
 	}
 
 	if (sizeof_item < 0)
 	{
 		fprintf(
-			stderr, "xcalloc error: negative parameter %" PRIdMAX, sizeof_item
+			stderr, "xcalloc error: negative parameter %" PRI_len, sizeof_item
 		);
 		return (NULL);
 	}
@@ -76,7 +75,7 @@ void *xrealloc(void *nullable_ptr, const len_ty size)
 {
 	if (size < 0)
 	{
-		fprintf(stderr, "xrealloc error: negative size %" PRIdMAX, size);
+		fprintf(stderr, "xrealloc error: negative size %" PRI_len, size);
 		return (NULL);
 	}
 
@@ -98,7 +97,7 @@ void *xrealloc(void *nullable_ptr, const len_ty size)
  */
 void *xrealloc_free_on_fail(void *nullable_ptr, const len_ty size)
 {
-	void *const restrict ptr = xrealloc(nullable_ptr, size);
+	void *const restrict ptr = realloc(nullable_ptr, size);
 
 	if (!ptr && size)
 		free(nullable_ptr);
@@ -119,7 +118,7 @@ char *xstrdup(char const *const str)
 		return (NULL);
 
 	const size_t s_size = strlen(str) + 1;
-	char *const restrict s = xmalloc(sizeof(*s) * s_size);
+	char *const restrict s = malloc(sizeof(*s) * s_size);
 
 	if (str)
 		strncpy(s, str, s_size);
