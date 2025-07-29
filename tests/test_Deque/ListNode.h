@@ -1,12 +1,12 @@
 #ifndef DS_LISTNODE_H
 #define DS_LISTNODE_H
 
-#include "ListNode_struct_macros.h"
+#define LISTNODE_UNIQUE_SUFFIX str
+#define LISTNODE_DATA_TYPE char *
+#include "ListNode_struct_def.h"
 
-DEFINE_LISTNODE_STRUCT(str, char *)
-
-#include "ListNode_prototypes_macros.h"
-
-DECLARE_LISTNODE_PROTOTYPES(str, char *)
+#define LISTNODE_UNIQUE_SUFFIX str
+#define LISTNODE_DATA_TYPE char *
+#include "ListNode_prototypes.h"
 
 #endif  // DS_LISTNODE_H

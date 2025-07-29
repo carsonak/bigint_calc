@@ -2,6 +2,7 @@
 #define _ISOC99_SOURCE
 
 #include "ListNode.h"
-#include "ListNode_methods_macros.h"
 
-DEFINE_LISTNODE_METHODS(str, char *)
+#define LISTNODE_UNIQUE_SUFFIX str
+#define LISTNODE_DATA_TYPE char *
+#include "ListNode_methods.c"

@@ -1,10 +1,15 @@
 #include <string.h> /* strcpy */
 
 #include "Deque.h"
-#include "Deque_methods_macros.h"
 
-DEFINE_DEQUE_METHODS(mystr, MyString)
+#define DEQUE_UNIQUE_SUFFIX mystr
+#define DEQUE_DATA_TYPE MyString
+#include "Deque_methods.c"
 
-DEFINE_DEQUE_METHODS(str, char *)
+#define DEQUE_UNIQUE_SUFFIX str
+#define DEQUE_DATA_TYPE char *
+#include "Deque_methods.c"
 
-DEFINE_DEQUE_METHODS(llint, long long int)
+#define DEQUE_UNIQUE_SUFFIX llint
+#define DEQUE_DATA_TYPE long long int
+#include "Deque_methods.c"

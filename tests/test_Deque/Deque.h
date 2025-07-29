@@ -1,26 +1,34 @@
 #ifndef DS_DEQUE_H
 #define DS_DEQUE_H
 
-#include "Deque_struct_macros.h"
-
 typedef struct MyString
 {
 	int len;
 	char *s;
 } MyString;
 
-DEFINE_DEQUE_STRUCT(mystr, MyString)
+#define DEQUE_UNIQUE_SUFFIX mystr
+#define DEQUE_DATA_TYPE MyString
+#include "Deque_struct_def.h"
 
-DEFINE_DEQUE_STRUCT(str, char *)
+#define DEQUE_UNIQUE_SUFFIX str
+#define DEQUE_DATA_TYPE char *
+#include "Deque_struct_def.h"
 
-DEFINE_DEQUE_STRUCT(llint, long long int)
+#define DEQUE_UNIQUE_SUFFIX llint
+#define DEQUE_DATA_TYPE long long int
+#include "Deque_struct_def.h"
 
-#include "Deque_prototypes_macros.h"
+#define DEQUE_UNIQUE_SUFFIX mystr
+#define DEQUE_DATA_TYPE MyString
+#include "Deque_prototypes.h"
 
-DECLARE_DEQUE_PROTOTYPES(mystr, MyString)
+#define DEQUE_UNIQUE_SUFFIX str
+#define DEQUE_DATA_TYPE char *
+#include "Deque_prototypes.h"
 
-DECLARE_DEQUE_PROTOTYPES(str, char *)
-
-DECLARE_DEQUE_PROTOTYPES(llint, long long int)
+#define DEQUE_UNIQUE_SUFFIX llint
+#define DEQUE_DATA_TYPE long long int
+#include "Deque_prototypes.h"
 
 #endif /* DS_DEQUE_H */

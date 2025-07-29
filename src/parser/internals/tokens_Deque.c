@@ -1,6 +1,7 @@
 #include <string.h> /* strcpy */
 
-#include "Deque_methods_macros.h"
 #include "tokens_Deque.h"
 
-DEFINE_DEQUE_METHODS(tok, lexer_token)
+#define DEQUE_UNIQUE_SUFFIX tok
+#define DEQUE_DATA_TYPE lexer_token
+#include "Deque_methods.c"
